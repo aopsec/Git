@@ -1,0 +1,8 @@
+sudo iptables -F
+sudo iptables -t nat -F
+sudo iptables -t nat -A OUTPUT -m owner --uid-owner debian-tor -j RETURN
+sudo iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-ports 5353
+sudo iptables -t nat -A OUTPUT -p tcp --syn -j REDIRECT --to-ports 9040
+sudo iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A OUTPUT -m owner --uid-owner debian-tor -j ACCEPT
+sudo iptables -A OUTPUT -j REJECT
