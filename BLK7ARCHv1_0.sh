@@ -18,6 +18,16 @@
 #   [F12] iwd.service enabled in chroot when nm-iwd selected
 #   [F13] --locale dedup prevents duplicate locale.gen entries
 #
+# Security hardening pass (recursive loop v1):
+#   [FIX-S1] validate_hostname: RFC 952/1123 regex — prevents shell metachar injection
+#   [FIX-S2] validate_username: POSIX regex — prevents shell metachar/path injection
+#   [FIX-S3] validate_lv_sizes: enforces numeric+suffix format, fixes disk_size arithmetic
+#            for GiB/MiB/TiB units (previous code stripped only 'G', silently wrong)
+#   [FIX-S4] validate_required_args now calls FIX-S1 + FIX-S2
+#   [FIX-S5] core_install now calls validate_lv_sizes
+#   [FIX-S6] curl calls get --max-time 60 + --retry 3 (prevents hung installs)
+#   [FIX-S7] strap.sh permissions set to 0700 (not +x which is umask-dependent)
+#
 # New in v1.0:
 #   [N1]  Full TUI wizard via whiptail (auto-detect + interactive prompts)
 #   [N2]  Auto-disk discovery and menu
@@ -252,6 +262,60 @@ validate_locales() {
   done
 }
 
+# [FIX-S1] Validate hostname: RFC 952/1123 — labels 1-63 chars, alphanumeric + hyphens,
+#           no leading/trailing hyphen, total ≤253 chars, no shell metacharacters.
+validate_hostname() {
+  if [[ -z "$HOSTNAME_VAL" ]]; then return 0; fi  # emptiness checked in validate_required_args
+  local label_re='^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?$'
+  local full_re='^[A-Za-z0-9]([A-Za-z0-9.-]{0,251}[A-Za-z0-9])?$'
+  if [[ ${#HOSTNAME_VAL} -gt 253 ]]; then
+    log_error "Hostname '${HOSTNAME_VAL}' exceeds 253 characters."
+    exit "$EXIT_VALIDATION"
+  fi
+  if [[ ! "$HOSTNAME_VAL" =~ $full_re ]]; then
+    log_error "Invalid hostname '${HOSTNAME_VAL}'. Use only letters, digits, hyphens, and dots."
+    exit "$EXIT_VALIDATION"
+  fi
+  # Each dot-separated label must also be individually valid
+  local label
+  IFS='.' read -ra _labels <<< "$HOSTNAME_VAL"
+  for label in "${_labels[@]}"; do
+    if [[ ! "$label" =~ $label_re ]]; then
+      log_error "Invalid hostname label '${label}' in '${HOSTNAME_VAL}'."
+      exit "$EXIT_VALIDATION"
+    fi
+  done
+}
+
+# [FIX-S2] Validate username: POSIX portable filename + Linux useradd constraints:
+#           starts with letter or underscore, followed by letters/digits/hyphens/underscores,
+#           no spaces, no shell metacharacters, max 32 chars.
+validate_username() {
+  if [[ -z "$USERNAME" ]]; then return 0; fi  # emptiness checked in validate_required_args
+  if [[ ${#USERNAME} -gt 32 ]]; then
+    log_error "Username '${USERNAME}' exceeds 32 characters."
+    exit "$EXIT_VALIDATION"
+  fi
+  if [[ ! "$USERNAME" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
+    log_error "Invalid username '${USERNAME}'. Use only lowercase letters, digits, hyphens, underscores; must start with letter or underscore."
+    exit "$EXIT_VALIDATION"
+  fi
+}
+
+# [FIX-S3] Validate LV size arguments accept only numeric + G|M|T|GiB|MiB|TiB suffix.
+#           Also ensures validate_disk_size arithmetic stays correct (strips suffix safely).
+validate_lv_sizes() {
+  local size_re='^[1-9][0-9]*(G|M|T|GiB|MiB|TiB)$'
+  if [[ ! "$LV_ROOT_SIZE" =~ $size_re ]]; then
+    log_error "Invalid --lv-root-size '${LV_ROOT_SIZE}'. Use numeric value with G/M/T/GiB/MiB/TiB (e.g. 50G)."
+    exit "$EXIT_VALIDATION"
+  fi
+  if [[ ! "$LV_SWAP_SIZE" =~ $size_re ]]; then
+    log_error "Invalid --lv-swap-size '${LV_SWAP_SIZE}'. Use numeric value with G/M/T/GiB/MiB/TiB (e.g. 8G)."
+    exit "$EXIT_VALIDATION"
+  fi
+}
+
 validate_disk() {
   if [[ -z "$DISK" ]]; then
     log_error "Missing required --disk argument."
@@ -272,10 +336,21 @@ validate_disk_size() {
   }
   local disk_gib=$(( disk_bytes / 1073741824 ))
 
-  # Parse sizes (accept G/GiB only for now)
+  # Parse sizes (G, GiB → GiB; M, MiB → MiB; T, TiB → TiB — normalise to GiB for comparison)
   local root_g swap_g min_g
-  root_g="${LV_ROOT_SIZE//G/}"
-  swap_g="${LV_SWAP_SIZE//G/}"
+  # Strip suffix variants to get numeric value in the given unit, then convert to GiB
+  _to_gib() {
+    local raw="$1"
+    local num="${raw//[A-Za-z]/}"
+    case "$raw" in
+      *GiB|*G) echo "$num" ;;
+      *MiB|*M) echo $(( num / 1024 )) ;;
+      *TiB|*T) echo $(( num * 1024 )) ;;
+      *) echo 0 ;;
+    esac
+  }
+  root_g="$(_to_gib "$LV_ROOT_SIZE")"
+  swap_g="$(_to_gib "$LV_SWAP_SIZE")"
   # +1G EFI + 2G overhead
   min_g=$(( root_g + swap_g + 3 ))
 
@@ -337,6 +412,8 @@ validate_required_args() {
     log_error "Missing required --username argument."
     exit "$EXIT_USAGE"
   fi
+  validate_hostname  # [FIX-S1]
+  validate_username  # [FIX-S2]
 }
 
 require_target_root_ready() {
@@ -583,9 +660,9 @@ configure_blackarch() {
   log_step "BlackArch bootstrap (verify=${BLACKARCH_VERIFY_MODE})."
   local strap="${MNT_ROOT}/root/strap.sh"
   local strap_sha_file="${MNT_ROOT}/root/strap.sh.sha256"
-  run_cmd curl -fsSL -o "$strap" https://blackarch.org/strap.sh
+  run_cmd curl -fsSL --max-time 60 --retry 3 --retry-delay 5 -o "$strap" https://blackarch.org/strap.sh
   if [[ "$BLACKARCH_VERIFY_MODE" == "remote-sha256" ]]; then
-    run_cmd curl -fsSL -o "$strap_sha_file" https://blackarch.org/strap.sh.sha256
+    run_cmd curl -fsSL --max-time 30 --retry 3 --retry-delay 5 -o "$strap_sha_file" https://blackarch.org/strap.sh.sha256
   fi
 
   if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
@@ -619,7 +696,7 @@ configure_blackarch() {
     log_warn "BlackArch checksum verification DISABLED."
   fi
 
-  chmod +x "$strap"
+  chmod 0700 "$strap"  # [FIX-S7] explicit 0700: only root can read/execute
   arch-chroot "$MNT_ROOT" /bin/bash /root/strap.sh
   log_ok "BlackArch bootstrap complete."
 }
@@ -1240,6 +1317,7 @@ core_install() {
   validate_required_args
   validate_timezone
   validate_locales
+  validate_lv_sizes  # [FIX-S3]
   dedup_locales
 
   if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
