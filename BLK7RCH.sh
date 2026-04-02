@@ -21,10 +21,10 @@ LV_HOME="lvhome"
 
 HOSTNAME=""
 USERNAME=""
-TIMEZONE="UTC"
+TIMEZONE="America/Sao_Paulo"
 WIFI_BACKEND="nm"
 ALLOW_SSH_INBOUND="false"
-ENABLE_BLACKARCH="true"
+ENABLE_BLACKARCH="false"
 YES_MODE="false"
 GLOBAL_DRY_RUN="false"
 BLACKARCH_VERIFY_MODE="remote-sha256"
@@ -36,7 +36,8 @@ IDS_MODE="minimal-local"
 IDS_SNORT_PROFILE="balanced"
 IDS_SUPPRESS_FILE=""
 RUN_ID="$(date +%Y%m%d%H%M%S)"
-INSTALL_YUM_COMPAT="true"
+INSTALL_YUM_COMPAT="false"
+TEST_REPORT="false"
 
 declare -a LOCALES=("en_US.UTF-8")
 
@@ -62,7 +63,7 @@ Required flags for core-install:
   --username <name>
 
 Optional flags:
-  --timezone <Area/City>          Default: UTC
+  --timezone <Area/City>          Default: America/Sao_Paulo
   --locale <locale>               Repeatable (e.g., en_US.UTF-8)
   --wifi-backend nm|nm-iwd        Default: nm
   --allow-ssh-inbound true|false  Default: false
@@ -76,6 +77,7 @@ Optional flags:
   --ids-snort-profile strict|balanced Default: balanced
   --ids-suppress-file /path/to/file Optional file copied to /etc/snort/suppress.conf
   --install-yum-compat true|false  Default: false (installs dnf and /usr/bin/yum symlink)
+  --test-report true|false          Default: false (writes install/test state files)
   --yes                            Skip destructive confirmation
   --dry-run                        Print actions without changing system
 USAGE
@@ -98,6 +100,20 @@ append_transaction_log() {
   fi
   mkdir -p "${MNT_ROOT}/var/log"
   printf '%s run_id=%s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$RUN_ID" "$message" >> "$log_path"
+}
+
+write_test_report() {
+  local status_line="$1"
+  local report_path="${MNT_ROOT}/var/log/blk7rch-test-report.txt"
+  if [[ "$TEST_REPORT" != "true" ]]; then
+    return 0
+  fi
+  if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
+    log_info "[dry-run] test-report: $status_line"
+    return 0
+  fi
+  mkdir -p "${MNT_ROOT}/var/log"
+  printf '%s run_id=%s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$RUN_ID" "$status_line" >> "$report_path"
 }
 
 chroot_pacman_install() {
@@ -493,6 +509,50 @@ install_yum_compat() {
   fi
 }
 
+setup_postboot_validation() {
+  if [[ "$TEST_REPORT" != "true" ]]; then
+    return 0
+  fi
+  if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
+    log_info "[dry-run] would install post-boot validation service and mark reboot_validation=required"
+    return 0
+  fi
+
+  mkdir -p "$MNT_ROOT/usr/local/sbin" "$MNT_ROOT/etc/systemd/system"
+  cat > "$MNT_ROOT/usr/local/sbin/blk7rch-postboot-validate.sh" <<'EOF_PBV'
+#!/usr/bin/env bash
+set -euo pipefail
+LOG_FILE="/var/log/blk7rch-postboot-check.log"
+OK_FILE="/var/log/blk7rch-postboot-check.ok"
+{
+  echo "postboot_check_started=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  grep -q "cryptdevice=" /proc/cmdline && echo "cryptdevice_cmdline=ok" || echo "cryptdevice_cmdline=missing"
+  systemctl is-enabled NetworkManager >/dev/null 2>&1 && echo "networkmanager_enabled=ok" || echo "networkmanager_enabled=missing"
+  test -f /etc/fstab && echo "fstab_present=ok" || echo "fstab_present=missing"
+  echo "postboot_check_finished=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+} >> "$LOG_FILE"
+touch "$OK_FILE"
+EOF_PBV
+  chmod +x "$MNT_ROOT/usr/local/sbin/blk7rch-postboot-validate.sh"
+
+  cat > "$MNT_ROOT/etc/systemd/system/blk7rch-postboot-validate.service" <<'EOF_SVC'
+[Unit]
+Description=BLK7RCH post-boot validation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/blk7rch-postboot-validate.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF_SVC
+
+  run_cmd arch-chroot "$MNT_ROOT" systemctl enable blk7rch-postboot-validate.service
+  write_test_report "stage=core-install reboot_validation=required"
+}
+
 install_workstation_profile() {
   log_info "Installing workstation profile packages and Hyprland config."
   require_target_root_ready
@@ -510,9 +570,21 @@ install_workstation_profile() {
 
   if [[ "$GLOBAL_DRY_RUN" == "false" ]]; then
     local target_dir="$MNT_ROOT/home/$USERNAME/.config/hypr"
+    if ! arch-chroot "$MNT_ROOT" id -u "$USERNAME" >/dev/null 2>&1; then
+      log_warn "User '$USERNAME' missing in target root. Creating user automatically."
+      arch-chroot "$MNT_ROOT" useradd -m -G wheel -s /bin/bash "$USERNAME"
+      append_transaction_log "auto-created-user=${USERNAME}"
+      # Ensure home directory exists and has correct permissions
+      if [[ ! -d "$MNT_ROOT/home/$USERNAME" ]]; then
+        log_warn "Home directory not created by useradd, creating manually."
+        mkdir -p "$MNT_ROOT/home/$USERNAME"
+        arch-chroot "$MNT_ROOT" chown -R "$USERNAME:$USERNAME" "/home/$USERNAME"
+        arch-chroot "$MNT_ROOT" chmod 0700 "/home/$USERNAME"
+      fi
+    fi
     if [[ ! -d "$MNT_ROOT/home/$USERNAME" ]]; then
-      log_error "User home '$MNT_ROOT/home/$USERNAME' missing. Ensure user exists in target system first."
-      exit "$EXIT_PRECONDITION"
+      log_error "User home '$MNT_ROOT/home/$USERNAME' missing after auto-create attempt."
+      exit "$EXIT_RUNTIME"
     fi
     mkdir -p "$target_dir"
     cat > "$target_dir/hyprland.conf" <<'EOFH'
@@ -533,16 +605,38 @@ bind=SUPER,D,exec,wofi --show drun
 bind=SUPER,Q,killactive
 bind=SUPER,M,exit
 EOFH
-    chown -R "$USERNAME:$USERNAME" "$MNT_ROOT/home/$USERNAME/.config"
+    if arch-chroot "$MNT_ROOT" test -d "/home/$USERNAME/.config"; then
+      arch-chroot "$MNT_ROOT" chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/.config"
+    fi
   else
     log_info "[dry-run] would create /home/$USERNAME/.config/hypr/hyprland.conf"
   fi
+  write_test_report "stage=workstation-profile status=completed"
 }
 
 install_ids_profile() {
   log_info "Installing IDS profile (Snort + Suricata tuned for low false positives)."
   require_target_root_ready
-  chroot_pacman_install snort suricata suricata-update
+  
+  # Check if snort and suricata are available in repos
+  local missing_packages=()
+  for pkg in snort suricata suricata-update; do
+    if ! arch-chroot "$MNT_ROOT" pacman -Si "$pkg" >/dev/null 2>&1; then
+      missing_packages+=("$pkg")
+    fi
+  done
+  
+  if [[ ${#missing_packages[@]} -gt 0 ]]; then
+    log_warn "Packages not found in standard repos: ${missing_packages[*]}"
+    log_warn "Install options:"
+    log_warn "  1. Build from AUR: yay -S snort suricata"
+    log_warn "  2. Use lightweight alternatives: airodump-ng (aircrack-ng), zeek"
+    log_warn "Skipping IDS profile installation."
+    write_test_report "stage=ids-profile status=skipped reason=packages-not-in-repos packages=${missing_packages[*]}"
+    return 0
+  fi
+  
+  chroot_pacman_install snort suricata
 
   if [[ "$GLOBAL_DRY_RUN" == "false" ]]; then
     local snort_dir="$MNT_ROOT/etc/snort"
@@ -642,6 +736,16 @@ threshold gen_id 1, sig_id 2100002, type both, track by_src, count 1, seconds 30
 EOF_SURITH
 
     if [[ "$IDS_MODE" == "managed-rules" ]]; then
+      if ! arch-chroot "$MNT_ROOT" command -v suricata-update >/dev/null 2>&1; then
+        log_warn "suricata-update not found after suricata install; attempting to install python-suricata-update."
+        chroot_pacman_install python-suricata-update
+      fi
+      if ! arch-chroot "$MNT_ROOT" command -v suricata-update >/dev/null 2>&1; then
+        log_error "Managed rules mode requires suricata-update, but it is unavailable in target root."
+        log_error "Use --ids-mode minimal-local or install suricata-update package manually in target."
+        exit "$EXIT_RUNTIME"
+      fi
+
       cat > "$suricata_dir/enable.conf" <<'EOF_SURIENABLE'
 emerging-scan.rules
 emerging-dos.rules
@@ -686,6 +790,7 @@ EOF_SURIDISABLE
   else
     log_info "[dry-run] would install precision-tuned Snort and Suricata configs and validate with -T."
   fi
+  write_test_report "stage=ids-profile status=completed ids_mode=${IDS_MODE}"
 }
 
 run_validation() {
@@ -741,6 +846,18 @@ run_validation() {
   if [[ ! -f "$MNT_ROOT/var/log/blk7rch-install.log" ]]; then
     log_error "Validation failed: transaction log $MNT_ROOT/var/log/blk7rch-install.log missing."
     ok=false
+  fi
+
+  if [[ "$TEST_REPORT" == "true" ]]; then
+    if [[ ! -f "$MNT_ROOT/var/log/blk7rch-test-report.txt" ]]; then
+      log_error "Validation failed: test report file $MNT_ROOT/var/log/blk7rch-test-report.txt missing."
+      ok=false
+    fi
+    if [[ -f "$MNT_ROOT/var/log/blk7rch-postboot-check.ok" ]]; then
+      log_info "Post-boot validation marker found."
+    else
+      log_warn "Post-boot validation marker missing. Reboot target system and check /var/log/blk7rch-postboot-check.log."
+    fi
   fi
 
   if [[ "$ok" == "false" ]]; then
@@ -821,6 +938,10 @@ parse_common_flags() {
         INSTALL_YUM_COMPAT="$(parse_bool "${2:-}")"
         shift 2
         ;;
+      --test-report)
+        TEST_REPORT="$(parse_bool "${2:-}")"
+        shift 2
+        ;;
       --yes)
         YES_MODE="true"
         shift
@@ -889,7 +1010,9 @@ core_install() {
   install_base
   configure_chroot
   install_yum_compat
+  setup_postboot_validation
   configure_blackarch
+  write_test_report "stage=core-install status=completed"
   log_info "Core installation completed successfully."
 }
 
