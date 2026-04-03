@@ -107,6 +107,7 @@ cleanup_on_exit() {
   local exit_code="$?"
   [[ "$_CLEANUP_DONE" == "true" ]] && return
   _CLEANUP_DONE="true"
+  unset LUKS_PASSPHRASE 2>/dev/null || true  # [FIX-S9] clear passphrase even on cryptsetup failure
 
   if [[ "$exit_code" -ne 0 && "$GLOBAL_DRY_RUN" == "false" ]]; then
     log_warn "Non-zero exit ($exit_code) — running rollback..."
@@ -278,7 +279,8 @@ validate_hostname() {
   fi
   # Each dot-separated label must also be individually valid
   local label
-  IFS='.' read -ra _labels <<< "$HOSTNAME_VAL"
+  local IFS='.'  # [FIX-S8] scope IFS change to avoid global word-split side-effect
+  read -ra _labels <<< "$HOSTNAME_VAL"
   for label in "${_labels[@]}"; do
     if [[ ! "$label" =~ $label_re ]]; then
       log_error "Invalid hostname label '${label}' in '${HOSTNAME_VAL}'."
@@ -572,7 +574,8 @@ ln -sf "/usr/share/zoneinfo/\${TIMEZONE}" /etc/localtime
 hwclock --systohc
 
 # Locales — [F4] use fixed-string grep to prevent regex injection
-IFS=',' read -r -a LOCALES <<< "\${LOCALES_CSV}"
+local IFS=','  # [FIX-S8] scope IFS to this read only
+read -r -a LOCALES <<< "\${LOCALES_CSV}"
 for loc in "\${LOCALES[@]}"; do
   if ! grep -qF "\${loc} UTF-8" /etc/locale.gen; then
     echo "\${loc} UTF-8" >> /etc/locale.gen
