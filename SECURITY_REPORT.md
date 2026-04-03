@@ -103,6 +103,8 @@ log_step() { printf '%b[STEP]%b %s %s\n' "${_BOLD}${_BLUE}" "${_RST}" "$(date +%
 | L2 | LOW | 663-665 | BlackArch `strap.sh` and `.sha256` fetched from same server — compromised server can serve matching fake pair | Documented; manual GPG workaround in README |
 | L3 | LOW | 649, 700 | `arch-chroot` called without absolute path; relies on PATH | Accepted — Arch ISO environment is trusted; `check_dependencies()` validates binary |
 | L4 | LOW | 1091-1093 | TUI disk parsing via `awk` breaks on disk names with spaces | Accepted — disk names with spaces are non-standard on Linux |
+| INT-1 | BUG | 528, 600 | `/etc/vconsole.conf` missing — pacstrap's `sd-vconsole` post-install hook errors without it; chroot's `local IFS=','` (FIX-S8) fails outside functions | **FIXED**: pre-create vconsole.conf before pacstrap; change `local IFS=','` to `IFS=',' read ...` in chroot script (FIX-S8b) |
+| INT-2 | BUG | 451-461 | `partition_disk()` omits `partprobe`+`udevadm settle` after sgdisk — second install attempt fails with "device in use" | **FIXED**: added `partprobe "$DISK"; udevadm settle --timeout=5` after partition creation |
 
 ---
 

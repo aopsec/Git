@@ -82,8 +82,8 @@ case "$MODE" in
     QEMU_ARGS+=(-display gtk,gl=off)
     ;;
   headless)
-    QEMU_ARGS+=(-display none -nographic)
-    echo "[INFO] Headless mode. Serial console on stdin/stdout."
+    QEMU_ARGS+=(-display curses,charset=UTF-8)
+    echo "[INFO] Headless mode. VGA rendered in terminal (curses)."
     echo "       SSH into VM:  ssh -p 2222 root@127.0.0.1"
     ;;
 esac

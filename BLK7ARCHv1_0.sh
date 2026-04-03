@@ -453,6 +453,9 @@ partition_disk() {
   run_cmd sgdisk -n 2:0:0 -t 2:8309 -c 2:"CRYPTLVM" "$DISK"
 
   if [[ "$GLOBAL_DRY_RUN" == "false" ]]; then
+    # Flush partition table to kernel; required after re-partitioning an in-use disk
+    partprobe "$DISK" 2>/dev/null || true
+    udevadm settle --timeout=5 2>/dev/null || true
     if [[ ! -b "$EFI_PART" || ! -b "$LUKS_PART" ]]; then
       log_error "Partition creation failed: expected ${EFI_PART} and ${LUKS_PART}."
       exit "$EXIT_RUNTIME"
@@ -522,6 +525,11 @@ install_base() {
     log_info "nm-iwd selected: adding iwd to pacstrap packages."
   fi
 
+  # Pre-create vconsole.conf so pacstrap's mkinitcpio post-install hook (sd-vconsole) succeeds
+  if [[ "$GLOBAL_DRY_RUN" == "false" ]]; then
+    mkdir -p "$MNT_ROOT/etc"
+    echo "KEYMAP=us" > "$MNT_ROOT/etc/vconsole.conf"
+  fi
   run_cmd pacstrap "$MNT_ROOT" "${base_pkgs[@]}"
   append_transaction_log "pacstrap-packages=${base_pkgs[*]}"
 
@@ -574,8 +582,8 @@ ln -sf "/usr/share/zoneinfo/\${TIMEZONE}" /etc/localtime
 hwclock --systohc
 
 # Locales — [F4] use fixed-string grep to prevent regex injection
-local IFS=','  # [FIX-S8] scope IFS to this read only
-read -r -a LOCALES <<< "\${LOCALES_CSV}"
+# [FIX-S8b] IFS=',' scoped to read via env-prefix; local not valid outside functions
+IFS=',' read -r -a LOCALES <<< "\${LOCALES_CSV}"
 for loc in "\${LOCALES[@]}"; do
   if ! grep -qF "\${loc} UTF-8" /etc/locale.gen; then
     echo "\${loc} UTF-8" >> /etc/locale.gen
@@ -593,6 +601,9 @@ cat > /etc/hosts <<EOFH
 ::1       localhost
 127.0.1.1 \${HOSTNAME_VAL}.localdomain \${HOSTNAME_VAL}
 EOFH
+
+# Console keymap (required by keymap + consolefont mkinitcpio hooks)
+echo "KEYMAP=us" > /etc/vconsole.conf
 
 # mkinitcpio with encrypt + lvm2 hooks
 sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)/' /etc/mkinitcpio.conf
