@@ -16,7 +16,7 @@ Interactive, fully automated Arch Linux installer with LUKS2 full-disk encryptio
 | FIX-S6 | MEDIUM | `curl` calls now include `--max-time`/`--retry` to prevent hung installs |
 | FIX-S7 | LOW | `strap.sh` permissions set to explicit `0700` instead of umask-dependent `+x` |
 
-See `SECURITY_REPORT.md` for full findings, root-cause analysis, and residual risks.
+See [SECURITY_REPORT.md](SECURITY_REPORT.md) for full findings, root-cause analysis, function test evidence, and residual risks.
 
 ---
 
@@ -128,3 +128,4 @@ bash BLK7ARCHv1_0.sh dry-run \
 - Security hardening pass: FIX-S1 through FIX-S7
 - Full TUI wizard via whiptail (N1–N7)
 - All F1–F13 bugs from BLK7RCHv3.0 resolved
+- Added SECURITY_REPORT.md: full audit findings, function test matrix (40 functions), residual risks, and next hardening steps (FIX-S8/S9 recommended)
