@@ -1270,6 +1270,93 @@ detect_candidate_disks() {
   lsblk -dpno NAME,TYPE 2>/dev/null | awk '$2=="disk"{print $1}'
 }
 
+prompt_for_disk_manual() {
+  local prompt_mode="${1:-menu}"
+  local entry=""
+  while true; do
+    if [[ "$prompt_mode" == "empty-detection" ]]; then
+      read -r -p "Enter target disk path (or 'retry'/'cancel'): " entry
+      case "$entry" in
+        retry|RETRY) return 2 ;;
+        cancel|CANCEL)
+          log_error "Disk selection cancelled by user."
+          return 1
+          ;;
+      esac
+    else
+      read -r -p "Enter target disk path (or blank to return): " entry
+      [[ -z "$entry" ]] && return 2
+    fi
+
+    if disk_is_placeholder "$entry"; then
+      log_error "Invalid DISK value: template placeholder '${entry}' is not allowed."
+      continue
+    fi
+    if ! disk_is_valid_blockdev "$entry"; then
+      log_error "Invalid DISK value: '${entry}' is not a block device."
+      continue
+    fi
+
+    CFG[disk]="$entry"
+    DISK_SOURCE="interactive"
+    return 0
+  done
+}
+
+resolve_disk_interactive() {
+  local disks=() dchoice entry
+  while true; do
+    list_disks_menu disks
+    if (( ${#disks[@]} == 0 )); then
+      log_warn "Disk auto-detection returned zero candidates."
+      log_warn "No disks detected automatically. You can enter a disk path manually."
+      prompt_for_disk_manual "empty-detection"
+      case "$?" in
+        0) return 0 ;;
+        1)
+          log_error "No disk selected. Choose a disk or enter one manually."
+          return 1
+          ;;
+        2) continue ;;
+      esac
+    fi
+
+    local -a labels=()
+    for entry in "${disks[@]}"; do labels+=("$entry"); done
+    echo "Detected disks:"
+    local i=1
+    for entry in "${labels[@]}"; do IFS='|' read -r d s m <<<"$entry"; echo "  $i) $d ($s $m)"; i=$((i+1)); done
+    echo "  r) Refresh detection"
+    echo "  m) Enter disk manually"
+    echo "  c) Cancel"
+    read -r -p "Select target disk [1]: " dchoice; dchoice="${dchoice:-1}"
+    case "$dchoice" in
+      r|R) continue ;;
+      m|M)
+        prompt_for_disk_manual "menu"
+        case "$?" in
+          0) return 0 ;;
+          1) return 1 ;;
+          2) continue ;;
+        esac
+        ;;
+      c|C)
+        log_error "Disk selection cancelled by user."
+        log_error "No disk selected. Choose a disk or enter one manually."
+        return 1
+        ;;
+      *)
+        if [[ "$dchoice" =~ ^[0-9]+$ ]] && (( dchoice>=1 && dchoice<=${#labels[@]} )); then
+          IFS='|' read -r CFG[disk] _ _ <<<"${labels[$((dchoice-1))]}"
+          DISK_SOURCE="interactive"
+          return 0
+        fi
+        echo "Invalid disk selection."
+        ;;
+    esac
+  done
+}
+
 list_disks_menu() {
   local -n out_ref=$1
   out_ref=()
@@ -1429,83 +1516,12 @@ advanced_menu() {
 }
 
 interactive_wizard() {
-  local disks=() dchoice disk_gib
-  local entry
-  while true; do
-    list_disks_menu disks
-    if (( ${#disks[@]} == 0 )); then
-      log_warn "No disks detected automatically. You can enter a disk path manually."
-      while true; do
-        read -r -p "Enter target disk path (or 'retry'/'cancel'): " entry
-        case "$entry" in
-          retry|RETRY) break ;;
-          cancel|CANCEL)
-            log_error "No disk selected. Choose a disk or enter one manually."
-            exit "$EXIT_VALIDATION"
-            ;;
-          "")
-            echo "No disk selected. Choose a disk or enter one manually."
-            ;;
-          *)
-            if disk_is_placeholder "$entry"; then
-              log_error "Configured DISK is a template placeholder: $entry"
-              continue
-            fi
-            if ! disk_is_valid_blockdev "$entry"; then
-              log_error "Configured DISK is not a block device: $entry"
-              continue
-            fi
-            CFG[disk]="$entry"
-            DISK_SOURCE="interactive"
-            break 2
-            ;;
-        esac
-      done
-      continue
+  local disk_gib entry
+  if [[ -z "${CFG[disk]}" ]]; then
+    if ! resolve_disk_interactive; then
+      exit "$EXIT_VALIDATION"
     fi
-
-    local -a labels=()
-    for entry in "${disks[@]}"; do labels+=("$entry"); done
-    echo "Detected disks:"
-    local i=1
-    for entry in "${labels[@]}"; do IFS='|' read -r d s m <<<"$entry"; echo "  $i) $d ($s $m)"; i=$((i+1)); done
-    echo "  r) Refresh detection"
-    echo "  m) Enter disk manually"
-    echo "  c) Cancel"
-    read -r -p "Select target disk [1]: " dchoice; dchoice="${dchoice:-1}"
-    case "$dchoice" in
-      r|R) continue ;;
-      m|M)
-        while true; do
-          read -r -p "Enter target disk path (or blank to return): " entry
-          [[ -z "$entry" ]] && break
-          if disk_is_placeholder "$entry"; then
-            log_error "Configured DISK is a template placeholder: $entry"
-            continue
-          fi
-          if ! disk_is_valid_blockdev "$entry"; then
-            log_error "Configured DISK is not a block device: $entry"
-            continue
-          fi
-          CFG[disk]="$entry"
-          DISK_SOURCE="interactive"
-          break 2
-        done
-        ;;
-      c|C)
-        log_error "No disk selected. Choose a disk or enter one manually."
-        exit "$EXIT_VALIDATION"
-        ;;
-      *)
-        if [[ "$dchoice" =~ ^[0-9]+$ ]] && (( dchoice>=1 && dchoice<=${#labels[@]} )); then
-          IFS='|' read -r CFG[disk] _ _ <<<"${labels[$((dchoice-1))]}"
-          DISK_SOURCE="interactive"
-          break
-        fi
-        echo "Invalid disk selection."
-        ;;
-    esac
-  done
+  fi
 
   read -r -p "Hostname [${CFG[hostname]}]: " entry; [[ -n "$entry" ]] && CFG[hostname]="$entry"
   read -r -p "Username [${CFG[username]}]: " entry; [[ -n "$entry" ]] && CFG[username]="$entry"
