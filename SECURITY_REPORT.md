@@ -91,7 +91,7 @@ All HIGH/MEDIUM issues resolved. Remaining LOW items are either accepted (L1, L3
 
 ```bash
 bash BLK7ARCHv1_0.sh dry-run \
-  --disk /dev/null \
+  --disk /dev/null 
   --hostname test-host \
   --username testuser \
   --timezone UTC \
@@ -173,3 +173,6 @@ cd tests/vm
 | Locale deduplication | 162–178 | ✓ |
 | Dependency pre-check (20+ binaries) | 202–236 | ✓ |
 | printf format safety (`%b` for escapes, `%s` for data) | 98–103 | ✓ |
+
+
+
