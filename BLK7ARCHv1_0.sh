@@ -36,6 +36,20 @@
 #   [N5]  Cleanup trap on any ERR or EXIT
 #   [N6]  --tui flag forces TUI even if flags present
 #   [N7]  Profile summary screen before destructive execution
+#
+# Bug fixes (v1.0.1):
+#   [FIX-V1]  main(): warn if script is not executable (+x hint)
+#   [FIX-V2]  main(): pre-scan global flags (--dry-run/--yes/-h/--help) before subcommand dispatch
+#   [FIX-V3]  validate_lv_sizes(): explicit empty-string check before regex
+#   [FIX-V3]  apply_cfg_to_globals(): fallback defaults for root/swap sizes
+#   [FIX-B2]  validate_hostname(): prefix-scoped IFS='.' on read (no function-level IFS leak)
+#   [FIX-B3]  _to_gib(): MiB values < 1024 no longer truncate to 0 (minimum 1 GiB)
+#   [FIX-B4]  SC2313: CFG["disk"] quoted index in IFS='|' read
+#   [FIX-B5]  Removed unused TUI_MODE, COMMAND_MODE, LEGACY_PROFILES dead variables
+#   [FIX-B6]  load_config_file(): split only on first '=' so values containing '=' are preserved
+#   [FIX-B7]  chroot_pacman_install(): explicit error handler on pacman -Syyu failure
+#   [FIX-B10] interactive_wizard(): skip blockdev in dry-run, always populate CFG sizes
+#   [NEW-ERR] ERR trap: log failing line number + command for every set -e termination
 # ==============================================================================
 set -euo pipefail
 
@@ -71,7 +85,7 @@ ALLOW_SSH_INBOUND="false"
 ENABLE_BLACKARCH="false"
 YES_MODE="false"
 GLOBAL_DRY_RUN="false"
-TUI_MODE="false"
+# [FIX-B5] TUI_MODE removed — declared but never referenced (SC2034)
 BLACKARCH_VERIFY_MODE="remote-sha256"
 IDS_HOME_NET="[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
 IDS_ENABLE_SERVICES="true"
@@ -127,6 +141,7 @@ cleanup_on_exit() {
   fi
 }
 trap cleanup_on_exit EXIT
+trap 'log_error "Script failed at line $LINENO: $BASH_COMMAND"' ERR  # [NEW-ERR]
 
 # --- Helpers ------------------------------------------------------------------
 run_cmd() {
@@ -282,9 +297,8 @@ validate_hostname() {
   fi
   # Each dot-separated label must also be individually valid
   local label
-  local IFS='.'       # [FIX-S8] scope IFS change to avoid global word-split side-effect
   local -a _labels    # [FIX-B2] declare local to prevent global namespace leak
-  read -ra _labels <<< "$HOSTNAME_VAL"
+  IFS='.' read -ra _labels <<< "$HOSTNAME_VAL"  # [FIX-B2] prefix-scoped IFS — no function-level IFS leak
   for label in "${_labels[@]}"; do
     if [[ ! "$label" =~ $label_re ]]; then
       log_error "Invalid hostname label '${label}' in '${HOSTNAME_VAL}'."
@@ -312,8 +326,17 @@ validate_username() {
 #           Also ensures validate_disk_size arithmetic stays correct (strips suffix safely).
 validate_lv_sizes() {
   local size_re='^[1-9][0-9]*(G|M|T|GiB|MiB|TiB)$'
+  # [FIX-V3] Explicit empty-string check before regex — empty string produces misleading "Invalid" error
+  if [[ -z "$LV_ROOT_SIZE" ]]; then
+    log_error "LV size not set. Use --lv-root-size / --lv-swap-size or accept defaults."
+    exit "$EXIT_VALIDATION"
+  fi
   if [[ ! "$LV_ROOT_SIZE" =~ $size_re ]]; then
     log_error "Invalid --lv-root-size '${LV_ROOT_SIZE}'. Use numeric value with G/M/T/GiB/MiB/TiB (e.g. 50G)."
+    exit "$EXIT_VALIDATION"
+  fi
+  if [[ -z "$LV_SWAP_SIZE" ]]; then
+    log_error "LV size not set. Use --lv-root-size / --lv-swap-size or accept defaults."
     exit "$EXIT_VALIDATION"
   fi
   if [[ ! "$LV_SWAP_SIZE" =~ $size_re ]]; then
@@ -362,7 +385,7 @@ validate_disk_size() {
     local num="${raw//[A-Za-z]/}"
     case "$raw" in
       *GiB|*G) echo "$num" ;;
-      *MiB|*M) echo $(( num / 1024 )) ;;
+      *MiB|*M) echo $(( num < 1024 ? 1 : num / 1024 )) ;;  # [FIX-B3] avoid truncation to 0 for values <1024M
       *TiB|*T) echo $(( num * 1024 )) ;;
       *) echo 0 ;;
     esac
@@ -456,6 +479,10 @@ validate_required_args() {
 }
 
 require_target_root_ready() {
+  # [FIX-DR] Dry-run never runs pacstrap, so os-release will not exist — skip check entirely.
+  #           Without this bypass, run_workstation_modules crashes in dry-run whenever
+  #           workstation_mode != "none" (the wizard default is "base").
+  [[ "$GLOBAL_DRY_RUN" == "true" ]] && return 0
   if [[ ! -d "$MNT_ROOT" ]]; then
     log_error "Target root '$MNT_ROOT' does not exist."
     exit "$EXIT_PRECONDITION"
@@ -476,7 +503,8 @@ chroot_pacman_install() {
   append_transaction_log "mode=${mode} packages=${packages[*]}"
 
   if [[ "$SKIP_FULL_UPGRADE" == "false" && "$PACMAN_UPGRADED_ONCE" == "false" ]]; then
-    run_cmd arch-chroot "$MNT_ROOT" pacman -Syyu --noconfirm
+    run_cmd arch-chroot "$MNT_ROOT" pacman -Syyu --noconfirm \
+      || { log_error "Full system upgrade failed. Check network and keyring."; exit "$EXIT_RUNTIME"; }  # [FIX-B7]
     PACMAN_UPGRADED_ONCE="true"
   fi
   run_cmd arch-chroot "$MNT_ROOT" pacman -S --needed --noconfirm "${packages[@]}"
@@ -1181,13 +1209,13 @@ core_install() {
 # =============================================================================
 
 declare -A CFG=()
-COMMAND_MODE=""
+# [FIX-B5] COMMAND_MODE removed — declared but never referenced (SC2034)
 ADVANCED_MODE="false"
 UNATTENDED_MODE="false"
 CONFIG_FILE=""
 CLI_DISK_EXPLICIT="false"
 DISK_SOURCE="unset"
-LEGACY_PROFILES=()
+# [FIX-B5] LEGACY_PROFILES removed — declared but never referenced (SC2034)
 
 init_cfg_defaults() {
   CFG[profile]="workstation"
@@ -1347,7 +1375,7 @@ resolve_disk_interactive() {
         ;;
       *)
         if [[ "$dchoice" =~ ^[0-9]+$ ]] && (( dchoice>=1 && dchoice<=${#labels[@]} )); then
-          IFS='|' read -r CFG[disk] _ _ <<<"${labels[$((dchoice-1))]}"
+          IFS='|' read -r CFG["disk"] _ _ <<<"${labels[$((dchoice-1))]}"  # [FIX-B4] SC2313: quoted index
           DISK_SOURCE="interactive"
           return 0
         fi
@@ -1376,6 +1404,10 @@ apply_cfg_to_globals() {
   TIMEZONE="${CFG[timezone]}"
   LOCALES=("${CFG[locale]}")
   WIFI_BACKEND="${CFG[wifi_backend]}"
+  # [FIX-V3] Write fallbacks back into CFG so all downstream consumers (print_install_summary etc.)
+  #           see the correct values — not just the LV_* globals used by core_install.
+  CFG[root_size]="${CFG[root_size]:-50G}"
+  CFG[swap_size]="${CFG[swap_size]:-8G}"
   LV_ROOT_SIZE="${CFG[root_size]}"
   LV_SWAP_SIZE="${CFG[swap_size]}"
   ENABLE_BLACKARCH="${CFG[enable_blackarch]}"
@@ -1387,14 +1419,17 @@ apply_cfg_to_globals() {
 load_config_file() {
   local cfg_file="$1"
   [[ -f "$cfg_file" ]] || { log_error "Config file not found: $cfg_file"; exit "$EXIT_USAGE"; }
-  while IFS='=' read -r raw_k raw_v; do
-    [[ -z "$raw_k" || "$raw_k" == \#* ]] && continue
-    local k="${raw_k//[[:space:]]/}"
-    local v="$raw_v"
+  # [FIX-B6] Read entire line then split on first '=' only — preserves values containing '='
+  local _cfg_line
+  while IFS= read -r _cfg_line; do
+    [[ -z "$_cfg_line" || "$_cfg_line" == \#* ]] && continue
+    local k="${_cfg_line%%=*}"
+    k="${k//[[:space:]]/}"
+    local v="${_cfg_line#*=}"
     v="${v#\"}"
     v="${v%\"}"
-    v="${v#'}"
-    v="${v%'}"
+    v="${v#\'}"
+    v="${v%\'}"
     case "$k" in
       PROFILE) CFG[profile]="$v" ;;
       WORKSTATION_MODE) CFG[workstation_mode]="$v" ;;
@@ -1443,6 +1478,9 @@ validate_install_cfg() {
   HOSTNAME_VAL="${CFG[hostname]}"; USERNAME="${CFG[username]}"; validate_required_args
   TIMEZONE="${CFG[timezone]}"; validate_timezone
   LOCALES=("${CFG[locale]}"); validate_locales
+  # [FIX-V3b] Re-apply fallbacks into CFG before validation — apply_cfg_to_globals already
+  #            normalised them, but a direct --disk call skips the wizard and CFG may still be empty.
+  CFG[root_size]="${CFG[root_size]:-50G}"; CFG[swap_size]="${CFG[swap_size]:-8G}"
   LV_ROOT_SIZE="${CFG[root_size]}"; LV_SWAP_SIZE="${CFG[swap_size]}"; validate_lv_sizes
   if [[ "${CFG[wifi_backend]}" != "nm" && "${CFG[wifi_backend]}" != "nm-iwd" ]]; then
     log_error "wifi_backend must be nm or nm-iwd"
@@ -1528,9 +1566,15 @@ interactive_wizard() {
   CFG[profile]="$(choose_from_menu 'Installation profile:' 3 minimal core workstation pentest custom)"
   CFG[workstation_mode]="$(choose_from_menu 'Workstation stack:' 2 none base dev pentest custom)"
 
-  disk_gib="$(( $(blockdev --getsize64 "${CFG[disk]}" 2>/dev/null || echo 128849018880) / 1073741824 ))"
-  [[ -z "${CFG[root_size]}" ]] && CFG[root_size]="$(calc_root_default "$disk_gib" "${CFG[profile]}")"
-  [[ -z "${CFG[swap_size]}" ]] && CFG[swap_size]="$(calc_swap_default)"
+  # [FIX-B10] Skip blockdev in dry-run (disk may not exist); use a safe fallback size
+  if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
+    disk_gib=120
+  else
+    disk_gib="$(( $(blockdev --getsize64 "${CFG[disk]}" 2>/dev/null || echo 128849018880) / 1073741824 ))"
+  fi
+  # [FIX-V3] Always set sizes using parameter expansion; removes fragile -z guard
+  CFG[root_size]="${CFG[root_size]:-$(calc_root_default "$disk_gib" "${CFG[profile]}")}"
+  CFG[swap_size]="${CFG[swap_size]:-$(calc_swap_default)}"
 
   if [[ "$ADVANCED_MODE" == "true" ]]; then
     advanced_menu
@@ -1649,6 +1693,29 @@ USAGE
 
 main() {
   init_cfg_defaults
+
+  # [FIX-V1] Warn if the script is not executable — prevents confusing "permission denied" on first run
+  if [[ ! -x "$0" ]]; then
+    log_warn "Hint: run 'chmod +x $0' to avoid permission denied errors."
+  fi
+
+  # [FIX-V2] Pre-scan for global flags before subcommand dispatch so that e.g.
+  #           './BLK7ARCHv1_0.sh --dry-run install' and '--help' work from any position.
+  local -a _remaining_args=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --dry-run) GLOBAL_DRY_RUN="true"; shift ;;
+      --yes)     YES_MODE="true"; shift ;;
+      -h|--help) usage; exit 0 ;;
+      *)         _remaining_args+=("$1"); shift ;;
+    esac
+  done
+  if [[ ${#_remaining_args[@]} -gt 0 ]]; then
+    set -- "${_remaining_args[@]}"
+  else
+    set --
+  fi
+
   local subcommand="${1:-help}"
   [[ $# -gt 0 ]] && shift
 
