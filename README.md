@@ -54,43 +54,43 @@ See [SECURITY_REPORT.md](SECURITY_REPORT.md) for full findings, root-cause analy
 
 ## Usage
 
-### Interactive TUI Wizard (recommended)
+### Recommended (new unified workflow)
 ```bash
-bash BLK7ARCHv1_0.sh --tui
+# Standard guided installer (interactive, safe defaults)
+bash BLK7ARCHv1_0.sh install
+
+# Advanced guided installer (menus for deeper customization)
+bash BLK7ARCHv1_0.sh install --advanced
 ```
 
-### CLI — Full Install
+### Config-driven install
 ```bash
-bash BLK7ARCHv1_0.sh core-install \
-  --disk /dev/sda \
-  --hostname myhostname \
-  --username myuser \
-  --timezone America/Sao_Paulo \
-  --locale en_US.UTF-8 \
-  --lv-root-size 50G \
-  --lv-swap-size 8G \
-  --wifi-backend nm \
-  --enable-blackarch false \
-  --allow-ssh-inbound false \
-  --yes
+# Generate a starter config profile
+bash BLK7ARCHv1_0.sh config-init
+
+# Run with config pre-filled (still asks confirmation unless unattended)
+bash BLK7ARCHv1_0.sh install --config install.conf
+
+# Fully unattended mode (for CI/labs; still requires explicit config values)
+bash BLK7ARCHv1_0.sh install --config install.conf --unattended
 ```
 
-### Dry Run (non-destructive simulation)
-```bash
-bash BLK7ARCHv1_0.sh dry-run \
-  --disk /dev/sda \
-  --hostname myhostname \
-  --username myuser
-```
-
-### Subcommands
-| Subcommand | Description |
+### Additional commands
+| Command | Description |
 |---|---|
-| `core-install` | Full base install: LUKS2 + LVM + GRUB + pacstrap |
-| `workstation-profile` | Hyprland desktop stack (run after core-install) |
-| `ids-profile` | Snort + Suricata IDS (run after core-install) |
-| `validate` | Verify installation completeness |
-| `dry-run` | Simulate core-install without any writes |
+| `install [--advanced] [--config file] [--unattended] [--dry-run]` | Primary installer (unified core + workstation flow) |
+| `config-init [file]` | Generate editable installer config template |
+| `profile-list` | Show available install profiles (`minimal`, `core`, `workstation`, `pentest`, `custom`) |
+| `self-test` | Dry-run oriented install pipeline self-test |
+| `help` | Show command help |
+
+### Legacy command mapping (temporary compatibility)
+| Old command | New recommendation |
+|---|---|
+| `core-install ...` | `install` (deprecated command still routed internally) |
+| `workstation-profile ...` | `install` + choose workstation mode |
+| `ids-profile ...` | `install --advanced` + enable IDS |
+| `dry-run ...` | `install --dry-run` |
 
 ---
 
@@ -108,13 +108,7 @@ grep -En '(password|secret|token|api_key)\s*=\s*["\x27][^"$\x27]+["\x27]' BLK7AR
 # Expected: 0 matches
 
 # Dry-run smoke test (safe — no disk writes, no root required)
-bash BLK7ARCHv1_0.sh dry-run \
-  --disk /dev/null \
-  --hostname test-host \
-  --username testuser \
-  --timezone UTC \
-  --lv-root-size 50G \
-  --lv-swap-size 8G
+bash BLK7ARCHv1_0.sh install --dry-run --advanced
 # Expected: exits 0, all steps logged as [dry-run], no filesystem changes
 
 # VM integration test (requires QEMU + Arch ISO + KVM)
