@@ -1185,6 +1185,8 @@ COMMAND_MODE=""
 ADVANCED_MODE="false"
 UNATTENDED_MODE="false"
 CONFIG_FILE=""
+CLI_DISK_EXPLICIT="false"
+DISK_SOURCE="unset"
 LEGACY_PROFILES=()
 
 init_cfg_defaults() {
@@ -1247,17 +1249,37 @@ calc_root_default() {
   esac
 }
 
+disk_is_placeholder() {
+  local disk_value="${1:-}"
+  case "$disk_value" in
+    ""|changeme|CHANGEME|/dev/sdX|/dev/vdX|/dev/nvme0nX|/dev/nvmeXnY|/dev/*X|*'${'*|*'{{'*|*'>>'*|*'<<'*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+disk_is_valid_blockdev() {
+  local disk_value="$1"
+  [[ -b "$disk_value" ]]
+}
+
+detect_candidate_disks() {
+  lsblk -dpno NAME,TYPE 2>/dev/null | awk '$2=="disk"{print $1}'
+}
+
 list_disks_menu() {
   local -n out_ref=$1
   out_ref=()
-  while IFS= read -r line; do
-    local dev size model
-    dev="$(awk '{print $1}' <<<"$line")"
-    size="$(awk '{print $2}' <<<"$line")"
-    model="$(awk '{$1=$2=""; print $0}' <<<"$line" | sed 's/^ *//')"
+  while IFS= read -r dev; do
+    local size model
     [[ -z "$dev" ]] && continue
-    out_ref+=("/dev/$dev|$size|${model:-unknown}")
-  done < <(lsblk -dno NAME,SIZE,MODEL,TYPE 2>/dev/null | awk '$4=="disk"{print $1" "$2" "$3}')
+    size="$(lsblk -dnpo SIZE "$dev" 2>/dev/null | head -n1)"
+    model="$(lsblk -dnpo MODEL "$dev" 2>/dev/null | head -n1 | sed 's/^ *//;s/ *$//')"
+    out_ref+=("${dev}|${size:-unknown}|${model:-unknown}")
+  done < <(detect_candidate_disks)
 }
 
 apply_cfg_to_globals() {
@@ -1308,10 +1330,28 @@ load_config_file() {
 }
 
 validate_install_cfg() {
-  [[ -n "${CFG[disk]}" ]] || { log_error "Target disk is required."; exit "$EXIT_USAGE"; }
+  if [[ -z "${CFG[disk]}" ]]; then
+    log_error "No disk selected. Choose a disk or enter one manually."
+    exit "$EXIT_USAGE"
+  fi
+  if disk_is_placeholder "${CFG[disk]}"; then
+    if [[ "$DISK_SOURCE" == "config" ]]; then
+      log_error "Configured DISK is a template placeholder: ${CFG[disk]}"
+    else
+      log_error "Selected DISK is a template placeholder: ${CFG[disk]}"
+    fi
+    exit "$EXIT_VALIDATION"
+  fi
   DISK="${CFG[disk]}"
   if [[ "$GLOBAL_DRY_RUN" != "true" ]]; then
-    validate_disk
+    if ! disk_is_valid_blockdev "$DISK"; then
+      if [[ "$DISK_SOURCE" == "config" ]]; then
+        log_error "Configured DISK is not a block device: $DISK"
+      else
+        log_error "Selected DISK is not a block device: $DISK"
+      fi
+      exit "$EXIT_VALIDATION"
+    fi
   fi
   HOSTNAME_VAL="${CFG[hostname]}"; USERNAME="${CFG[username]}"; validate_required_args
   TIMEZONE="${CFG[timezone]}"; validate_timezone
@@ -1390,20 +1430,82 @@ advanced_menu() {
 
 interactive_wizard() {
   local disks=() dchoice disk_gib
-  list_disks_menu disks
-  (( ${#disks[@]} > 0 )) || { log_error "No disks detected."; exit "$EXIT_VALIDATION"; }
-  local -a labels=()
   local entry
-  for entry in "${disks[@]}"; do labels+=("$entry"); done
-  echo "Detected disks:"
-  local i=1
-  for entry in "${labels[@]}"; do IFS='|' read -r d s m <<<"$entry"; echo "  $i) $d ($s $m)"; i=$((i+1)); done
   while true; do
+    list_disks_menu disks
+    if (( ${#disks[@]} == 0 )); then
+      log_warn "No disks detected automatically. You can enter a disk path manually."
+      while true; do
+        read -r -p "Enter target disk path (or 'retry'/'cancel'): " entry
+        case "$entry" in
+          retry|RETRY) break ;;
+          cancel|CANCEL)
+            log_error "No disk selected. Choose a disk or enter one manually."
+            exit "$EXIT_VALIDATION"
+            ;;
+          "")
+            echo "No disk selected. Choose a disk or enter one manually."
+            ;;
+          *)
+            if disk_is_placeholder "$entry"; then
+              log_error "Configured DISK is a template placeholder: $entry"
+              continue
+            fi
+            if ! disk_is_valid_blockdev "$entry"; then
+              log_error "Configured DISK is not a block device: $entry"
+              continue
+            fi
+            CFG[disk]="$entry"
+            DISK_SOURCE="interactive"
+            break 2
+            ;;
+        esac
+      done
+      continue
+    fi
+
+    local -a labels=()
+    for entry in "${disks[@]}"; do labels+=("$entry"); done
+    echo "Detected disks:"
+    local i=1
+    for entry in "${labels[@]}"; do IFS='|' read -r d s m <<<"$entry"; echo "  $i) $d ($s $m)"; i=$((i+1)); done
+    echo "  r) Refresh detection"
+    echo "  m) Enter disk manually"
+    echo "  c) Cancel"
     read -r -p "Select target disk [1]: " dchoice; dchoice="${dchoice:-1}"
-    if [[ "$dchoice" =~ ^[0-9]+$ ]] && (( dchoice>=1 && dchoice<=${#labels[@]} )); then break; fi
-    echo "Invalid disk selection."
+    case "$dchoice" in
+      r|R) continue ;;
+      m|M)
+        while true; do
+          read -r -p "Enter target disk path (or blank to return): " entry
+          [[ -z "$entry" ]] && break
+          if disk_is_placeholder "$entry"; then
+            log_error "Configured DISK is a template placeholder: $entry"
+            continue
+          fi
+          if ! disk_is_valid_blockdev "$entry"; then
+            log_error "Configured DISK is not a block device: $entry"
+            continue
+          fi
+          CFG[disk]="$entry"
+          DISK_SOURCE="interactive"
+          break 2
+        done
+        ;;
+      c|C)
+        log_error "No disk selected. Choose a disk or enter one manually."
+        exit "$EXIT_VALIDATION"
+        ;;
+      *)
+        if [[ "$dchoice" =~ ^[0-9]+$ ]] && (( dchoice>=1 && dchoice<=${#labels[@]} )); then
+          IFS='|' read -r CFG[disk] _ _ <<<"${labels[$((dchoice-1))]}"
+          DISK_SOURCE="interactive"
+          break
+        fi
+        echo "Invalid disk selection."
+        ;;
+    esac
   done
-  IFS='|' read -r CFG[disk] _ _ <<<"${labels[$((dchoice-1))]}"
 
   read -r -p "Hostname [${CFG[hostname]}]: " entry; [[ -n "$entry" ]] && CFG[hostname]="$entry"
   read -r -p "Username [${CFG[username]}]: " entry; [[ -n "$entry" ]] && CFG[username]="$entry"
@@ -1491,7 +1593,7 @@ parse_install_args() {
       --yes) YES_MODE="true"; UNATTENDED_MODE="true"; shift ;;
       --hostname) CFG[hostname]="${2:-}"; shift 2 ;;
       --username) CFG[username]="${2:-}"; shift 2 ;;
-      --disk) CFG[disk]="${2:-}"; shift 2 ;;
+      --disk) CFG[disk]="${2:-}"; CLI_DISK_EXPLICIT="true"; DISK_SOURCE="cli"; shift 2 ;;
       --timezone) CFG[timezone]="${2:-}"; shift 2 ;;
       --locale) CFG[locale]="${2:-}"; shift 2 ;;
       --lv-root-size) CFG[root_size]="${2:-}"; shift 2 ;;
@@ -1537,8 +1639,20 @@ main() {
   case "$subcommand" in
     install)
       parse_install_args "$@"
-      [[ -n "$CONFIG_FILE" ]] && load_config_file "$CONFIG_FILE"
-      if [[ -z "${CFG[disk]}" || "$UNATTENDED_MODE" != "true" ]]; then
+      local cli_disk=""
+      if [[ "$CLI_DISK_EXPLICIT" == "true" ]]; then
+        cli_disk="${CFG[disk]}"
+      fi
+      if [[ -n "$CONFIG_FILE" ]]; then
+        load_config_file "$CONFIG_FILE"
+        if [[ "$CLI_DISK_EXPLICIT" == "true" ]]; then
+          CFG[disk]="$cli_disk"
+          DISK_SOURCE="cli"
+        elif [[ -n "${CFG[disk]}" ]]; then
+          DISK_SOURCE="config"
+        fi
+      fi
+      if [[ -z "${CFG[disk]}" ]]; then
         interactive_wizard
       fi
       run_install
