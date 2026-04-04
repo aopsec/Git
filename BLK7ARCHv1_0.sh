@@ -95,11 +95,13 @@ _YELLOW="\033[0;33m"
 _RED="\033[0;31m"
 _BLUE="\033[0;34m"
 
-log_step()  { printf "${_BOLD}${_BLUE}[STEP]${_RST} %s %s\n" "$(date +%H:%M:%S)" "$*"; }
-log_info()  { printf "${_CYAN}[INFO]${_RST} %s %s\n" "$(date +%H:%M:%S)" "$*"; }
-log_ok()    { printf "${_GREEN}[ OK ]${_RST} %s %s\n" "$(date +%H:%M:%S)" "$*"; }
-log_warn()  { printf "${_YELLOW}[WARN]${_RST} %s %s\n" "$(date +%H:%M:%S)" "$*"; }
-log_error() { printf "${_RED}[ERR ]${_RST} %s %s\n" "$(date +%H:%M:%S)" "$*" >&2; }
+# [FIX-M3] Use %b for escape codes so color vars never act as format specifiers;
+#           user-controlled $* is always isolated in a %s argument.
+log_step()  { printf '%b[STEP]%b %s %s\n' "${_BOLD}${_BLUE}" "${_RST}" "$(date +%H:%M:%S)" "$*"; }
+log_info()  { printf '%b[INFO]%b %s %s\n' "${_CYAN}"          "${_RST}" "$(date +%H:%M:%S)" "$*"; }
+log_ok()    { printf '%b[ OK ]%b %s %s\n' "${_GREEN}"         "${_RST}" "$(date +%H:%M:%S)" "$*"; }
+log_warn()  { printf '%b[WARN]%b %s %s\n' "${_YELLOW}"        "${_RST}" "$(date +%H:%M:%S)" "$*"; }
+log_error() { printf '%b[ERR ]%b %s %s\n' "${_RED}"           "${_RST}" "$(date +%H:%M:%S)" "$*" >&2; }
 
 # --- Rollback / Cleanup Trap [F10] -------------------------------------------
 _CLEANUP_DONE="false"
@@ -107,7 +109,8 @@ cleanup_on_exit() {
   local exit_code="$?"
   [[ "$_CLEANUP_DONE" == "true" ]] && return
   _CLEANUP_DONE="true"
-  unset LUKS_PASSPHRASE 2>/dev/null || true  # [FIX-S9] clear passphrase even on cryptsetup failure
+  unset LUKS_PASSPHRASE 2>/dev/null || true   # [FIX-S9] clear passphrase even on cryptsetup failure
+  unset USER_PASSPHRASE 2>/dev/null || true   # [FIX-B1] clear user passphrase on any exit
 
   if [[ "$exit_code" -ne 0 && "$GLOBAL_DRY_RUN" == "false" ]]; then
     log_warn "Non-zero exit ($exit_code) — running rollback..."
@@ -279,7 +282,8 @@ validate_hostname() {
   fi
   # Each dot-separated label must also be individually valid
   local label
-  local IFS='.'  # [FIX-S8] scope IFS change to avoid global word-split side-effect
+  local IFS='.'       # [FIX-S8] scope IFS change to avoid global word-split side-effect
+  local -a _labels    # [FIX-B2] declare local to prevent global namespace leak
   read -ra _labels <<< "$HOSTNAME_VAL"
   for label in "${_labels[@]}"; do
     if [[ ! "$label" =~ $label_re ]]; then
@@ -318,6 +322,17 @@ validate_lv_sizes() {
   fi
 }
 
+# [FIX-B4] Validate --ids-home-net: allow only CIDR/IP characters to prevent YAML injection.
+#           Accepts bare CIDRs (10.0.0.0/8), Snort list ([10.0.0.0/8,192.168.0.0/16]),
+#           or quoted strings. Rejects shell-special and YAML-special chars.
+validate_ids_home_net() {
+  if [[ -z "$IDS_HOME_NET" ]]; then return 0; fi
+  if [[ ! "$IDS_HOME_NET" =~ ^[\[\]0-9./:,\ a-fA-F!]+$ ]]; then
+    log_error "Invalid --ids-home-net '${IDS_HOME_NET}'. Use CIDR notation only (e.g. [192.168.0.0/16,10.0.0.0/8])."
+    exit "$EXIT_VALIDATION"
+  fi
+}
+
 validate_disk() {
   if [[ -z "$DISK" ]]; then
     log_error "Missing required --disk argument."
@@ -336,7 +351,8 @@ validate_disk_size() {
     log_warn "Could not determine disk size for validation. Proceeding anyway."
     return 0
   }
-  local disk_gib=$(( disk_bytes / 1073741824 ))
+  local disk_gib  # [FIX-B5] SC2155: declare separate from assignment
+  disk_gib=$(( disk_bytes / 1073741824 ))
 
   # Parse sizes (G, GiB → GiB; M, MiB → MiB; T, TiB → TiB — normalise to GiB for comparison)
   local root_g swap_g min_g
@@ -402,6 +418,23 @@ prompt_luks_passphrase() {
     exit "$EXIT_VALIDATION"
   fi
   LUKS_PASSPHRASE="$p1"
+  unset p1 p2
+}
+
+# [FIX-B1] Prompt for user account password (applied to root + USERNAME via chpasswd)
+prompt_user_passphrase() {
+  local p1 p2
+  if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
+    log_info "[dry-run] Skipping user passphrase prompt."
+    return 0
+  fi
+  read -r -s -p $'\nEnter password for root and '"${USERNAME}"': ' p1; printf '\n'
+  read -r -s -p 'Confirm password: ' p2; printf '\n'
+  if [[ -z "$p1" || "$p1" != "$p2" ]]; then
+    log_error "User passphrase mismatch or empty."
+    exit "$EXIT_VALIDATION"
+  fi
+  USER_PASSPHRASE="$p1"
   unset p1 p2
 }
 
@@ -705,9 +738,15 @@ configure_blackarch() {
       log_error "BlackArch integrity failure: got ${actual_sha}, expected ${expected_sha}."
       exit "$EXIT_RUNTIME"
     fi
+    # [FIX-L2] Both strap.sh and its .sha256 come from the same server — a compromised
+    #           server could serve a matching fake pair and pass this check.
+    #           For stronger assurance, verify the strap.sh GPG signature manually
+    #           before running this installer with --enable-blackarch true.
     log_ok "BlackArch strap SHA256 verified."
+    log_warn "NOTE (L2): strap.sh and .sha256 share the same origin server. A server-side"
+    log_warn "compromise could forge a matching pair. For critical installs, verify GPG manually."
   elif [[ "$BLACKARCH_VERIFY_MODE" == "disabled" ]]; then
-    log_warn "BlackArch checksum verification DISABLED."
+    log_warn "BlackArch checksum verification DISABLED — strap.sh authenticity unverified."
   fi
 
   chmod 0700 "$strap"  # [FIX-S7] explicit 0700: only root can read/execute
@@ -752,7 +791,7 @@ OK_FILE="/var/log/blk7arch-postboot-check.ok"
 } >> "$LOG_FILE"
 touch "$OK_FILE"
 EOF_PBV
-  chmod +x "$MNT_ROOT/usr/local/sbin/blk7arch-postboot-validate.sh"
+  chmod 0700 "$MNT_ROOT/usr/local/sbin/blk7arch-postboot-validate.sh"  # [FIX-B3] explicit perms, consistent with FIX-S7
 
   cat > "$MNT_ROOT/etc/systemd/system/blk7arch-postboot-validate.service" <<'EOF_SVC'
 [Unit]
@@ -1183,6 +1222,21 @@ tui_wizard() {
     3>&1 1>&2 2>&3)" || profile_choice=""
   [[ "$profile_choice" == *"yum"* ]] && INSTALL_YUM_COMPAT="true"
 
+  # User/root password — [FIX-B1] TUI must also collect account password
+  local up1 up2
+  up1="$(whiptail --title "Account Password" --passwordbox \
+    "Set password for root and '${USERNAME}':" \
+    $bh $bw 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
+  up2="$(whiptail --title "Account Password" --passwordbox \
+    "Confirm password:" \
+    $bh $bw 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
+  if [[ -z "$up1" || "$up1" != "$up2" ]]; then
+    whiptail --msgbox "Passwords do not match or are empty." $bh $bw
+    exit "$EXIT_VALIDATION"
+  fi
+  USER_PASSPHRASE="$up1"
+  unset up1 up2
+
   # Test report
   if whiptail --title "Test Report" --yesno "Enable post-install test report?" $bh $bw; then
     TEST_REPORT="true"
@@ -1243,7 +1297,7 @@ parse_common_flags() {
           exit "$EXIT_USAGE"
         fi
         shift 2 ;;
-      --ids-home-net)      IDS_HOME_NET="${2:-}"; shift 2 ;;
+      --ids-home-net)      IDS_HOME_NET="${2:-}"; validate_ids_home_net; shift 2 ;;  # [FIX-B4]
       --ids-enable-services)
         IDS_ENABLE_SERVICES="$(parse_bool "${2:-}")"; shift 2 ;;
       --skip-full-upgrade)
@@ -1351,6 +1405,7 @@ core_install() {
     resolve_partition_paths
     confirm_destructive
     prompt_luks_passphrase
+    prompt_user_passphrase  # [FIX-B1]
   fi
 
   partition_disk
@@ -1358,6 +1413,19 @@ core_install() {
   format_and_mount
   install_base
   configure_chroot
+  # [FIX-B1] Set passwords for root and the new user via chpasswd
+  if [[ "$GLOBAL_DRY_RUN" == "false" ]]; then
+    if [[ -z "${USER_PASSPHRASE:-}" ]]; then
+      log_error "Internal: missing user passphrase."
+      exit "$EXIT_RUNTIME"
+    fi
+    printf '%s:%s\n' "root" "$USER_PASSPHRASE" | arch-chroot "$MNT_ROOT" chpasswd
+    printf '%s:%s\n' "$USERNAME" "$USER_PASSPHRASE" | arch-chroot "$MNT_ROOT" chpasswd
+    unset USER_PASSPHRASE
+    log_ok "Passwords set for root and ${USERNAME}."
+  else
+    log_info "[dry-run] would set passwords for root and ${USERNAME} via chpasswd."
+  fi
   install_yum_compat
   setup_postboot_validation
   configure_blackarch
