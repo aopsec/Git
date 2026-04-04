@@ -1122,274 +1122,12 @@ run_validation() {
   log_ok "Validation PASSED."
 }
 
-# =============================================================================
-# [N1-N7] TUI WIZARD
-# =============================================================================
-_tui_check_whiptail() {
-  if ! command -v whiptail >/dev/null 2>&1; then
-    log_error "whiptail not found. Install libnewt or use CLI flags."
-    exit "$EXIT_DEPENDENCY"
-  fi
-}
-
-tui_wizard() {
-  _tui_check_whiptail
-  local bw=70 bh=20
-
-  # Welcome
-  whiptail --title "BLK7ARCHv${VERSION} Installer" --msgbox \
-    "Welcome to BLK7ARCH — Arch Linux Encrypted Installer\n\nThis wizard will guide you through a LUKS2+LVM installation.\n\nPress OK to begin." \
-    $bh $bw
-
-  # Detect disks
-  local disk_list=()
-  while IFS= read -r line; do
-    local dev size model
-    dev="$(echo "$line" | awk '{print $1}')"
-    size="$(echo "$line" | awk '{print $2}')"
-    model="$(echo "$line" | awk '{$1=$2=""; print $0}' | sed 's/^ *//')"
-    disk_list+=("/dev/$dev" "${size} — ${model}")
-  done < <(lsblk -ndo NAME,SIZE,MODEL 2>/dev/null | grep -v '^loop' || true)
-
-  if [[ ${#disk_list[@]} -eq 0 ]]; then
-    whiptail --msgbox "No block devices found." $bh $bw
-    exit "$EXIT_VALIDATION"
-  fi
-
-  DISK="$(whiptail --title "Select Target Disk" \
-    --menu "Choose the disk to install Arch Linux on.\n⚠ ALL DATA WILL BE ERASED." \
-    $bh $bw $((${#disk_list[@]} / 2)) "${disk_list[@]}" 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-
-  # Hostname
-  HOSTNAME_VAL="$(whiptail --title "Hostname" --inputbox "Enter the system hostname:" \
-    $bh $bw "BLK7ARCH" 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-  [[ -z "$HOSTNAME_VAL" ]] && { whiptail --msgbox "Hostname cannot be empty." $bh $bw; exit "$EXIT_USAGE"; }
-
-  # Username
-  USERNAME="$(whiptail --title "Username" --inputbox "Enter the primary username:" \
-    $bh $bw "user" 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-  [[ -z "$USERNAME" ]] && { whiptail --msgbox "Username cannot be empty." $bh $bw; exit "$EXIT_USAGE"; }
-
-  # Timezone
-  TIMEZONE="$(whiptail --title "Timezone" --inputbox \
-    "Enter timezone (e.g. America/Sao_Paulo, Europe/London):" \
-    $bh $bw "$TIMEZONE" 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-
-  # Extra locale
-  local extra_locale
-  extra_locale="$(whiptail --title "Extra Locale" --inputbox \
-    "Extra locale (leave blank for en_US.UTF-8 only):" \
-    $bh $bw "" 3>&1 1>&2 2>&3)" || true
-  if [[ -n "$extra_locale" ]]; then
-    LOCALES+=("$extra_locale")
-  fi
-
-  # WiFi backend
-  local wifi_choice
-  wifi_choice="$(whiptail --title "WiFi Backend" --menu "Select NetworkManager WiFi backend:" \
-    $bh $bw 2 \
-    "nm"     "Standard wpa_supplicant" \
-    "nm-iwd" "Intel iwd (faster, recommended)" \
-    3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-  WIFI_BACKEND="$wifi_choice"
-
-  # SSH
-  if whiptail --title "SSH Inbound" --yesno "Allow SSH inbound (UFW)?" $bh $bw; then
-    ALLOW_SSH_INBOUND="true"
-  else
-    ALLOW_SSH_INBOUND="false"
-  fi
-
-  # BlackArch
-  if whiptail --title "BlackArch" --yesno "Bootstrap BlackArch repository?" $bh $bw; then
-    ENABLE_BLACKARCH="true"
-  else
-    ENABLE_BLACKARCH="false"
-  fi
-
-  # LV sizes
-  LV_ROOT_SIZE="$(whiptail --title "Root LV Size" --inputbox \
-    "Root logical volume size (e.g. 50G, 80G):" \
-    $bh $bw "$LV_ROOT_SIZE" 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-  LV_SWAP_SIZE="$(whiptail --title "Swap LV Size" --inputbox \
-    "Swap logical volume size (e.g. 8G, 16G):" \
-    $bh $bw "$LV_SWAP_SIZE" 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-
-  # Optional profiles
-  local profile_choice
-  profile_choice="$(whiptail --title "Optional Profiles" \
-    --checklist "Select profiles to install after base (SPACE to toggle):" \
-    $bh $bw 3 \
-    "workstation" "Hyprland desktop stack" OFF \
-    "ids"         "Snort + Suricata IDS" OFF \
-    "yum"         "yum/dnf compatibility" OFF \
-    3>&1 1>&2 2>&3)" || profile_choice=""
-  [[ "$profile_choice" == *"yum"* ]] && INSTALL_YUM_COMPAT="true"
-
-  # User/root password — [FIX-B1] TUI must also collect account password
-  local up1 up2
-  up1="$(whiptail --title "Account Password" --passwordbox \
-    "Set password for root and '${USERNAME}':" \
-    $bh $bw 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-  up2="$(whiptail --title "Account Password" --passwordbox \
-    "Confirm password:" \
-    $bh $bw 3>&1 1>&2 2>&3)" || exit "$EXIT_USAGE"
-  if [[ -z "$up1" || "$up1" != "$up2" ]]; then
-    whiptail --msgbox "Passwords do not match or are empty." $bh $bw
-    exit "$EXIT_VALIDATION"
-  fi
-  USER_PASSPHRASE="$up1"
-  unset up1 up2
-
-  # Test report
-  if whiptail --title "Test Report" --yesno "Enable post-install test report?" $bh $bw; then
-    TEST_REPORT="true"
-  fi
-
-  # Summary
-  local summary
-  summary="Install Summary:
-  Disk     : ${DISK}
-  Hostname : ${HOSTNAME_VAL}
-  User     : ${USERNAME}
-  Timezone : ${TIMEZONE}
-  Locale(s): ${LOCALES[*]}
-  WiFi     : ${WIFI_BACKEND}
-  SSH in   : ${ALLOW_SSH_INBOUND}
-  BlackArch: ${ENABLE_BLACKARCH}
-  Root LV  : ${LV_ROOT_SIZE}
-  Swap LV  : ${LV_SWAP_SIZE}
-  Profiles : ${profile_choice:-none}
-  Test rpt : ${TEST_REPORT}"
-
-  whiptail --title "Confirm Installation" --yesno "$summary\n\n⚠ THIS WILL ERASE ${DISK}. Proceed?" \
-    22 $bw || exit "$EXIT_USAGE"
-
-  YES_MODE="true"
-
-  # Run selected profiles after core-install
-  _TUI_PROFILES="$profile_choice"
-}
-
-# --- CLI flag parser ----------------------------------------------------------
-parse_common_flags() {
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --disk)              DISK="${2:-}"; shift 2 ;;
-      --hostname)          HOSTNAME_VAL="${2:-}"; shift 2 ;;
-      --username)          USERNAME="${2:-}"; shift 2 ;;
-      --timezone)          TIMEZONE="${2:-}"; shift 2 ;;
-      --locale)            LOCALES+=("${2:-}"); shift 2 ;;
-      --lv-root-size)      LV_ROOT_SIZE="${2:-}"; shift 2 ;;
-      --lv-swap-size)      LV_SWAP_SIZE="${2:-}"; shift 2 ;;
-      --wifi-backend)
-        WIFI_BACKEND="${2:-}"
-        if [[ "$WIFI_BACKEND" != "nm" && "$WIFI_BACKEND" != "nm-iwd" ]]; then
-          log_error "Invalid --wifi-backend '${WIFI_BACKEND}'. Use nm|nm-iwd."
-          exit "$EXIT_USAGE"
-        fi
-        shift 2 ;;
-      --allow-ssh-inbound)
-        ALLOW_SSH_INBOUND="$(parse_bool "${2:-}")"; shift 2 ;;
-      --enable-blackarch)
-        ENABLE_BLACKARCH="$(parse_bool "${2:-}")"; shift 2 ;;
-      --target-root)       MNT_ROOT="${2:-}"; shift 2 ;;
-      --blackarch-verify)
-        BLACKARCH_VERIFY_MODE="${2:-}"
-        if [[ "$BLACKARCH_VERIFY_MODE" != "remote-sha256" && "$BLACKARCH_VERIFY_MODE" != "disabled" ]]; then
-          log_error "Invalid --blackarch-verify '${BLACKARCH_VERIFY_MODE}'."
-          exit "$EXIT_USAGE"
-        fi
-        shift 2 ;;
-      --ids-home-net)      IDS_HOME_NET="${2:-}"; validate_ids_home_net; shift 2 ;;  # [FIX-B4]
-      --ids-enable-services)
-        IDS_ENABLE_SERVICES="$(parse_bool "${2:-}")"; shift 2 ;;
-      --skip-full-upgrade)
-        SKIP_FULL_UPGRADE="$(parse_bool "${2:-}")"; shift 2 ;;
-      --ids-mode)
-        IDS_MODE="${2:-}"
-        if [[ "$IDS_MODE" != "minimal-local" && "$IDS_MODE" != "managed-rules" ]]; then
-          log_error "Invalid --ids-mode '${IDS_MODE}'."
-          exit "$EXIT_USAGE"
-        fi
-        shift 2 ;;
-      --ids-snort-profile)
-        IDS_SNORT_PROFILE="${2:-}"
-        if [[ "$IDS_SNORT_PROFILE" != "strict" && "$IDS_SNORT_PROFILE" != "balanced" ]]; then
-          log_error "Invalid --ids-snort-profile '${IDS_SNORT_PROFILE}'."
-          exit "$EXIT_USAGE"
-        fi
-        shift 2 ;;
-      --ids-suppress-file) IDS_SUPPRESS_FILE="${2:-}"; shift 2 ;;
-      --install-yum-compat)
-        INSTALL_YUM_COMPAT="$(parse_bool "${2:-}")"; shift 2 ;;
-      --test-report)
-        TEST_REPORT="$(parse_bool "${2:-}")"; shift 2 ;;
-      --yes)               YES_MODE="true"; shift ;;
-      --dry-run)           GLOBAL_DRY_RUN="true"; shift ;;
-      --tui)               TUI_MODE="true"; shift ;;
-      *)
-        log_error "Unknown argument: $1"
-        usage; exit "$EXIT_USAGE" ;;
-    esac
-  done
-}
-
-# --- Usage -------------------------------------------------------------------
-usage() {
-  cat <<USAGE
-BLK7ARCHv${VERSION} — Interactive Arch Linux Encrypted Installer
-
-Usage:
-  ${SCRIPT_NAME} <subcommand> [options]
-  ${SCRIPT_NAME} --tui                    (launch interactive wizard)
-
-Subcommands:
-  core-install         Full base install (LUKS2+LVM+GRUB)
-  workstation-profile  Hyprland desktop stack
-  ids-profile          Snort + Suricata IDS
-  validate             Validate installed system
-  dry-run              Simulate core-install (non-destructive)
-
-Required for core-install:
-  --disk /dev/sdX|/dev/nvme0n1
-  --hostname <name>
-  --username <name>
-
-Optional:
-  --timezone <Area/City>             Default: America/Sao_Paulo
-  --locale <locale>                  Repeatable; default: en_US.UTF-8
-  --lv-root-size <size>              Default: 50G
-  --lv-swap-size <size>              Default: 8G
-  --wifi-backend nm|nm-iwd           Default: nm
-  --allow-ssh-inbound true|false     Default: false
-  --enable-blackarch true|false      Default: false
-  --target-root <path>               Default: /mnt
-  --blackarch-verify remote-sha256|disabled
-  --ids-home-net <cidr-list>
-  --ids-enable-services true|false
-  --skip-full-upgrade true|false
-  --ids-mode minimal-local|managed-rules
-  --ids-snort-profile strict|balanced
-  --ids-suppress-file <path>
-  --install-yum-compat true|false
-  --test-report true|false
-  --yes                              Skip destructive confirmation
-  --dry-run                          Simulate without changes
-  --tui                              Force interactive TUI wizard
-
-Logs:
-  Transaction log : \${target-root}/var/log/blk7arch-install.log
-  Test report     : \${target-root}/var/log/blk7arch-test-report.txt
-USAGE
-}
-
 # --- core_install orchestrator -----------------------------------------------
 core_install() {
   validate_required_args
   validate_timezone
   validate_locales
-  validate_lv_sizes  # [FIX-S3]
+  validate_lv_sizes
   dedup_locales
 
   if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
@@ -1405,11 +1143,11 @@ core_install() {
     require_arch_iso_context
     check_dependencies
     validate_disk
-    validate_disk_size  # [F8]
+    validate_disk_size
     resolve_partition_paths
     confirm_destructive
     prompt_luks_passphrase
-    prompt_user_passphrase  # [FIX-B1]
+    prompt_user_passphrase
   fi
 
   partition_disk
@@ -1417,7 +1155,7 @@ core_install() {
   format_and_mount
   install_base
   configure_chroot
-  # [FIX-B1] Set passwords for root and the new user via chpasswd
+
   if [[ "$GLOBAL_DRY_RUN" == "false" ]]; then
     if [[ -z "${USER_PASSPHRASE:-}" ]]; then
       log_error "Internal: missing user passphrase."
@@ -1430,6 +1168,7 @@ core_install() {
   else
     log_info "[dry-run] would set passwords for root and ${USERNAME} via chpasswd."
   fi
+
   install_yum_compat
   setup_postboot_validation
   configure_blackarch
@@ -1437,63 +1176,427 @@ core_install() {
   log_ok "Core installation completed successfully. run_id=${RUN_ID}"
 }
 
-# --- main --------------------------------------------------------------------
-_TUI_PROFILES=""
+# =============================================================================
+# Unified UX: install wizard + config profiles
+# =============================================================================
 
-main() {
-  # Allow --tui as first arg or bare flag with no subcommand
-  if [[ "${1:-}" == "--tui" || "${1:-}" == "-tui" ]]; then
-    TUI_MODE="true"
-    shift
-  fi
+declare -A CFG=()
+COMMAND_MODE=""
+ADVANCED_MODE="false"
+UNATTENDED_MODE="false"
+CONFIG_FILE=""
+LEGACY_PROFILES=()
 
-  if [[ $# -lt 1 && "$TUI_MODE" == "false" ]]; then
-    usage; exit "$EXIT_USAGE"
-  fi
+init_cfg_defaults() {
+  CFG[profile]="workstation"
+  CFG[workstation_mode]="base"
+  CFG[disk]=""
+  CFG[hostname]="blk7arch"
+  CFG[username]="user"
+  CFG[timezone]="${TIMEZONE}"
+  CFG[locale]="${LOCALES[0]}"
+  CFG[wifi_backend]="nm"
+  CFG[root_size]=""
+  CFG[swap_size]=""
+  CFG[enable_blackarch]="false"
+  CFG[allow_ssh_inbound]="false"
+  CFG[ids_enabled]="false"
+  CFG[yum_compat]="false"
+  CFG[test_report]="false"
+}
 
-  # TUI wizard mode
-  if [[ "$TUI_MODE" == "true" ]]; then
-    tui_wizard
-    core_install
-    if [[ "$_TUI_PROFILES" == *"workstation"* ]]; then
-      install_workstation_profile
+choose_from_menu() {
+  local prompt="$1" default="$2"; shift 2
+  local -a options=("$@")
+  local idx=1 choice
+  while true; do
+    echo "$prompt"
+    for choice in "${options[@]}"; do
+      printf '  %d) %s\n' "$idx" "$choice"
+      idx=$((idx+1))
+    done
+    idx=1
+    read -r -p "Select [${default}]: " choice
+    [[ -z "$choice" ]] && choice="$default"
+    if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >=1 && choice <= ${#options[@]} )); then
+      printf '%s' "${options[$((choice-1))]}"
+      return 0
     fi
-    if [[ "$_TUI_PROFILES" == *"ids"* ]]; then
-      install_ids_profile
-    fi
-    run_validation
-    log_ok "BLK7ARCHv${VERSION} installation complete!"
+    echo "Invalid selection."
+  done
+}
+
+calc_swap_default() {
+  local mem_kb=0 mem_gb
+  mem_kb="$(awk '/MemTotal:/ {print $2}' /proc/meminfo 2>/dev/null || echo 0)"
+  mem_gb=$(( (mem_kb + 1048575) / 1048576 ))
+  if (( mem_gb <= 0 )); then echo "8G"; return; fi
+  if (( mem_gb <= 4 )); then echo "4G"; elif (( mem_gb <= 8 )); then echo "8G"; elif (( mem_gb <= 16 )); then echo "16G"; else echo "32G"; fi
+}
+
+calc_root_default() {
+  local disk_gib="$1" profile="$2"
+  if (( disk_gib <= 80 )); then echo "40G"; return; fi
+  case "$profile" in
+    minimal) echo "35G" ;;
+    core) echo "45G" ;;
+    workstation) echo "60G" ;;
+    pentest) echo "80G" ;;
+    custom) echo "60G" ;;
+    *) echo "50G" ;;
+  esac
+}
+
+list_disks_menu() {
+  local -n out_ref=$1
+  out_ref=()
+  while IFS= read -r line; do
+    local dev size model
+    dev="$(awk '{print $1}' <<<"$line")"
+    size="$(awk '{print $2}' <<<"$line")"
+    model="$(awk '{$1=$2=""; print $0}' <<<"$line" | sed 's/^ *//')"
+    [[ -z "$dev" ]] && continue
+    out_ref+=("/dev/$dev|$size|${model:-unknown}")
+  done < <(lsblk -dno NAME,SIZE,MODEL,TYPE 2>/dev/null | awk '$4=="disk"{print $1" "$2" "$3}')
+}
+
+apply_cfg_to_globals() {
+  DISK="${CFG[disk]}"
+  HOSTNAME_VAL="${CFG[hostname]}"
+  USERNAME="${CFG[username]}"
+  TIMEZONE="${CFG[timezone]}"
+  LOCALES=("${CFG[locale]}")
+  WIFI_BACKEND="${CFG[wifi_backend]}"
+  LV_ROOT_SIZE="${CFG[root_size]}"
+  LV_SWAP_SIZE="${CFG[swap_size]}"
+  ENABLE_BLACKARCH="${CFG[enable_blackarch]}"
+  ALLOW_SSH_INBOUND="${CFG[allow_ssh_inbound]}"
+  TEST_REPORT="${CFG[test_report]}"
+  INSTALL_YUM_COMPAT="${CFG[yum_compat]}"
+}
+
+load_config_file() {
+  local cfg_file="$1"
+  [[ -f "$cfg_file" ]] || { log_error "Config file not found: $cfg_file"; exit "$EXIT_USAGE"; }
+  while IFS='=' read -r raw_k raw_v; do
+    [[ -z "$raw_k" || "$raw_k" == \#* ]] && continue
+    local k="${raw_k//[[:space:]]/}"
+    local v="$raw_v"
+    v="${v#\"}"
+    v="${v%\"}"
+    v="${v#'}"
+    v="${v%'}"
+    case "$k" in
+      PROFILE) CFG[profile]="$v" ;;
+      WORKSTATION_MODE) CFG[workstation_mode]="$v" ;;
+      DISK) CFG[disk]="$v" ;;
+      HOSTNAME) CFG[hostname]="$v" ;;
+      USERNAME) CFG[username]="$v" ;;
+      TIMEZONE) CFG[timezone]="$v" ;;
+      LOCALE) CFG[locale]="$v" ;;
+      WIFI_BACKEND) CFG[wifi_backend]="$v" ;;
+      ROOT_LV_SIZE) CFG[root_size]="$v" ;;
+      SWAP_LV_SIZE) CFG[swap_size]="$v" ;;
+      ENABLE_BLACKARCH) CFG[enable_blackarch]="$(parse_bool "$v")" ;;
+      ALLOW_SSH_INBOUND) CFG[allow_ssh_inbound]="$(parse_bool "$v")" ;;
+      IDS_ENABLED) CFG[ids_enabled]="$(parse_bool "$v")" ;;
+      YUM_COMPAT) CFG[yum_compat]="$(parse_bool "$v")" ;;
+      TEST_REPORT) CFG[test_report]="$(parse_bool "$v")" ;;
+      UNATTENDED) UNATTENDED_MODE="$(parse_bool "$v")" ;;
+    esac
+  done < "$cfg_file"
+}
+
+validate_install_cfg() {
+  [[ -n "${CFG[disk]}" ]] || { log_error "Target disk is required."; exit "$EXIT_USAGE"; }
+  DISK="${CFG[disk]}"
+  if [[ "$GLOBAL_DRY_RUN" != "true" ]]; then
+    validate_disk
+  fi
+  HOSTNAME_VAL="${CFG[hostname]}"; USERNAME="${CFG[username]}"; validate_required_args
+  TIMEZONE="${CFG[timezone]}"; validate_timezone
+  LOCALES=("${CFG[locale]}"); validate_locales
+  LV_ROOT_SIZE="${CFG[root_size]}"; LV_SWAP_SIZE="${CFG[swap_size]}"; validate_lv_sizes
+  if [[ "${CFG[wifi_backend]}" != "nm" && "${CFG[wifi_backend]}" != "nm-iwd" ]]; then
+    log_error "wifi_backend must be nm or nm-iwd"
+    exit "$EXIT_VALIDATION"
+  fi
+}
+
+print_install_summary() {
+  echo
+  echo "=== Installation Summary ==="
+  printf 'Mode: %s\n' "$([[ "$ADVANCED_MODE" == "true" ]] && echo advanced || echo standard)"
+  printf 'Profile: %s (%s)\n' "${CFG[profile]}" "${CFG[workstation_mode]}"
+  printf 'Disk: %s\nHostname: %s\nUsername: %s\nTimezone: %s\nLocale: %s\n' \
+    "${CFG[disk]}" "${CFG[hostname]}" "${CFG[username]}" "${CFG[timezone]}" "${CFG[locale]}"
+  printf 'Root LV: %s | Swap LV: %s\nWiFi backend: %s\n' \
+    "${CFG[root_size]}" "${CFG[swap_size]}" "${CFG[wifi_backend]}"
+  printf 'BlackArch: %s | SSH inbound: %s | IDS: %s\n' \
+    "${CFG[enable_blackarch]}" "${CFG[allow_ssh_inbound]}" "${CFG[ids_enabled]}"
+}
+
+confirm_execution() {
+  if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
+    log_info "Dry-run mode: skipping destructive confirmation barrier."
+    YES_MODE="true"
     return 0
   fi
+  local root_dev
+  root_dev="$(findmnt -n -o SOURCE / || true)"
+  if [[ -n "$root_dev" && "$root_dev" == ${CFG[disk]}* ]]; then
+    log_error "Refusing to operate on current system disk: ${CFG[disk]}"
+    exit "$EXIT_PRECONDITION"
+  fi
+  if lsblk -nr -o MOUNTPOINT "${CFG[disk]}" | grep -q '/'; then
+    log_error "Refusing to install to a disk with mounted partitions: ${CFG[disk]}"
+    exit "$EXIT_PRECONDITION"
+  fi
+  lsblk -dno NAME,SIZE,MODEL "${CFG[disk]}" | awk '{print "Target:","/dev/"$1,"Size:",$2,"Model:",$3}'
+  echo "WARNING: ALL DATA ON ${CFG[disk]} WILL BE DESTROYED."
+  if [[ "$UNATTENDED_MODE" == "true" ]]; then
+    YES_MODE="true"
+    return 0
+  fi
+  read -r -p "Type EXACTLY 'ERASE ${CFG[disk]}' to continue: " ans
+  [[ "$ans" == "ERASE ${CFG[disk]}" ]] || { log_error "Confirmation phrase mismatch."; exit "$EXIT_PRECONDITION"; }
+}
 
-  local subcommand="${1:-}"
-  shift
+advanced_menu() {
+  local choice
+  while true; do
+    choice="$(choose_from_menu 'Advanced options:' 1       'Set profile' 'Set workstation mode' 'Set timezone/locale' 'Set network/security' 'Set LV sizes' 'Continue')"
+    case "$choice" in
+      'Set profile') CFG[profile]="$(choose_from_menu 'Install profile:' 3 minimal core workstation pentest custom)" ;;
+      'Set workstation mode') CFG[workstation_mode]="$(choose_from_menu 'Workstation mode:' 2 none base dev pentest custom)" ;;
+      'Set timezone/locale')
+        read -r -p "Timezone [${CFG[timezone]}]: " x; [[ -n "$x" ]] && CFG[timezone]="$x"
+        read -r -p "Locale [${CFG[locale]}]: " x; [[ -n "$x" ]] && CFG[locale]="$x"
+        ;;
+      'Set network/security')
+        CFG[wifi_backend]="$(choose_from_menu 'WiFi backend:' 1 nm nm-iwd)"
+        CFG[allow_ssh_inbound]="$(choose_from_menu 'Allow inbound SSH?' 2 true false)"
+        CFG[enable_blackarch]="$(choose_from_menu 'Enable BlackArch?' 2 true false)"
+        CFG[ids_enabled]="$(choose_from_menu 'Enable IDS profile?' 2 true false)"
+        ;;
+      'Set LV sizes')
+        read -r -p "Root LV size [${CFG[root_size]}]: " x; [[ -n "$x" ]] && CFG[root_size]="$x"
+        read -r -p "Swap LV size [${CFG[swap_size]}]: " x; [[ -n "$x" ]] && CFG[swap_size]="$x"
+        ;;
+      'Continue') break ;;
+    esac
+  done
+}
+
+interactive_wizard() {
+  local disks=() dchoice disk_gib
+  list_disks_menu disks
+  (( ${#disks[@]} > 0 )) || { log_error "No disks detected."; exit "$EXIT_VALIDATION"; }
+  local -a labels=()
+  local entry
+  for entry in "${disks[@]}"; do labels+=("$entry"); done
+  echo "Detected disks:"
+  local i=1
+  for entry in "${labels[@]}"; do IFS='|' read -r d s m <<<"$entry"; echo "  $i) $d ($s $m)"; i=$((i+1)); done
+  while true; do
+    read -r -p "Select target disk [1]: " dchoice; dchoice="${dchoice:-1}"
+    if [[ "$dchoice" =~ ^[0-9]+$ ]] && (( dchoice>=1 && dchoice<=${#labels[@]} )); then break; fi
+    echo "Invalid disk selection."
+  done
+  IFS='|' read -r CFG[disk] _ _ <<<"${labels[$((dchoice-1))]}"
+
+  read -r -p "Hostname [${CFG[hostname]}]: " entry; [[ -n "$entry" ]] && CFG[hostname]="$entry"
+  read -r -p "Username [${CFG[username]}]: " entry; [[ -n "$entry" ]] && CFG[username]="$entry"
+  CFG[profile]="$(choose_from_menu 'Installation profile:' 3 minimal core workstation pentest custom)"
+  CFG[workstation_mode]="$(choose_from_menu 'Workstation stack:' 2 none base dev pentest custom)"
+
+  disk_gib="$(( $(blockdev --getsize64 "${CFG[disk]}" 2>/dev/null || echo 128849018880) / 1073741824 ))"
+  [[ -z "${CFG[root_size]}" ]] && CFG[root_size]="$(calc_root_default "$disk_gib" "${CFG[profile]}")"
+  [[ -z "${CFG[swap_size]}" ]] && CFG[swap_size]="$(calc_swap_default)"
+
+  if [[ "$ADVANCED_MODE" == "true" ]]; then
+    advanced_menu
+  else
+    read -r -p "Timezone [${CFG[timezone]}]: " entry; [[ -n "$entry" ]] && CFG[timezone]="$entry"
+    read -r -p "Locale [${CFG[locale]}]: " entry; [[ -n "$entry" ]] && CFG[locale]="$entry"
+  fi
+}
+
+run_workstation_modules() {
+  case "${CFG[workstation_mode]}" in
+    none) log_info "Skipping workstation modules." ;;
+    base|dev|pentest|custom) install_workstation_profile ;;
+  esac
+  if [[ "${CFG[ids_enabled]}" == "true" || "${CFG[profile]}" == "pentest" || "${CFG[workstation_mode]}" == "pentest" ]]; then
+    install_ids_profile
+  fi
+}
+
+run_install() {
+  apply_cfg_to_globals
+  validate_install_cfg
+  print_install_summary
+  confirm_execution
+  core_install
+  run_workstation_modules
+  if [[ "$GLOBAL_DRY_RUN" != "true" ]]; then
+    run_validation
+  else
+    log_info "Dry-run mode: skipping post-install validation checks."
+  fi
+}
+
+config_init() {
+  local out="${1:-install.conf}"
+  cat > "$out" <<'CFGEOF'
+# BLK7ARCH install profile template
+PROFILE=workstation
+WORKSTATION_MODE=base
+DISK=/dev/sdX
+HOSTNAME=blk7arch
+USERNAME=user
+TIMEZONE=America/Sao_Paulo
+LOCALE=en_US.UTF-8
+WIFI_BACKEND=nm
+ROOT_LV_SIZE=60G
+SWAP_LV_SIZE=8G
+ENABLE_BLACKARCH=false
+ALLOW_SSH_INBOUND=false
+IDS_ENABLED=false
+YUM_COMPAT=false
+TEST_REPORT=false
+UNATTENDED=false
+CFGEOF
+  log_ok "Wrote config template: $out"
+}
+
+profile_list() {
+  cat <<'EOF_P'
+Available install profiles:
+  minimal      Core encrypted base install without workstation modules
+  core         Base encrypted install with conservative package set
+  workstation  Opinionated desktop-ready install (default)
+  pentest      Workstation + IDS + optional BlackArch-ready tuning
+  custom       Start from defaults and customize in advanced menu
+EOF_P
+}
+
+parse_install_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --advanced) ADVANCED_MODE="true"; shift ;;
+      --config) CONFIG_FILE="${2:-}"; shift 2 ;;
+      --unattended) UNATTENDED_MODE="true"; shift ;;
+      --dry-run) GLOBAL_DRY_RUN="true"; shift ;;
+      --yes) YES_MODE="true"; UNATTENDED_MODE="true"; shift ;;
+      --hostname) CFG[hostname]="${2:-}"; shift 2 ;;
+      --username) CFG[username]="${2:-}"; shift 2 ;;
+      --disk) CFG[disk]="${2:-}"; shift 2 ;;
+      --timezone) CFG[timezone]="${2:-}"; shift 2 ;;
+      --locale) CFG[locale]="${2:-}"; shift 2 ;;
+      --lv-root-size) CFG[root_size]="${2:-}"; shift 2 ;;
+      --lv-swap-size) CFG[swap_size]="${2:-}"; shift 2 ;;
+      --wifi-backend) CFG[wifi_backend]="${2:-}"; shift 2 ;;
+      --allow-ssh-inbound) CFG[allow_ssh_inbound]="$(parse_bool "${2:-}")"; shift 2 ;;
+      --enable-blackarch) CFG[enable_blackarch]="$(parse_bool "${2:-}")"; shift 2 ;;
+      *) log_error "Unknown install option: $1"; exit "$EXIT_USAGE" ;;
+    esac
+  done
+}
+
+parse_common_flags() {
+  parse_install_args "$@"
+}
+
+usage() {
+  cat <<USAGE
+BLK7ARCHv${VERSION} — Unified Arch Linux encrypted installer
+
+Usage:
+  ${SCRIPT_NAME} install [--advanced] [--config FILE] [--unattended] [--dry-run]
+  ${SCRIPT_NAME} config-init [output-file]
+  ${SCRIPT_NAME} profile-list
+  ${SCRIPT_NAME} self-test
+  ${SCRIPT_NAME} help
+
+Primary workflow:
+  ${SCRIPT_NAME} install
+  ${SCRIPT_NAME} install --advanced
+  ${SCRIPT_NAME} install --config install.conf
+
+Legacy compatibility (deprecated):
+  core-install, workstation-profile, ids-profile, validate, dry-run
+USAGE
+}
+
+main() {
+  init_cfg_defaults
+  local subcommand="${1:-help}"
+  [[ $# -gt 0 ]] && shift
 
   case "$subcommand" in
-    core-install)
-      parse_common_flags "$@"
-      core_install ;;
-    workstation-profile)
-      parse_common_flags "$@"
-      require_root
-      validate_required_args
-      install_workstation_profile ;;
-    ids-profile)
-      parse_common_flags "$@"
-      require_root
-      install_ids_profile ;;
-    validate)
-      parse_common_flags "$@"
-      run_validation ;;
-    dry-run)
+    install)
+      parse_install_args "$@"
+      [[ -n "$CONFIG_FILE" ]] && load_config_file "$CONFIG_FILE"
+      if [[ -z "${CFG[disk]}" || "$UNATTENDED_MODE" != "true" ]]; then
+        interactive_wizard
+      fi
+      run_install
+      log_ok "BLK7ARCHv${VERSION} installation complete!"
+      ;;
+    config-init)
+      config_init "${1:-install.conf}"
+      ;;
+    profile-list)
+      profile_list
+      ;;
+    self-test)
       GLOBAL_DRY_RUN="true"
-      parse_common_flags "$@"
-      core_install ;;
-    -h|--help|help)
-      usage ;;
+      CFG[disk]="${CFG[disk]:-/dev/null}"
+      CFG[hostname]="test-host"
+      CFG[username]="tester"
+      CFG[workstation_mode]="none"
+      CFG[ids_enabled]="false"
+      CFG[root_size]="50G"
+      CFG[swap_size]="8G"
+      run_install
+      ;;
+    core-install)
+      log_warn "Deprecated: core-install. Use '${SCRIPT_NAME} install' instead."
+      parse_install_args "$@"
+      run_install
+      ;;
+    workstation-profile)
+      log_warn "Deprecated: workstation-profile. Use '${SCRIPT_NAME} install' with workstation mode."
+      parse_install_args "$@"
+      apply_cfg_to_globals
+      install_workstation_profile
+      ;;
+    ids-profile)
+      log_warn "Deprecated: ids-profile. Use '${SCRIPT_NAME} install --advanced' and enable IDS."
+      parse_install_args "$@"
+      apply_cfg_to_globals
+      install_ids_profile
+      ;;
+    validate)
+      apply_cfg_to_globals
+      run_validation
+      ;;
+    dry-run)
+      log_warn "Deprecated: dry-run subcommand. Use install --dry-run."
+      GLOBAL_DRY_RUN="true"
+      parse_install_args "$@"
+      if [[ -z "${CFG[disk]}" ]]; then CFG[disk]="/dev/null"; fi
+      run_install
+      ;;
+    -h|--help|help|"")
+      usage
+      ;;
     *)
       log_error "Unknown subcommand: $subcommand"
-      usage; exit "$EXIT_USAGE" ;;
+      usage
+      exit "$EXIT_USAGE"
+      ;;
   esac
 }
 
