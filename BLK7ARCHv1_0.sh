@@ -428,6 +428,10 @@ prompt_user_passphrase() {
     log_info "[dry-run] Skipping user passphrase prompt."
     return 0
   fi
+  # Already collected by TUI wizard (whiptail passwordbox) — skip re-prompting
+  if [[ -n "${USER_PASSPHRASE:-}" ]]; then
+    return 0
+  fi
   read -r -s -p $'\nEnter password for root and '"${USERNAME}"': ' p1; printf '\n'
   read -r -s -p 'Confirm password: ' p2; printf '\n'
   if [[ -z "$p1" || "$p1" != "$p2" ]]; then
