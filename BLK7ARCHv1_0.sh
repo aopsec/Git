@@ -58,6 +58,19 @@
 #   [FIX-B7]  chroot_pacman_install(): explicit error handler on pacman -Syyu failure
 #   [FIX-B10] interactive_wizard(): skip blockdev in dry-run, always populate CFG sizes
 #   [NEW-ERR] ERR trap: log failing line number + command for every set -e termination
+#
+# Bug fixes (v1.0.2 — Pass 4, screencast live-test findings):
+#   [FIX-BUG05] choose_from_menu(): all display output redirected to stderr — function is
+#               called as $(...) so stdout was captured into caller variable; menu was invisible
+#               and return value was polluted with menu text, causing validate_install_cfg to
+#               exit 1 (BUG-02/05/09).
+#   [FIX-BUG04] parse_install_args(): guard every two-arg option with [[ $# -lt 2 ]] check;
+#               'shift 2' with only 1 arg exits 1 under set -e → silent rollback (BUG-04/07).
+#   [FIX-BUG03] load_config_file(): suggest 'config-init <file>' in missing-file error (BUG-03).
+#   [FIX-BUG08] interactive_wizard(): early return with /dev/null disk when GLOBAL_DRY_RUN=true
+#               — dry-run no longer prompts interactively (BUG-08).
+#   [FIX-BUG01] main(): --dry-run with no subcommand now emits actionable warning +
+#               usage, then exits (BUG-01).
 # ==============================================================================
 set -euo pipefail
 
@@ -1253,13 +1266,16 @@ init_cfg_defaults() {
 }
 
 choose_from_menu() {
+  # [FIX-BUG05] All display output routed to stderr: this function is called as $(...)
+  # so stdout is captured into the caller's variable. Without >&2 the menu text is
+  # invisible to the user AND pollutes the captured return value (BUG-02/05/09).
   local prompt="$1" default="$2"; shift 2
   local -a options=("$@")
   local idx=1 choice
   while true; do
-    echo "$prompt"
+    echo "$prompt" >&2
     for choice in "${options[@]}"; do
-      printf '  %d) %s\n' "$idx" "$choice"
+      printf '  %d) %s\n' "$idx" "$choice" >&2
       idx=$((idx+1))
     done
     idx=1
@@ -1269,7 +1285,7 @@ choose_from_menu() {
       printf '%s' "${options[$((choice-1))]}"
       return 0
     fi
-    echo "Invalid selection."
+    echo "Invalid selection." >&2
   done
 }
 
@@ -1435,7 +1451,12 @@ apply_cfg_to_globals() {
 
 load_config_file() {
   local cfg_file="$1"
-  [[ -f "$cfg_file" ]] || { log_error "Config file not found: $cfg_file"; exit "$EXIT_USAGE"; }
+  # [FIX-BUG03] Add actionable config-init hint when config file is missing (BUG-03)
+  [[ -f "$cfg_file" ]] || {
+    log_error "Config file not found: $cfg_file"
+    log_info "Run '${SCRIPT_NAME} config-init ${cfg_file}' to generate a template."
+    exit "$EXIT_USAGE"
+  }
   # [FIX-B6] Read entire line then split on first '=' only — preserves values containing '='
   local _cfg_line
   while IFS= read -r _cfg_line; do
@@ -1572,6 +1593,16 @@ advanced_menu() {
 
 interactive_wizard() {
   local disk_gib entry
+
+  # [FIX-BUG08] In dry-run mode, skip all interactive prompts and use built-in defaults.
+  # disk, hostname, username, and sizes are already set by init_cfg_defaults; only disk
+  # needs an explicit safe fallback since /dev/null is not auto-detected (BUG-08).
+  if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
+    log_info "[dry-run] Skipping interactive wizard — using built-in defaults."
+    [[ -z "${CFG[disk]}" ]] && CFG[disk]="/dev/null"
+    return 0
+  fi
+
   if [[ -z "${CFG[disk]}" ]]; then
     if ! resolve_disk_interactive; then
       exit "$EXIT_VALIDATION"
@@ -1661,24 +1692,37 @@ EOF_P
 }
 
 parse_install_args() {
+  # [FIX-BUG04] Guard every two-arg option: shift 2 with only 1 arg remaining exits 1
+  # under set -e, producing a silent rollback with no actionable error (BUG-04/07).
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --advanced) ADVANCED_MODE="true"; shift ;;
-      --config) CONFIG_FILE="${2:-}"; shift 2 ;;
-      --unattended) UNATTENDED_MODE="true"; shift ;;
-      --dry-run) GLOBAL_DRY_RUN="true"; shift ;;
-      --yes) YES_MODE="true"; UNATTENDED_MODE="true"; shift ;;
-      --hostname) CFG[hostname]="${2:-}"; shift 2 ;;
-      --username) CFG[username]="${2:-}"; shift 2 ;;
-      --disk) CFG[disk]="${2:-}"; CLI_DISK_EXPLICIT="true"; DISK_SOURCE="cli"; shift 2 ;;
-      --timezone) CFG[timezone]="${2:-}"; shift 2 ;;
-      --locale) CFG[locale]="${2:-}"; shift 2 ;;
-      --lv-root-size) CFG[root_size]="${2:-}"; shift 2 ;;
-      --lv-swap-size) CFG[swap_size]="${2:-}"; shift 2 ;;
-      --wifi-backend) CFG[wifi_backend]="${2:-}"; shift 2 ;;
-      --allow-ssh-inbound) CFG[allow_ssh_inbound]="$(parse_bool "${2:-}")"; shift 2 ;;
-      --enable-blackarch) CFG[enable_blackarch]="$(parse_bool "${2:-}")"; shift 2 ;;
-      *) log_error "Unknown install option: $1"; exit "$EXIT_USAGE" ;;
+      --advanced)          ADVANCED_MODE="true"; shift ;;
+      --config)            [[ $# -lt 2 ]] && { log_error "--config requires a FILE argument. Usage: ${SCRIPT_NAME} install --config FILE"; exit "$EXIT_USAGE"; }
+                           CONFIG_FILE="$2"; shift 2 ;;
+      --unattended)        UNATTENDED_MODE="true"; shift ;;
+      --dry-run)           GLOBAL_DRY_RUN="true"; shift ;;
+      --yes)               YES_MODE="true"; UNATTENDED_MODE="true"; shift ;;
+      --hostname)          [[ $# -lt 2 ]] && { log_error "--hostname requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[hostname]="$2"; shift 2 ;;
+      --username)          [[ $# -lt 2 ]] && { log_error "--username requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[username]="$2"; shift 2 ;;
+      --disk)              [[ $# -lt 2 ]] && { log_error "--disk requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[disk]="$2"; CLI_DISK_EXPLICIT="true"; DISK_SOURCE="cli"; shift 2 ;;
+      --timezone)          [[ $# -lt 2 ]] && { log_error "--timezone requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[timezone]="$2"; shift 2 ;;
+      --locale)            [[ $# -lt 2 ]] && { log_error "--locale requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[locale]="$2"; shift 2 ;;
+      --lv-root-size)      [[ $# -lt 2 ]] && { log_error "--lv-root-size requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[root_size]="$2"; shift 2 ;;
+      --lv-swap-size)      [[ $# -lt 2 ]] && { log_error "--lv-swap-size requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[swap_size]="$2"; shift 2 ;;
+      --wifi-backend)      [[ $# -lt 2 ]] && { log_error "--wifi-backend requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[wifi_backend]="$2"; shift 2 ;;
+      --allow-ssh-inbound) [[ $# -lt 2 ]] && { log_error "--allow-ssh-inbound requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[allow_ssh_inbound]="$(parse_bool "$2")"; shift 2 ;;
+      --enable-blackarch)  [[ $# -lt 2 ]] && { log_error "--enable-blackarch requires a VALUE argument."; exit "$EXIT_USAGE"; }
+                           CFG[enable_blackarch]="$(parse_bool "$2")"; shift 2 ;;
+      *)                   log_error "Unknown install option: $1"; exit "$EXIT_USAGE" ;;
     esac
   done
 }
@@ -1731,6 +1775,14 @@ main() {
     set -- "${_remaining_args[@]}"
   else
     set --
+  fi
+
+  # [FIX-BUG01] --dry-run without a subcommand: pre-scan strips the flag, leaving no
+  # subcommand. Provide an actionable error instead of silent usage display (BUG-01).
+  if [[ "$GLOBAL_DRY_RUN" == "true" && ${#_remaining_args[@]} -eq 0 ]]; then
+    log_warn "--dry-run requires a subcommand. Did you mean: ${SCRIPT_NAME} install --dry-run"
+    usage
+    exit "$EXIT_USAGE"
   fi
 
   local subcommand="${1:-help}"
