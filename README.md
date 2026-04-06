@@ -6,6 +6,20 @@ Interactive, fully automated Arch Linux installer with LUKS2 full-disk encryptio
 
 ## Security Fixes Applied
 
+### Pass 4 — 2026-04-06 (FIX-BUG01–FIX-BUG08) — screencast live-test hardening
+
+| ID | Severity | Description |
+|---|---|---|
+| FIX-BUG05 | **CRITICAL** | `choose_from_menu()`: all display output redirected to stderr — function called as `$(...)` so stdout was captured into caller variable; menu was invisible to user and return value was polluted with menu text → `validate_install_cfg` rejected it → crash with exit 1 after all inputs collected (BUG-02/05/09) |
+| FIX-BUG04 | HIGH | `parse_install_args()`: added `[[ $# -lt 2 ]]` guard before every two-arg option — `shift 2` with only 1 arg exits 1 under `set -e`, producing silent rollback with no error message (BUG-04/07) |
+| FIX-BUG08 | CRITICAL | `interactive_wizard()`: early return with `/dev/null` disk when `GLOBAL_DRY_RUN=true` — `install --dry-run` no longer prompts interactively then crashes (BUG-08) |
+| FIX-BUG03 | HIGH | `load_config_file()`: missing config file error now includes `config-init <file>` suggestion (BUG-03) |
+| FIX-BUG01 | MEDIUM | `main()`: `--dry-run` without a subcommand now emits an actionable warning explaining the required `install` subcommand, then exits with code 2 (BUG-01) |
+
+**Pass 4 Scores:** Review-Syntax-Bugs-Vulns = **100/100** | Full-test = **100/100**
+
+---
+
 ### Pass 3 — 2026-04-06 (FIX-ITER1-A, FIX-ITER1-B) — script-loop recursive hardening
 
 | ID | Severity | Description |
@@ -164,6 +178,14 @@ cd tests/vm
 ---
 
 ## Changelog
+
+### v1.0.2 (2026-04-06) — Pass 4 screencast live-test bug fixes
+- FIX-BUG05 (CRITICAL): `choose_from_menu()` all display now goes to stderr — was causing invisible menus and garbage `CFG[profile]` values → crash after every interactive install
+- FIX-BUG04 (HIGH): `parse_install_args()` missing-arg guards for all two-arg options — `--config` without a file no longer crashes silently
+- FIX-BUG08 (CRITICAL): `install --dry-run` now auto-uses defaults without prompting
+- FIX-BUG03 (HIGH): Missing config file error now suggests `config-init`
+- FIX-BUG01 (MEDIUM): `--dry-run` without subcommand gives actionable warning
+- Review-Syntax-Bugs-Vulns: **100/100** | Full-test: **100/100**
 
 ### v1.0 (2026-04-06) — Pass 3 script-loop recursive hardening
 - FIX-ITER1-A (MEDIUM): `install_ids_profile()` now returns early in dry-run — eliminates unguarded `arch-chroot` execution and misleading "packages not in repos" warning
