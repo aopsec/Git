@@ -37,6 +37,14 @@
 #   [N6]  --tui flag forces TUI even if flags present
 #   [N7]  Profile summary screen before destructive execution
 #
+# Security hardening pass (recursive loop v2 — script-loop):
+#   [FIX-ITER1-A] install_ids_profile(): added early dry-run return before arch-chroot
+#                 pacman -Si probe — eliminates misleading "packages not in repos" warning
+#                 and prevents unguarded arch-chroot execution when no chroot exists.
+#   [FIX-ITER1-B] _to_gib(): promoted from nested (inside validate_disk_size) to top-level
+#                 — bash nested functions pollute global namespace after first invocation;
+#                 top-level placement prevents silent re-definition on repeated calls.
+#
 # Bug fixes (v1.0.1):
 #   [FIX-V1]  main(): warn if script is not executable (+x hint)
 #   [FIX-V2]  main(): pre-scan global flags (--dry-run/--yes/-h/--help) before subcommand dispatch
@@ -367,6 +375,19 @@ validate_disk() {
   fi
 }
 
+# [FIX-ITER1-B] _to_gib promoted to top-level: bash nested functions pollute global namespace
+#               after first invocation of the outer function; top-level avoids re-definition risk.
+_to_gib() {
+  local raw="$1"
+  local num="${raw//[A-Za-z]/}"
+  case "$raw" in
+    *GiB|*G) echo "$num" ;;
+    *MiB|*M) echo $(( num < 1024 ? 1 : num / 1024 )) ;;  # [FIX-B3] avoid truncation to 0 for values <1024M
+    *TiB|*T) echo $(( num * 1024 )) ;;
+    *) echo 0 ;;
+  esac
+}
+
 # [F8] Validate disk has enough space for chosen LV sizes
 validate_disk_size() {
   local disk_bytes
@@ -379,17 +400,6 @@ validate_disk_size() {
 
   # Parse sizes (G, GiB → GiB; M, MiB → MiB; T, TiB → TiB — normalise to GiB for comparison)
   local root_g swap_g min_g
-  # Strip suffix variants to get numeric value in the given unit, then convert to GiB
-  _to_gib() {
-    local raw="$1"
-    local num="${raw//[A-Za-z]/}"
-    case "$raw" in
-      *GiB|*G) echo "$num" ;;
-      *MiB|*M) echo $(( num < 1024 ? 1 : num / 1024 )) ;;  # [FIX-B3] avoid truncation to 0 for values <1024M
-      *TiB|*T) echo $(( num * 1024 )) ;;
-      *) echo 0 ;;
-    esac
-  }
   root_g="$(_to_gib "$LV_ROOT_SIZE")"
   swap_g="$(_to_gib "$LV_SWAP_SIZE")"
   # +1G EFI + 2G overhead
@@ -910,6 +920,13 @@ install_ids_profile() {
   require_target_root_ready
   # [F3] ids-profile now validates required args
   validate_required_args
+
+  # [FIX-ITER1-A] dry-run guard: in dry-run the chroot is not bootstrapped; skip arch-chroot
+  #               package availability probe and proceed as if packages are available.
+  if [[ "$GLOBAL_DRY_RUN" == "true" ]]; then
+    log_info "[dry-run] would probe snort/suricata availability and install IDS configs."
+    return 0
+  fi
 
   # Check package availability
   local missing_packages=()
