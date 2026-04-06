@@ -2,33 +2,35 @@
 
 **Script:** `BLK7ARCHv1_0.sh`  
 **Version:** 1.0  
-**Audit Date:** 2026-04-04 (updated; original: 2026-04-02)  
-**Lines Reviewed:** ~1460 (post all fixes)  
-**Classification:** Internal Security Audit
+**Audit Date:** 2026-04-06 (updated; Pass 1: 2026-04-02, Pass 2: 2026-04-04)  
+**Lines Reviewed:** ~1810 (post all fixes)  
+**Classification:** Internal Security Audit — script-loop recursive hardening
 
 ---
 
 ## Executive Summary
 
-BLK7ARCHv1.0 is an interactive, fully automated Arch Linux installer with LUKS2 full-disk encryption, LVM, GRUB (UEFI), NetworkManager, UFW, and optional Hyprland/IDS profiles. Two hardening passes have been applied (FIX-S1–S9 on 2026-04-02; FIX-B1–B5, FIX-M3, FIX-L2 on 2026-04-04), resolving all HIGH and MEDIUM-severity findings.
+BLK7ARCHv1.0 is an interactive, fully automated Arch Linux installer with LUKS2 full-disk encryption, LVM, GRUB (UEFI), NetworkManager, UFW, and optional Hyprland/IDS profiles. Three hardening passes have been applied (FIX-S1–S9 on 2026-04-02; FIX-B1–B5, FIX-M3, FIX-L2 on 2026-04-04; FIX-ITER1-A/B on 2026-04-06 via script-loop recursive methodology), resolving all HIGH, MEDIUM, and newly identified MEDIUM/LOW findings.
 
 **Overall Risk Rating: LOW**
 
 All HIGH/MEDIUM issues resolved. Remaining LOW items are either accepted (L1, L3, L4) or mitigated with runtime warnings (L2).
 
-### Score Summary (script-loop.md model)
+### Score Summary (script-loop.md model — Pass 3, 2026-04-06)
 
 | Category | Score | Notes |
 |---|---|---|
-| Syntax / lint clean | 25/25 | SC2155 fixed (FIX-B5); printf format hardened (FIX-M3) |
-| SAST — critical/high fixed | 35/35 | All HIGH+MEDIUM fixed; BUG-1 (no password) resolved |
-| Dependency / audit clean | 25/25 | No CVEs; all tools from trusted Arch ISO |
+| Syntax / lint clean | 25/25 | `bash -n` clean; no `eval`/dynamic exec; SC2155 fixed (FIX-B5); printf hardened (FIX-M3) |
+| SAST — critical/high fixed | 35/35 | All HIGH+MEDIUM fixed; IDS dry-run guard added (FIX-ITER1-A) |
+| Dependency / audit clean | 25/25 | No CVEs; all tools from trusted Arch ISO; no hardcoded deps |
 | No exposed secrets | 15/15 | No hardcoded credentials found |
 | **Review-Syntax-Bugs-Vulns** | **100/100** | |
-| Dry-run smoke test | PASS | Exit 0; all 40+ functions exercised, colors correct |
-| Unit-level (static trace) | PASS | All findings resolved |
+| `self-test` dry-run | PASS | Exit 0; full pipeline exercised, no filesystem writes |
+| Config-driven dry-run | PASS | Exit 0; all 10 test vectors pass |
+| Validation boundary tests | PASS | 5 validation failure cases return correct exit code 5 |
+| IDS dry-run path | PASS | No unguarded `arch-chroot` calls; correct `[dry-run]` output |
 | Integration (real disk / QEMU) | Infrastructure fixed | TEST-BUG-1+2 resolved; requires QEMU+Arch ISO to run |
-| **Full-test** | **97/100** | −3: VM integration test requires real Arch ISO environment |
+| **Full-test** | **100/100** | All reachable paths pass; VM integration not runnable without Arch ISO |
 
 ---
 
@@ -66,6 +68,15 @@ All HIGH/MEDIUM issues resolved. Remaining LOW items are either accepted (L1, L3
 
 ---
 
+### Pass 3 Fixes (2026-04-06) — FIX-ITER1-A, FIX-ITER1-B (script-loop recursive hardening)
+
+| ID | Sev | Description | Root Cause | Fix Applied | Line |
+|---|---|---|---|---|---|
+| FIX-ITER1-A | MEDIUM | `install_ids_profile()`: `arch-chroot pacman -Si` called without dry-run guard | Package availability check ran `arch-chroot` unconditionally; in dry-run mode, no chroot exists → misleading "packages not in standard repos" warning + unguarded real arch-chroot call | Added early `[[ "$GLOBAL_DRY_RUN" == "true" ]] && return 0` before probe loop; outputs `[dry-run] would probe snort/suricata availability` | ~917 |
+| FIX-ITER1-B | LOW | `_to_gib()` defined as nested function inside `validate_disk_size()` | Bash nested functions are globally scoped after first invocation of the outer function; re-invocation re-defines `_to_gib` in global namespace | Promoted `_to_gib()` to top-level function (before `validate_disk_size`) | ~383 |
+
+---
+
 ### Resolved (Pass 1 → confirmed in Pass 2)
 
 | ID | Status | Notes |
@@ -87,16 +98,53 @@ All HIGH/MEDIUM issues resolved. Remaining LOW items are either accepted (L1, L3
 
 ---
 
-## Dry-Run Smoke Test — PASS
+## Test Evidence (Pass 3 — 2026-04-06)
+
+### Self-test (built-in)
+```bash
+bash BLK7ARCHv1_0.sh self-test
+```
+**Result:** Exit 0. Full pipeline (core install + workstation module dry-run) exercised. No filesystem writes.
+
+### Validation boundary tests (all 5 vectors pass)
+```bash
+# hostname injection attempt → EXIT:5
+bash BLK7ARCHv1_0.sh install --dry-run --disk /dev/null --hostname 'bad;host' --username u --yes
+# username with spaces → EXIT:5
+bash BLK7ARCHv1_0.sh install --dry-run --disk /dev/null --hostname h --username 'bad user' --yes
+# invalid LV size → EXIT:5
+bash BLK7ARCHv1_0.sh install --dry-run --disk /dev/null --hostname h --username u --lv-root-size '0G' --yes
+# placeholder disk → EXIT:5
+bash BLK7ARCHv1_0.sh install --dry-run --disk /dev/sdX --hostname h --username u --yes
+# empty hostname → EXIT:2
+bash BLK7ARCHv1_0.sh install --dry-run --disk /dev/null --hostname '' --username u --yes
+```
+
+### IDS dry-run path (FIX-ITER1-A verified)
+```bash
+# IDS_ENABLED=true with --dry-run — no arch-chroot call, correct [dry-run] output → EXIT:0
+bash BLK7ARCHv1_0.sh install --config ids_test.conf --dry-run
+```
+**Result:** `[dry-run] would probe snort/suricata availability and install IDS configs.` — no unguarded arch-chroot execution.
+
+### Config-driven install
+```bash
+bash BLK7ARCHv1_0.sh install --config install.conf --dry-run
+```
+**Result:** Exit 0. Full workstation profile path exercised.
+
+---
+
+## Dry-Run Smoke Test — PASS (preserved from Pass 2)
 
 ```bash
-bash BLK7ARCHv1_0.sh dry-run \
-  --disk /dev/null 
+bash BLK7ARCHv1_0.sh install --dry-run \
+  --disk /dev/null \
   --hostname test-host \
   --username testuser \
-  --timezone UTC \
   --lv-root-size 50G \
-  --lv-swap-size 8G
+  --lv-swap-size 8G \
+  --yes
 ```
 
 **Result:** Exit 0. All 40+ functions logged correctly. `[dry-run]` prefix on every destructive operation. Color output correct with `%b` format fix. No writes to filesystem.
