@@ -61,7 +61,7 @@ class BLK7Logger:
             with LOG_PATH.open("a") as fh:
                 fh.write(message + "\n")
         except OSError:
-            pass
+            pass  # Best-effort: cannot log a logging failure without recursion [FIX-V2]
 
 
 log: BLK7Logger = BLK7Logger()

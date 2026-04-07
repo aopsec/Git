@@ -35,8 +35,8 @@ class RollbackStack:
             log.warn(f"  rollback: {description}")
             try:
                 action()
-            except Exception:  # noqa: BLE001 — rollback actions must not abort remaining actions
-                log.error(f"  rollback failed: {description}")
+            except Exception as exc:  # noqa: BLE001 — rollback actions must not abort remaining actions
+                log.error(f"  rollback failed: {description} — {exc}")  # [FIX-V2]
                 traceback.print_exc()
         self._stack.clear()
 
