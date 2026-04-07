@@ -230,7 +230,7 @@ Credentials (in separate --creds file):
 
 TESTING
 -------
-  python -m pytest tests/ -v          # Run all 42 tests
+  python -m pytest tests/ -v          # Run all 58 tests
   python -m blk7rch self-test         # Full dry-run (pentest profile)
   python -m py_compile blk7rch/**/*.py  # Syntax check all files
 
@@ -247,6 +247,7 @@ PROJECT STRUCTURE
     utils/          logger, rollback stack, subprocess wrapper
   configs/          blk7rch_default.json, blk7rch_pentest.json, blk7rch_minimal.json
   tests/            test_config.py, test_dry_run.py
+  blk7rch-afk-automation.sh  3-cycle autonomous code-review harness (AFK mode)
 
 
 SECURITY NOTES
