@@ -1,0 +1,22 @@
+{
+  "disk": "",
+  "hostname": "blk7arch",
+  "username": "user",
+  "timezone": "America/Sao_Paulo",
+  "locale": "en_US.UTF-8",
+  "keymap": "us",
+  "bootloader": "grub",
+  "profile": "minimal",
+  "workstation_mode": "none",
+  "enable_blackarch": false,
+  "enable_ids": false,
+  "ids_home_net": "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]",
+  "ids_snort_profile": "balanced",
+  "ids_mode": "minimal-local",
+  "allow_ssh_inbound": false,
+  "wifi_backend": "nm",
+  "enable_gdm": false,
+  "auto_reboot": true,
+  "root_lv_size": "30G",
+  "swap_lv_size": "4G"
+}
