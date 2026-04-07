@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m py_compile blk7rch/main.py blk7rch/__init__.py blk7rch/__main__.py blk7rch/config/schema.py blk7rch/config/defaults.py blk7rch/config/loader.py blk7rch/installer/core.py blk7rch/installer/disk_setup.py blk7rch/installer/chroot_config.py blk7rch/installer/post_install.py blk7rch/profiles/base.py blk7rch/profiles/workstation.py blk7rch/profiles/pentest.py blk7rch/profiles/ids.py blk7rch/security/blackarch.py blk7rch/security/ufw.py blk7rch/security/ids_snort.py blk7rch/security/ids_suricata.py blk7rch/security/validation.py blk7rch/desktop/hyprland.py blk7rch/desktop/waybar.py blk7rch/desktop/gdm.py blk7rch/tui/menu.py blk7rch/utils/logger.py blk7rch/utils/rollback.py blk7rch/utils/run.py)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3 -m pip install pytest)"
+    ]
+  }
+}

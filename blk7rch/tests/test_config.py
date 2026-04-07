@@ -226,3 +226,102 @@ class TestIDSConfig:
         """Pentest Waybar config must include the custom/ids module."""
         from blk7rch.desktop.waybar import _IDS_MODULE
         assert "custom/ids" in _IDS_MODULE
+
+
+class TestKeymapValidation:
+    """Tests for keymap field validation (previously dead code, now active)."""
+
+    def test_invalid_keymap_uppercase_raises(self) -> None:
+        """Keymap with uppercase letters must raise ValueError."""
+        with pytest.raises(ValueError, match="keymap"):
+            BLK7Config(keymap="US")
+
+    def test_invalid_keymap_space_raises(self) -> None:
+        """Keymap with spaces must raise ValueError."""
+        with pytest.raises(ValueError, match="keymap"):
+            BLK7Config(keymap="us layout")
+
+    def test_invalid_keymap_slash_raises(self) -> None:
+        """Keymap with path separator must raise ValueError."""
+        with pytest.raises(ValueError, match="keymap"):
+            BLK7Config(keymap="us/evil")
+
+    def test_invalid_keymap_empty_raises(self) -> None:
+        """Empty keymap must raise ValueError."""
+        with pytest.raises(ValueError, match="keymap"):
+            BLK7Config(keymap="")
+
+    def test_valid_keymap_us(self) -> None:
+        """'us' keymap must be accepted."""
+        cfg = BLK7Config(keymap="us")
+        assert cfg.keymap == "us"
+
+    def test_valid_keymap_br_abnt2(self) -> None:
+        """'br-abnt2' keymap must be accepted."""
+        cfg = BLK7Config(keymap="br-abnt2")
+        assert cfg.keymap == "br-abnt2"
+
+    def test_valid_keymap_de_neo(self) -> None:
+        """'de_neo' keymap with underscore must be accepted."""
+        cfg = BLK7Config(keymap="de_neo")
+        assert cfg.keymap == "de_neo"
+
+
+class TestTimezoneValidation:
+    """Tests for timezone field validation (previously dead code, now active)."""
+
+    def test_invalid_timezone_traversal_raises(self) -> None:
+        """Path traversal in timezone must raise ValueError (regex pre-check)."""
+        with pytest.raises(ValueError, match="timezone"):
+            BLK7Config(timezone="../../etc/passwd")
+
+    def test_invalid_timezone_special_chars_raises(self) -> None:
+        """Timezone with shell metacharacters must raise ValueError."""
+        with pytest.raises(ValueError, match="timezone"):
+            BLK7Config(timezone="Bad Zone/Name!")
+
+    def test_invalid_timezone_empty_raises(self) -> None:
+        """Empty timezone must raise ValueError."""
+        with pytest.raises(ValueError, match="timezone"):
+            BLK7Config(timezone="")
+
+    def test_invalid_timezone_leading_dot_raises(self) -> None:
+        """Timezone starting with '.' must raise ValueError."""
+        with pytest.raises(ValueError, match="timezone"):
+            BLK7Config(timezone="./etc/localtime")
+
+    def test_valid_timezone_format(self) -> None:
+        """Timezone with valid Olson format must pass regex pre-check."""
+        from unittest.mock import patch
+        with patch("blk7rch.config.schema.Path.exists", return_value=True):
+            cfg = BLK7Config(timezone="America/Sao_Paulo")
+            assert cfg.timezone == "America/Sao_Paulo"
+
+    def test_valid_timezone_three_part(self) -> None:
+        """Three-part timezone (e.g. America/Indiana/Indianapolis) must be accepted."""
+        from unittest.mock import patch
+        with patch("blk7rch.config.schema.Path.exists", return_value=True):
+            cfg = BLK7Config(timezone="America/Indiana/Indianapolis")
+            assert cfg.timezone == "America/Indiana/Indianapolis"
+
+    def test_valid_timezone_utc(self) -> None:
+        """Single-segment timezone (UTC) must be accepted."""
+        from unittest.mock import patch
+        with patch("blk7rch.config.schema.Path.exists", return_value=True):
+            cfg = BLK7Config(timezone="UTC")
+            assert cfg.timezone == "UTC"
+
+
+class TestWorkstationModeValidation:
+    """Tests for workstation_mode set-membership validation."""
+
+    def test_invalid_workstation_mode_raises(self) -> None:
+        """Unknown workstation_mode must raise ValueError."""
+        with pytest.raises(ValueError, match="workstation_mode"):
+            BLK7Config(workstation_mode="gaming")
+
+    def test_all_valid_workstation_modes(self) -> None:
+        """All four valid workstation_modes must be accepted."""
+        for mode in ("none", "base", "dev", "pentest"):
+            cfg = BLK7Config(workstation_mode=mode)
+            assert cfg.workstation_mode == mode

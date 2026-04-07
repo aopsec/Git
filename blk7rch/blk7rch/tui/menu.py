@@ -124,8 +124,8 @@ class BLK7Menu(GlobalMenu):  # type: ignore[misc]
                 chosen = str(result.item())
                 self._blk7_cfg.profile = chosen
                 return chosen
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception:  # noqa: BLE001 — archinstall TUI may be unavailable; fall back silently
+            log.info("Profile selector TUI unavailable — using current profile")
 
         return self._blk7_cfg.profile
 
@@ -186,7 +186,7 @@ class BLK7Menu(GlobalMenu):  # type: ignore[misc]
             from archinstall.tui import SelectMenu, Alignment, FrameProperties, MenuItemGroup
 
             options = [
-                f"SSH inbound: {'allow' if self.cfg.allow_ssh_inbound else 'deny'}",
+                f"SSH inbound: {'allow' if self._blk7_cfg.allow_ssh_inbound else 'deny'}",
                 f"IDS mode: {self._blk7_cfg.ids_mode}",
                 f"Snort profile: {self._blk7_cfg.ids_snort_profile}",
                 f"IDS HOME_NET: {self._blk7_cfg.ids_home_net}",
@@ -197,7 +197,7 @@ class BLK7Menu(GlobalMenu):  # type: ignore[misc]
                 alignment=Alignment.CENTER,
                 frame=FrameProperties.min("Security"),
             ).run()
-        except Exception:  # noqa: BLE001
+        except Exception:  # noqa: BLE001 — archinstall security submenu may be unavailable
             log.warn("Security submenu unavailable — edit config file directly")
 
     def _security_summary(self) -> str:

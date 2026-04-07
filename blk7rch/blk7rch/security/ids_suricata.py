@@ -68,7 +68,10 @@ class IDSSuricataConfig:
         if self.dry_run:
             log.dry(f"write {path}")
             return
-        path.write_text(content)
+        try:
+            path.write_text(content)
+        except OSError as exc:
+            raise RuntimeError(f"Suricata: failed to write {path}") from exc
 
     def _write_suricata_yaml(self) -> None:
         """Write ``/etc/suricata/suricata.yaml``."""

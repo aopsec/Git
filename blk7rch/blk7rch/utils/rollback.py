@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import traceback
 from collections.abc import Callable
-from typing import Any
 
 from blk7rch.utils.logger import log
 
@@ -36,7 +35,7 @@ class RollbackStack:
             log.warn(f"  rollback: {description}")
             try:
                 action()
-            except Exception:  # noqa: BLE001
+            except Exception:  # noqa: BLE001 — rollback actions must not abort remaining actions
                 log.error(f"  rollback failed: {description}")
                 traceback.print_exc()
         self._stack.clear()

@@ -54,7 +54,7 @@ echo "Post-boot validation complete: ${PASS} passed, ${FAIL} failed."
 [[ "$FAIL" -eq 0 ]] && exit 0 || exit 1
 """
 
-_SERVICE_CONTENT = f"""\
+_SERVICE_CONTENT = """\
 [Unit]
 Description=BLK7rch Post-Boot System Validation
 After=network.target

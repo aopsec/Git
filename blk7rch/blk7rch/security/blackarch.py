@@ -1,9 +1,8 @@
-2"""BlackArchBootstrap — download, SHA256-verify, and execute the BlackArch strap.sh."""
+"""BlackArchBootstrap — download, SHA256-verify, and execute the BlackArch strap.sh."""
 
 from __future__ import annotations
 
 import hashlib
-import os
 import stat
 import tempfile
 from pathlib import Path
@@ -63,6 +62,9 @@ class BlackArchBootstrap:
             if not self.dry_run:
                 chroot_strap.write_bytes(strap_host.read_bytes())
                 chroot_strap.chmod(stat.S_IRWXU)
+                # Re-verify SHA256 of the copy immediately before execution to close
+                # the TOCTOU window between the original verify and the chroot copy.
+                self._verify_sha256(chroot_strap, sha_host)
 
             chroot_run(self.target, ["/bin/bash", "/tmp/strap.sh"], dry_run=self.dry_run)
 

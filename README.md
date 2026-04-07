@@ -4,6 +4,17 @@ Interactive, fully automated Arch Linux installer with LUKS2 full-disk encryptio
 
 ---
 
+## Repository Components
+
+| Component | Language | Entry point | Docs |
+|-----------|----------|-------------|------|
+| `BLK7ARCHv1_0.sh` | Bash | `bash BLK7ARCHv1_0.sh install` | This file |
+| `blk7rch/` | Python 3.12+ | `python -m blk7rch install` | [blk7rch/README.txt](blk7rch/README.txt) |
+
+Both installers target the same goal — LUKS2+LVM encrypted Arch Linux with Hyprland desktop and optional pentest/IDS tooling. The bash installer is standalone and production-ready. The Python package wraps the `archinstall` library with a richer programmatic API and JSON config system.
+
+---
+
 ## Security Fixes Applied
 
 ### Pass 4 — 2026-04-06 (FIX-BUG01–FIX-BUG08) — screencast live-test hardening
@@ -143,11 +154,19 @@ bash BLK7ARCHv1_0.sh install --dry-run --disk /dev/sdX --hostname h --username u
 # IDS dry-run path (should not call arch-chroot)
 bash BLK7ARCHv1_0.sh install --dry-run --disk /dev/null --hostname h --username u --yes 2>&1 | grep 'dry-run'
 
-# VM integration test (requires QEMU + Arch ISO + KVM)
+# VM integration test — bash installer (requires QEMU + Arch ISO + KVM)
 cd tests/vm
 ./setup.sh
 ./run-tests.sh --dry-only     # fast (~3 min)
 ./run-tests.sh                # full install test (~40 min)
+
+# VM integration test — Python package (requires QEMU + Arch ISO + KVM)
+# Extract kernel/initrd from ISO first (one-time):
+#   7z e -o/tmp/arch-boot <arch.iso> arch/boot/x86_64/vmlinuz-linux arch/boot/x86_64/initramfs-linux.img
+cd tests/vm
+bash run-tests-python.sh --dry-only   # headless direct-kernel boot, ~5 min
+# Full install (GRUB UI requires interactive GTK window):
+bash run-tests-python.sh              # launches QEMU in named tmux session
 ```
 
 ---
@@ -178,6 +197,32 @@ cd tests/vm
 ---
 
 ## Changelog
+
+### blk7rch Python package — v1.0.2 (2026-04-06) — VM test runner + code quality
+
+**`tests/vm/run-tests-python.sh`** (new)
+- Added headless VM integration test runner for the Python package
+- `--dry-only` mode: direct-kernel boot (no GRUB), fully automated serial-console dry-run
+- Full install mode: UEFI OVMF + VNC, requires interactive GTK window due to GRUB EFI keyboard limitation
+- 9p virtfs host share (`mount_tag=blk7arch`) mounts repo into VM at `/mnt/blk7rch`
+
+### blk7rch Python package — v1.0.1 (2026-04-06) — bug fixes
+
+**`blk7rch/blk7rch/security/blackarch.py`**
+- FIX (CRITICAL): Restored SHA256 re-verification of `strap.sh` chroot copy immediately before `arch-chroot` execution — closes TOCTOU window that allowed payload substitution between copy and execute
+- FIX (CRITICAL): Removed stray `2` prefix on module docstring that caused `SyntaxError` on import, silently disabling the entire BlackArch bootstrap
+- FIX (LOW): Removed unused `import os` (`ruff F401`)
+
+**`blk7rch/blk7rch/tui/menu.py`**
+- FIX (CRITICAL): `_security_submenu()` — `self.cfg` → `self._blk7_cfg`; the security submenu always raised `AttributeError` and fell through to "submenu unavailable" without any indication the attribute name was wrong
+
+**`blk7rch/blk7rch/main.py`**
+- FIX (MEDIUM): `config_init` was called without forwarding `args.profile` — the CLI `--profile` flag was silently ignored, always producing a `workstation` preset regardless of input
+- FIX (LOW): Removed dead `args_namespace = argparse.Namespace(profile=profile)` variable (created and immediately abandoned)
+
+pytest: **42/42 passed** | py_compile: **OK**
+
+---
 
 ### v1.0.2 (2026-04-06) — Pass 4 screencast live-test bug fixes
 - FIX-BUG05 (CRITICAL): `choose_from_menu()` all display now goes to stderr — was causing invisible menus and garbage `CFG[profile]` values → crash after every interactive install
