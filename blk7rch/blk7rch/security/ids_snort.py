@@ -64,7 +64,10 @@ class IDSSnortConfig:
         if self.dry_run:
             log.dry(f"write {path}")
             return
-        path.write_text(content)
+        try:
+            path.write_text(content)
+        except OSError as exc:
+            raise RuntimeError(f"Snort: failed to write {path}") from exc
 
     def _write_snort_conf(self) -> None:
         """Write ``/etc/snort/snort.conf``."""

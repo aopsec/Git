@@ -12,7 +12,6 @@ Subcommands:
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from pathlib import Path
 
@@ -31,7 +30,7 @@ def main() -> None:
     if args.command == "install":
         run_install(args)
     elif args.command == "config-init":
-        config_init(args.output)
+        config_init(args.output, args.profile)
     elif args.command == "self-test":
         run_self_test()
     else:
@@ -88,11 +87,6 @@ def _build_parser() -> argparse.ArgumentParser:
         "--disk", type=str, metavar="DEVICE",
         help="Block device to install to, e.g. /dev/sda",
     )
-    p_install.add_argument(
-        "--advanced", action="store_true",
-        help="Show advanced options in the interactive menu",
-    )
-
     # ── config-init ──────────────────────────────────────────────────────────
     p_config = sub.add_parser(
         "config-init",
@@ -197,14 +191,13 @@ def config_init(output: str | Path, profile: str = "workstation") -> None:
         Profile preset to use as the base configuration.
     """
     try:
-        args_namespace = argparse.Namespace(profile=profile)
         output_path = Path(output)
         cfg = make_default_config(profile)
         json_str = config_to_json(cfg, include_passwords=False)
         output_path.write_text(json_str)
         log.ok(f"Config written to {output_path}")
         print(json_str)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001 — catch-all for config-init error report
         log.error(f"config-init failed: {exc}")
         sys.exit(1)
 
@@ -230,7 +223,7 @@ def run_self_test() -> None:
         installer.run()
         log.ok("self-test: PASSED — all phases completed in dry-run mode")
         sys.exit(0)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — catch-all for self-test report
         log.error(f"self-test: FAILED — {exc}")
         import traceback
         traceback.print_exc()

@@ -76,7 +76,7 @@ def _write_transaction_log(cfg: BLK7Config, target: Path, dry_run: bool) -> None
             LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
             LOG_PATH.write_text(content)
         except OSError:
-            pass
+            log.warn(f"Could not write host transaction log: {LOG_PATH}")
 
         target_log = target / "var" / "log" / "blk7rch-install.log"
         try:

@@ -66,7 +66,10 @@ class GDMSetup:
             return
 
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(_HYPRLAND_SESSION)
+        try:
+            dest.write_text(_HYPRLAND_SESSION)
+        except OSError as exc:
+            raise RuntimeError(f"GDM: failed to write session file {dest}") from exc
 
     def _write_accounts_service(self) -> None:
         """Write the AccountsService user config to set the default session."""
@@ -79,7 +82,10 @@ class GDMSetup:
             return
 
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(_ACCOUNTS_SERVICE_TEMPLATE)
+        try:
+            dest.write_text(_ACCOUNTS_SERVICE_TEMPLATE)
+        except OSError as exc:
+            raise RuntimeError(f"GDM: failed to write accounts-service file {dest}") from exc
 
     def _enable_gdm(self) -> None:
         """Enable the gdm systemd service inside the chroot."""

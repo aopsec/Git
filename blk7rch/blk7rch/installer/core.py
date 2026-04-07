@@ -17,7 +17,7 @@ from blk7rch.utils.logger import log
 from blk7rch.utils.rollback import RollbackStack
 
 try:
-    import archinstall
+    import archinstall  # noqa: F401
     from archinstall.lib.installer import Installer
     from archinstall.lib.disk.filesystem_handler import FilesystemHandler
     from archinstall.lib.models.bootloader import Bootloader
@@ -72,7 +72,7 @@ class BLK7Installer:
             self._phase1_disk()
             self._phase2_base()
             self._phase3_post()
-        except Exception:
+        except Exception:  # noqa: BLE001 — intentional broad catch, triggers rollback on any phase failure
             self.rollback.execute()
             raise
 
@@ -168,7 +168,7 @@ class BLK7Installer:
         """Log all Phase 2 actions without executing them."""
         log.dry("Installer.mount_ordered_layout()")
         log.dry(f"configure_chroot(locale={self.cfg.locale}, keymap={self.cfg.keymap})")
-        log.dry(f"Installer.add_bootloader(Bootloader.Grub)")
+        log.dry("Installer.add_bootloader(Bootloader.Grub)")
         log.dry(f"Installer.create_users({self.cfg.username})")
         log.dry("Installer.enable_service('NetworkManager')")
         if self.cfg.enable_gdm:

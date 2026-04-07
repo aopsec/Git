@@ -11,8 +11,8 @@ from blk7rch.utils.run import chroot_run, run_cmd
 try:
     from archinstall.lib.locale import (
         LocaleConfiguration,
-        set_keyboard_language,
-        set_timezone,
+        set_keyboard_language,  # noqa: F401
+        set_timezone,  # noqa: F401
     )
     _LOCALE_AVAILABLE = True
 except ImportError:
@@ -172,7 +172,10 @@ def _configure_grub(cfg: BLK7Config, target: Path, dry_run: bool) -> None:
     luks_uuid = uuid_result.stdout.strip()
 
     if not luks_uuid:
-        log.warn(f"Could not determine UUID of {luks_part} — GRUB cryptdevice may be incomplete")
+        raise RuntimeError(
+            f"Could not determine UUID of {luks_part} via blkid. "
+            "Aborting to prevent invalid GRUB cryptdevice entry."
+        )
     elif not _UUID_RE.match(luks_uuid):
         raise RuntimeError(
             f"blkid returned an unexpected UUID format: {luks_uuid!r}. "

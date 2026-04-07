@@ -18,10 +18,16 @@ _HOSTNAME_RE = re.compile(
 _USERNAME_RE = re.compile(r"^[a-z_][a-z0-9_-]{0,31}$")
 _LV_SIZE_RE = re.compile(r"^[1-9][0-9]*(G|M|T|GiB|MiB|TiB)$")
 _VALID_PROFILES = {"minimal", "core", "workstation", "pentest"}
+_VALID_WORKSTATION_MODES = {"none", "base", "dev", "pentest"}
 _VALID_BOOTLOADERS = {"grub", "systemd-boot"}
 _VALID_IDS_MODES = {"minimal-local", "managed-rules"}
 _VALID_IDS_SNORT_PROFILES = {"balanced", "strict"}
 _VALID_WIFI_BACKENDS = {"nm", "nm-iwd"}
+# Keymap names: lowercase letters, digits, hyphens, underscores (e.g. 'us', 'br-abnt2', 'de')
+_KEYMAP_RE = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
+# Olson timezone names: one or two slash-separated segments, letters/digits/underscores/plus/hyphen
+# Blocks path traversal (rejects '.', '..', leading '/', shell metacharacters)
+_TIMEZONE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_+\-]*(/[A-Za-z][A-Za-z0-9_+\-]*){0,2}$")
 # Mirrors the bash validation from BLK7ARCHv1_0.sh:
 #   [[ "$IDS_HOME_NET" =~ ^[\[\]0-9./:,\ a-fA-F!]+$ ]]
 # Allows only CIDR characters: brackets, digits, dots, slashes, colons, commas,
@@ -62,19 +68,27 @@ def _validate_lv_size(name: str, value: str) -> str:
 
 
 def _validate_timezone(value: str) -> str:
-    """Check that the timezone exists under /usr/share/zoneinfo."""
-    tz_path = Path("/usr/share/zoneinfo") / value
-    if not tz_path.exists():
+    """Validate Olson timezone name format, then probe /usr/share/zoneinfo if available."""
+    if not value or not _TIMEZONE_RE.match(value):
         raise ValueError(
-            f"Timezone '{value}' not found under /usr/share/zoneinfo."
+            f"Invalid timezone '{value}'. Expected Olson format, e.g. 'America/Sao_Paulo'."
         )
+    zoneinfo_root = Path("/usr/share/zoneinfo")
+    if zoneinfo_root.exists():
+        if not (zoneinfo_root / value).exists():
+            raise ValueError(
+                f"Timezone '{value}' not found under /usr/share/zoneinfo."
+            )
     return value
 
 
 def _validate_keymap(value: str) -> str:
-    """Accept any non-empty keymap string (validation deferred to archinstall)."""
-    if not value:
-        raise ValueError("Keymap must not be empty.")
+    """Validate keymap name against allowed character set."""
+    if not value or not _KEYMAP_RE.match(value):
+        raise ValueError(
+            f"Invalid keymap '{value}'. Expected format: lowercase letters, digits, "
+            "hyphens, underscores (e.g. 'us', 'br-abnt2', 'de')."
+        )
     return value
 
 
@@ -194,10 +208,14 @@ class BLK7Config:
             _validate_hostname(self.hostname)
         if self.username:
             _validate_username(self.username)
+        _validate_keymap(self.keymap)
+        _validate_timezone(self.timezone)
         _validate_lv_size("root_lv_size", self.root_lv_size)
         _validate_lv_size("swap_lv_size", self.swap_lv_size)
         if self.profile not in _VALID_PROFILES:
             raise ValueError(f"Invalid profile '{self.profile}'. Choose from {_VALID_PROFILES}.")
+        if self.workstation_mode not in _VALID_WORKSTATION_MODES:
+            raise ValueError(f"Invalid workstation_mode '{self.workstation_mode}'.")
         if self.bootloader not in _VALID_BOOTLOADERS:
             raise ValueError(f"Invalid bootloader '{self.bootloader}'.")
         if self.ids_mode not in _VALID_IDS_MODES:
