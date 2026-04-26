@@ -1,8 +1,0 @@
-[Unit]
-Description=OpenBox Tor circuit health check
-After=tor.service network-online.target
-Wants=tor.service
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/sbin/openbox-tor-check.sh
