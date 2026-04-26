@@ -1,7 +1,0 @@
-[Unit]
-Description=OpenBox DNS leak check
-After=pihole-FTL.service dnscrypt-proxy.service
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/sbin/openbox-dnsleak-check.sh
