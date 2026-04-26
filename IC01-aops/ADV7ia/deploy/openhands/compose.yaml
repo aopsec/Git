@@ -1,0 +1,27 @@
+# [FIX-ADV7IA-CM-02] Keep the OpenHands UI local-only and separate LAN access into a proxy layer.
+services:
+  openhands-app:
+    image: docker.openhands.dev/openhands/openhands:1.6
+    container_name: openhands-app
+    restart: unless-stopped
+    network_mode: bridge
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      SANDBOX_USER_ID: "${ADV7IA_OPENHANDS_SANDBOX_USER_ID:-1000}"
+      SANDBOX_RUNTIME_BINDING_ADDRESS: "127.0.0.1"
+      USE_HOST_NETWORK: "false"
+      FILE_STORE: "local"
+      FILE_STORE_PATH: "/.openhands"
+      SANDBOX_VOLUMES: "${ADV7IA_WORKSPACE_DIR:-/home/aops/ObsidianAgent/Projects/ADV7ia}:/workspace/adv7ia:rw"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "${HOME}/.openhands:/.openhands"
+      - "${HOME}/.openhands:/home/openhands/.openhands"
+      - "${HOME}/.openhands:/root/.openhands"
+      - "${ADV7IA_OPENHANDS_CONFIG:-/home/aops/.openhands/config.toml}:/app/config.toml:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    command: ["uvicorn", "openhands.server.listen:app", "--host", "0.0.0.0", "--port", "3000"]

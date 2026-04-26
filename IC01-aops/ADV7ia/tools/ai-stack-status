@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# [FIX-ADV7IA-TOOLS-01] Resolve the audit entrypoint from the repo-local tools directory.
+set -euo pipefail
+shopt -s inherit_errexit
+
+cleanup() {
+  :
+}
+
+main() {
+  local script_dir=""
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  exec "${script_dir}/audit-local-ai-stack"
+}
+
+trap cleanup EXIT INT
+main "$@"

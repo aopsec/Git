@@ -1,0 +1,183 @@
+#!/usr/bin/env bash
+# [FIX-ADV7IA-TOOLS-02] Remove hardcoded source paths and use repo-local tools by default.
+set -euo pipefail
+shopt -s inherit_errexit
+
+cleanup() {
+  :
+}
+
+print_service_state() {
+  local service_name="$1"
+
+  if systemctl is-active --quiet "${service_name}"; then
+    printf 'active (system)\n'
+    return 0
+  fi
+  if systemctl --user is-active --quiet "${service_name}"; then
+    printf 'active (user)\n'
+    return 0
+  fi
+  if systemctl is-enabled --quiet "${service_name}" >/dev/null 2>&1; then
+    systemctl is-active "${service_name}" || true
+    return 0
+  fi
+  systemctl --user is-active "${service_name}" || true
+}
+
+run_bounded_probe() {
+  local timeout_seconds="$1"
+  local label="$2"
+  shift 2
+
+  local output=""
+  local status=0
+
+  if ! command -v timeout >/dev/null 2>&1; then
+    printf '[WARN] timeout command not available; skipping bounded probe: %s\n' "${label}"
+    return 0
+  fi
+
+  if ! command -v "$1" >/dev/null 2>&1; then
+    printf '[INFO] command not available: %s\n' "$1"
+    return 0
+  fi
+
+  output="$(timeout "${timeout_seconds}" "$@" 2>&1)" || status=$?
+  if [[ ${status} -eq 0 ]]; then
+    if [[ -n "${output}" ]]; then
+      printf '%s\n' "${output}"
+    fi
+    return 0
+  fi
+
+  if [[ ${status} -eq 124 ]]; then
+    printf '[WARN] timed out after %s: %s\n' "${timeout_seconds}" "${label}"
+  else
+    printf '[WARN] command failed (%d): %s\n' "${status}" "${label}"
+  fi
+
+  if [[ -n "${output}" ]]; then
+    printf '%s\n' "${output}"
+  fi
+}
+
+section() {
+  local label="$1"
+  printf '\n===== %s =====\n' "${label}"
+}
+
+script_dir() {
+  local dir=""
+  dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  printf '%s\n' "${dir}"
+}
+
+project_root() {
+  local dir="$1"
+  printf '%s\n' "$(cd "${dir}/.." && pwd)"
+}
+
+print_repo_status() {
+  local source_repo="$1"
+  section "Source repo"
+  if [[ -d "${source_repo}/.git" ]]; then
+    git -C "${source_repo}" status --short || true
+    git -C "${source_repo}" log --oneline --decorate -8 || true
+    return 0
+  fi
+  printf '[INFO] source repo not available: %s\n' "${source_repo}"
+}
+
+main() {
+  local local_tools=""
+  local local_root=""
+  local source_repo=""
+  local opencode_config=""
+  local rag_smoke=""
+  local lmstudio_timeout=""
+  local rag_collection=""
+  local qdrant_url=""
+
+  local_tools="$(script_dir)"
+  local_root="$(project_root "${local_tools}")"
+  source_repo="${ADV7IA_SOURCE_REPO:-${HOME}/openhands-workspace/aider-test}"
+  opencode_config="${HOME}/.config/opencode/opencode.json"
+  rag_smoke="${ADV7IA_RAG_SMOKE_CMD:-test-qdrant-lmstudio-rag}"
+  lmstudio_timeout="${ADV7IA_LM_STUDIO_TIMEOUT_SECONDS:-5s}"
+  rag_collection="${ADV7IA_RAG_COLLECTION:-adv7ia_repo_rag}"
+  qdrant_url="${ADV7IA_QDRANT_URL:-http://127.0.0.1:6333}"
+
+  section "System"
+  uname -a
+  date -Is
+
+  section "Docker services"
+  systemctl is-active docker || true
+  systemctl is-active containerd || true
+  systemctl is-active openhands-docker-bridge-allow.service || true
+  print_service_state openhands-docker-proxy.service
+  print_service_state caddy.service
+  print_service_state adv7ia-caddy-lan-proxy.service
+  systemctl is-active lmstudio-docker-proxy.service || true
+
+  section "Docker containers"
+  docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}" || true
+
+  section "LM Studio"
+  run_bounded_probe "${lmstudio_timeout}" "lms status" lms status || true
+  run_bounded_probe "${lmstudio_timeout}" "lms ps" lms ps || true
+  curl -s --max-time 5 http://127.0.0.1:1234/v1/models | jq -r '.data[].id' || true
+
+  section "LM Studio Docker bridge"
+  curl -s --max-time 5 http://172.17.0.1:1234/v1/models | jq -r '.data[].id' || true
+
+  section "OpenHands health"
+  curl -s --max-time 5 http://127.0.0.1:3000/health || true
+  echo
+
+  section "OpenCode MCP"
+  opencode mcp list || true
+
+  section "Qdrant"
+  curl -s --max-time 5 http://127.0.0.1:6333/collections | jq . || true
+
+  section "RAG smoke"
+  if command -v "${rag_smoke}" >/dev/null 2>&1; then
+    "${rag_smoke}" || true
+  else
+    printf '[INFO] RAG smoke command not available: %s\n' "${rag_smoke}"
+  fi
+
+  section "RAG repo query"
+  case "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "${qdrant_url}/collections/${rag_collection}" || true)" in
+    200)
+      "${local_tools}/query-aider-test-rag" "filesystem MCP and git MCP validation" || true
+      ;;
+    404)
+      printf '[WARN] missing default ADV7ia RAG collection: %s\n' "${rag_collection}"
+      printf '[INFO] bootstrap with: bash %s/bootstrap-adv7ia-rag\n' "${local_tools}"
+      ;;
+    *)
+      printf '[WARN] unable to inspect default ADV7ia RAG collection: %s\n' "${rag_collection}"
+      ;;
+  esac
+
+  section "Ports"
+  ss -ltnp | grep -E '(:1234|:3000|:6333|:8443)' || true
+
+  section "OpenCode permissions"
+  if [[ -f "${opencode_config}" ]]; then
+    jq '.permission, .mcp' "${opencode_config}" || true
+  else
+    printf '[INFO] opencode config not available: %s\n' "${opencode_config}"
+  fi
+
+  section "Imported project root"
+  printf '%s\n' "${local_root}"
+
+  print_repo_status "${source_repo}"
+}
+
+trap cleanup EXIT INT
+main "$@"

@@ -1,0 +1,13 @@
+[Unit]
+Description=IPS IDS Kunai eBPF event monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/kunai run
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,2 @@
+# [IPS-PH1] Placeholder for local Kunai rules.
+# Keep rules visible-only during Phase 1. Tune after the Falco and auditd baseline.

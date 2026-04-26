@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily IPS IDS Loki-RS YARA scan
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=45m
+Persistent=true
+
+[Install]
+WantedBy=timers.target
