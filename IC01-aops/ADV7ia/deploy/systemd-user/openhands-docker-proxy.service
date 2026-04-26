@@ -1,0 +1,13 @@
+# [FIX-OH-08] Current default deployment target for the OpenHands bridge proxy.
+[Unit]
+Description=Expose OpenHands localhost API to Docker bridge only
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/socat -d -d TCP4-LISTEN:3000,bind=172.17.0.1,fork,reuseaddr TCP4:127.0.0.1:3000
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

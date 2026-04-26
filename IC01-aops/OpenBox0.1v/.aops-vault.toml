@@ -1,0 +1,115 @@
+version = 1
+
+[project]
+name = "OpenBox"
+tag = "openbox"
+
+[vault]
+root = "vault"
+generated = "vault/Generated"
+
+[render]
+generator_ref = "plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py"
+regenerate_command = "python3 \"${AOPS_OBSIDIAN_AGENT_CLI:-$HOME/plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py}\" --sync --repo ."
+stale_message = "Obsidian vault is stale. Regenerate with:"
+summary_fallback = "absolute"
+
+[repository_map]
+include = true
+core_documents = [
+  "README",
+  "CASE_STUDY",
+  "THREAT_MODEL",
+  "HARDENING_PLAN_v2",
+  "RUNBOOK",
+  "TOR_STREAMING_CAVEAT",
+  "REFERENCES",
+  "OBSIDIAN_VAULT",
+]
+manual_dashboards = [
+  "OpenBox Vault Home",
+  "OpenBox Project Dashboard",
+  "OpenBox Architecture Dashboard",
+  "OpenBox Operations Dashboard",
+  "OpenBox Security Dashboard",
+  "OpenBox Research Dashboard",
+  "OpenBox Delivery Backlog",
+  "OpenBox Roadmap",
+]
+
+[related_notes]
+defaults = ["README"]
+
+[related_notes.match]
+base = ["README", "HARDENING_PLAN_v2", "RUNBOOK"]
+sysctl = ["README", "HARDENING_PLAN_v2", "CASE_STUDY"]
+nftables = ["THREAT_MODEL", "HARDENING_PLAN_v2", "RUNBOOK"]
+wireguard = ["THREAT_MODEL", "HARDENING_PLAN_v2", "RUNBOOK"]
+wg0 = ["THREAT_MODEL", "HARDENING_PLAN_v2", "RUNBOOK"]
+dns = ["THREAT_MODEL", "RUNBOOK", "REFERENCES"]
+dnsleak = ["THREAT_MODEL", "RUNBOOK", "REFERENCES"]
+pihole = ["THREAT_MODEL", "RUNBOOK", "REFERENCES"]
+tor = ["TOR_STREAMING_CAVEAT", "THREAT_MODEL", "RUNBOOK", "REFERENCES"]
+stremio = ["README", "CASE_STUDY", "RUNBOOK"]
+monitoring = ["THREAT_MODEL", "RUNBOOK", "REFERENCES"]
+caddy = ["RUNBOOK", "REFERENCES"]
+monit = ["RUNBOOK", "REFERENCES"]
+fail2ban = ["THREAT_MODEL", "RUNBOOK"]
+watchdog = ["THREAT_MODEL", "RUNBOOK"]
+validate = ["README", "RUNBOOK"]
+test = ["README", "RUNBOOK"]
+
+[[catalog]]
+label = "Install Phases"
+folder = "Install Phases"
+note_prefix = "Install Phase"
+tag = "install-phase"
+source_patterns = ["install.d/*.sh"]
+title_mode = "install-phase"
+index_name = "Install Phase Index"
+
+[[catalog]]
+label = "Systemd"
+folder = "Systemd"
+note_prefix = "Systemd"
+tag = "systemd"
+source_patterns = ["systemd/*.service", "systemd/*.timer"]
+title_mode = "standard"
+index_name = "Systemd Service Index"
+
+[[catalog]]
+label = "Automation"
+folder = "Automation"
+note_prefix = "Automation"
+tag = "automation"
+source_patterns = ["usr/local/sbin/*.sh"]
+title_mode = "standard"
+index_name = "Automation Index"
+
+[[catalog]]
+label = "Validation"
+folder = "Validation"
+note_prefix = "Validation"
+tag = "validation"
+source_patterns = ["tests/*.sh"]
+title_mode = "standard"
+index_name = "Validation Index"
+
+[[catalog]]
+label = "Configs"
+folder = "Configs"
+note_prefix = "Config"
+tag = "config"
+source_patterns = [
+  "etc/nftables/*",
+  "etc/tor/*",
+  "etc/dnscrypt-proxy/*",
+  "etc/caddy/*",
+  "etc/ssh/sshd_config.d/*",
+  "etc/fail2ban/jail.d/*",
+  "etc/monit/monitrc.d/*",
+  "etc/sysctl.d/*",
+  "etc/wireguard/*",
+]
+title_mode = "config"
+index_name = "Config Index"

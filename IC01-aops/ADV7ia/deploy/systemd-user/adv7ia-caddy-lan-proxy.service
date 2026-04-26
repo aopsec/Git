@@ -1,0 +1,16 @@
+# [FIX-ADV7IA-CADDY-02] Rootless fallback unit for the Caddy LAN proxy when host-level install is unavailable.
+[Unit]
+Description=Expose OpenHands to the LAN through Caddy mTLS on :8443
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/adv7ia/caddy-lan-proxy.env
+ExecStart=%h/.local/bin/caddy run --config ${ADV7IA_CADDY_CONFIG} --adapter caddyfile
+ExecReload=%h/.local/bin/caddy reload --config ${ADV7IA_CADDY_CONFIG} --adapter caddyfile
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target
