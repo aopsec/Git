@@ -1,6 +1,0 @@
-[Unit]
-Description=IPS IDS AIDE integrity check
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/aide --check

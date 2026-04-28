@@ -1,7 +1,0 @@
-[Unit]
-Description=IPS IDS chkrootkit and unhide scan
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/chkrootkit
-ExecStart=/usr/bin/unhide quick
