@@ -1,0 +1,195 @@
+{
+  "_doc": "Bibliografia rastreável usada no AVAL01-IC.html. Cada entrada citada por id no corpo via class=\"cite\" data-ref=ID.",
+  "br_gov": [
+    {
+      "id": "anatel-mcom-2026-balanco",
+      "type": "gov-br",
+      "authority": "Ministério das Comunicações (MCom) / Anatel",
+      "title": "Brasil intensifica combate à pirataria digital em 2025, com apreensão milionária e mapeamento de até 8 milhões de usuários clandestinos",
+      "url": "https://www.gov.br/mcom/pt-br/noticias/2026/janeiro/brasil-intensifica-combate-a-pirataria-digital-em-2025-com-apreensao-milionaria-e-mapeamento-de-ate-8-milhoes-de-usuarios-clandestinos",
+      "date": "2026-01",
+      "key_figures": [
+        "R$ 166 milhões em equipamentos apreendidos em 2025",
+        "Até 8 milhões de usuários piratas mapeados pela Anatel"
+      ]
+    },
+    {
+      "id": "anatel-ancine-acordo-2025",
+      "type": "gov-br",
+      "authority": "Anatel",
+      "title": "Anatel e Ancine firmam acordo para combater pirataria de conteúdos audiovisuais",
+      "url": "https://www.gov.br/anatel/pt-br/assuntos/noticias/anatel-e-ancine-firmam-acordo-para-combater-pirataria-de-conteudos-audiovisuais",
+      "date": "2025-05-15",
+      "key_figures": [
+        "1,5 milhão de TV boxes não homologados apreendidos entre out/2018 e mai/2025",
+        "R$ 353,2 milhões em equipamentos apreendidos no período",
+        "24.700 IPs e 4.428 domínios bloqueados pelo Lab Antipirataria desde set/2023"
+      ]
+    },
+    {
+      "id": "operacao-praedo-2025",
+      "type": "imprensa-tec",
+      "authority": "TELETIME / Polícia Federal / Anatel",
+      "title": "PF e Anatel desarticulam esquema milionário de TV box pirata e gatonet (Operação PRAEDO)",
+      "url": "https://teletime.com.br/29/07/2025/pf-e-anatel-desarticulam-esquema-milionario-de-tv-box-pirata-e-gatonet/",
+      "date": "2025-07-29",
+      "key_figures": [
+        "38 agentes PF + 4 fiscais Anatel, 12 mandados de busca em Curitiba/Foz/Brasília",
+        "140 aparelhos recolhidos: UniTv, Red Pro3, BTV, Platinum, Pulse",
+        "Preço médio R$ 899 por unidade no varejo clandestino"
+      ]
+    },
+    {
+      "id": "operacao-404-fase8",
+      "type": "imprensa-tec",
+      "authority": "Ministério da Justiça e Segurança Pública (MJSP)",
+      "title": "Operação 404 (8ª fase) bloqueia 535 sites e 1 app de IPTV pirata",
+      "url": "https://www.targethd.net/como-a-operacao-404-bloqueou-535-sites-de-iptv-e-streaming-piratas-na-sua-8a-fase/",
+      "date": "2024-11-27",
+      "key_figures": [
+        "535 sites bloqueados",
+        "44 mandados de busca, 4 prisões preventivas",
+        "BTV (TV box pirata referência) entre os alvos"
+      ]
+    },
+    {
+      "id": "operacao-404-fase7",
+      "type": "imprensa-tec",
+      "authority": "MJSP",
+      "title": "Operação contra pirataria tira do ar 675 sites e 14 aplicativos de streaming (7ª fase)",
+      "url": "https://teletime.com.br/19/09/2024/operacao-contra-pirataria-tira-do-ar-sites-e-aplicativos-de-streaming/",
+      "date": "2024-09-19"
+    },
+    {
+      "id": "cetic-tic-dom-2024",
+      "type": "gov-br",
+      "authority": "CETIC.br / NIC.br / CGI.br",
+      "title": "TIC Domicílios 2024 — em duas décadas, lares urbanos com internet passaram de 13% para 85%",
+      "url": "https://cetic.br/pt/noticia/em-duas-decadas-proporcao-de-lares-urbanos-brasileiros-com-internet-passou-de-13-para-85-aponta-tic-domicilios-2024/",
+      "date": "2024-10-31",
+      "key_figures": [
+        "85% dos lares urbanos brasileiros com internet (vs 13% em 2005)",
+        "TV é 2º dispositivo de acesso à internet (60%), atrás só do celular (99%)",
+        "141 milhões de internautas no Brasil"
+      ]
+    },
+    {
+      "id": "cetic-tic-dom-2024-pdf",
+      "type": "gov-br",
+      "authority": "CETIC.br",
+      "title": "TIC Domicílios 2024 — Resumo Executivo (PDF oficial)",
+      "url": "https://www.cetic.br/media/docs/publicacoes/2/20250512115624/tic_domicilios_2024_resumo_executivo.pdf",
+      "date": "2025-05"
+    },
+    {
+      "id": "procon-google-2025",
+      "type": "imprensa-tec",
+      "authority": "Procon Carioca",
+      "title": "Procon Carioca notifica Google por anúncios de TV box pirata",
+      "url": "https://teletime.com.br/24/07/2025/procon-carioca-notifica-google-por-anuncios-de-tv-box-pirata",
+      "date": "2025-07-24"
+    },
+    {
+      "id": "procon-sp-orientacao",
+      "type": "imprensa-tec",
+      "authority": "Procon-SP",
+      "title": "Procon-SP orienta sobre BTV/UniTV/TV Box pirata: sem garantia de suporte ou reembolso",
+      "url": "https://onlinedigitalsolucoes.com/uso-de-btv-unitv-e-tv-box-pirata-riscos-legais-e-orientacoes/",
+      "date": "2025"
+    }
+  ],
+  "global_threat": [
+    {
+      "id": "fbi-psa-2025",
+      "type": "gov-us",
+      "authority": "FBI / IC3",
+      "title": "PSA I-060525-PSA — Home Internet Connected Devices Facilitate Criminal Activity (BadBox 2.0)",
+      "url": "https://www.ic3.gov/PSA/2025/PSA250605",
+      "date": "2025-06-05",
+      "key_figures": [
+        "Sete TV boxes (incluindo MXQ Pro 5G) e um tablet listados como infectados",
+        "Backdoor baseado em Triada (Lemon Group, China)"
+      ]
+    },
+    {
+      "id": "human-badbox2",
+      "type": "industry",
+      "authority": "HUMAN Security — Satori Threat Intelligence",
+      "title": "Satori Threat Intelligence Disruption: BADBOX 2.0 Targets Consumer Devices with Multiple Fraud Schemes",
+      "url": "https://www.humansecurity.com/learn/blog/satori-threat-intelligence-disruption-badbox-2-0/",
+      "date": "2025-03",
+      "key_figures": [
+        ">1.000.000 dispositivos infectados (vs 74.000 do BadBox original)",
+        "222 países e territórios com tráfego BadBox 2.0",
+        "Mais de 1/3 dos dispositivos infectados estão no BRASIL"
+      ]
+    },
+    {
+      "id": "human-newsroom",
+      "type": "industry",
+      "authority": "HUMAN Security",
+      "title": "HUMAN Exposes BADBOX 2.0 Scheme Infecting 1 Million Off-Brand AOSP Devices",
+      "url": "https://www.humansecurity.com/newsroom/human-exposes-badbox-2-0-scheme/",
+      "date": "2025-03"
+    },
+    {
+      "id": "eff-fbi-warning",
+      "type": "ngo",
+      "authority": "Electronic Frontier Foundation",
+      "title": "FBI Warning on IoT Devices: How to Tell If You Are Impacted",
+      "url": "https://www.eff.org/deeplinks/2025/06/fbi-warning-iot-devices-how-tell-if-you-are-impacted",
+      "date": "2025-06"
+    },
+    {
+      "id": "compass-mxq",
+      "type": "internal-research",
+      "authority": "Pesquisa interna AOPS (compass artifact)",
+      "title": "Inside the MXQ Pro 5G 4K R2390 — Rockchip RK3229 com firmware comprometido",
+      "path": "/home/aops/Downloads/compass_artifact_wf-562a9f40-b72e-40e3-b1d7-e800f8b32ae7_text_markdown.md",
+      "date": "2026-04-25",
+      "summary": "Análise técnica do hardware (RK3229, Mali-400, Cortex-A7), boot chain Rockchip, lista de chipsets Wi-Fi falsos, fraude de capacidade, ADB pré-habilitado, bootloader não-bloqueado, malware persistente em /system."
+    }
+  ],
+  "model_e_aopstech": [
+    {
+      "id": "av01-modelo",
+      "type": "academic",
+      "authority": "UniCEUB — Disciplina Introdução à Computação",
+      "title": "[IC]AV01-A.pdf — Avaliação 01: Estudo de Caso → Pitch → Projeto Técnico (rubrica oficial)",
+      "path": "/home/aops/Downloads/[IC]AV01-A.pdf",
+      "date": "2026-04"
+    },
+    {
+      "id": "openbox-repo",
+      "type": "internal-code",
+      "authority": "AOPS — OpenBox v0.2.0",
+      "title": "OpenBox — caixa de borda residencial com WireGuard + DNS cifrado + nftables kill switch (RK3229)",
+      "path": "/home/aops/ObsidianAgent/Projects/IC01-aops/OpenBox0.1v/",
+      "date": "2026-04-25"
+    },
+    {
+      "id": "adv7sec-repo",
+      "type": "internal-code",
+      "authority": "AOPS — ADV7Sec 1.0v",
+      "title": "ADV7Sec — control plane IPS/IDS detection-only para Linux (auditd + Falco + Suricata + Zeek + ClamAV)",
+      "path": "/home/aops/ObsidianAgent/Projects/IC01-aops/IPS_IDS/ADV7Sec_1.0v.py",
+      "date": "2026-04"
+    },
+    {
+      "id": "rk3229-threat-research",
+      "type": "internal-research",
+      "authority": "AOPS",
+      "title": "RK3229_THREAT_RESEARCH — análise de ameaças do hardware Rockchip RK322x",
+      "path": "/home/aops/ObsidianAgent/Projects/IC01-aops/OpenBox0.1v/docs/security/RK3229_THREAT_RESEARCH.md",
+      "date": "2026-04-25"
+    },
+    {
+      "id": "adv7box-prev",
+      "type": "internal-code",
+      "authority": "AOPS — ADV7Box AV01-A",
+      "title": "ADV7Box — entrega consolidada AV01-A (referência visual, não-canônica para esta entrega)",
+      "path": "/home/aops/ObsidianAgent/Projects/IC01-aops/OpenBox0.1v/ADV7Box/",
+      "date": "2026-04-26"
+    }
+  ]
+}
