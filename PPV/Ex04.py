@@ -36,17 +36,27 @@ print(">>> Number   Pattern    Generator <<<\n   > FrecodeCamp\n       - LAB 01"
 
 # [CORE]
 def number_pattern(n):
-    # Try comparing n to itself — this fails if n isn't a number
-    if n != n or n < 1:
-        return "Argument must be an integer greater than 0"
+    try:
+        r = range(1, n + 1)
+    except TypeError:
+        return "Argument must be an integer value."   # <-- period here
     
-    x = ""
-    for i in range(1, n + 1):
-        x += str(i) + " "
+    if n < 1:
+        return "Argument must be an integer greater than 0."  # <-- and here
     
-    return x.strip()
+    result = ""
+    for i in r:
+        if i < n:
+            result += str(i) + " "
+        else:
+            result += str(i)
+    
+    return result
 
 
 if __name__ == '__main__':
     print(number_pattern(4))
-    print(number_pattern(12)) 
+    print(number_pattern(12))
+    print(number_pattern(3.5))
+    print(number_pattern("hello"))
+    print(number_pattern(0))
