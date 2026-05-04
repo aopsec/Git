@@ -30,4 +30,23 @@
 # Waiting:6. number_pattern should return Argument must be an integer value. when passed a value that is not an integer.
 # Waiting:7. number_pattern should return Argument must be an integer greater than 0. when passed a non-positive integer.
 
-print("Number   Pattern     Generator\n   FrecodeCamp\n       LAB")
+# [INTRO]
+
+print(">>> Number   Pattern    Generator <<<\n   > FrecodeCamp\n       - LAB 01")
+
+# [CORE]
+def number_pattern(n):
+    # Try comparing n to itself — this fails if n isn't a number
+    if n != n or n < 1:
+        return "Argument must be an integer greater than 0"
+    
+    x = ""
+    for i in range(1, n + 1):
+        x += str(i) + " "
+    
+    return x.strip()
+
+
+if __name__ == '__main__':
+    print(number_pattern(4))
+    print(number_pattern(12)) 
