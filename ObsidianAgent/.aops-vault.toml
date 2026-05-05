@@ -1,0 +1,64 @@
+version = 1
+
+[project]
+name = "ObsidianAgent"
+tag = "obsidian-agent"
+
+[vault]
+root = "Vault"
+generated = "Vault/Generated"
+
+[render]
+generator_ref = "plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py"
+regenerate_command = 'python3 "${AOPS_OBSIDIAN_AGENT_CLI:-$HOME/plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py}" --sync --repo .'
+stale_message = "Vault output is stale. Regenerate with:"
+summary_fallback = "relative"
+
+[repository_map]
+include = true
+core_documents = ["README"]
+manual_dashboards = ["Vault Home"]
+
+[related_notes]
+defaults = ["README"]
+
+[related_notes.match]
+openbox = ["README"]
+vault = ["README"]
+project = ["README"]
+
+[[catalog]]
+label = "Project Manifests"
+folder = "Project Manifests"
+note_prefix = "Project Manifest"
+tag = "project-manifest"
+source_patterns = ["Projects/*/.aops-vault.toml"]
+title_mode = "project-parent"
+index_name = "Project Manifest Index"
+
+[[catalog]]
+label = "Project Overviews"
+folder = "Project Overviews"
+note_prefix = "Project Overview"
+tag = "project-overview"
+source_patterns = ["Projects/*/README.md"]
+title_mode = "project-parent"
+index_name = "Project Overview Index"
+
+[[catalog]]
+label = "Session Logs"
+folder = "Session Logs"
+note_prefix = "Session Log"
+tag = "session-log"
+source_patterns = ["SessionLogs/*/*.md"]
+title_mode = "session-log"
+index_name = "Session Log Index"
+
+[[catalog]]
+label = "Daily Notes"
+folder = "Daily Notes"
+note_prefix = "Daily"
+tag = "daily-note"
+source_patterns = ["Vault/Journal/Daily/*.md"]
+title_mode = "daily"
+index_name = "Daily Note Index"
