@@ -1,332 +1,0 @@
-[1;34m[TEST] Log file: /run/media/aops/SapoHD/ComputerScience/Git/tests/vm/logs/python-test-20260406-223833.log[0m
-[1;34m[TEST] Mode: dry-only (direct kernel boot)[0m
-[1;34m[TEST] Starting QEMU (direct kernel boot, serial→stdio)...[0m
-[1;34m[TEST] QEMU started (direct kernel boot). Waiting for Arch ISO (~90s)...[0m
-P+q6E616D65\[18t[!p]104\[0m[?7h[1G[0J]3008;start=d6181e0764aa488c87adc1a3f0586bda;user=root;hostname=archiso;machineid=bbbd6255169649fbb2938703c313c436;bootid=848d6066e25d41539d8b5a75d0e63b43;pid=1;pidfdid=2;comm=systemd;type=boot\[!p]104\[0m[?7h[1G[0J[6n[32766;32766H[6n[1;1H[!p]104\[0m[?7h[1G[0J[6n[32766;32766H[6n[1;1H]3008;start=8b8420d17fcf49a08288d706e2d75f79;user=root;hostname=archiso;machineid=bbbd6255169649fbb2938703c313c436;bootid=848d6066e25d41539d8b5a75d0e63b43;pid=576;pidfdid=577;comm=(systemd-firstboot);servicename=systemd-firstboot.service;invocationid=1734ea27be9149fba719140950ca70cd;type=service\[!p]104\[0m[?7h[1G[0J[6n[32766;32766H[6n[1;1H[!p]104\[0m[?7h[1G[0J[6n[32766;32766H[6n[1;1H]3008;start=c8a51b07724c4a37ac4c7fb86340af19;user=root;hostname=archiso;machineid=bbbd6255169649fbb2938703c313c436;bootid=848d6066e25d41539d8b5a75d0e63b43;pid=707;pidfdid=708;comm=(agetty);servicename=serial-getty@ttyS0.service;invocationid=02fcdf288850407a91fe5a7934acac50;type=service\P+q6E616D65\
-Arch Linux 6.19.10-arch1-1 (ttyS0)
-
-archiso login: [1;32m[ OK ] Arch ISO booted[0m
-root
-To install [38;2;23;147;209mArch Linux[0m follow the installation guide:
-https://wiki.archlinux.org/title/Installation_guide
-
-For Wi-Fi, authenticate to the wireless network using the [35miwctl[0m utility.
-For mobile broadband (WWAN) modems, connect with the [35mmmcli[0m utility.
-Ethernet, WLAN and WWAN interfaces using DHCP should work automatically.
-
-After connecting to the internet, the installation guide can be accessed
-via the convenience script [35mInstallation_guide[0m.
-
-[41m [41m [41m [40m [44m [40m [41m [46m [45m [41m [46m [43m [41m [44m [45m [40m [44m [40m [41m [44m [41m [41m [46m [42m [41m [44m [43m [41m [45m [40m [40m [44m [40m [41m [44m [42m [41m [46m [44m [41m [46m [47m [0m
-]3008;start=990eef5cc52b4e739fd87c8f539ec832;user=root;hostname=archiso;machineid=bbbd6255169649fbb2938703c313c436;bootid=848d6066e25d41539d8b5a75d0e63b43;pid=707;pidfdid=708;comm=login;targetuser=root;sessionid=3;type=session\[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hrroot[?2004l
-zsh: command not found: root
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m127 [39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[196C:([198D[?2004h[1;34m[TEST] Mounting host 9p share...[0m
-mmkdir -p /host && mount -t 9p -o trans=virtio,version=9p2000.L blk7arch /host[?2004l[K
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hmmkdir -p /host && mount -t 9p -o trans=virtio,version=9p2000.L blk7arch /host[?2004l
-mount: /host: blk7arch already mounted on /host.
-       dmesg(1) may have more information after failed mount system call.
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m32 [39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[197C:([199D[?2004hlls /host/blk7rch/blk7rch/__init__.py && echo '9P_OK'[?2004l[K
-[0m[01;32m/host/blk7rch/blk7rch/__init__.py[0m
-9P_OK
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hlls /host/blk7rch/blk7rch/__init__.py && echo '9P_OK'[?2004l
-PYTHONPATH=/host/blk7rch python -c 'import blk7rch; print("IMPORT_OK")'
-[0m[01;32m/host/blk7rch/blk7rch/__init__.py[0m
-9P_OK
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hPPYTHONPATH=/host/blk7rch python -c 'import blk7rch; print("IMPORT_OK")'[?2004l
-IMPORT_OK
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hPPYTHONPATH=/host/blk7rch python -m blk7rch self-test && echo 'SELFTEST_73205:0' || echo 'SELFTEST_73205:1'[?2004l
-[1;32m[ OK ] 9p share mounted[0m
-[1;34m[TEST] Verifying blk7rch importable...[0m
-PYTHONPATH=/host/blk7rch python -c 'import blk7rch; print("IMPORT_OK")'
-[1;32m[ OK ] blk7rch importable[0m
-[1;34m[TEST] === self-test (dry-run pentest profile) ===[0m
-PYTHONPATH=/host/blk7rch python -m blk7rch self-test && echo 'SELFTEST_73794:0' || echo 'SELFTEST_73794:1'
-[1;33m[WARN] SELF-TEST: FAILED (1)[0m
-SELFTEST_RESULT=1
-[1;34m[TEST] === install --dry-run --profile workstation ===[0m
-PYTHONPATH=/host/blk7rch python -m blk7rch install   --dry-run --profile workstation --disk /dev/vda   --hostname blk7test --username auditor --unattended   && echo 'DRYRUN_73794:0' || echo 'DRYRUN_73794:1'
-PYTHONPATH=/host/blk7rch python -m blk7rch install   --dry-run --profile workstation --disk /dev/vda   --hostname blk7test --username auditor --unattended   && echo 'DRYRUN_73205:0' || echo 'DRYRUN_73205:1'
-[34m[1m==> [0mself-test: running dry-run with pentest profile
-[34m[1m==> [0mBLK7rch installer started
-[34m[1m==> [0mPhase 0: validating configuration
-[33m[1m[DRY-RUN] [0mvalidation skipped in dry-run mode
-[32m[1m[OK] [0mPhase 0: configuration valid
-[34m[1m==> [0mPhase 1: disk partitioning + LUKS2 + LVM
-[33m[1m[DRY-RUN] [0mbuild_disk_layout()
-[33m[1m[DRY-RUN] [0mFilesystemHandler.perform_filesystem_operations()
-[34m[1m==> [0mPhase 2: base system installation
-[33m[1m[DRY-RUN] [0mInstaller.mount_ordered_layout()
-[33m[1m[DRY-RUN] [0mconfigure_chroot(locale=en_US.UTF-8, keymap=us)
-[33m[1m[DRY-RUN] [0mInstaller.add_bootloader(Bootloader.Grub)
-[33m[1m[DRY-RUN] [0mInstaller.create_users(testuser)
-[33m[1m[DRY-RUN] [0mInstaller.enable_service('NetworkManager')
-[33m[1m[DRY-RUN] [0mInstaller.enable_service('gdm')
-[34m[1m==> [0mProfile [base]: installing minimal packages
-[33m[1m[DRY-RUN] [0madd_additional_packages(['base', 'base-devel', 'linux', 'linux-firmware', 'lvm2', 'cryptsetup', 'grub', 'efibootmgr', 'networkmanager', 'sudo', 'vim', 'git', 'ufw', 'openssh', 'man-db', 'man-pages', 'bash-completion'])
-[33m[1m[DRY-RUN] [0menable_service(NetworkManager)
-[32m[1m[OK] [0mProfile [base]: complete
-[34m[1m==> [0mProfile [workstation]: installing desktop packages
-[33m[1m[DRY-RUN] [0madd_additional_packages(['hyprland', 'waybar', 'foot', 'wofi', 'mako', 'xdg-desktop-portal-hyprland', 'xdg-desktop-portal-gtk', 'xorg-xwayland', 'brightnessctl', 'wl-clipboard', 'gdm', 'polkit', 'polkit-gnome', 'grim', 'slurp'])
-[36m[1m[INFO] [0mHyprland: writing pentest config variant
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/testuser/.config/hypr/hyprland.conf
-[36m[1m[INFO] [0mWaybar: writing pentest IDS variant
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/testuser/.config/waybar/config
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/testuser/.config/waybar/style.css
-[34m[1m==> [0mGDM: configuring display manager
-[33m[1m[DRY-RUN] [0mwrite /mnt/usr/share/wayland-sessions/hyprland.desktop
-[33m[1m[DRY-RUN] [0mwrite /mnt/var/lib/AccountsService/users/testuser
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable gdm
-[32m[1m[OK] [0mGDM: configured
-[32m[1m[OK] [0mProfile [workstation]: complete
-[34m[1m==> [0mProfile [pentest]: installing pentest tools
-[33m[1m[DRY-RUN] [0madd_additional_packages(['firefox', 'htop', 'nethogs', 'nmap', 'wireshark-qt', 'python', 'python-pip', 'tmux', 'ranger', 'tcpdump', 'net-tools', 'iproute2', 'bind', 'whois', 'traceroute'])
-[34m[1m==> [0mProfile [ids]: installing IDS/IPS
-[33m[1m[DRY-RUN] [0madd_additional_packages(['snort', 'suricata'])
-[34m[1m==> [0mSnort: writing configuration files
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/snort/snort.conf
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/snort/threshold.conf
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/snort/suppress.conf
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/snort/rules/local.rules
-[36m[1m[INFO] [0mSnort: validating configuration
-[33m[1m[DRY-RUN] [0march-chroot /mnt snort -T -c /etc/snort/snort.conf
-[32m[1m[OK] [0mSnort: configuration validated
-[32m[1m[OK] [0mSnort: configuration complete
-[34m[1m==> [0mSuricata: writing configuration files
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/suricata/suricata.yaml
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/suricata/threshold.config
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/suricata/rules/local.rules
-[36m[1m[INFO] [0mSuricata: validating configuration
-[33m[1m[DRY-RUN] [0march-chroot /mnt suricata -T -c /etc/suricata/suricata.yaml -v
-[32m[1m[OK] [0mSuricata: configuration validated
-[32m[1m[OK] [0mSuricata: configuration complete
-[33m[1m[DRY-RUN] [0menable_service(snort)
-[33m[1m[DRY-RUN] [0menable_service(suricata)
-[32m[1m[OK] [0mProfile [ids]: complete
-[32m[1m[OK] [0mProfile [pentest]: complete
-[34m[1m==> [0mBlackArch: bootstrapping repository
-[33m[1m[DRY-RUN] [0mcurl -fsSL --max-time 60 --retry 3 -o /tmp/tmpel5o8igw/strap.sh https://blackarch.org/strap.sh
-[33m[1m[DRY-RUN] [0mcurl -fsSL --max-time 60 --retry 3 -o /tmp/tmpel5o8igw/strap.sh.sha256 https://blackarch.org/strap.sh.sha256
-[33m[1m[DRY-RUN] [0mSHA256 verification skipped in dry-run mode
-[33m[1m[DRY-RUN] [0march-chroot /mnt /bin/bash /tmp/strap.sh
-[32m[1m[OK] [0mBlackArch: repository bootstrapped
-[34m[1m==> [0mPhase 3: post-installation
-[33m[1m[DRY-RUN] [0mwrite transaction log (dry-run — not written to disk)
-[32m[1m[OK] [0mTransaction log written
-[34m[1m==> [0mPost-boot validation: installing service
-[33m[1m[DRY-RUN] [0mwrite /mnt/usr/local/bin/blk7rch-postboot-validate
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/systemd/system/blk7rch-postboot-validate.service
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable blk7rch-postboot-validate.service
-[32m[1m[OK] [0mPost-boot validation: service installed and enabled
-[34m[1m==> [0mUFW: configuring firewall
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw --force reset
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw default deny incoming
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw default allow outgoing
-[36m[1m[INFO] [0mUFW: SSH inbound DENIED (allow_ssh_inbound=False)
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw --force enable
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable ufw
-[32m[1m[OK] [0mUFW: firewall configured
-[34m[1m==> [0mUnmounting /mnt
-[33m[1m[DRY-RUN] [0mumount -R /mnt
-[32m[1m[OK] [0mFilesystems unmounted
-[33m[1m[DRY-RUN] [0mreboot skipped in dry-run mode
-[32m[1m[OK] [0mPhase 3: complete
-[32m[1m[OK] [0mBLK7rch installation complete!
-[32m[1m[OK] [0mself-test: PASSED — all phases completed in dry-run mode
-SELFTEST_73205:0
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hPPYTHONPATH=/host/blk7rch python -c 'import blk7rch; print("IMPORT_OK")'[?2004l
-IMPORT_OK
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hPPYTHONPATH=/host/blk7rch python -m blk7rch self-test && echo 'SELFTEST_73794:0' || echo 'SELFTEST_73794:1'[?2004l
-[1;33m[WARN] DRY-RUN: FAILED (1)[0m
-DRY_RUN_RESULT=1
-[1;34m[TEST] === TEST SUMMARY ===[0m
-[1;33m[WARN] self-test:    FAILED (1)[0m
-[1;33m[WARN] dry-run:      FAILED (1)[0m
-[1;34m[TEST] Full log: /run/media/aops/SapoHD/ComputerScience/Git/tests/vm/logs/python-test-20260406-223833.log[0m
-[1;34m[TEST] VM running in tmux 'blk7rch-python-test' — attach: tmux attach -t blk7rch-python-test | kill: tmux kill-session -t blk7rch-python-test[0m
-[34m[1m==> [0mself-test: running dry-run with pentest profile
-[34m[1m==> [0mBLK7rch installer started
-[34m[1m==> [0mPhase 0: validating configuration
-[33m[1m[DRY-RUN] [0mvalidation skipped in dry-run mode
-[32m[1m[OK] [0mPhase 0: configuration valid
-[34m[1m==> [0mPhase 1: disk partitioning + LUKS2 + LVM
-[33m[1m[DRY-RUN] [0mbuild_disk_layout()
-[33m[1m[DRY-RUN] [0mFilesystemHandler.perform_filesystem_operations()
-[34m[1m==> [0mPhase 2: base system installation
-[33m[1m[DRY-RUN] [0mInstaller.mount_ordered_layout()
-[33m[1m[DRY-RUN] [0mconfigure_chroot(locale=en_US.UTF-8, keymap=us)
-[33m[1m[DRY-RUN] [0mInstaller.add_bootloader(Bootloader.Grub)
-[33m[1m[DRY-RUN] [0mInstaller.create_users(testuser)
-[33m[1m[DRY-RUN] [0mInstaller.enable_service('NetworkManager')
-[33m[1m[DRY-RUN] [0mInstaller.enable_service('gdm')
-[34m[1m==> [0mProfile [base]: installing minimal packages
-[33m[1m[DRY-RUN] [0madd_additional_packages(['base', 'base-devel', 'linux', 'linux-firmware', 'lvm2', 'cryptsetup', 'grub', 'efibootmgr', 'networkmanager', 'sudo', 'vim', 'git', 'ufw', 'openssh', 'man-db', 'man-pages', 'bash-completion'])
-[33m[1m[DRY-RUN] [0menable_service(NetworkManager)
-[32m[1m[OK] [0mProfile [base]: complete
-[34m[1m==> [0mProfile [workstation]: installing desktop packages
-[33m[1m[DRY-RUN] [0madd_additional_packages(['hyprland', 'waybar', 'foot', 'wofi', 'mako', 'xdg-desktop-portal-hyprland', 'xdg-desktop-portal-gtk', 'xorg-xwayland', 'brightnessctl', 'wl-clipboard', 'gdm', 'polkit', 'polkit-gnome', 'grim', 'slurp'])
-[36m[1m[INFO] [0mHyprland: writing pentest config variant
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/testuser/.config/hypr/hyprland.conf
-[36m[1m[INFO] [0mWaybar: writing pentest IDS variant
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/testuser/.config/waybar/config
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/testuser/.config/waybar/style.css
-[34m[1m==> [0mGDM: configuring display manager
-[33m[1m[DRY-RUN] [0mwrite /mnt/usr/share/wayland-sessions/hyprland.desktop
-[33m[1m[DRY-RUN] [0mwrite /mnt/var/lib/AccountsService/users/testuser
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable gdm
-[32m[1m[OK] [0mGDM: configured
-[32m[1m[OK] [0mProfile [workstation]: complete
-[34m[1m==> [0mProfile [pentest]: installing pentest tools
-[33m[1m[DRY-RUN] [0madd_additional_packages(['firefox', 'htop', 'nethogs', 'nmap', 'wireshark-qt', 'python', 'python-pip', 'tmux', 'ranger', 'tcpdump', 'net-tools', 'iproute2', 'bind', 'whois', 'traceroute'])
-[34m[1m==> [0mProfile [ids]: installing IDS/IPS
-[33m[1m[DRY-RUN] [0madd_additional_packages(['snort', 'suricata'])
-[34m[1m==> [0mSnort: writing configuration files
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/snort/snort.conf
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/snort/threshold.conf
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/snort/suppress.conf
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/snort/rules/local.rules
-[36m[1m[INFO] [0mSnort: validating configuration
-[33m[1m[DRY-RUN] [0march-chroot /mnt snort -T -c /etc/snort/snort.conf
-[32m[1m[OK] [0mSnort: configuration validated
-[32m[1m[OK] [0mSnort: configuration complete
-[34m[1m==> [0mSuricata: writing configuration files
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/suricata/suricata.yaml
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/suricata/threshold.config
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/suricata/rules/local.rules
-[36m[1m[INFO] [0mSuricata: validating configuration
-[33m[1m[DRY-RUN] [0march-chroot /mnt suricata -T -c /etc/suricata/suricata.yaml -v
-[32m[1m[OK] [0mSuricata: configuration validated
-[32m[1m[OK] [0mSuricata: configuration complete
-[33m[1m[DRY-RUN] [0menable_service(snort)
-[33m[1m[DRY-RUN] [0menable_service(suricata)
-[32m[1m[OK] [0mProfile [ids]: complete
-[32m[1m[OK] [0mProfile [pentest]: complete
-[34m[1m==> [0mBlackArch: bootstrapping repository
-[33m[1m[DRY-RUN] [0mcurl -fsSL --max-time 60 --retry 3 -o /tmp/tmpoo91vxom/strap.sh https://blackarch.org/strap.sh
-[33m[1m[DRY-RUN] [0mcurl -fsSL --max-time 60 --retry 3 -o /tmp/tmpoo91vxom/strap.sh.sha256 https://blackarch.org/strap.sh.sha256
-[33m[1m[DRY-RUN] [0mSHA256 verification skipped in dry-run mode
-[33m[1m[DRY-RUN] [0march-chroot /mnt /bin/bash /tmp/strap.sh
-[32m[1m[OK] [0mBlackArch: repository bootstrapped
-[34m[1m==> [0mPhase 3: post-installation
-[33m[1m[DRY-RUN] [0mwrite transaction log (dry-run — not written to disk)
-[32m[1m[OK] [0mTransaction log written
-[34m[1m==> [0mPost-boot validation: installing service
-[33m[1m[DRY-RUN] [0mwrite /mnt/usr/local/bin/blk7rch-postboot-validate
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/systemd/system/blk7rch-postboot-validate.service
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable blk7rch-postboot-validate.service
-[32m[1m[OK] [0mPost-boot validation: service installed and enabled
-[34m[1m==> [0mUFW: configuring firewall
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw --force reset
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw default deny incoming
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw default allow outgoing
-[36m[1m[INFO] [0mUFW: SSH inbound DENIED (allow_ssh_inbound=False)
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw --force enable
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable ufw
-[32m[1m[OK] [0mUFW: firewall configured
-[34m[1m==> [0mUnmounting /mnt
-[33m[1m[DRY-RUN] [0mumount -R /mnt
-[32m[1m[OK] [0mFilesystems unmounted
-[33m[1m[DRY-RUN] [0mreboot skipped in dry-run mode
-[32m[1m[OK] [0mPhase 3: complete
-[32m[1m[OK] [0mBLK7rch installation complete!
-[32m[1m[OK] [0mself-test: PASSED — all phases completed in dry-run mode
-SELFTEST_73794:0
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hPPYTHONPATH=/host/blk7rch python -m blk7rch install   --dry-run --profile workstation --disk /dev/vda   --hostname blk7test --username auditor --unattended   && echo 'DRYRUN_73794:0' || echo 'DRYRUN_73794 [K::1'[?2004l
-[1;34musage: [0m[1;35mblk7rch[0m [[32m-h[0m] [32m<command> ...[0m
-blk7rch: error: unrecognized arguments: --hostname blk7test --username auditor
-DRYRUN_73794:1
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hPPYTHONPATH=/host/blk7rch python -m blk7rch install   --dry-run --profile workstation --disk /dev/vda   --hostname blk7test --username auditor --unattended   && echo 'DRYRUN_73205:0' || echo 'DRYRUN_73205 [K::1'[?2004l
-[1;34musage: [0m[1;35mblk7rch[0m [[32m-h[0m] [32m<command> ...[0m
-blk7rch: error: unrecognized arguments: --hostname blk7test --username auditor
-DRYRUN_73205:1
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hPPYTHONPATH=/host/blk7rch python -m blk7rch config-init /tmp/test-config.json --profile workstation && echo CONFIG_OK[?2004l
-[32m[1m[OK] [0mConfig written to /tmp/test-config.json
-{
-  "disk": "",
-  "hostname": "blk7arch",
-  "username": "user",
-  "timezone": "America/Sao_Paulo",
-  "locale": "en_US.UTF-8",
-  "keymap": "us",
-  "bootloader": "grub",
-  "profile": "workstation",
-  "workstation_mode": "base",
-  "enable_blackarch": false,
-  "enable_ids": false,
-  "ids_home_net": "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]",
-  "ids_snort_profile": "balanced",
-  "ids_mode": "minimal-local",
-  "allow_ssh_inbound": false,
-  "wifi_backend": "nm",
-  "enable_gdm": true,
-  "auto_reboot": true,
-  "root_lv_size": "50G",
-  "swap_lv_size": "8G"
-}
-CONFIG_OK
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hppython -c "[?2004l
-[0m(B[27m[24m[J\`dquote> [K[?2004hiimport json[?2004l
-[0m(B[27m[24m[J\`dquote> [K[?2004hwwith open('/tmp/test-config.json') as f: c = json.load(f)[?2004l
-[0m(B[27m[24m[J\`dquote> [K[?2004hcc['disk']='/dev/vda'; c['hostname']='blk7test'; c['username']='auditor'[?2004l
-[0m(B[27m[24m[J\`dquote> [K[?2004hwwith open('/tmp/test-config.json','w') as f: json.dump(c,f,indent=2)[?2004l
-[0m(B[27m[24m[J\`dquote> [K[?2004hpprint('PATCH_OK')[?2004l
-[0m(B[27m[24m[J\`dquote> [K[?2004h"[?2004l
-PATCH_OK
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hPPYTHONPATH=/host/blk7rch python -m blk7rch install --dry-run --config /tmp/test-config.json --unattended && echo 'DRYRUN:PASSED' || echo 'DRYRUN:FAILED'[?2004l
-[34m[1m==> [0mLoading config from /tmp/test-config.json
-[34m[1m==> [0mBLK7rch installer started
-[34m[1m==> [0mPhase 0: validating configuration
-[33m[1m[DRY-RUN] [0mvalidation skipped in dry-run mode
-[32m[1m[OK] [0mPhase 0: configuration valid
-[34m[1m==> [0mPhase 1: disk partitioning + LUKS2 + LVM
-[33m[1m[DRY-RUN] [0mbuild_disk_layout()
-[33m[1m[DRY-RUN] [0mFilesystemHandler.perform_filesystem_operations()
-[34m[1m==> [0mPhase 2: base system installation
-[33m[1m[DRY-RUN] [0mInstaller.mount_ordered_layout()
-[33m[1m[DRY-RUN] [0mconfigure_chroot(locale=en_US.UTF-8, keymap=us)
-[33m[1m[DRY-RUN] [0mInstaller.add_bootloader(Bootloader.Grub)
-[33m[1m[DRY-RUN] [0mInstaller.create_users(auditor)
-[33m[1m[DRY-RUN] [0mInstaller.enable_service('NetworkManager')
-[33m[1m[DRY-RUN] [0mInstaller.enable_service('gdm')
-[34m[1m==> [0mProfile [base]: installing minimal packages
-[33m[1m[DRY-RUN] [0madd_additional_packages(['base', 'base-devel', 'linux', 'linux-firmware', 'lvm2', 'cryptsetup', 'grub', 'efibootmgr', 'networkmanager', 'sudo', 'vim', 'git', 'ufw', 'openssh', 'man-db', 'man-pages', 'bash-completion'])
-[33m[1m[DRY-RUN] [0menable_service(NetworkManager)
-[32m[1m[OK] [0mProfile [base]: complete
-[34m[1m==> [0mProfile [workstation]: installing desktop packages
-[33m[1m[DRY-RUN] [0madd_additional_packages(['hyprland', 'waybar', 'foot', 'wofi', 'mako', 'xdg-desktop-portal-hyprland', 'xdg-desktop-portal-gtk', 'xorg-xwayland', 'brightnessctl', 'wl-clipboard', 'gdm', 'polkit', 'polkit-gnome', 'grim', 'slurp'])
-[36m[1m[INFO] [0mHyprland: writing base config variant
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/auditor/.config/hypr/hyprland.conf
-[36m[1m[INFO] [0mWaybar: writing base variant
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/auditor/.config/waybar/config
-[33m[1m[DRY-RUN] [0mwrite /mnt/home/auditor/.config/waybar/style.css
-[34m[1m==> [0mGDM: configuring display manager
-[33m[1m[DRY-RUN] [0mwrite /mnt/usr/share/wayland-sessions/hyprland.desktop
-[33m[1m[DRY-RUN] [0mwrite /mnt/var/lib/AccountsService/users/auditor
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable gdm
-[32m[1m[OK] [0mGDM: configured
-[32m[1m[OK] [0mProfile [workstation]: complete
-[34m[1m==> [0mPhase 3: post-installation
-[33m[1m[DRY-RUN] [0mwrite transaction log (dry-run — not written to disk)
-[32m[1m[OK] [0mTransaction log written
-[34m[1m==> [0mPost-boot validation: installing service
-[33m[1m[DRY-RUN] [0mwrite /mnt/usr/local/bin/blk7rch-postboot-validate
-[33m[1m[DRY-RUN] [0mwrite /mnt/etc/systemd/system/blk7rch-postboot-validate.service
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable blk7rch-postboot-validate.service
-[32m[1m[OK] [0mPost-boot validation: service installed and enabled
-[34m[1m==> [0mUFW: configuring firewall
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw --force reset
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw default deny incoming
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw default allow outgoing
-[36m[1m[INFO] [0mUFW: SSH inbound DENIED (allow_ssh_inbound=False)
-[33m[1m[DRY-RUN] [0march-chroot /mnt ufw --force enable
-[33m[1m[DRY-RUN] [0march-chroot /mnt systemctl enable ufw
-[32m[1m[OK] [0mUFW: firewall configured
-[34m[1m==> [0mUnmounting /mnt
-[33m[1m[DRY-RUN] [0mumount -R /mnt
-[32m[1m[OK] [0mFilesystems unmounted
-[33m[1m[DRY-RUN] [0mreboot skipped in dry-run mode
-[32m[1m[OK] [0mPhase 3: complete
-[32m[1m[OK] [0mBLK7rch installation complete!
-DRYRUN:PASSED
-[1m[7m#[27m[1m[0m(B                                                                                                                                                                                                                            [0m(B[27m[24m[J[1m[31m[39m[0m(B[1m[31mroot[39m[0m(B@archiso [1m~ [0m(B# [K[?2004hSELFTEST_RESULT=0
-DRY_RUN_RESULT=0
---- VM DRY-ONLY PHASE COMPLETE ---
