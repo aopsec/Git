@@ -39,10 +39,10 @@ def number_pattern(n):
     try:
         r = range(1, n + 1)
     except TypeError:
-        return "Argument must be an integer value."   # <-- period here
+        return "Argument must be an integer value."   
     
     if n < 1:
-        return "Argument must be an integer greater than 0."  # <-- and here
+        return "Argument must be an integer greater than 0."  
     
     result = ""
     for i in r:
