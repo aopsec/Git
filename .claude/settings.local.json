@@ -49,7 +49,10 @@
       "Bash(echo \"EXIT_CODE=$?\")",
       "Bash(python3:*)",
       "Bash(unzip:*)",
-      "Bash(chmod +x /home/aops/hyprland-reset.sh /home/aops/hyprland-nvidia-optimize.sh)"
+      "Bash(chmod +x /home/aops/hyprland-reset.sh /home/aops/hyprland-nvidia-optimize.sh)",
+      "Bash(git lfs *)",
+      "Bash(git push *)",
+      "Bash(gh auth *)"
     ]
   }
 }
