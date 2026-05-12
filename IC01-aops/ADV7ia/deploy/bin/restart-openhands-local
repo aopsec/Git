@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+# [FIX-OH-05] Recreate OpenHands from the repo-managed Compose spec instead of a raw docker run.
+set -euo pipefail
+shopt -s inherit_errexit
+
+cleanup() {
+  :
+}
+
+usage() {
+  cat <<'EOF'
+Usage: restart-openhands-local [--dry-run]
+
+Recreate the local OpenHands app container from the ADV7ia Compose template.
+EOF
+}
+
+log_info() {
+  printf '[INFO] %s\n' "$1"
+}
+
+log_error() {
+  printf '[ERROR] %s\n' "$1" >&2
+}
+
+run_cmd() {
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    printf '+'
+    printf ' %q' "$@"
+    printf '\n'
+    return 0
+  fi
+
+  "$@"
+}
+
+wait_for_health() {
+  local -i remaining=30
+
+  while ((remaining > 0)); do
+    if curl -fsS --max-time 2 http://127.0.0.1:3000/health >/dev/null; then
+      return 0
+    fi
+    sleep 1
+    ((remaining -= 1))
+  done
+
+  return 1
+}
+
+verify_runtime() {
+  local container_name="$1"
+
+  run_cmd docker exec "${container_name}" getent hosts host.docker.internal >/dev/null
+  run_cmd docker exec "${container_name}" test -f /app/config.toml
+  run_cmd docker exec "${container_name}" test -d /.openhands
+  run_cmd docker exec \
+    "${container_name}" \
+    python3 \
+    -c \
+    'import urllib.request; urllib.request.urlopen("http://host.docker.internal:3000/health", timeout=10)'
+}
+
+remove_matching_containers() {
+  local filter_name="$1"
+  local -a container_ids=()
+
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    printf '+ docker rm -f <containers matching name=%s>\n' "${filter_name}"
+    return 0
+  fi
+
+  mapfile -t container_ids < <(docker ps -aq --filter "name=${filter_name}")
+  if ((${#container_ids[@]} == 0)); then
+    return 0
+  fi
+
+  run_cmd docker rm -f "${container_ids[@]}"
+}
+
+main() {
+  local project_root=""
+  local compose_file=""
+  local workspace_base=""
+  local config_dir=""
+  local config_file=""
+  local container_name=""
+  local sandbox_user_id=""
+
+  project_root="${OH_PROJECT_ROOT:-/home/aops/ObsidianAgent/Projects/ADV7ia}"
+  compose_file="${OH_COMPOSE_FILE:-${project_root}/deploy/openhands/compose.yaml}"
+  workspace_base="${OH_WORKSPACE_BASE:-${project_root}}"
+  config_dir="${OH_CONFIG_DIR:-${HOME}/.openhands}"
+  config_file="${OH_OPENHANDS_CONFIG:-${config_dir}/config.toml}"
+  container_name="${OH_CONTAINER_NAME:-openhands-app}"
+  sandbox_user_id="${OH_SANDBOX_USER_ID:-$(id -u)}"
+
+  while (($# > 0)); do
+    case "$1" in
+      --dry-run)
+        DRY_RUN=1
+        ;;
+      -h|--help)
+        usage
+        return 0
+        ;;
+      *)
+        log_error "Unknown argument: $1"
+        usage >&2
+        return 2
+        ;;
+    esac
+    shift
+  done
+
+  if [[ ! -d "${project_root}" ]]; then
+    log_error "Project root not found: ${project_root}"
+    return 1
+  fi
+  if [[ ! -f "${compose_file}" ]]; then
+    log_error "Compose file not found: ${compose_file}"
+    return 1
+  fi
+  if [[ ! -d "${workspace_base}" ]]; then
+    log_error "Workspace base not found: ${workspace_base}"
+    return 1
+  fi
+
+  run_cmd mkdir -p "${config_dir}"
+  if [[ ! -f "${config_file}" ]]; then
+    log_error "OpenHands config file not found: ${config_file}"
+    return 1
+  fi
+
+  log_info "Removing stale OpenHands sandboxes"
+  remove_matching_containers 'oh-agent-server'
+
+  log_info "Removing existing ${container_name} container"
+  remove_matching_containers "${container_name}"
+
+  log_info "Starting ${container_name} from ${compose_file}"
+  # [FIX-OH-06] Keep the UI on 127.0.0.1 and let the bridge proxy expose 172.17.0.1:3000.
+  run_cmd env \
+    ADV7IA_WORKSPACE_DIR="${workspace_base}" \
+    ADV7IA_OPENHANDS_CONFIG="${config_file}" \
+    ADV7IA_OPENHANDS_SANDBOX_USER_ID="${sandbox_user_id}" \
+    docker compose -f "${compose_file}" up -d --force-recreate --wait "${container_name}"
+
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    return 0
+  fi
+
+  log_info "Waiting for OpenHands health endpoint"
+  if ! wait_for_health; then
+    log_error "OpenHands health check did not become ready on http://127.0.0.1:3000/health"
+    return 1
+  fi
+
+  log_info "Verifying host alias and persistence paths inside ${container_name}"
+  if ! verify_runtime "${container_name}"; then
+    log_error "Runtime verification failed inside ${container_name}"
+    return 1
+  fi
+
+  log_info "OpenHands app container is healthy with the bridge alias and persistent file store"
+}
+
+DRY_RUN=0
+
+trap cleanup EXIT INT
+main "$@"
