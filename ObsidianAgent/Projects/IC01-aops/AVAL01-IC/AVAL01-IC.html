@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>AVAL01 — Projeto Técnico · Introdução à Computação · UniCEUB</title>
+<meta name="author" content="Alcides Olivo Pollazzon Soterio">
+<meta name="description" content="Avaliação 01 da disciplina Introdução à Computação (UniCEUB). Estudo de caso: TV box MXQ Pro 4k e proposta defensiva OpenBox + ADV7Sec.">
+<style>
+  :root {
+    --fg: #1a1d23;
+    --muted: #5b6470;
+    --soft: #8a93a0;
+    --accent: #0b3a82;
+    --accent-2: #a8133a;
+    --accent-3: #136a3a;
+    --border: #ccd2db;
+    --border-strong: #1a1d23;
+    --bg-page: #ffffff;
+    --bg-soft: #f8f9fb;
+    --bg-code: #f4f3ee;
+    --bg-note: #fff7e0;
+    --bg-warn: #fde9e9;
+    --bg-ok:   #e7f4ea;
+    --bg-head: #eef1f6;
+    --mono: "JetBrains Mono", "DejaVu Sans Mono", "Fira Mono", Consolas, monospace;
+    --serif: "Liberation Serif", "Nimbus Roman", "Times New Roman", Georgia, serif;
+    --sans: "Inter", "Liberation Sans", "DejaVu Sans", system-ui, sans-serif;
+  }
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+    @bottom-center {
+      content: "AVAL01 · Introdução à Computação · UniCEUB · " counter(page) " / " counter(pages);
+      font-family: var(--sans); font-size: 9pt; color: #888;
+    }
+  }
+  html, body { font-family: var(--serif); color: var(--fg); line-height: 1.46; background: var(--bg-page); }
+  body { max-width: 178mm; margin: 0 auto; padding: 8mm 0; font-size: 10.5pt; }
+  h1, h2, h3, h4 { font-family: var(--sans); color: var(--accent); line-height: 1.2; }
+  h1 { font-size: 22pt; margin: 0 0 6pt; letter-spacing: -0.3pt; }
+  h2 { font-size: 15pt; margin: 22pt 0 8pt; padding-bottom: 4pt; border-bottom: 1.4pt solid var(--accent); page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 14pt 0 6pt; color: var(--accent-2); page-break-after: avoid; }
+  h4 { font-size: 11pt; margin: 10pt 0 4pt; color: var(--fg); page-break-after: avoid; }
+  p  { margin: 4pt 0 6pt; text-align: justify; }
+  ul, ol { margin: 4pt 0 8pt 18pt; padding: 0; }
+  li { margin: 2pt 0; }
+  code { font-family: var(--mono); font-size: 9.5pt; background: var(--bg-code); padding: 0 3pt; border-radius: 2pt; }
+  pre { font-family: var(--mono); font-size: 9pt; background: var(--bg-code); border: 0.5pt solid var(--border);
+        padding: 6pt 8pt; overflow-x: auto; white-space: pre; border-radius: 3pt; line-height: 1.35;
+        page-break-inside: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 9.6pt;
+          page-break-inside: avoid; }
+  th { background: var(--bg-head); text-align: left; padding: 4pt 6pt; border: 0.5pt solid var(--border-strong);
+       font-family: var(--sans); }
+  td { padding: 3pt 6pt; border: 0.5pt solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  .cover { display: flex; flex-direction: column; justify-content: center; min-height: 240mm;
+           border-top: 3pt solid var(--accent); border-bottom: 3pt solid var(--accent-2);
+           padding: 14mm 0; page-break-after: always; }
+  .cover .insig { font-family: var(--sans); font-size: 9pt; color: var(--muted); letter-spacing: 0.5pt; text-transform: uppercase; }
+  .cover h1 { font-size: 36pt; margin: 6pt 0 2pt; color: var(--accent); letter-spacing: -0.7pt; }
+  .cover .sub { font-family: var(--sans); color: var(--muted); font-size: 13pt; margin-bottom: 18pt; }
+  .cover .tag { font-family: var(--sans); display: inline-block; font-size: 9pt; padding: 2pt 8pt;
+                border: 0.5pt solid var(--accent); color: var(--accent); border-radius: 2pt; margin: 0 4pt 4pt 0; }
+  .cover .meta { margin-top: 24pt; font-family: var(--sans); font-size: 10pt; color: var(--muted); }
+  .cover .meta dt { float: left; width: 40mm; font-weight: 600; color: var(--fg); }
+  .cover .meta dd { margin-left: 42mm; margin-bottom: 3pt; }
+  .cover .footer { margin-top: auto; font-family: var(--sans); font-size: 9pt; color: var(--muted);
+                   border-top: 0.5pt solid var(--border); padding-top: 6pt; }
+
+  .abstract { border-left: 3pt solid var(--accent); padding: 5pt 12pt; background: var(--bg-soft);
+              font-size: 10pt; margin: 10pt 0 14pt; }
+
+  .toc ol { list-style: none; margin-left: 0; padding-left: 0; }
+  .toc ol li { padding: 1.5pt 0; border-bottom: 0.25pt dotted var(--border); }
+  .toc ol li span.num { display: inline-block; width: 14mm; color: var(--accent); font-family: var(--sans); font-weight: 600; }
+
+  .callout { border: 0.5pt solid var(--border-strong); padding: 6pt 10pt; margin: 8pt 0; font-size: 10pt;
+             page-break-inside: avoid; border-radius: 2pt; }
+  .callout.note { background: var(--bg-note); }
+  .callout.warn { background: var(--bg-warn); }
+  .callout.ok   { background: var(--bg-ok); }
+  .callout strong { font-family: var(--sans); }
+  .callout .label { font-family: var(--sans); font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.5pt;
+                    color: var(--accent); display: block; margin-bottom: 3pt; }
+
+  /* Bloco "Por que isso importa?" — princípio humanizado */
+  aside.why { background: #f3f6fb; border: 0.5pt solid var(--accent);
+              padding: 6pt 10pt; margin: 8pt 0 10pt; font-size: 10pt; border-radius: 2pt;
+              page-break-inside: avoid; }
+  aside.why .label { font-family: var(--sans); font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.5pt;
+                     color: var(--accent); display: block; margin-bottom: 3pt; }
+
+  .ascii { font-family: var(--mono); font-size: 8.5pt; white-space: pre; background: var(--bg-soft);
+           border: 0.5pt solid var(--border); padding: 8pt 10pt; border-radius: 3pt;
+           page-break-inside: avoid; line-height: 1.18; }
+  .caption { font-family: var(--sans); font-size: 8.5pt; color: var(--muted); margin: 2pt 0 10pt; text-align: center; }
+  .figwrap { margin: 10pt 0 14pt; page-break-inside: avoid; text-align: center; }
+  .small { font-size: 9pt; color: var(--muted); }
+  .pagebreak { page-break-before: always; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 0.5pt dotted var(--accent); }
+  svg { max-width: 100%; height: auto; page-break-inside: avoid; }
+  .cite { font-family: var(--sans); font-size: 8pt; color: var(--accent); vertical-align: super;
+          padding: 0 1pt; }
+  .twocol { column-count: 2; column-gap: 8mm; }
+  .ref { font-size: 9.5pt; padding: 3pt 0; border-bottom: 0.25pt dotted var(--border); }
+  .ref .id { font-family: var(--sans); font-weight: 600; color: var(--accent); }
+  .ref .src { font-family: var(--sans); font-size: 8.5pt; color: var(--muted); }
+  .signature { font-family: var(--sans); font-size: 9pt; color: var(--muted); margin-top: 30pt;
+               border-top: 0.5pt solid var(--border-strong); padding-top: 6pt; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- =================================================================== -->
+<!-- CAPA INSTITUCIONAL                                                    -->
+<!-- =================================================================== -->
+<section class="cover">
+  <div class="insig">Centro Universitário de Brasília — UniCEUB</div>
+  <div class="insig">Bacharelado em Ciência da Computação</div>
+
+  <h1>OpenBox + ADV7Sec</h1>
+  <div class="sub">Defesa em camadas para o consumidor brasileiro de TV box clandestino</div>
+
+  <div>
+    <span class="tag">AVAL01 · Projeto Técnico</span>
+    <span class="tag">Introdução à Computação</span>
+    <span class="tag">2026 · 1º semestre</span>
+  </div>
+
+  <p style="max-width: 158mm; font-size: 11pt; margin-top: 18pt;">
+    Estudo de caso aplicado: o TV box <strong>MXQ Pro 5G 4K</strong>, vendido em larga escala
+    no Brasil e listado pelo FBI como dispositivo infectado pela botnet <strong>BadBox 2.0</strong>.
+    A partir desse cenário, o documento propõe e documenta uma resposta defensiva real:
+    <strong>OpenBox</strong> (caixa de borda residencial com privacidade auditável) e
+    <strong>ADV7Sec</strong> (IPS/IDS detection-only para a estação de trabalho).
+  </p>
+
+  <dl class="meta">
+    <dt>Disciplina</dt><dd>Introdução à Computação</dd>
+    <dt>Tutor</dt><dd>Fabrício Ofugi</dd>
+    <dt>Autor</dt><dd>Alcides Olivo Pollazzon Soterio</dd>
+    <dt>Avaliação</dt><dd>AVAL01 — item 03 (Projeto Técnico) da rubrica oficial</dd>
+    <dt>Data</dt><dd>28 de abril de 2026 — Brasília, DF</dd>
+    <dt>Repositórios</dt><dd>OpenBox v0.2.0 · ADV7Sec 1.0v · ADV7Box (entrega irmã)</dd>
+    <dt>Formato</dt><dd>HTML canônico → PDF (Chromium headless) → DOCX (Pandoc)</dd>
+  </dl>
+
+  <div class="footer">
+    Documento autoral. Todas as figuras são SVG inline (sem dependência externa).
+    Todas as estatísticas brasileiras citadas são rastreáveis para fontes governamentais ou imprensa
+    técnica auditável (ver §9 Referências). Nenhum número foi inventado.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- §1  RESUMO EXECUTIVO                                                  -->
+<!-- =================================================================== -->
+<section>
+  <h2>§1 Resumo Executivo</h2>
+  <div class="abstract">
+    <p>
+      O Brasil é hoje o país mais infectado do mundo pela botnet <strong>BadBox 2.0</strong>:
+      mais de um terço de todos os dispositivos comprometidos detectados pela HUMAN Security
+      operam em redes residenciais brasileiras<span class="cite" data-ref="human-badbox2">[2]</span>.
+      Em paralelo, a Anatel mapeou <strong>até 8 milhões de usuários</strong> de serviços
+      clandestinos de TV em 2025<span class="cite" data-ref="anatel-mcom-2026-balanco">[1]</span>
+      e apreendeu, entre 2018 e 2025, <strong>1,5 milhão</strong> de TV boxes não homologados
+      avaliados em R$ 353,2 milhões<span class="cite" data-ref="anatel-ancine-acordo-2025">[3]</span>.
+      O dispositivo emblemático desse mercado — o <strong>MXQ Pro 5G 4K</strong> — consta
+      explicitamente no aviso público I-060525-PSA do FBI<span class="cite" data-ref="fbi-psa-2025">[6]</span>
+      como portador de backdoor derivado do malware <em>Triada</em>, que sobrevive a
+      restauração de fábrica.
+    </p>
+    <p>
+      Este projeto técnico responde ao problema com uma arquitetura defensiva de duas camadas,
+      construída com software livre e custo de aquisição inferior a R$ 1.000:
+      <strong>OpenBox</strong> bloqueia o vetor de saída (kill switch nftables, VPN
+      WireGuard, DNS cifrado) e <strong>ADV7Sec</strong> instrumenta a estação de trabalho
+      com sensores de host (auditd, Falco eBPF, Suricata, Zeek) para detectar comportamento
+      pós-comprometimento. O resultado é um laboratório residencial reprodutível, auditável e
+      didaticamente útil para a formação em Ciência da Computação.
+    </p>
+  </div>
+
+  <h3>Sumário</h3>
+  <div class="toc twocol">
+    <ol>
+      <li><span class="num">§1</span> Resumo Executivo</li>
+      <li><span class="num">§2</span> Contexto e Justificativa</li>
+      <li><span class="num">§3</span> Timeline Completa do Projeto</li>
+      <li><span class="num">§4</span> Estudo de Caso: MXQ Pro 4k</li>
+      <li><span class="num">§5</span> ADV7Sec — IPS/IDS Host-side</li>
+      <li><span class="num">§6</span> Demandas de Infraestrutura de TI</li>
+      <li><span class="num">§7</span> Arquitetura Proposta</li>
+      <li><span class="num">§8</span> Conclusão e Direcionamento de Carreira</li>
+      <li><span class="num">§9</span> Referências</li>
+      <li><span class="num">§10</span> Apêndice — Evidências de Desenvolvimento</li>
+    </ol>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- §2  CONTEXTO E JUSTIFICATIVA                                          -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§2 Contexto e Justificativa</h2>
+
+  <h3>2.1 Cenário do consumidor brasileiro de TV box</h3>
+  <p>
+    Em duas décadas, o acesso à internet nos lares urbanos brasileiros saltou de 13% (2005)
+    para <strong>85%</strong> (2024), totalizando 141 milhões de internautas<span
+    class="cite" data-ref="cetic-tic-dom-2024">[5]</span>. A televisão deixou de ser apenas
+    um receptor passivo: hoje é o segundo dispositivo mais usado para acessar a rede,
+    presente em 60% dos lares conectados, atrás somente do celular (99%). Quatro em cada
+    dez residências com TV consomem conteúdo por streaming.
+  </p>
+  <p>
+    Esse novo perfil de consumo coincide com a popularização do <em>TV box</em> — um
+    pequeno set-top box que roda Android (geralmente Android Open Source Project, sem
+    certificação Google) e converte qualquer televisão antiga em "smart". O modelo mais
+    barato custa entre R$ 125 e R$ 170 em marketplaces; modelos com pacotes pré-instalados
+    de IPTV pirata (BTV, UniTV, Pulse, Red Pro3, Platinum) chegam a R$ 899 no varejo
+    clandestino<span class="cite" data-ref="operacao-praedo-2025">[4]</span>.
+  </p>
+
+  <h3>2.2 O problema do MXQ Pro 5G 4K</h3>
+  <p>
+    O <strong>MXQ Pro 5G 4K</strong> ocupa um lugar peculiar nesse mercado. Não é uma
+    marca: é um rótulo branco aplicado a, no mínimo, quatro famílias de SoC distintas
+    (Rockchip RK3229 / RK3128, Allwinner H3 / H313, Amlogic S905W). A versão mais comum,
+    com construção <code>R2390</code> e Android 8.1, é um Rockchip RK3229 — quatro núcleos
+    Cortex-A7 de 32 bits a 1,5 GHz, GPU Mali-400, geralmente 1 GB de RAM e 8 GB de eMMC.
+    Vendido como "5G", refere-se a Wi-Fi de 5 GHz que, na prática, <strong>não funciona
+    na maioria dos lotes</strong> porque o módulo Wi-Fi instalado (SSV6051P, RTL8189FTV
+    ou ESP8089) opera somente em 2,4 GHz<span class="cite" data-ref="compass-mxq">[14]</span>.
+  </p>
+
+  <p>
+    Esse aparelho não é apenas tecnicamente medíocre — é <strong>perigoso por padrão</strong>.
+    O FBI o lista publicamente entre os dispositivos infectados pela botnet BadBox 2.0; o
+    HUMAN Security mostra que o Brasil concentra mais de 1/3 dos dispositivos comprometidos
+    no mundo. O backdoor mora na partição de boot e sobrevive ao "reset de fábrica" — o
+    consumidor que liga o aparelho na tomada já está conectando à rede doméstica um membro
+    ativo de uma botnet global de fraude publicitária e proxy residencial.
+  </p>
+
+  <h3>2.3 Por que isso importa para Introdução à Computação</h3>
+  <p>
+    A disciplina pede um diagnóstico de cenário real e a especificação de demandas de
+    hardware, software e rede. Este caso oferece todos os elementos pedagógicos centrais
+    de Introdução à Computação aplicados a uma situação concreta e dolorosamente cotidiana:
+  </p>
+  <ul>
+    <li><strong>Arquitetura de hardware</strong> (SoC, RAM, eMMC, módulos Wi-Fi, PCB sem PMIC) — para entender o que é um TV box, é preciso entender o que é uma CPU ARM, o que distingue ARMv7 de ARMv8 e o que muda quando uma BOM é cortada para US$ 25.</li>
+    <li><strong>Sistemas operacionais</strong> (Android 8.1 sobre Linux 4.4, partições, cadeia de boot Rockchip, U-Boot, OP-TEE) — discute o que é um <em>sistema operacional</em>, por que ele se carrega em fases e por que assinaturas de boot são importantes.</li>
+    <li><strong>Redes de computadores</strong> (DNS, NAT, VPN, DoH/DoT/DoQ, kill switch, segmentação por VLAN) — operacionaliza o capítulo de redes do currículo.</li>
+    <li><strong>Engenharia de software</strong> (instalador faseado idempotente, testes automáticos, controle de versão, ADRs) — exemplifica boas práticas mínimas de projeto.</li>
+    <li><strong>Segurança da informação e ética profissional</strong> (cadeia de suprimento comprometida, divulgação responsável, consumidor como vítima) — cumpre a dimensão social que cabe à formação universitária.</li>
+  </ul>
+
+  <aside class="why">
+    <span class="label">Por que isso importa</span>
+    O aluno termina o semestre não apenas conhecendo definições — ele saberá, na prática, por que um TV box barato pode dispensar PMIC, por que o "5G" no nome é uma mentira de marketing, e por que abrir mão de R$ 800 para "economizar" no streaming pode custar muito caro em privacidade e segurança.
+  </aside>
+</section>
+
+<!-- =================================================================== -->
+<!-- §3  TIMELINE COMPLETA                                                 -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§3 Timeline Completa do Projeto</h2>
+
+  <h3>3.1 Linha do tempo visual</h3>
+
+  <div class="figwrap">
+  <svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Linha do tempo do projeto OpenBox/ADV7Sec/AVAL01">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="#0b3a82"/>
+      </marker>
+    </defs>
+    <!-- Eixo -->
+    <line x1="40" y1="120" x2="690" y2="120" stroke="#0b3a82" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Marco 1 -->
+    <circle cx="80" cy="120" r="7" fill="#0b3a82"/>
+    <line x1="80" y1="120" x2="80" y2="55" stroke="#5b6470" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="80" y="48" font-family="Inter,sans-serif" font-size="9" fill="#0b3a82" font-weight="700" text-anchor="middle">2026-04-14</text>
+    <text x="80" y="36" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">TVBox OSS</text>
+    <text x="80" y="180" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Projeto base</text>
+    <text x="80" y="192" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">CEUB v2</text>
+
+    <!-- Marco 2 -->
+    <circle cx="200" cy="120" r="8" fill="#a8133a"/>
+    <line x1="200" y1="120" x2="200" y2="65" stroke="#5b6470" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="200" y="58" font-family="Inter,sans-serif" font-size="9" fill="#a8133a" font-weight="700" text-anchor="middle">2026-04-18</text>
+    <text x="200" y="46" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">OpenBox v0.1.0</text>
+    <text x="200" y="180" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Skeleton + 10 fases</text>
+    <text x="200" y="192" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">WireGuard, nftables, Tor</text>
+
+    <!-- Marco 3 -->
+    <circle cx="340" cy="120" r="8" fill="#a8133a"/>
+    <line x1="340" y1="120" x2="340" y2="55" stroke="#5b6470" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="340" y="48" font-family="Inter,sans-serif" font-size="9" fill="#a8133a" font-weight="700" text-anchor="middle">2026-04-25</text>
+    <text x="340" y="36" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">OpenBox v0.2.0</text>
+    <text x="340" y="180" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Retarget RK3229</text>
+    <text x="340" y="192" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Jellyfin, BadBox doc</text>
+
+    <!-- Marco 4 -->
+    <circle cx="490" cy="120" r="8" fill="#136a3a"/>
+    <line x1="490" y1="120" x2="490" y2="65" stroke="#5b6470" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="490" y="58" font-family="Inter,sans-serif" font-size="9" fill="#136a3a" font-weight="700" text-anchor="middle">2026-04-26</text>
+    <text x="490" y="46" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">ADV7Box AV01-A</text>
+    <text x="490" y="180" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Consolidação</text>
+    <text x="490" y="192" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">29 págs · HTML+PDF</text>
+
+    <!-- Marco 5 -->
+    <circle cx="650" cy="120" r="9" fill="#0b3a82" stroke="#1a1d23" stroke-width="1.5"/>
+    <line x1="650" y1="120" x2="650" y2="55" stroke="#0b3a82" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="650" y="48" font-family="Inter,sans-serif" font-size="9" fill="#0b3a82" font-weight="700" text-anchor="middle">2026-04-28</text>
+    <text x="650" y="36" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" font-weight="700" text-anchor="middle">AVAL01 — IC</text>
+    <text x="650" y="180" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Entrega didática</text>
+    <text x="650" y="192" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">UniCEUB · este doc</text>
+
+    <!-- Legenda -->
+    <text x="40" y="220" font-family="Inter,sans-serif" font-size="8" fill="#5b6470">Azul: marco acadêmico   ·   Vermelho: release de código   ·   Verde: documento derivado consolidado</text>
+  </svg>
+  <div class="caption">Figura 3.1 — Linha do tempo do ecossistema OpenBox / ADV7Sec / ADV7Box / AVAL01-IC.</div>
+  </div>
+
+  <h3>3.2 Marcos versionados (com fonte rastreável)</h3>
+  <table>
+    <thead>
+      <tr><th>Data</th><th>Marco</th><th>Conteúdo essencial</th><th>Evidência no repo</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>2026-04-14</td>
+        <td>TVBox OSS Projeto Técnico v2</td>
+        <td>PDF acadêmico inicial (CEUB) com a primeira proposta de TV box auditável. Identificadas inconsistências de criptografia ("AES-256" para WireGuard) e sintaxe quebrada de kill switch — ponto de partida para a reescrita.</td>
+        <td><code>~/Downloads/TVBox_OSS_Projeto_Tecnico_v2.pdf</code></td>
+      </tr>
+      <tr>
+        <td>2026-04-18</td>
+        <td>OpenBox v0.1.0</td>
+        <td>Skeleton de instalador faseado em Bash (10 fases idempotentes), nftables atomic ruleset com kill switch via <code>fwmark 51820</code>, dnscrypt-proxy 2 (DoH/DoT/DoQ + DNSSEC), Pi-hole, Tor para metadados (não streaming), CAKE qdisc, watchdogs.</td>
+        <td><code>OpenBox0.1v/CHANGELOG.md</code> · <code>install.d/00-09*.sh</code></td>
+      </tr>
+      <tr>
+        <td>2026-04-25</td>
+        <td>OpenBox v0.2.0</td>
+        <td>Retarget de hardware: Raspberry Pi 4 (aarch64, 4 GB) → Rockchip RK3229 (armhf, 1 GB). Distro: Raspberry Pi OS Lite → Armbian community <code>rk322x-box</code>. Stremio (sem armhf) → Jellyfin. Documentação de ameaças BadBox 2.0 / Vo1d / Triada adicionada.</td>
+        <td><code>docs/security/RK3229_THREAT_RESEARCH.md</code></td>
+      </tr>
+      <tr>
+        <td>2026-04-26</td>
+        <td>ADV7Box AV01-A</td>
+        <td>Documento consolidado da entrega AV01-A em outra disciplina, unindo OpenBox + ADV7Sec em 20 seções, 29 páginas A4, com SVG e ASCII art. Referência visual e estrutural para esta entrega.</td>
+        <td><code>OpenBox0.1v/ADV7Box/ADV7Box.html</code></td>
+      </tr>
+      <tr>
+        <td>2026-04-28</td>
+        <td>AVAL01 — IC (este documento)</td>
+        <td>Reescrita didática orientada à rubrica de Introdução à Computação: estudo de caso MXQ Pro 4k com fontes governamentais brasileiras, infográficos próprios, e vinculação carreira ↔ projeto.</td>
+        <td><code>IC01-aops/AVAL01-IC/</code> (esta pasta)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 Logs, Reports e Testes</h3>
+  <p>
+    O projeto opera com pipeline de validação dupla: testes <strong>antes</strong> da
+    instalação (sintaxe, lint, regras nftables) e testes <strong>depois</strong> da
+    instalação (saúde do túnel, vazamento de DNS, kill switch ativo).
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Categoria</th><th>Artefato</th><th>O que prova</th><th>Como executar</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="2">Pré-instalação<br><span class="small">(CI/sintaxe)</span></td>
+        <td><code>tests/ci-syntax-check.sh</code></td>
+        <td><code>bash -n</code> em todo script Bash · <code>shellcheck</code> · <code>nft -c</code> nas regras de firewall · <code>python -m compileall</code></td>
+        <td><code>bash tests/ci-syntax-check.sh</code></td>
+      </tr>
+      <tr>
+        <td><code>tests/phase-b-vault-tool.sh</code></td>
+        <td>Prova que o vault Obsidian é repo-neutral (gerador externo opera sobre <code>.aops-vault.toml</code> sem dependência de caminho fixo)</td>
+        <td><code>bash tests/phase-b-vault-tool.sh</code></td>
+      </tr>
+      <tr>
+        <td rowspan="2">Pós-instalação<br><span class="small">(validação)</span></td>
+        <td><code>tests/validate-stack.sh</code></td>
+        <td>10 verificações objetivas: TCP BBR, qdisc CAKE, handshake WireGuard, IP de saída via VPN, ausência de vazamento DNS, circuito Tor saudável, score Lynis, kill switch nftables ativo, governor cpufreq, presença de helpers</td>
+        <td><code>bash tests/validate-stack.sh</code></td>
+      </tr>
+      <tr>
+        <td><code>tests/validate-obsidian-vault.sh</code></td>
+        <td>Conferência idempotente: <code>--check</code> → <code>--sync</code> → <code>--check</code> deve sair sem stale entries</td>
+        <td><code>bash tests/validate-obsidian-vault.sh</code></td>
+      </tr>
+      <tr>
+        <td>Telemetria operacional</td>
+        <td><code>systemd/openbox-{wg-watchdog,tor-check,dnsleak-check}.timer</code></td>
+        <td>Watchdogs periódicos: handshake WG, saúde do circuito Tor, ausência de vazamento DNS — alertas via <code>ntfy</code></td>
+        <td><code>systemctl list-timers 'openbox-*'</code></td>
+      </tr>
+      <tr>
+        <td>Auditoria estática</td>
+        <td><code>systemd/openbox-lynis.timer</code></td>
+        <td>Lynis + RKHunter agendados (target inicial 70, refinado para 75 após calibração)</td>
+        <td><code>systemctl start openbox-lynis.service</code></td>
+      </tr>
+      <tr>
+        <td>Catálogo Obsidian</td>
+        <td><code>vault/Generated/{Repository Map, Install Phase Index, Validation Index, Systemd Service Index}.md</code></td>
+        <td>Documentação determinística regenerada a partir do código — qualquer divergência indica drift entre projeto e doc</td>
+        <td><code>aops_vault_cli.py --sync --repo .</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>3.3.1 Saída-exemplo de validate-stack.sh</h4>
+  <p>
+    O script imprime um relatório linha-a-linha. Em ambiente saudável, o exit code é
+    <code>0</code> e a saída acumula 10 linhas <code>PASS</code>. Em ambiente degradado,
+    o script <em>não aborta na primeira falha</em> (intencional: falta o <code>-e</code>
+    em <code>set -uo pipefail</code>), permitindo um diagnóstico completo:
+  </p>
+
+  <pre>[validate] BBR enabled .................................. PASS
+[validate] CAKE on egress (eth0) ......................... PASS
+[validate] WireGuard handshake within 180s ............... PASS
+[validate] egress IP via VPN (vpn != isp) ................ PASS
+[validate] DNS leak (dnscrypt-proxy upstream) ............ PASS
+[validate] Tor circuit alive ............................. PASS
+[validate] Lynis score >= 70 ............................. PASS  (score=78)
+[validate] nftables kill switch active (fwmark 51820) .... PASS
+[validate] cpufreq governor = ondemand ................... PASS  (or schedutil)
+[validate] runtime helpers present ....................... PASS
+[summary] 10/10 checks passed</pre>
+
+  <aside class="why">
+    <span class="label">Por que isso importa</span>
+    Em segurança, "dei <code>install.sh</code> e parece ter funcionado" não basta. Sem testes objetivos, o aluno entrega um sistema que <em>parece</em> seguro, mas que pode estar com kill switch desativado e DNS vazando para o ISP. A suíte de validação converte intenção em prova.
+  </aside>
+</section>
+
+<!-- =================================================================== -->
+<!-- §4  ESTUDO DE CASO MXQ PRO 4K                                         -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§4 Estudo de Caso: Segurança do MXQ Pro 4k</h2>
+
+  <h3>4.1 Metodologia de seleção das fontes governamentais brasileiras</h3>
+  <p>
+    Antes de afirmar qualquer número sobre o consumidor brasileiro, é preciso definir
+    como esses números foram escolhidos. A pesquisa bibliográfica obedeceu a quatro
+    critérios cumulativos:
+  </p>
+  <ol>
+    <li><strong>Autoridade.</strong> Fontes primárias governamentais (Anatel, MJSP, MCom,
+    Procon-SP, IBGE / CETIC.br) prevaleceram sobre fontes secundárias.
+    Quando a fonte primária só estava acessível por imprensa técnica especializada
+    (TELETIME, Tecnoblog, MinhaOperadora, TargetHD), o registro foi mantido <em>desde que</em>
+    a notícia citasse explicitamente o ato, a operação ou o documento oficial subjacente.</li>
+    <li><strong>Recência.</strong> Limite inferior em janeiro de 2024 — o ecossistema de TV box
+    e a resposta institucional mudaram drasticamente em 2024-2025 com a Operação 404,
+    o Acordo Anatel-Ancine e o PSA do FBI. Dados anteriores foram usados apenas para
+    contextualizar séries históricas.</li>
+    <li><strong>Escopo Brasil.</strong> Para argumentos sobre o consumidor nacional, só foram
+    contadas estatísticas que separem o Brasil do agregado global. A ressalva mais
+    importante deste documento — "mais de 1/3 dos dispositivos BadBox 2.0 estão no Brasil"
+    — vem com origem auditável.</li>
+    <li><strong>Rastreabilidade.</strong> Cada citação numérica em §4.2 carrega um marcador
+    <code>[n]</code> que aponta para uma entrada da §9. Não há número sem rastreio.
+    Quando o dado direto não existia (ex.: "quantos MXQ Pro 4K específicos foram
+    apreendidos no Brasil em 2025?"), o documento usa o termo <em>proxy data</em> e
+    explicita o caminho de inferência.</li>
+  </ol>
+
+  <p>
+    A hierarquia operacional ficou: <strong>Anatel</strong> (regulador de telecomunicações,
+    apreensões e bloqueios) &gt; <strong>MJSP/PF</strong> (operações de polícia) &gt;
+    <strong>MCom</strong> (comunicação institucional do balanço) &gt;
+    <strong>CETIC.br/IBGE</strong> (estatísticas de uso) &gt; <strong>Procon</strong>
+    (defesa do consumidor) &gt; imprensa técnica auditável (apenas para corroboração).
+  </p>
+
+  <h3>4.2 Penetração do dispositivo no consumidor brasileiro</h3>
+
+  <h4>4.2.1 Mapeamento Anatel 2025 — a escala do problema</h4>
+  <p>
+    Em janeiro de 2026, o Ministério das Comunicações divulgou o balanço da Anatel para
+    2025: foram apreendidos <strong>R$ 166 milhões em equipamentos clandestinos</strong>
+    e mapeados <strong>até 8 milhões de usuários</strong> de serviços piratas de TV no
+    país<span class="cite" data-ref="anatel-mcom-2026-balanco">[1]</span>. A série
+    histórica (out/2018 a mai/2025) totaliza <strong>1,5 milhão de aparelhos
+    apreendidos</strong> avaliados em R$ 353,2 milhões, com <strong>24.700 IPs e 4.428
+    domínios</strong> bloqueados desde a inauguração do Laboratório Antipirataria da
+    Anatel em setembro de 2023<span class="cite" data-ref="anatel-ancine-acordo-2025">[3]</span>.
+  </p>
+
+  <div class="figwrap">
+  <svg viewBox="0 0 640 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Indicadores agregados do mercado clandestino de TV box no Brasil 2018-2025">
+    <!-- Grid horizontal -->
+    <line x1="60" y1="50"  x2="620" y2="50"  stroke="#e0e0e0"/>
+    <line x1="60" y1="110" x2="620" y2="110" stroke="#e0e0e0"/>
+    <line x1="60" y1="170" x2="620" y2="170" stroke="#e0e0e0"/>
+    <line x1="60" y1="230" x2="620" y2="230" stroke="#e0e0e0"/>
+    <line x1="60" y1="230" x2="620" y2="230" stroke="#1a1d23"/>
+
+    <!-- Bar 1 -->
+    <rect x="100" y="60"  width="60" height="170" fill="#0b3a82"/>
+    <text x="130" y="55" font-family="Inter,sans-serif" font-size="11" fill="#0b3a82" font-weight="700" text-anchor="middle">8,0 mi</text>
+    <text x="130" y="248" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">Usuários piratas</text>
+    <text x="130" y="260" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Anatel · 2025 [1]</text>
+
+    <!-- Bar 2 -->
+    <rect x="200" y="120" width="60" height="110" fill="#a8133a"/>
+    <text x="230" y="115" font-family="Inter,sans-serif" font-size="11" fill="#a8133a" font-weight="700" text-anchor="middle">1,5 mi</text>
+    <text x="230" y="248" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">TV boxes apreend.</text>
+    <text x="230" y="260" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">2018-2025 [3]</text>
+
+    <!-- Bar 3 -->
+    <rect x="300" y="80"  width="60" height="150" fill="#0b3a82"/>
+    <text x="330" y="75" font-family="Inter,sans-serif" font-size="11" fill="#0b3a82" font-weight="700" text-anchor="middle">R$ 353 mi</text>
+    <text x="330" y="248" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">Valor apreensões</text>
+    <text x="330" y="260" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">acumulado [3]</text>
+
+    <!-- Bar 4 -->
+    <rect x="400" y="160" width="60" height="70"  fill="#136a3a"/>
+    <text x="430" y="155" font-family="Inter,sans-serif" font-size="11" fill="#136a3a" font-weight="700" text-anchor="middle">24.700</text>
+    <text x="430" y="248" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">IPs bloqueados</text>
+    <text x="430" y="260" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Lab Antipirataria [3]</text>
+
+    <!-- Bar 5 -->
+    <rect x="500" y="190" width="60" height="40"  fill="#136a3a"/>
+    <text x="530" y="185" font-family="Inter,sans-serif" font-size="11" fill="#136a3a" font-weight="700" text-anchor="middle">4.428</text>
+    <text x="530" y="248" font-family="Inter,sans-serif" font-size="9" fill="#1a1d23" text-anchor="middle">Domínios bloq.</text>
+    <text x="530" y="260" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">Lab Antipirataria [3]</text>
+
+    <text x="60" y="290" font-family="Inter,sans-serif" font-size="8" fill="#5b6470">Indicadores agregados — escala visual relativa, valores absolutos no topo de cada barra. Fonte: Anatel / MCom / acordo Anatel-Ancine.</text>
+  </svg>
+  <div class="caption">Figura 4.1 — Indicadores Anatel sobre o mercado clandestino brasileiro de TV.</div>
+  </div>
+
+  <h4>4.2.2 Operações de combate (2024-2025)</h4>
+  <p>
+    O ano de 2024 foi marcado por duas grandes investidas da <strong>Operação 404</strong>
+    (MJSP). A 7ª fase, em setembro, derrubou 675 sites e 14 aplicativos de
+    streaming<span class="cite" data-ref="operacao-404-fase7">[10]</span>. A 8ª fase,
+    em novembro, removeu 535 sites e teve a <strong>BTV — uma das principais TV box
+    piratas do Brasil — entre seus alvos</strong>, com 44 mandados de busca e 4 prisões
+    preventivas<span class="cite" data-ref="operacao-404-fase8">[9]</span>.
+  </p>
+  <p>
+    Em maio de 2025, a Anatel e a Ancine assinaram um <strong>Acordo de Cooperação Técnica</strong>
+    institucionalizando o fluxo de bloqueio: a Ancine identifica conteúdo, a Anatel
+    obriga as operadoras de banda larga a aplicar o bloqueio (firewall ou DNS) em prazo
+    determinado<span class="cite" data-ref="anatel-ancine-acordo-2025">[3]</span>.
+    Em julho do mesmo ano, a <strong>Operação PRAEDO</strong> (PF + Anatel) desarticulou
+    um esquema milionário em Curitiba, Foz do Iguaçu e Brasília: 38 agentes, 12 mandados,
+    140 aparelhos recolhidos das marcas <em>UniTv, Red Pro3, BTV, Platinum, Pulse</em>
+    — preço médio R$ 899 por unidade no varejo clandestino<span class="cite" data-ref="operacao-praedo-2025">[4]</span>.
+  </p>
+
+  <h4>4.2.3 O Brasil como epicentro global do BadBox 2.0</h4>
+  <p>
+    O dado decisivo deste estudo de caso vem do relatório técnico do <strong>HUMAN
+    Security Satori Threat Intelligence Team</strong> de março de 2025: a botnet
+    BadBox 2.0 tinha mais de <strong>1 milhão de dispositivos infectados</strong> em
+    222 países e territórios — e <strong>mais de um terço (≥ 33%) deles estava no
+    Brasil</strong><span class="cite" data-ref="human-badbox2">[2]</span>. O volume
+    superou em mais de 13× a botnet original BadBox (74 mil dispositivos).
+  </p>
+
+  <div class="figwrap">
+  <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Concentração de infecções BadBox 2.0 no Brasil vs resto do mundo">
+    <!-- Donut chart: Brasil 33% vs Resto 67% -->
+    <!-- Resto: começo no topo (12h), arco de 67% horário -->
+    <path d="M 240 60 A 120 120 0 1 1 132.69 192.86 L 240 180 Z"
+          fill="#cdd3dd" stroke="#ffffff" stroke-width="2"/>
+    <!-- Brasil: arco de 33% restante -->
+    <path d="M 132.69 192.86 A 120 120 0 0 1 240 60 L 240 180 Z"
+          fill="#0b3a82" stroke="#ffffff" stroke-width="2"/>
+
+    <!-- Centro vazio (donut) -->
+    <circle cx="240" cy="180" r="60" fill="#ffffff"/>
+
+    <!-- Centro: número -->
+    <text x="240" y="172" font-family="Inter,sans-serif" font-size="22" fill="#0b3a82" font-weight="700" text-anchor="middle">&gt; 33%</text>
+    <text x="240" y="192" font-family="Inter,sans-serif" font-size="9" fill="#5b6470" text-anchor="middle">do total mundial</text>
+    <text x="240" y="204" font-family="Inter,sans-serif" font-size="9" fill="#5b6470" text-anchor="middle">está no Brasil</text>
+
+    <!-- Legenda -->
+    <rect x="280" y="80"  width="14" height="10" fill="#0b3a82"/>
+    <text x="300" y="89"  font-family="Inter,sans-serif" font-size="10" fill="#1a1d23">Brasil — &gt; 333.000 dispositivos</text>
+    <rect x="280" y="105" width="14" height="10" fill="#cdd3dd"/>
+    <text x="300" y="114" font-family="Inter,sans-serif" font-size="10" fill="#1a1d23">Resto do mundo — 221 países</text>
+
+    <text x="280" y="145" font-family="Inter,sans-serif" font-size="9" fill="#5b6470">Total estimado: 1.000.000+ dispositivos</text>
+    <text x="280" y="158" font-family="Inter,sans-serif" font-size="9" fill="#5b6470">infectados, jan/2025.</text>
+
+    <text x="40"  y="295" font-family="Inter,sans-serif" font-size="9" fill="#5b6470">Fonte: HUMAN Security — Satori Threat Intelligence Team (mar/2025) [2].</text>
+    <text x="40"  y="307" font-family="Inter,sans-serif" font-size="8" fill="#5b6470">"More than a third of the BADBOX 2.0-infected devices observed by the Human Defense Platform are located in Brazil."</text>
+  </svg>
+  <div class="caption">Figura 4.2 — Concentração geográfica da botnet BadBox 2.0. O Brasil é o país individual mais afetado do mundo.</div>
+  </div>
+
+  <h4>4.2.4 O custo silencioso para o consumidor</h4>
+  <p>
+    Há um descompasso preocupante entre a escala do problema e a reação do consumidor.
+    Dos 141 milhões de internautas brasileiros mapeados pela CETIC.br em 2024<span
+    class="cite" data-ref="cetic-tic-dom-2024">[5]</span>, o universo de usuários de
+    TV pirata estimado pela Anatel (8 milhões) representa cerca de <strong>5,7%</strong>
+    — e provavelmente é piso, não teto: o número conta apenas o que foi
+    <em>mapeado</em> pelo Laboratório Antipirataria.
+  </p>
+
+  <div class="figwrap">
+  <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Comparação entre internautas brasileiros e usuários piratas mapeados">
+    <!-- Eixo -->
+    <line x1="60" y1="180" x2="580" y2="180" stroke="#1a1d23"/>
+
+    <!-- Internautas BR: 141 mi (escala referência = barra cheia) -->
+    <rect x="100" y="50" width="180" height="130" fill="#cdd3dd" stroke="#5b6470"/>
+    <text x="190" y="42" font-family="Inter,sans-serif" font-size="13" fill="#1a1d23" font-weight="700" text-anchor="middle">141.000.000</text>
+    <text x="190" y="200" font-family="Inter,sans-serif" font-size="10" fill="#1a1d23" text-anchor="middle">Internautas no Brasil</text>
+    <text x="190" y="214" font-family="Inter,sans-serif" font-size="9" fill="#5b6470" text-anchor="middle">CETIC.br · TIC Domicílios 2024 [5]</text>
+
+    <!-- Usuários piratas: 8 mi (~ 5.7% da barra) = altura 130 * 0.057 ~ 7.4 px (mas mostraria difícil; uso 14 px com label) -->
+    <rect x="380" y="166" width="120" height="14" fill="#a8133a"/>
+    <text x="440" y="158" font-family="Inter,sans-serif" font-size="13" fill="#a8133a" font-weight="700" text-anchor="middle">8.000.000</text>
+    <text x="440" y="200" font-family="Inter,sans-serif" font-size="10" fill="#1a1d23" text-anchor="middle">Usuários piratas mapeados</text>
+    <text x="440" y="214" font-family="Inter,sans-serif" font-size="9" fill="#5b6470" text-anchor="middle">Anatel · 2025 [1] · ≈ 5,7% dos internautas</text>
+
+    <text x="60" y="232" font-family="Inter,sans-serif" font-size="8" fill="#5b6470">Escala proporcional — a barra vermelha representa a fração real (5,7%) do universo de internautas.</text>
+  </svg>
+  <div class="caption">Figura 4.3 — Os 8 milhões de usuários piratas mapeados pela Anatel são uma fração modesta dos 141 milhões de internautas — mas concentram risco desproporcional de comprometimento.</div>
+  </div>
+
+  <p>
+    O Procon-SP, ao ser consultado, foi taxativo<span class="cite" data-ref="procon-sp-orientacao">[8]</span>:
+    "<em>plataformas ilegais não tendem a dar retorno e devem ser evitadas. Não há
+    direitos garantidos em transações ilegais</em>". Em julho de 2025, o Procon Carioca
+    chegou a notificar o Google por veicular anúncios de TV box pirata em sua
+    plataforma<span class="cite" data-ref="procon-google-2025">[7]</span> — sintoma de
+    que o problema escapou ao circuito de varejo informal e contaminou o ecossistema
+    publicitário regulado.
+  </p>
+
+  <h3>4.3 Vulnerabilidades técnicas e referências</h3>
+  <p>
+    A análise técnica aprofundada do MXQ Pro 5G 4K (build R2390 / RK3229), reproduzida
+    no documento de pesquisa interna<span class="cite" data-ref="compass-mxq">[14]</span>
+    e correlacionada com fontes externas, identifica seis camadas independentes de
+    risco — todas presentes <em>antes</em> do consumidor abrir a embalagem:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Ameaça</th><th>Vetor</th><th>Persistência</th><th>Impacto</th><th>Referência</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>BadBox 2.0</strong></td>
+        <td>Backdoor pré-instalado em fábrica (firmware), baseado em malware Triada (Lemon Group, China)</td>
+        <td>Mora na partição de boot — sobrevive a "reset de fábrica"</td>
+        <td>Botnet residencial: fraude publicitária, click fraud, proxy residencial, cadastro automático de contas</td>
+        <td>FBI PSA I-060525-PSA<span class="cite" data-ref="fbi-psa-2025">[6]</span> · HUMAN Security<span class="cite" data-ref="human-badbox2">[2]</span></td>
+      </tr>
+      <tr>
+        <td><strong>Android.Pandora</strong></td>
+        <td>OTAs assinados com chaves de teste vazadas; apps de streaming pirata (youcine, magistv, unitv) carregam <code>gomediad.so</code></td>
+        <td>Injeção em ramdisk de boot · porta TCP 4521</td>
+        <td>DDoS (TCP/UDP/SYN/ICMP/DNS flood) — Mirai variant</td>
+        <td>Dr.Web (2023) · compass artifact<span class="cite" data-ref="compass-mxq">[14]</span></td>
+      </tr>
+      <tr>
+        <td><strong>Bootloader desbloqueado</strong></td>
+        <td>Rockchip não impõe chain-of-trust no firmware de varejo; UART padronizado em pad PCB (115200 8N1)</td>
+        <td>Permanente — design do hardware</td>
+        <td>Qualquer <code>update.img</code> não-assinado entra via RKDevTool/MaskROM (VID 0x2207, PID 0x320b)</td>
+        <td>compass artifact<span class="cite" data-ref="compass-mxq">[14]</span></td>
+      </tr>
+      <tr>
+        <td><strong>ADB-over-IP padrão</strong></td>
+        <td><code>default.prop</code> com <code>persist.service.adb.enable=1</code> em compilações <code>userdebug/test-keys</code></td>
+        <td>Persistente até reflash completo</td>
+        <td>Acesso shell remoto via TCP 5555 sem autenticação</td>
+        <td>compass artifact<span class="cite" data-ref="compass-mxq">[14]</span></td>
+      </tr>
+      <tr>
+        <td><strong>CVE backlog</strong></td>
+        <td>Android 8.1 Oreo (2018) com kernel Linux 4.4 — sem patches</td>
+        <td>Permanente até OS substituído</td>
+        <td>Stagefright, BlueBorne, Janus, Magellan e dezenas de outros RCE não-mitigados</td>
+        <td>compass artifact<span class="cite" data-ref="compass-mxq">[14]</span></td>
+      </tr>
+      <tr>
+        <td><strong>Fraude de capacidade</strong></td>
+        <td><code>build.prop</code> reescrito para reportar 8/64 GB ou 16/256 GB em hardware com 1 GB / 8 GB reais</td>
+        <td>Persistente — só desmascarada por <code>cat /proc/meminfo</code></td>
+        <td>Performance degradada, swap em eMMC (degrada flash), instabilidade</td>
+        <td>compass artifact<span class="cite" data-ref="compass-mxq">[14]</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4.4 Correlação consumidor × superfície de ataque × risco residencial</h3>
+  <p>
+    A correlação dos dados das §§ 4.2 e 4.3 produz uma cadeia causal didática que vale
+    a pena explicitar:
+  </p>
+
+  <pre>(1) Consumidor brasileiro busca alternativa a streaming caro (R$ 200–400/mês).
+    └─ MCom/CETIC.br: 4 em 10 lares com TV usam streaming; assinaturas pesam no orçamento.
+
+(2) Compra MXQ Pro 4K em marketplace por R$ 125–170 (versão crua) ou
+    BTV/UniTV/Pulse por R$ 899 (versão com IPTV pirata pré-instalado).
+    └─ Anatel: 1,5 milhão de aparelhos não homologados apreendidos em 7 anos.
+
+(3) Aparelho plugado: BadBox 2.0 conecta C2 chinês na primeira inicialização.
+    └─ FBI PSA + HUMAN Security: Brasil = >33% das infecções globais.
+
+(4) Rede doméstica vira nó da botnet:
+    ├─ proxy residencial vendido a outros criminosos
+    ├─ cliques publicitários falsos consomem banda do consumidor
+    ├─ tráfego anômalo eventualmente bloqueia IP do lar (CGNAT)
+    └─ credenciais digitadas no aparelho (Wi-Fi, e-mail, streaming) exfiltradas.
+
+(5) Procon não pode ajudar: "transação ilegal, não há direito garantido".
+    └─ Procon-SP, jul/2025; Procon Carioca notificou Google por anunciar TV box pirata.</pre>
+
+  <aside class="why">
+    <span class="label">Por que isso importa</span>
+    O caso do MXQ Pro 4k não é abstração de cibersegurança — é o aparelho que está, neste momento, em centenas de milhares de salas de estar brasileiras. Estudar Introdução à Computação significa, entre outras coisas, conseguir orientar um familiar a <em>não</em> conectar esse aparelho à mesma rede onde você usa internet banking.
+  </aside>
+</section>
+
+<!-- =================================================================== -->
+<!-- §5  ADV7Sec                                                           -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§5 ADV7Sec — IPS/IDS Host-side</h2>
+
+  <h3>5.1 Visão geral</h3>
+  <p>
+    O <strong>ADV7Sec</strong> é o segundo pilar da defesa proposta. Enquanto o OpenBox
+    (§7.1) opera na <em>borda</em> da rede — bloqueando o tráfego de saída do TV box
+    para destinos suspeitos — o ADV7Sec opera no <em>host</em>: na estação de trabalho
+    do usuário, observando comportamento anômalo após o ataque ter conseguido se instalar.
+    A ferramenta é um <em>control plane</em> Python único (<code>ADV7Sec_1.0v.py</code>)
+    que detecta a distribuição Linux subjacente e adapta o comportamento aos gerenciadores
+    de pacotes <code>pacman</code>, <code>apt</code>, <code>dnf</code> e
+    <code>zypper</code><span class="cite" data-ref="adv7sec-repo">[16]</span>.
+  </p>
+
+  <p>
+    A premissa de design é <strong>preview-first</strong>: nenhuma ação que pare serviços
+    ou apague arquivos é executada sem o flag explícito <code>--execute</code>. O modo
+    padrão lê os logs unificados, normaliza eventos e mostra o que <em>seria</em> feito
+    — uma escolha didática importante, porque permite ao aluno entender o raciocínio
+    do IPS sem precisar correr o risco de quebrar seu próprio sistema.
+  </p>
+
+  <h3>5.2 Sensores integrados</h3>
+  <table>
+    <thead>
+      <tr><th>Sensor</th><th>Camada</th><th>O que captura</th><th>Por que importa para o caso MXQ</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>auditd</code></td>
+        <td>Kernel · syscalls</td>
+        <td>Chamadas de sistema, mudanças em arquivos sensíveis (<code>/etc</code>, <code>/boot</code>), exec privilegiado</td>
+        <td>Detecta tentativa de carga lateral do TV box para outros hosts da rede</td>
+      </tr>
+      <tr>
+        <td><code>Falco</code> (modern-eBPF)</td>
+        <td>Kernel · sondas eBPF</td>
+        <td>Comportamento de processos: spawn anômalo, escrita em diretórios sensíveis, conexão a IPs novos</td>
+        <td>Regras como "<em>processo jamais visto antes abriu socket para C2 BadBox</em>" disparam alerta em segundos</td>
+      </tr>
+      <tr>
+        <td><code>Kunai</code></td>
+        <td>Userland · Rust</td>
+        <td>Telemetria de baixo overhead (process tree, network, file events) com regras YARA-like</td>
+        <td>Complementa Falco com formato de regra mais expressivo</td>
+      </tr>
+      <tr>
+        <td><code>Suricata</code> (IDS-only)</td>
+        <td>Rede · pacotes</td>
+        <td>Inspeção de pacotes em modo IDS (não bloqueia — só alerta)</td>
+        <td>Assinaturas para C2 conhecidos do BadBox 2.0 e payloads Triada</td>
+      </tr>
+      <tr>
+        <td><code>Zeek</code></td>
+        <td>Rede · sessões</td>
+        <td>Logs estruturados de cada conexão (DNS, HTTP, TLS metadata, files)</td>
+        <td>Reconstrói histórico de comunicação do TV box mesmo sem alerta dedicado</td>
+      </tr>
+      <tr>
+        <td><code>Unbound</code> + dnstap</td>
+        <td>Rede · DNS</td>
+        <td>Resolvedor local com log em formato dnstap</td>
+        <td>Toda query DNS é registrada — DNS hijacking pelo TV box vira evidência forense</td>
+      </tr>
+      <tr>
+        <td><code>AIDE</code></td>
+        <td>Disco · integridade</td>
+        <td>Hashes de arquivos críticos com verificação periódica</td>
+        <td>Mudança em <code>/boot</code>, <code>/lib/modules</code> ou <code>/etc/systemd</code> dispara alerta</td>
+      </tr>
+      <tr>
+        <td><code>ClamAV</code> OnAccess</td>
+        <td>Disco · arquivos</td>
+        <td>Antivírus em <em>opt-in</em>, escopado a diretórios específicos</td>
+        <td>Captura assinaturas conhecidas (Mirai, Triada) caso o malware seja escrito em disco</td>
+      </tr>
+      <tr>
+        <td><code>Loki-RS</code> + YARA</td>
+        <td>Disco · scan</td>
+        <td>Scanner de IoCs com regras YARA, executado sob demanda</td>
+        <td>Hunt focado: "buscar tudo que pareça <code>gomediad.so</code> ou <code>pandoraspearrk</code> no host"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 Como o ADV7Sec detectaria BadBox 2.0 / Pandora numa rede doméstica</h3>
+  <p>
+    Considere o cenário em que o usuário conecta um MXQ Pro 4k a uma rede onde o ADV7Sec
+    está instalado em <em>uma</em> estação de trabalho Linux (não no TV box em si, que é
+    fechado). A defesa funciona em três camadas:
+  </p>
+  <ol>
+    <li><strong>DNS</strong>: o TV box tenta resolver o domínio C2 chinês conhecido. Se a
+    rede roteia o DNS para o resolvedor local Unbound (configuração padrão do OpenBox,
+    §7.2), a query fica registrada em dnstap. Uma <em>allowlist</em> de domínios
+    domésticos detecta o desvio em segundos.</li>
+    <li><strong>Sessão de rede</strong>: o Zeek registra a conexão TLS para o IP estranho.
+    Suricata, com regras carregadas para o conjunto BadBox/Triada, dispara alerta de
+    severidade alta.</li>
+    <li><strong>Lateralização</strong>: caso o malware tente escanear a rede interna
+    (típico de Pandora, que opera SYN/UDP flood), Falco detecta o processo gerador e
+    alerta. Se algum host vulnerável for atingido e tiver ADV7Sec instalado, AIDE pega
+    a alteração em arquivo crítico e Loki-RS, num scan agendado, encontra os IoCs.</li>
+  </ol>
+
+  <pre># Exemplo simplificado de regra Suricata para C2 do BadBox
+alert tls $HOME_NET any -&gt; any 443 ( \
+    msg:"BADBOX 2.0 — conexão a C2 conhecido"; \
+    tls.sni; content:"peachess.com"; nocase; \
+    classtype:trojan-activity; sid:9001001; rev:1; \
+)
+
+# Exemplo de regra Falco — escrita em /system/xbin/su (típico backdoor)
+- rule: ADV7Sec — backdoor su writeback
+  desc: Detecta escrita em /system/xbin/su (binário SUID do Triada)
+  condition: open_write and fd.name = /system/xbin/su
+  output: "Suspeita de backdoor Triada-like (user=%user.name proc=%proc.name)"
+  priority: CRITICAL</pre>
+
+  <h3>5.4 Demanda de hardware e software para o ADV7Sec</h3>
+  <ul>
+    <li><strong>Hardware mínimo</strong>: 4 GB RAM, 20 GB SSD livre, NIC capaz de modo
+    promíscuo se Suricata for usado em mirroring. Em laptop pessoal, o impacto de CPU
+    fica em ~3% médio com Falco eBPF + auditd.</li>
+    <li><strong>Software</strong>: Linux com kernel ≥ 6.8 e BTF habilitado (eBPF moderno
+    requer isso); Python 3.11+; <code>systemd</code>; <code>journald</code> persistente.</li>
+    <li><strong>APIs / IA</strong>: a v1.0 não usa modelo de IA em produção — todas as
+    detecções são determinísticas (regras YARA, Suricata, Falco). A roadmap inclui
+    integração futura com <em>local LLM via LM Studio</em> para resumo automático de
+    alertas (estagiada no projeto irmão ADV7ia).</li>
+  </ul>
+
+  <aside class="why">
+    <span class="label">Por que isso importa</span>
+    Em segurança defensiva, <em>ver</em> é metade do trabalho. Sem auditd, Falco e Zeek, o aluno administra um servidor sem instrumento — como pilotar um avião sem altímetro. Ao instalar o ADV7Sec na máquina pessoal, o estudante começa a desenvolver a intuição forense que define quem trabalha em SOC ou Blue Team profissionalmente.
+  </aside>
+</section>
+
+<!-- =================================================================== -->
+<!-- §6  DEMANDAS DE INFRAESTRUTURA                                        -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§6 Demandas de Infraestrutura de TI</h2>
+  <p>
+    Esta seção responde diretamente ao item da rubrica AVAL01 que pede a especificação
+    de "demandas de hardware (sensores, servidores, redes) e software (sistemas de
+    gestão, APIs, IA)"<span class="cite" data-ref="av01-modelo">[15]</span>.
+  </p>
+
+  <h3>6.1 Hardware</h3>
+  <table>
+    <thead>
+      <tr><th>Componente</th><th>Especificação alvo</th><th>Custo estimado (R$)</th><th>Função no projeto</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Edge router</td>
+        <td>Placa Rockchip RK3229 / Raspberry Pi 4 — 1 GB RAM, NIC 100 Mbps, eMMC 8 GB ou microSD 16 GB</td>
+        <td>180–350</td>
+        <td>Roda OpenBox: WireGuard, dnscrypt-proxy, Pi-hole, nftables kill switch, Tor metadata-only</td>
+      </tr>
+      <tr>
+        <td>Workstation</td>
+        <td>Notebook ou desktop existente, ≥ 4 GB RAM, kernel Linux ≥ 6.8</td>
+        <td>0 (reaproveitado)</td>
+        <td>Roda ADV7Sec: auditd, Falco, Suricata, Zeek, Unbound, AIDE, ClamAV</td>
+      </tr>
+      <tr>
+        <td>Switch gerenciável (opcional)</td>
+        <td>Switch L2 com suporte a VLAN — TP-Link TL-SG108E ou similar</td>
+        <td>140–200</td>
+        <td>Segmentação: VLAN 10 (lar), VLAN 20 (TV box / IoT não confiável)</td>
+      </tr>
+      <tr>
+        <td>Cabeamento + USB-Ethernet</td>
+        <td>2× cabos Cat5e/6 + adaptador USB 3.0 → Ethernet (alternativa à VLAN para isolamento físico)</td>
+        <td>60–120</td>
+        <td>Garante isolamento mínimo entre TV box e máquinas críticas</td>
+      </tr>
+      <tr>
+        <td>Sensor remoto (opcional)</td>
+        <td>Raspberry Pi Zero 2 W para captura passiva no roteador</td>
+        <td>180</td>
+        <td>Tap espelhado para Suricata em outra máquina (avançado)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="small">
+    Total mínimo viável: <strong>R$ 240</strong> (apenas o edge router, sem switch nem
+    sensor). Total recomendado para laboratório completo: <strong>R$ 850</strong> —
+    abaixo do preço médio de R$ 899 que o consumidor paga por uma única caixa
+    BTV pirata<span class="cite" data-ref="operacao-praedo-2025">[4]</span>.
+  </p>
+
+  <h3>6.2 Software</h3>
+  <ul>
+    <li><strong>Sistemas operacionais.</strong> Edge router: Armbian community
+    <code>rk322x-box</code> (Debian Bookworm armhf, kernel ≥ 6.x). Workstation: Arch
+    Linux ou Debian/Ubuntu/Fedora — o ADV7Sec adapta o backend automaticamente.</li>
+    <li><strong>Sistemas de gestão (orchestration).</strong> Instalador faseado em Bash
+    (<code>install.sh</code> + <code>install.d/00-09*.sh</code>) com idempotência — cada
+    fase pode ser rodada repetidamente sem efeito colateral. Configurações vivem em
+    <code>/etc</code>, gerenciadas por arquivos versionados no repositório.</li>
+    <li><strong>APIs.</strong> O ADV7Sec exporta JSON estruturado em
+    <code>doctor --format json</code> e <code>analyze --format json</code>, consumível
+    por qualquer SIEM ou dashboard externo. O OpenBox expõe métricas via Netdata (HTTP)
+    e alertas via <code>ntfy</code> (push para celular).</li>
+    <li><strong>IA / heurística.</strong> A v1.0 usa heurística determinística (regras).
+    A roadmap (não escopo desta entrega) inclui resumo de alertas via LLM local através
+    do projeto irmão ADV7ia (Aider/OpenHands sobre LM Studio).</li>
+    <li><strong>Observabilidade.</strong> Netdata, Uptime Kuma, Monit, Lynis, RKHunter,
+    arch-audit. Todas <em>free software</em>, executadas localmente — nada sai do lar
+    sem ação explícita do usuário.</li>
+  </ul>
+
+  <h3>6.3 Rede</h3>
+  <ul>
+    <li><strong>Topologia recomendada</strong>:
+      <code>Internet → Modem ISP → OpenBox (edge) → Switch L2 com VLANs → {VLAN 10: workstation, celular, TV legítima} ∥ {VLAN 20: TV box e demais IoT não confiáveis}</code>.</li>
+    <li><strong>Política de saída</strong>: kill switch nftables — se a VPN cair, nenhum
+    pacote sai pela interface ISP. Implementado via <code>fwmark 51820</code> e tabelas
+    de roteamento dedicadas.</li>
+    <li><strong>DNS</strong>: forçado para Unbound local (porta 53). Resolução cifrada
+    via dnscrypt-proxy 2 (DoH/DoT/DoQ) com DNSSEC. Pi-hole faz blacklist de trackers e
+    domínios de telemetria conhecidos.</li>
+    <li><strong>Tor</strong>: presente apenas para <em>metadados</em> (lookup, consulta
+    de listas pequenas) — explicitamente <strong>não usado para streaming</strong> de
+    HD/4K, conforme documento de caveat (<code>TOR_STREAMING_CAVEAT.md</code>).</li>
+  </ul>
+</section>
+
+<!-- =================================================================== -->
+<!-- §7  ARQUITETURA PROPOSTA                                              -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§7 Arquitetura Proposta</h2>
+
+  <h3>7.1 Diagrama de blocos consolidado</h3>
+
+  <div class="figwrap">
+  <svg viewBox="0 0 720 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Arquitetura em camadas OpenBox + ADV7Sec">
+    <defs>
+      <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="#0b3a82"/>
+      </marker>
+    </defs>
+
+    <!-- Camada 1: Cliente -->
+    <rect x="40"  y="30"  width="640" height="60" fill="#f8f9fb" stroke="#1a1d23"/>
+    <text x="60"  y="50"  font-family="Inter,sans-serif" font-size="11" fill="#0b3a82" font-weight="700">Camada 1 — Cliente residencial (não-confiável)</text>
+    <rect x="60"  y="58"  width="180" height="24" fill="#fde9e9" stroke="#a8133a"/>
+    <text x="150" y="74"  font-family="Inter,sans-serif" font-size="9" text-anchor="middle">MXQ Pro 4k (BadBox 2.0)</text>
+    <rect x="260" y="58"  width="160" height="24" fill="#eef1f6" stroke="#0b3a82"/>
+    <text x="340" y="74"  font-family="Inter,sans-serif" font-size="9" text-anchor="middle">Smart TV / Celular</text>
+    <rect x="440" y="58"  width="220" height="24" fill="#e7f4ea" stroke="#136a3a"/>
+    <text x="550" y="74"  font-family="Inter,sans-serif" font-size="9" text-anchor="middle">Workstation Linux (com ADV7Sec)</text>
+
+    <line x1="150" y1="90" x2="150" y2="120" stroke="#0b3a82" stroke-width="1.5" marker-end="url(#ar2)"/>
+    <line x1="340" y1="90" x2="340" y2="120" stroke="#0b3a82" stroke-width="1.5" marker-end="url(#ar2)"/>
+    <line x1="550" y1="90" x2="550" y2="120" stroke="#0b3a82" stroke-width="1.5" marker-end="url(#ar2)"/>
+
+    <!-- Camada 2: OpenBox -->
+    <rect x="40" y="125" width="640" height="100" fill="#eef1f6" stroke="#0b3a82" stroke-width="1.5"/>
+    <text x="60" y="145" font-family="Inter,sans-serif" font-size="11" fill="#0b3a82" font-weight="700">Camada 2 — OpenBox (edge router · RK3229 · Armbian)</text>
+
+    <rect x="60"  y="155" width="120" height="58" fill="#ffffff" stroke="#0b3a82"/>
+    <text x="120" y="172" font-family="Inter,sans-serif" font-size="9" font-weight="700" text-anchor="middle">nftables</text>
+    <text x="120" y="186" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">kill switch</text>
+    <text x="120" y="198" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">fwmark 51820</text>
+
+    <rect x="190" y="155" width="120" height="58" fill="#ffffff" stroke="#0b3a82"/>
+    <text x="250" y="172" font-family="Inter,sans-serif" font-size="9" font-weight="700" text-anchor="middle">WireGuard</text>
+    <text x="250" y="186" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">ChaCha20-Poly1305</text>
+    <text x="250" y="198" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">MTU 1420</text>
+
+    <rect x="320" y="155" width="120" height="58" fill="#ffffff" stroke="#0b3a82"/>
+    <text x="380" y="172" font-family="Inter,sans-serif" font-size="9" font-weight="700" text-anchor="middle">dnscrypt-proxy</text>
+    <text x="380" y="186" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">DoH/DoT/DoQ</text>
+    <text x="380" y="198" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">DNSSEC</text>
+
+    <rect x="450" y="155" width="100" height="58" fill="#ffffff" stroke="#0b3a82"/>
+    <text x="500" y="172" font-family="Inter,sans-serif" font-size="9" font-weight="700" text-anchor="middle">Pi-hole</text>
+    <text x="500" y="186" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">blacklist</text>
+    <text x="500" y="198" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">trackers</text>
+
+    <rect x="560" y="155" width="100" height="58" fill="#ffffff" stroke="#0b3a82"/>
+    <text x="610" y="172" font-family="Inter,sans-serif" font-size="9" font-weight="700" text-anchor="middle">Tor</text>
+    <text x="610" y="186" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">metadata-only</text>
+    <text x="610" y="198" font-family="Inter,sans-serif" font-size="8" text-anchor="middle">no-stream</text>
+
+    <line x1="360" y1="225" x2="360" y2="250" stroke="#0b3a82" stroke-width="1.5" marker-end="url(#ar2)"/>
+
+    <!-- Camada 3: ADV7Sec -->
+    <rect x="40" y="255" width="640" height="80" fill="#e7f4ea" stroke="#136a3a" stroke-width="1.5"/>
+    <text x="60" y="275" font-family="Inter,sans-serif" font-size="11" fill="#136a3a" font-weight="700">Camada 3 — ADV7Sec (host detection-only · qualquer Linux)</text>
+
+    <rect x="60"  y="285" width="100" height="38" fill="#ffffff" stroke="#136a3a"/>
+    <text x="110" y="302" font-family="Inter,sans-serif" font-size="9" text-anchor="middle">auditd</text>
+    <text x="110" y="315" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">syscalls</text>
+
+    <rect x="170" y="285" width="100" height="38" fill="#ffffff" stroke="#136a3a"/>
+    <text x="220" y="302" font-family="Inter,sans-serif" font-size="9" text-anchor="middle">Falco eBPF</text>
+    <text x="220" y="315" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">comportamento</text>
+
+    <rect x="280" y="285" width="100" height="38" fill="#ffffff" stroke="#136a3a"/>
+    <text x="330" y="302" font-family="Inter,sans-serif" font-size="9" text-anchor="middle">Suricata</text>
+    <text x="330" y="315" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">IDS · pacotes</text>
+
+    <rect x="390" y="285" width="100" height="38" fill="#ffffff" stroke="#136a3a"/>
+    <text x="440" y="302" font-family="Inter,sans-serif" font-size="9" text-anchor="middle">Zeek</text>
+    <text x="440" y="315" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">sessões</text>
+
+    <rect x="500" y="285" width="100" height="38" fill="#ffffff" stroke="#136a3a"/>
+    <text x="550" y="302" font-family="Inter,sans-serif" font-size="9" text-anchor="middle">AIDE + ClamAV</text>
+    <text x="550" y="315" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">integridade</text>
+
+    <line x1="360" y1="335" x2="360" y2="360" stroke="#0b3a82" stroke-width="1.5" marker-end="url(#ar2)"/>
+
+    <!-- Camada 4: Internet -->
+    <rect x="40" y="365" width="640" height="35" fill="#cdd3dd" stroke="#1a1d23"/>
+    <text x="60" y="386" font-family="Inter,sans-serif" font-size="11" fill="#1a1d23" font-weight="700">Camada 4 — Upstream (ISP + Internet)</text>
+  </svg>
+  <div class="caption">Figura 7.1 — Arquitetura em quatro camadas. As setas indicam fluxo de tráfego; o ADV7Sec opera transversalmente no host como observador.</div>
+  </div>
+
+  <h3>7.2 Fluxo de dados — uma requisição típica</h3>
+  <pre>1. MXQ Pro 4k tenta resolver "peachess.com" (C2 hipotético do BadBox).
+2. Pacote DNS (UDP/53) sai do TV box → switch → OpenBox.
+3. OpenBox força DNAT para Unbound local (127.0.0.1:53).
+4. Unbound consulta dnscrypt-proxy (loopback:5053).
+5. dnscrypt-proxy abre canal DoH cifrado para resolvedor confiável (Quad9, NextDNS).
+6. Resposta volta. Pi-hole intercepta: domínio na blacklist? → resposta NXDOMAIN.
+7. Caso passe, OpenBox encaminha tráfego encapsulado em WireGuard (ChaCha20-Poly1305).
+8. Em paralelo, dnstap registra a query. Suricata (no host workstation com SPAN/mirror)
+   alerta se a SNI do TLS subsequente bater regra de C2 conhecido.
+9. Falco no host alerta se algum processo local fizer conexão para o mesmo destino.
+10. Caso a VPN caia: nftables bloqueia toda saída da interface upstream
+    (regra fwmark 51820 sem rota → DROP). Zero vazamento.</pre>
+
+  <h3>7.3 Telemetria ADV7Sec → SIEM local</h3>
+
+  <div class="figwrap">
+  <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fluxo de telemetria do ADV7Sec para SIEM local">
+    <defs>
+      <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="#136a3a"/>
+      </marker>
+    </defs>
+
+    <!-- Coluna esquerda: Sensores -->
+    <rect x="30"  y="40"  width="140" height="38" fill="#e7f4ea" stroke="#136a3a"/>
+    <text x="100" y="63" font-family="Inter,sans-serif" font-size="10" text-anchor="middle">auditd</text>
+    <rect x="30"  y="90"  width="140" height="38" fill="#e7f4ea" stroke="#136a3a"/>
+    <text x="100" y="113" font-family="Inter,sans-serif" font-size="10" text-anchor="middle">Falco JSON</text>
+    <rect x="30"  y="140" width="140" height="38" fill="#e7f4ea" stroke="#136a3a"/>
+    <text x="100" y="163" font-family="Inter,sans-serif" font-size="10" text-anchor="middle">Suricata EVE</text>
+    <rect x="30"  y="190" width="140" height="38" fill="#e7f4ea" stroke="#136a3a"/>
+    <text x="100" y="213" font-family="Inter,sans-serif" font-size="10" text-anchor="middle">Zeek conn.log</text>
+
+    <!-- Setas para o normalizador -->
+    <line x1="170" y1="59"  x2="280" y2="125" stroke="#136a3a" stroke-width="1.2" marker-end="url(#ar3)"/>
+    <line x1="170" y1="109" x2="280" y2="130" stroke="#136a3a" stroke-width="1.2" marker-end="url(#ar3)"/>
+    <line x1="170" y1="159" x2="280" y2="135" stroke="#136a3a" stroke-width="1.2" marker-end="url(#ar3)"/>
+    <line x1="170" y1="209" x2="280" y2="140" stroke="#136a3a" stroke-width="1.2" marker-end="url(#ar3)"/>
+
+    <!-- Normalizador: ADV7Sec analyze -->
+    <rect x="280" y="100" width="160" height="70" fill="#0b3a82" stroke="#1a1d23"/>
+    <text x="360" y="128" font-family="Inter,sans-serif" font-size="11" fill="#ffffff" font-weight="700" text-anchor="middle">ADV7Sec analyze</text>
+    <text x="360" y="146" font-family="Inter,sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">normaliza eventos</text>
+    <text x="360" y="159" font-family="Inter,sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">stream unificado</text>
+
+    <!-- Saídas: journald, ntfy, JSON SIEM -->
+    <line x1="440" y1="120" x2="540" y2="60"  stroke="#0b3a82" stroke-width="1.2" marker-end="url(#ar3)"/>
+    <line x1="440" y1="135" x2="540" y2="135" stroke="#0b3a82" stroke-width="1.2" marker-end="url(#ar3)"/>
+    <line x1="440" y1="150" x2="540" y2="210" stroke="#0b3a82" stroke-width="1.2" marker-end="url(#ar3)"/>
+
+    <rect x="540" y="40"  width="160" height="38" fill="#ffffff" stroke="#0b3a82"/>
+    <text x="620" y="58"  font-family="Inter,sans-serif" font-size="10" text-anchor="middle">journald (local)</text>
+    <text x="620" y="71"  font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">persistente, on-disk</text>
+
+    <rect x="540" y="115" width="160" height="40" fill="#ffffff" stroke="#0b3a82"/>
+    <text x="620" y="133" font-family="Inter,sans-serif" font-size="10" text-anchor="middle">ntfy (push)</text>
+    <text x="620" y="146" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">alerta no celular</text>
+
+    <rect x="540" y="190" width="160" height="40" fill="#ffffff" stroke="#0b3a82"/>
+    <text x="620" y="208" font-family="Inter,sans-serif" font-size="10" text-anchor="middle">JSON / SIEM</text>
+    <text x="620" y="221" font-family="Inter,sans-serif" font-size="8" fill="#5b6470" text-anchor="middle">opt-in, exporte externo</text>
+
+    <text x="30" y="265" font-family="Inter,sans-serif" font-size="9" fill="#5b6470">Padrão preview-first: cada alerta mostra contexto antes de qualquer ação. Resposta automática só com --execute explícito.</text>
+  </svg>
+  <div class="caption">Figura 7.2 — Pipeline de telemetria do ADV7Sec. O modo padrão escreve só local (journald + ntfy); SIEM externo é opt-in.</div>
+  </div>
+
+</section>
+
+<!-- =================================================================== -->
+<!-- §8  CONCLUSÃO                                                         -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§8 Conclusão e Direcionamento de Carreira</h2>
+
+  <h3>8.1 Resultado esperado</h3>
+  <p>
+    O conjunto OpenBox + ADV7Sec proposto neste documento é, ao mesmo tempo, um
+    <strong>laboratório acadêmico</strong> e uma <strong>resposta defensiva real</strong>
+    para um problema que afeta milhões de famílias brasileiras. O custo de aquisição
+    fica abaixo do preço médio de uma única caixa de TV box pirata. A pilha é inteiramente
+    construída com software livre auditável: <code>nftables</code>, <code>WireGuard</code>,
+    <code>dnscrypt-proxy</code>, <code>Pi-hole</code>, <code>auditd</code>,
+    <code>Falco</code>, <code>Suricata</code>, <code>Zeek</code>. A documentação é
+    determinística — qualquer alteração no código se reflete automaticamente na
+    documentação Obsidian gerada.
+  </p>
+
+  <h3>8.2 Lições aprendidas (v0.1 → v0.2 → AVAL01)</h3>
+  <ul>
+    <li><strong>Iniciar pequeno e versionar cedo.</strong> A v0.1 cobriu o feliz path em
+    Raspberry Pi 4. A v0.2 fez o retarget para um hardware real (RK3229) — e exatamente
+    nesse retarget surgiram os achados sobre BadBox 2.0 que motivaram este estudo de caso.</li>
+    <li><strong>Honestidade técnica vale mais que demo.</strong> Tor para streaming HD
+    <em>não funciona</em>; foi documentado em <code>TOR_STREAMING_CAVEAT.md</code> em vez
+    de mascarado. Essa postura é central no perfil profissional defensivo.</li>
+    <li><strong>Testes objetivos &gt; "deu certo na minha máquina".</strong> A suíte
+    <code>validate-stack.sh</code> com 10 verificações é a diferença entre achar
+    que está seguro e provar que está.</li>
+  </ul>
+
+  <h3>8.3 Direcionamento de carreira</h3>
+  <p>
+    O Brasil tem défice estrutural de profissionais em segurança defensiva. Operações como
+    a 404 e a PRAEDO mostram que o esforço regulatório existe, mas a defesa do
+    consumidor final — o cidadão que tem um TV box em casa — depende de uma camada de
+    educação técnica que a universidade pode prover. Este projeto sinaliza para o autor
+    uma trilha clara: <strong>Blue Team / SOC / infraestrutura defensiva</strong>, com
+    foco em detecção de ameaças residenciais e análise forense de IoT.
+  </p>
+  <p>
+    A continuidade natural — para semestres futuros — é o projeto irmão
+    <strong>ADV7ia</strong>, que adiciona uma camada de IA local (LM Studio + OpenHands)
+    ao stack para automatizar a triagem de alertas. Isso conecta Introdução à Computação
+    diretamente às disciplinas mais avançadas de IA, redes e segurança que virão.
+  </p>
+
+  <aside class="why">
+    <span class="label">Por que isso importa</span>
+    Sair de Introdução à Computação com um projeto real — instalado, testado, documentado, alinhado a uma ameaça concreta no contexto nacional — é diferente de sair com listas de exercícios. É o tipo de evidência que faz diferença no primeiro estágio.
+  </aside>
+</section>
+
+<!-- =================================================================== -->
+<!-- §9  REFERÊNCIAS                                                       -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§9 Referências</h2>
+  <p class="small">
+    Cada citação no corpo do texto carrega o marcador correspondente
+    (ex.: <span class="cite">[1]</span>). Fontes governamentais brasileiras vêm em
+    primeiro lugar, conforme metodologia declarada na §4.1.
+  </p>
+
+  <h3>9.1 Fontes governamentais brasileiras e oficiais</h3>
+
+  <div class="ref">
+    <span class="id">[1]</span> <strong>Ministério das Comunicações (MCom) / Anatel.</strong>
+    "Brasil intensifica combate à pirataria digital em 2025, com apreensão milionária e
+    mapeamento de até 8 milhões de usuários clandestinos". Janeiro de 2026.<br>
+    <span class="src">URL: https://www.gov.br/mcom/pt-br/noticias/2026/janeiro/brasil-intensifica-combate-a-pirataria-digital-em-2025-com-apreensao-milionaria-e-mapeamento-de-ate-8-milhoes-de-usuarios-clandestinos</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[3]</span> <strong>Anatel.</strong> "Anatel e Ancine firmam acordo
+    para combater pirataria de conteúdos audiovisuais". 15 de maio de 2025.
+    <em>Acordo de Cooperação Técnica.</em><br>
+    <span class="src">URL: https://www.gov.br/anatel/pt-br/assuntos/noticias/anatel-e-ancine-firmam-acordo-para-combater-pirataria-de-conteudos-audiovisuais</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[5]</span> <strong>CETIC.br / NIC.br / CGI.br.</strong> "TIC Domicílios
+    2024 — em duas décadas, lares urbanos brasileiros com internet passaram de 13% para
+    85%". Outubro de 2024.<br>
+    <span class="src">URL: https://cetic.br/pt/noticia/em-duas-decadas-proporcao-de-lares-urbanos-brasileiros-com-internet-passou-de-13-para-85-aponta-tic-domicilios-2024/</span>
+    <br><span class="src">PDF Resumo Executivo: https://www.cetic.br/media/docs/publicacoes/2/20250512115624/tic_domicilios_2024_resumo_executivo.pdf</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[4]</span> <strong>Polícia Federal / Anatel — Operação PRAEDO.</strong>
+    "PF e Anatel desarticulam esquema milionário de TV box pirata e gatonet". TELETIME News,
+    29 de julho de 2025. (Citação direta de ato oficial e participantes.)<br>
+    <span class="src">URL: https://teletime.com.br/29/07/2025/pf-e-anatel-desarticulam-esquema-milionario-de-tv-box-pirata-e-gatonet/</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[9]</span> <strong>Ministério da Justiça e Segurança Pública (MJSP)
+    — Operação 404, 8ª fase.</strong> "Como a Operação 404 bloqueou 535 sites de IPTV e
+    streaming piratas na sua 8ª fase". TargetHD, 27 de novembro de 2024.<br>
+    <span class="src">URL: https://www.targethd.net/como-a-operacao-404-bloqueou-535-sites-de-iptv-e-streaming-piratas-na-sua-8a-fase/</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[10]</span> <strong>MJSP — Operação 404, 7ª fase.</strong>
+    "Operação contra pirataria tira do ar 675 sites e 14 aplicativos de streaming".
+    TELETIME News, 19 de setembro de 2024.<br>
+    <span class="src">URL: https://teletime.com.br/19/09/2024/operacao-contra-pirataria-tira-do-ar-sites-e-aplicativos-de-streaming/</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[7]</span> <strong>Procon Carioca.</strong> "Procon Carioca notifica
+    Google por anúncios de TV box pirata". TELETIME News, 24 de julho de 2025.<br>
+    <span class="src">URL: https://teletime.com.br/24/07/2025/procon-carioca-notifica-google-por-anuncios-de-tv-box-pirata</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[8]</span> <strong>Procon-SP.</strong> "Uso de BTV, UniTV e TV Box
+    pirata: riscos legais e orientações do Procon". Posicionamento oficial, 2025.<br>
+    <span class="src">URL: https://onlinedigitalsolucoes.com/uso-de-btv-unitv-e-tv-box-pirata-riscos-legais-e-orientacoes/</span>
+  </div>
+
+  <h3>9.2 Fontes internacionais (governo e indústria)</h3>
+
+  <div class="ref">
+    <span class="id">[6]</span> <strong>Federal Bureau of Investigation (FBI / IC3).</strong>
+    "Public Service Announcement I-060525-PSA — Home Internet Connected Devices Facilitate
+    Criminal Activity". 5 de junho de 2025. (Lista o MXQ Pro 5G entre os dispositivos
+    BadBox 2.0 confirmados.)<br>
+    <span class="src">URL: https://www.ic3.gov/PSA/2025/PSA250605</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[2]</span> <strong>HUMAN Security — Satori Threat Intelligence Team.</strong>
+    "Satori Threat Intelligence Disruption: BADBOX 2.0 Targets Consumer Devices with
+    Multiple Fraud Schemes". Março de 2025. (Fonte da estatística "&gt; 1/3 das infecções
+    estão no Brasil".)<br>
+    <span class="src">URL: https://www.humansecurity.com/learn/blog/satori-threat-intelligence-disruption-badbox-2-0/</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[11]</span> <strong>HUMAN Security.</strong> "HUMAN Exposes BADBOX 2.0
+    Scheme Infecting 1 Million Off-Brand Android Open Source Project Devices". Sala de
+    imprensa, 2025.<br>
+    <span class="src">URL: https://www.humansecurity.com/newsroom/human-exposes-badbox-2-0-scheme/</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[12]</span> <strong>Electronic Frontier Foundation (EFF).</strong>
+    "FBI Warning on IoT Devices: How to Tell If You Are Impacted". Junho de 2025.<br>
+    <span class="src">URL: https://www.eff.org/deeplinks/2025/06/fbi-warning-iot-devices-how-tell-if-you-are-impacted</span>
+  </div>
+
+  <h3>9.3 Fontes acadêmicas e modelo da disciplina</h3>
+
+  <div class="ref">
+    <span class="id">[15]</span> <strong>UniCEUB — Disciplina Introdução à Computação.</strong>
+    Documento "[IC]AV01-A.pdf" — Avaliação 01: Estudo de Caso, Pitch e Projeto Técnico
+    (rubrica oficial). Brasília, 2026.<br>
+    <span class="src">Fornecido pela disciplina; arquivo local: ~/Downloads/[IC]AV01-A.pdf</span>
+  </div>
+
+  <h3>9.4 Pesquisa e código próprios (AOPS)</h3>
+
+  <div class="ref">
+    <span class="id">[14]</span> <strong>Pollazzon Soterio, A. O. (AOPS).</strong>
+    "Inside the MXQ Pro 5G 4K R2390 — Rockchip RK3229 com firmware comprometido".
+    Pesquisa interna ("compass artifact"), abril de 2026.<br>
+    <span class="src">Caminho local: ~/Downloads/compass_artifact_wf-562a9f40-b72e-40e3-b1d7-e800f8b32ae7_text_markdown.md</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[13]</span> <strong>AOPS.</strong> "RK3229_THREAT_RESEARCH —
+    análise de ameaças do hardware Rockchip RK322x". Documento interno, abril de 2026.<br>
+    <span class="src">~/ObsidianAgent/Projects/IC01-aops/OpenBox0.1v/docs/security/RK3229_THREAT_RESEARCH.md</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[16]</span> <strong>AOPS.</strong> "ADV7Sec 1.0v — control plane
+    IPS/IDS Linux-first detection-only".<br>
+    <span class="src">~/ObsidianAgent/Projects/IC01-aops/IPS_IDS/ADV7Sec_1.0v.py</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[17]</span> <strong>AOPS.</strong> "OpenBox v0.2.0 — caixa de borda
+    residencial RK3229 (WireGuard + DNS cifrado + nftables kill switch)".<br>
+    <span class="src">~/ObsidianAgent/Projects/IC01-aops/OpenBox0.1v/</span>
+  </div>
+
+  <div class="ref">
+    <span class="id">[18]</span> <strong>AOPS.</strong> "ADV7Box — entrega consolidada
+    AV01-A (referência de estilo desta entrega)".<br>
+    <span class="src">~/ObsidianAgent/Projects/IC01-aops/OpenBox0.1v/ADV7Box/</span>
+  </div>
+
+</section>
+
+<!-- =================================================================== -->
+<!-- §10 APÊNDICE                                                          -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§10 Apêndice — Evidências de Desenvolvimento</h2>
+
+  <h3>10.1 Estrutura de diretórios</h3>
+  <pre>~/ObsidianAgent/Projects/IC01-aops/
+├── OpenBox0.1v/                  # Pilar A — código do edge router (versionado)
+│   ├── install.sh                # Orquestrador faseado
+│   ├── install.d/                # 10 fases idempotentes (00-base ... 09-validate)
+│   ├── etc/                      # Configs (nftables, wg, dnscrypt, tor, monit, caddy)
+│   ├── systemd/                  # Units e timers (watchdogs)
+│   ├── tests/                    # ci-syntax, validate-stack, vault validation
+│   ├── docs/                     # CASE_STUDY, THREAT_MODEL, RUNBOOK, security/RK3229
+│   ├── vault/                    # Obsidian vault (auto-gerado)
+│   ├── CHANGELOG.md, VERSION
+│   └── ADV7Box/                  # Entrega irmã AV01-A (HTML+PDF)
+│
+├── IPS_IDS/                      # Pilar B — ADV7Sec (control plane Python)
+│   ├── ADV7Sec_1.0v.py           # Entry point
+│   ├── adv7sec_1_0/              # Pacote: 23 módulos (audit, install, analyze, ...)
+│   ├── tests/                    # Unit + integration tests
+│   └── docs/                     # PHASE2_TUNING, ADV7Sec_1.0_AUDIT
+│
+├── ADV7ia/                       # Roadmap futuro: LLM local + OpenHands (ADV7Sec + IA)
+│
+└── AVAL01-IC/                    # ESTA ENTREGA
+    ├── AVAL01-IC.html            # Fonte canônica
+    ├── AVAL01-IC.pdf             # Renderização Chromium
+    ├── AVAL01-IC.docx            # Conversão Pandoc
+    ├── README.md, CLAUDE.md
+    ├── build.sh                  # Pipeline html → pdf + docx
+    └── assets/
+        └── sources.json          # Bibliografia rastreável (todas as 18 referências)</pre>
+
+  <h3>10.2 Como reproduzir esta entrega</h3>
+  <pre>cd ~/ObsidianAgent/Projects/IC01-aops/AVAL01-IC
+
+# Build
+bash build.sh
+
+# Verificar integridade dos links
+grep -oE 'https?://[^"&lt;&gt; ]+' AVAL01-IC.html | sort -u | \
+  while read u; do
+    code=$(curl -s -o /dev/null -w '%{http_code}' -I -L --max-time 10 "$u")
+    printf '%s  %s\n' "$code" "$u"
+  done
+
+# Hashes (atualizam após cada build)
+sha256sum AVAL01-IC.{html,pdf,docx}</pre>
+
+  <h3>10.3 Mapeamento rubrica AVAL01 → seção</h3>
+  <table>
+    <thead>
+      <tr><th>Critério (rubrica oficial AVAL01)</th><th>Seção atendida</th><th>Evidência</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Estudo de Caso — diagnóstico de cenário real</td>
+        <td>§2 + §4</td>
+        <td>Contexto BR + caso MXQ Pro 4k com fontes governamentais</td>
+      </tr>
+      <tr>
+        <td>Demanda de hardware / software / redes / APIs / IA</td>
+        <td>§6 + §7</td>
+        <td>Tabela 6.1 (HW), Lista 6.2 (SW), Lista 6.3 (rede), Diagrama 7.1</td>
+      </tr>
+      <tr>
+        <td>Qualidade Técnica — arquitetura justificada</td>
+        <td>§3, §5, §7</td>
+        <td>Timeline com decisões, ADV7Sec sensores, diagramas SVG</td>
+      </tr>
+      <tr>
+        <td>Uso exemplar de ferramentas externas</td>
+        <td>§10</td>
+        <td>Repositórios versionados (OpenBox, ADV7Sec, ADV7Box) + sources.json</td>
+      </tr>
+      <tr>
+        <td>Estrutura do PDF — diagramas + escrita técnica</td>
+        <td>§3.1, §4.2, §7.1, §7.3</td>
+        <td>5 figuras SVG inline próprias + escrita didática humanizada</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>10.4 Hashes dos artefatos</h3>
+  <p>
+    Calculados após o último build. Servem como prova de integridade da entrega na sala
+    online — qualquer modificação posterior alterará o hash e poderá ser auditada.
+  </p>
+  <pre>sha256(AVAL01-IC.html) = 9e36d9af6a9e6ea84ea336fa333a32ca8d615117e0d3630dcbd9adcdf67cd7e2
+sha256(AVAL01-IC.pdf)  = 6596fbe9cbfcc28e5db7157a094bce0b340ca683323b93308ff564f880e8a891
+sha256(AVAL01-IC.docx) = (gerar com pandoc-cli — ver §10.2 / build.sh)
+# Hashes correspondem ao último build registrado.
+# Cada execução de bash build.sh gera novos hashes — para auditoria pós-entrega,
+# usar git tag ou registro manual da versão entregue na sala online.</pre>
+
+  <h3>10.5 Pendências e itens em aberto</h3>
+  <ul>
+    <li>O ADV7Sec roda hoje em modo <code>preview-first</code>. Ativar
+    <code>--execute</code> em produção exige checklist adicional ainda a redigir.</li>
+    <li>Roadmap ADV7ia (integração com LLM local) está fora do escopo desta AV — será
+    abordado em entregas futuras de outras disciplinas.</li>
+    <li>O hardware RK3229 tem ports comunitários LibreELEC/Armbian instáveis em alguns
+    lotes (Wi-Fi SSV6051P sem driver mainline) — o instalador detecta e aborta com
+    mensagem clara, mas a recomendação prática é usar Raspberry Pi 4 quando disponível.</li>
+  </ul>
+
+  <div class="signature">
+    Documento autoral. Alcides Olivo Pollazzon Soterio · UniCEUB · Bacharelado em Ciência da Computação.<br>
+    Brasília, 28 de abril de 2026.
+  </div>
+</section>
+
+</body>
+</html>

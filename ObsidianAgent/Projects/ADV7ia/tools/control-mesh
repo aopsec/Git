@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# [FIX-ADV7IA-CM-07] Prefer the repo-local virtualenv when running the control mesh.
+set -euo pipefail
+shopt -s inherit_errexit
+
+cleanup() {
+  :
+}
+
+script_dir() {
+  local dir=""
+  dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  printf '%s\n' "${dir}"
+}
+
+project_root() {
+  local dir="$1"
+  printf '%s\n' "$(cd "${dir}/.." && pwd)"
+}
+
+main() {
+  local tools_dir=""
+  local root=""
+  local python_bin=""
+
+  tools_dir="$(script_dir)"
+  root="$(project_root "${tools_dir}")"
+  python_bin="${ADV7IA_CONTROL_PYTHON:-${root}/.venv/bin/python}"
+  if [[ ! -x "${python_bin}" ]]; then
+    python_bin="python3"
+  fi
+
+  cd "${root}"
+  exec "${python_bin}" -m adv7ia_control.cli "$@"
+}
+
+trap cleanup EXIT INT
+main "$@"

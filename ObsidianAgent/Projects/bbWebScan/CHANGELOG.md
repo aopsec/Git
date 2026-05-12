@@ -1,0 +1,245 @@
+# Changelog
+
+All notable changes to bbWebScan are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
+adheres to [SemVer](https://semver.org/).
+
+## [0.5.2] — 2026-05-11
+
+### Fixed
+- Main menu dispatch now catches user-facing exceptions from menu routes:
+  `FileNotFoundError`, `FileExistsError`, `ValueError`, and `OSError`.
+  The menu prints `[bbwebscan menu] <error>` and returns to the main menu
+  instead of crashing with a traceback.
+- Save Profile no longer persists `settings.raw_request` into profile YAML.
+  Raw request paths are now treated strictly as one-off run inputs, aligned
+  with existing one-off header/cookie handling.
+
+### Security
+- Profile persistence hardening: raw request file paths are excluded from
+  saved profiles to prevent accidental carryover of temporary request files.
+
+## [0.5.1] — 2026-05-11
+
+### Added
+- `bbwebscan menu` subcommand and no-args `bbwebscan` menu default. The menu
+  is Rich-backed when `rich>=13` is installed and falls back to plain terminal
+  output in unbootstrapped development environments.
+- Scan Wizard for existing scan arguments: targets/input file, profile, mode,
+  authorization acknowledgement, tool toggles, amass mode, API discovery,
+  one-off auth, wordlist, rate/thread/timeouts, severity, DNS check, output
+  directory, dry-run preference, quiet mode, and strict identity.
+- Scan Action Menu: preview equivalent command, dry-run, run scan, save profile,
+  edit settings, or return to main menu.
+- Doctor / Auto Fix Tools menu flow. It inventories first, displays a table,
+  shows planned `doctor --fix-path` / `install` actions, and requires one
+  confirmation before invoking the existing helpers.
+- Menu-driven profile saving that writes only env-var auth references such as
+  `${BBW_TOKEN}`; one-off plaintext header/cookie inputs are never persisted to
+  profile YAML.
+- Runtime dependency: `rich>=13`.
+
+### Changed
+- Existing direct CLI usage remains valid, including smart defaults such as
+  `bbwebscan example.com --dry-run`. Only the no-args behavior changed from the
+  static welcome panel to the interactive menu.
+
+## [0.5.0] — 2026-05-09
+
+### Added
+- **`amass` subdomain enumeration stage** (vault: hacking-apis p. 123,
+  `Tool Index.md` + `Command Cheat Index.md`). Runs before httpx when
+  `--enumerate-subdomains` is set; FQDNs pass through `enforce_scope_gate`
+  before reaching downstream stages. Modes: `passive` (default), `active`,
+  `intel`. `active` and `intel` make detectable DNS queries and require
+  `--ack-authorized`.
+- **`kiterunner` API route discovery** (vault: hacking-apis p. 124,
+  `Command Cheat Index.md`). Runs alongside `discovery` stage when
+  `--api-discovery` is set. Findings carry `kind="api-route"`; status
+  200/3xx → `info`, 401/403 → `low`.
+- CLI flags on `bbwebscan scan`: `--enumerate-subdomains`,
+  `--amass-mode {passive,active,intel}`, `--api-discovery`.
+- `RunConfig.enumerate_subdomains`, `RunConfig.api_discovery`,
+  `RunConfig.amass_mode` (Pydantic Literal type).
+- `bbwebscan/stages/amass_stage.py` and
+  `bbwebscan/stages/kiterunner_stage.py`.
+- Fingerprint regexes for `amass` and `kiterunner` in
+  `preflight.TOOL_IDENTITY` derived from observed v4.2.0 / v1.0.2 banners.
+  Adversarial test asserts a fake binary just printing the tool name does
+  NOT pass.
+- `INSTALL_HINTS["amass"]` and `INSTALL_HINTS["kiterunner"]` with verified
+  upstream paths (curl -sI returned 200 during install).
+
+### Deferred (vault-attested but not v0.5.0 scope)
+- `sqlmap` (vault: blackhat-graphql p. 125-126) — exploitation surface;
+  separate release with explicit auth gating + redaction stack.
+- `jwt_tool` (vault: hacking-apis p. 225) — narrow scope; v0.5.1 candidate.
+- `wappalyzer` (vault: blackhat-graphql p. 67) — overlaps existing
+  httpx `--tech-detect`.
+
+### Notes
+- `amass enum -version` outputs only the version number (no banner). The
+  fingerprint relies on `detect_identity`'s `--help` fallback which probes
+  `amass --help` whose banner contains `OWASP Amass Project`.
+- kiterunner binary name is `kiterunner`, not `kr` (despite some upstream
+  docs using `kr`). Plan's `cmd/kr` install URL was wrong; verified
+  package layout is `cmd/kiterunner`.
+- amass v4 deprecated `-passive` (passive is default) and
+  `-max-dns-queries` (replaced by `-dns-qps`). bbWebScan does NOT inject
+  rate-limit flags silently — operators set them via profile-supplied
+  amass args in a future release.
+
+## [0.4.4] — 2026-05-09
+
+### Fixed
+- **HIGH (security)** — Credential leak to disk via
+  `runs/<UTC>/run_config.json`. `auth.headers` and `auth.cookies` values are
+  now replaced with `<redacted>` before serialisation; header/cookie KEYS
+  are preserved so the audit trail still records which credentials were
+  configured for the run. Reported by `/cyberref` review of v0.4.3.
+- **HIGH (security)** — Credential leak via dry-run argv echo
+  (`runner.py`). `Authorization:` and `Cookie:` header values in
+  `plan.command` are now masked by `redact_command_for_log()` before being
+  printed to stdout or written to `runs/<UTC>/logs/<stage>.stdout.log`.
+  Handles both the `-H` per-element form (httpx, katana, nuclei, ffuf,
+  feroxbuster, dirsearch) and the arjun `--headers` newline-joined form.
+  Reported by `/cyberref` review of v0.4.3.
+
+### Added
+- `REDACTED_PLACEHOLDER` constant in `bbwebscan.config` and
+  `REDACT_PLACEHOLDER` in `bbwebscan.runner` (`<redacted>` in both).
+- `redact_command_for_log(command: list[str]) -> list[str]` helper in
+  `bbwebscan.runner` for argv masking.
+
+## [0.4.3] — 2026-05-09
+
+### Added
+- `bbwebscan --version` flag at the root parser; prints `bbwebscan X.Y.Z` and
+  exits 0. `__version__` is now read from `importlib.metadata` so pyproject is
+  the single source of truth.
+- `bbwebscan history` subcommand listing past runs newest-first with a fixed-
+  column table; supports `--limit` and `--runs-dir`.
+- `bbwebscan show <run>` prints a past run's `summary.md`; raises a clean error
+  when the path lacks a summary.
+- `bbwebscan compare <run-A> <run-B>` diffs `findings.json` between two runs;
+  identity is the tuple `(stage, kind, target, title)`. Output sections:
+  added, removed, unchanged, plus per-severity counts.
+- `bbwebscan scan --severity {info,low,medium,high,critical}` filters findings
+  below the threshold before write. Summary line gains a per-severity
+  breakdown. New exit code `3` when threshold-meeting findings exist (CI gate).
+- `bbwebscan scan --check-dns` resolves each target host via
+  `socket.gethostbyname` before scanning; unresolvable hosts emit a non-fatal
+  `Note: <host> did not resolve via DNS` in the summary.
+- Profile auth env-var interpolation: `auth.headers` and `auth.cookies` may
+  reference `${ENV_VAR}` placeholders; missing vars raise an actionable
+  `ValueError` naming the variable. Scoped to auth only — `${HOME}` in
+  `wordlist:` is left literal.
+- `[project.optional-dependencies] cov = ["pytest-cov>=5.0"]` and a `fail_under
+  = 85` coverage gate.
+- New `RunSummary` Pydantic model and `bbwebscan/history.py` module.
+- `CHANGELOG.md` (this file).
+
+### Changed
+- `bbwebscan/__init__.py` now resolves `__version__` dynamically from
+  `importlib.metadata.version("bbwebscan")`; falls back to `"0.0.0+local"`
+  when called before `pip install -e .`.
+- `pipeline.execute_scan` filters findings against `min_severity` before
+  writing `findings.json` and the summary; closing summary now includes the
+  severity breakdown when findings exist.
+
+## [0.4.2] — 2026-05-09
+
+### Added
+- `bbwebscan install --quiet` filters cargo/pip compile spam; keeps `[*]`,
+  `[!]`, `[+]`, `[dry-run]`, warning, and error lines.
+- Closing summary on every scan: `[bbwebscan] scan complete — N findings,
+  A/T scope decisions allowed` plus `[bbwebscan] artifacts: <path>`.
+- Init profiles include a guidance comment block hinting at how to enable
+  aggressive recon (`enabled_tools: [ffuf, feroxbuster, arjun, nuclei]` +
+  `--mode aggressive --ack-authorized`).
+- README "Install for system-wide use" section with `pipx install -e .`
+  recipe so `bbwebscan` is discoverable outside the venv.
+
+### Changed
+- `--ack-authorized` is silently accepted on every subcommand
+  (`install`/`doctor`/`init`) as a documented no-op, so muscle-memory across
+  subcommands no longer hits a confusing argparse error.
+
+### Fixed
+- `persist_path_in_shell_rc` now recognises the bash installer's
+  `# [FIX-BBR-02] bug bounty web recon tool PATH` marker as equivalent to its
+  own `# [bbwebscan]`. A user running both `bbwebscan install` and
+  `bbwebscan doctor --fix-path` no longer ends up with duplicate PATH-export
+  blocks in `~/.zshrc`.
+- Scans no longer end silently — operator no longer needs to `cd runs/` to
+  find artifacts.
+
+## [0.4.1] — 2026-05-08
+
+### Added
+- Path-gap detection in `preflight.inventory_tools`: scans `~/go/bin`,
+  `~/.cargo/bin`, `~/.local/bin` so binaries installed via `go install` /
+  `cargo install` aren't reported missing just because they're not on PATH
+  yet — they show up as `⚠ on-disk` with a remediation hint.
+- `ToolStatus.path_gap` and `ToolStatus.shadowed_by` fields.
+- `bbwebscan doctor --fix-path` idempotently *prepends* the recon bin dirs
+  to the user's shell rc (zsh/bash, marker-guarded) so PD's `httpx` wins
+  over `/usr/bin/httpx` Python shims.
+- `[FIX-BBW-D]` constants and helpers: `_WELL_KNOWN_BIN_DIRS`,
+  `_resolve_tool_path`, `WELL_KNOWN_BIN_DIRS`, `PERSIST_MARKER`,
+  `persist_path_in_shell_rc()`.
+
+### Changed
+- `bbwebscan install` now passes `--persist-path` to the bash installer by
+  default (use `--no-persist-path` to opt out).
+- Doctor classifier returns `("⚠", "on-disk")` and `("⚠", "shadowed")` in
+  addition to `✓ found`, `✗ missing`, `? suspect`.
+
+## [0.4.0] — 2026-05-08
+
+### Added
+- CLI subcommand structure: `bbwebscan {scan,install,doctor,init}` (default
+  `scan` for back-compat).
+- `bbwebscan install` wraps `~/bbScan_Installer.sh`; `bbwebscan doctor`
+  reports per-tool readiness with install hints; `bbwebscan init <name>`
+  scaffolds a profile YAML.
+- Smart-default positional: `bbwebscan example.com` derives
+  `allowed_hosts=[example.com]` and runs a safe scan profile-less.
+- No-args `bbwebscan` shows a welcome panel with live toolchain summary.
+- `--quiet/-q` suppresses per-stage progress output (verbose default).
+- Profile-supplied tool fingerprints via `ProgramProfile.tool_identity`.
+- `--strict-identity` flag promotes suspect tools to a hard error.
+- Optional `[psl]` extra integrating `publicsuffix2` for full TLD coverage.
+
+## [0.3.0] — 2026-05-08
+
+### Added
+- Tool identity fingerprinting (`TOOL_IDENTITY` regex map, `ToolStatus.identity`,
+  `[SUSPECT]` markers in summary). Adversarial test ensures fake binaries
+  sharing a tool name don't pass.
+- Dirsearch `--help` drift guard (test skips if dirsearch missing).
+- `[FIX-BBW-07]` short-circuit in `filter_urls_in_scope` via `already_decided`.
+- "Allowed/Rejected scope decisions" wording in summary (was "targets").
+
+### Fixed
+- Cumulative-URL bug in `discovery_stage.parse_results` — findings now match
+  the artifact they came from.
+- JSONL parsers (`httpx`/`katana`/`nuclei`) tolerate malformed and empty lines.
+- Subprocess `TimeoutExpired` and `OSError` no longer crash the pipeline;
+  return a failed `ExecutionResult` for retry.
+- Split `tool_timeout_s` from `command_wall_clock_s` (was one value used
+  ambiguously).
+- httpx stage now passes `build_header_args` so authenticated endpoints work.
+- `wfuzz`/`gobuster` removed from default toolset (broken syntax / non-JSON
+  output); kept as opt-ins.
+- `feroxbuster` JSONL parsed via `load_json_or_jsonl`.
+
+## [0.0.1] — 2026-05-08
+
+### Added
+- Initial release. Pipeline `httpx → katana → discovery (ffuf/feroxbuster/
+  dirsearch) → params (arjun) → nuclei`. Pydantic v2 strict models, retry
+  policy, scope-aware target filtering, JSONL-tolerant parsing.
+- CLI with profile YAML, `--mode {safe,aggressive}` (aggressive requires
+  `--ack-authorized`), `--dry-run`, `--check-tools`.
+- Public-suffix denylist guard against bare-TLD targets.

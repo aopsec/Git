@@ -1,0 +1,22 @@
+{
+  "task_id": "task-bootstrap-local-control-mesh",
+  "title": "Harden OpenHands and wire the recursive control mesh",
+  "objective": "Keep OpenHands local-only, expose it through an authenticated LAN proxy, and maintain an evidence-backed recursive loop.",
+  "status": "active",
+  "parent_task_id": null,
+  "depends_on": [],
+  "branch_depth": 0,
+  "retry_count": 0,
+  "current_session_id": "session-bootstrap-openhands",
+  "risky_actions": [
+    "network",
+    "edit"
+  ],
+  "next_actions": [
+    "Audit the live OpenHands exposure",
+    "Review the Caddy mutual TLS trust chain",
+    "Compact the active session once it crosses 95%"
+  ],
+  "last_checkpoint_id": "checkpoint-bootstrap-intake",
+  "assigned_role": "planner"
+}

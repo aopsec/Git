@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# [FIX-ADV7IA-TOOLS-06] Keep Git MCP tied to the live source repo unless overridden.
+set -euo pipefail
+shopt -s inherit_errexit
+
+cleanup() {
+  :
+}
+
+main() {
+  local py=""
+  local repo=""
+
+  py="${ADV7IA_GIT_MCP_PYTHON:-${HOME}/.local/mcp-servers/git/.venv/bin/python}"
+  repo="${ADV7IA_SOURCE_REPO:-${HOME}/openhands-workspace/aider-test}"
+
+  if [[ ! -x "${py}" ]]; then
+    printf '[ERROR] Git MCP Python not found: %s\n' "${py}" >&2
+    exit 127
+  fi
+
+  if [[ ! -d "${repo}/.git" ]]; then
+    printf '[ERROR] Not a git repo: %s\n' "${repo}" >&2
+    exit 2
+  fi
+
+  exec "${py}" -m mcp_server_git --repository "${repo}" "$@"
+}
+
+trap cleanup EXIT INT
+main "$@"

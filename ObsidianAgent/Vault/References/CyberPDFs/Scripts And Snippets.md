@@ -1,0 +1,1932 @@
+# Scripts And Snippets
+
+## [[python-penetration-testing-essentials-2c0e9938]]
+- p. 15: `import socket`
+- p. 15: `for port in portlist:`
+- p. 19: `from online business. A hacker or group of black hat hackers ind a vulnerability`
+- p. 24: `from the client. Before using this method, the socket.bind(address) and`
+- p. 28: `while True:`
+- p. 39: `def get_protnumber(prefix):`
+- p. 39: `for a in dir(socket)`
+- p. 39: `for res in socket.getaddrinfo('www.thapar.edu', 'http'):`
+- p. 43: `import os`
+- p. 43: `for line in response.readlines():`
+- p. 45: `import platform`
+- p. 45: `from datetime import datetime`
+- p. 46: `for ip in xrange(st1,en1):`
+- p. 48: `def scan(addr):`
+- p. 48: `def run1():`
+- p. 50: `import collections`
+- p. 50: `import socket, subprocess,sys`
+- p. 50: `import threading`
+- p. 51: `class myThread (threading.Thread):`
+- p. 51: `def __init__(self,st,en):`
+- p. 51: `def run(self):`
+- p. 51: `def run1(st1,en1):`
+- p. 51: `for i in xrange(total_thread):`
+- p. 52: `for t in threads:`
+- p. 52: `for key in dict:`
+- p. 54: `import time`
+- p. 54: `import thread`
+- p. 56: `class threading`
+- p. 58: `for port in range(r1,r2):`
+- p. 60: `import shelve`
+- p. 60: `def __init__(self, threadName,rmip,r1,r2,c):`
+- p. 60: `def scantcp(threadName,rmip,r1,r2,c):`
+- p. 62: `for i in range(tnum):`
+- p. 65: `def create():`
+- p. 66: `def update():`
+- p. 66: `def del1():`
+- p. 66: `def list1():`
+- p. 72: `import struct`
+- p. 75: `from your native byte order to the network byte order and back again. Now, let's`
+- p. 78: `import binascii`
+- p. 86: `while 1:`
+- p. 90: `from scapy.all import *`
+- p. 101: `while True :`
+- p. 103: `def info(fm):`
+- p. 105: `class Dot11Elt(Packet):`
+- p. 108: `def probesniff(fm):`
+- p. 109: `import sys`
+- p. 112: `from port 2. Hence, the switch makes an entry stating that the MAC B computer is`
+- p. 117: `from error handling. However, from a pentester's point of view, it is very important`
+- p. 117: `import re`
+- p. 117: `import random`
+- p. 117: `import urllib`
+- p. 117: `while flag ==0:`
+- p. 117: `for match in re.finditer(a_tag,content):`
+- p. 123: `from bs4 import BeautifulSoup`
+- p. 123: `for link in b_object.find_all('a'):`
+- p. 125: `for match in re.finditer("Domain Name:",who_is1):`
+- p. 125: `for line in lines :`
+- p. 134: `function validateForm()`
+- p. 136: `import mechanize`
+- p. 136: `for form in br.forms():`
+- p. 142: `for srcport in range(1,65535):`
+- p. 143: `for srcport in range(st,en):`
+- p. 151: `import httplib`
+- p. 151: `import shelve # to store login pages name`
+- p. 151: `for u in s['php']:`
+- p. 153: `for x in range(val1):`
+- p. 153: `def retrieve():`
+- p. 153: `for key in r:`
+- p. 153: `while (True):`
+- p. 155: `for link in br.links():`
+- p. 156: `for l in list:`
+- p. 156: `for match in re.findall(l,data1):`
+- p. 162: `while flag =="y":`
+- p. 162: `while loop execute at least one time. The interesting thing is that, when we used`
+- p. 167: `for i in xrange(0,field):`
+- p. 167: `for i in xrange(0, len(list_a)):`
+- p. 167: `for i in xrange(0, len(list_n)):`
+- p. 177: `from start to inish and then verify your results`
+- p. 2: Employ the power of Python to get the best out
+- p. 3: All rights reserved. No part of this book may be reproduced, stored in a retrieval
+- p. 3: Publishing, and its dealers and distributors will be held liable for any damages
+- p. 3: companies and products mentioned in this book by the appropriate use of capitals.
+- p. 4: Content Development Editor Production Coordinator
+- p. 5: Mohit (also known as Mohit Raj) is an application developer and Python
+- p. 5: programmer, with a keen interest in the ield of information security. He has done
+- p. 5: a Wireless Deauthentication Attack! in Open Source For You in July 2014. He is also a
+- p. 5: certiied Certiied Security Analyst (ECSA). He has been working in IBM India for
+- p. 5: more than 2 years. He is also a freelance professional trainer for CEH and Python in
+- p. 5: CODEC Networks. Apart from this, he is familiar with Red Hat and CentOS Linux
+- p. 5: especially the technical reviewers and also the editors Merwyn
+- p. 6: secure cloud storage, and wireless network security.
+- p. 6: I would like to thank Alex Perry, my favorite Pythoneer, for being an
+- p. 6: India, and is a long-time advocator of open source. He is a steady contributor to the
+- p. 6: created the world's irst one-of-a-kind security-testing browser bundle, PenQ, which
+- p. 6: is an open source Linux-based penetration testing browser bundle, preconigured
+- p. 7: Rejah is also an active member of the OWASP and the chapter leader of OWASP,
+- p. 7: Kerala. He is also one of the moderators of the OWASP Google+ group and an
+- p. 7: Cyber Security division of DBG now, Rejah is also a fan of process automation,
+- p. 7: has built a wide variety of software, from those meant to run on a calculator to those
+- p. 7: engineering, information security, hardware programming, and web development.
+- p. 10: Chapter 1: Python with Penetration Testing and Networking 5
+- p. 10: Introducing the scope of pentesting 6
+- p. 10: Learning the common testing platforms with Python 10
+- p. 10: The TCP scan concept and its implementation using a Python script 34
+- p. 11: Implementing a network sniffer using Python 58
+- p. 11: Introducing ARP spooing and implementing it using Python 70
+- p. 11: Testing the security system using custom packet crafting
+- p. 11: Wireless SSID inding and wireless trafic analysis by Python 88
+- p. 11: The deauthentication (deauth) attacks 96
+- p. 12: Chapter 6: Client-side and DDoS Attacks 119
+- p. 12: Tampering with the client-side parameter with Python 120
+- p. 12: Chapter 7: Pentesting of SQLI and XSS 135
+- p. 12: Introducing the SQL injection attack 136
+- p. 12: Understanding the SQL injection attack by a Python script 137
+- p. 14: This book is a practical guide that shows you the advantages of using Python for
+- p. 14: pentesting, with the help of detailed code examples. This book starts by exploring
+- p. 14: the basics of networking with Python and then proceeds to network and wireless
+- p. 14: pentesting, including information gathering and attacking. Later on, we delve into
+- p. 14: such as parameter tampering, DDOS, XSS, and SQL injection.
+- p. 14: Chapter 1, Python with Penetration Testing and Networking, aims to complete the
+- p. 14: Chapter 2, Scanning Pentesting, covers how network scanning is done to gather
+- p. 14: how to create a layer 4 sniffer, and how to perform layer 3 and layer 4 attacks.
+- p. 14: Chapter 4, Wireless Pentesting, teaches wireless frames and how to obtain information
+- p. 14: such as SSID, BSSID, and the channel number from a wireless frame using a Python
+- p. 14: script. In this type of attack, you will learn how to perform pentesting attacks on
+- p. 14: Chapter 6, Client-side and DDoS Attacks, teaches client-side validation as well as how
+- p. 15: Chapter 7, Pentesting of SQLI and XSS, covers two major web attacks, SQL injection
+- p. 15: and XSS. In SQL injection, you will learn how to ind the admin login page using a
+- p. 15: You will need to have Python 2.7, Apache 2.x, RHEL 5.0 or CentOS 5.0, and Kali Linux.
+- p. 15: If you are a Python programmer or a security researcher who has basic knowledge
+- p. 15: of Python programming and want to learn about penetration testing with the help of
+- p. 15: Python, this book is ideal for you. Even if you are new to the ield of ethical hacking,
+- p. 15: this book can help you ind the vulnerabilities in your system so that you are ready
+- p. 15: to tackle any kind of attack or intrusion.
+- p. 18: hackers hack for any purpose such as fame, selling vulnerability for money,
+- p. 18: or to exploit vulnerability for personal enmity.
+- p. 18: Lots of well-trained hackers have got jobs in the information security ield by
+- p. 18: hacking into a system and then informing the victim of the security bug(s)
+- p. 18: company to secure its system. A pentester performs hacking attempts to break
+- p. 18: of their indings. To become an expert in pentesting, a person should have deep
+- p. 19: Python with Penetration Testing and Networking
+- p. 19: Introducing the scope of pentesting
+- p. 19: In simple words, penetration testing is to test the information security measures of
+- p. 19: a company. Information security measures entail a company's network, database,
+- p. 19: website, public-facing servers, security policies, and everything else speciied by
+- p. 19: the client. At the end of the day, a pentester must present a detailed report of their
+- p. 19: indings such as weakness, vulnerability in the company's infrastructure, and the
+- p. 19: risk level of particular vulnerability, and provide solutions if possible.
+- p. 19: There are several points that describe the signiicance of pentesting:
+- p. 19: • Pentesting identiies the threats that might expose the conidentiality
+- p. 19: • Expert pentesting provides assurance to the organization with a complete
+- p. 19: and detailed assessment of organizational security
+- p. 19: • Pentesting assesses the network's eficiency by producing huge amount
+- p. 19: of trafic and scrutinizes the security of devices such as irewalls, routers,
+- p. 19: or network design might lead to vulnerabilities that can be detected
+- p. 19: • In today's world, potential threats are increasing signiicantly; pentesting is
+- p. 19: a proactive exercise to minimize the chance of being exploited
+- p. 19: • Pentesting ensures whether suitable security policies are being followed
+- p. 19: from online business. A hacker or group of black hat hackers ind a vulnerability
+- p. 20: An organization should conduct a risk assessment operation before pentesting;
+- p. 20: this will help identify the main threats such as misconiguration or vulnerability in:
+- p. 20: The following points describe the qualities of good pentester. They should:
+- p. 20: • Be ready to show how to exploit the vulnerabilities
+- p. 20: A pentester tests the network using manual techniques or the relevant tools. There
+- p. 20: also perform more R&D. If you are interested in pentesting and want to make your
+- p. 20: own tools, then the Python programming language is the best, as extensive and
+- p. 20: freely available pentesting packages are available in Python, in addition to its ease
+- p. 20: and mechanize, reduces code size. In Python, to make a program, you don't need to
+- p. 20: deine big classes such as Java. It's more productive to write code in Python than in
+- p. 20: If you know some programming in Python and are interested in pentesting this book
+- p. 21: Before we get into pentesting, the scope of pentesting should be deined.
+- p. 21: of the organization, then pentester Alice would deine the scope of pentesting
+- p. 21: of a web server, and so on, might change the scope of pentesting.
+- p. 21: The scope of pentesting is deined in two types of tests:
+- p. 21: ° Scans and identifies the remote system for potential vulnerabilities
+- p. 21: ° Maps the vulnerabilities with proper exploits
+- p. 21: ° Exploits the remote system with proper care to avoid disruption
+- p. 21: ° Does not attempt a Denial-of-Service (DoS) attack
+- p. 21: ° Attempts DoS and buffer overflow attacks, which have the
+- p. 21: There are three types of approaches to pentesting:
+- p. 21: • Black-box pentesting follows non-deterministic approach of testing
+- p. 21: ° It is like hacking with the knowledge of an outside attacker
+- p. 22: • White-box pentesting follows deterministic approach of testing
+- p. 22: • Gray-box pentesting follows hybrid approach of black and white box testing
+- p. 22: trial and error on the part of the pentester
+- p. 22: ° It performs the security assessment and testing internally
+- p. 22: Before you start reading this book, you should know the basics of Python
+- p. 22: In this book, all experiments and demonstration have been done in Python 2.7.8
+- p. 22: Version. If you use Linux OS such as Kali or BackTrack, then there will be no issue,
+- p. 22: platform. Kali Linux also uses the 2.7 Version. If you love to work on Red Hat or
+- p. 23: scanning and snifing pentesting, you will need a small network of attached devices.
+- p. 23: attack, you will need an Apache server running on the Linux platform. It will be
+- p. 23: this contains the RPM of Apache and PHP. For the Python script, we will use
+- p. 23: You will now perform pentesting; I hope you are well acquainted with networking
+- p. 23: meaning of ports, network addresses, and broadcast addresses. A pentester must
+- p. 23: you are thinking of using Linux, then you are on the right track. In this book, we will
+- p. 23: execute our programs on Windows as well as Linux. In this book, Windows, CentOS,
+- p. 23: A hacker always loves to work on a Linux system. As it is free and open source,
+
+## [[black-hat-python-python-programming-for-hackers-and-pentesters-be8983b0]]
+- p. 25: `package managers by issuing the following commands:`
+- p. 27: `def sum(number_one,number_two):`
+- p. 27: `def convert_integer(number_string):`
+- p. 30: `function calls or a function that is called from many potential places. Using`
+- p. 32: `import socket`
+- p. 34: `import threading`
+- p. 34: `while True:`
+- p. 35: `import sys`
+- p. 35: `import getopt`
+- p. 35: `import subprocess`
+- p. 36: `def main():`
+- p. 37: `def client_sender(buffer):`
+- p. 38: `function that will handle both our command execution and our full com-`
+- p. 38: `def server_loop():`
+- p. 39: `def run_command(command):`
+- p. 39: `def client_handler(client_socket):`
+- p. 40: `while "\n" not in cmd_buffer:`
+- p. 42: `def server_loop(local_host,local_port,remote_host,remote_port,receive_first):`
+- p. 44: `def proxy_handler(client_socket, remote_host, remote_port, receive_first):`
+- p. 46: `for i in xrange(0, len(src), length):`
+- p. 46: `def response_handler(buffer):`
+- p. 48: `from the Paramiko website as well.`
+- p. 48: `import paramiko`
+- p. 49: `def ssh_command(ip, user, passwd, command):`
+- p. 50: `def _init_(self):`
+- p. 50: `def check_channel_request(self, kind, chanid):`
+- p. 50: `def check_auth_password(self, username, password):`
+- p. 54: `def reverse_forward_tunnel(server_port, remote_host, remote_port, transport):`
+- p. 54: `function handler .`
+- p. 54: `def handler(chan, host, port):`
+- p. 59: `import os`
+- p. 61: `import struct`
+- p. 61: `from ctypes import *`
+- p. 62: `def __new__(self, socket_buffer=None):`
+- p. 62: `def __init__(self, socket_buffer=None):`
+- p. 65: `class IP(Structure):`
+- p. 65: `def __new__(self, socket_buffer):`
+- p. 65: `def __init__(self, socket_buffer):`
+- p. 66: `import time`
+- p. 66: `from netaddr import IPNetwork,IPAddress`
+- p. 66: `for ip in IPNetwork(subnet):`
+- p. 68: `for ip in IPNetwork("192.168.112.1/24"):`
+- p. 70: `from scapy.all import *`
+- p. 72: `def packet_callback(packet):`
+- p. 74: `import signal`
+- p. 75: `def restore_target(gateway_ip,gateway_mac,target_ip,target_mac):`
+- p. 75: `def get_mac(ip_address):`
+- p. 76: `def poison_target(gateway_ip,gateway_mac,target_ip,target_mac):`
+- p. 76: `function simply sends out the appropriate ARP packets to the network`
+- p. 78: `import re`
+- p. 78: `import zlib`
+- p. 78: `import cv2`
+- p. 78: `def http_assembler(pcap_file):`
+- p. 78: `for session in sessions:`
+- p. 78: `for packet in sessions[session]:`
+- p. 80: `def get_http_headers(http_payload):`
+- p. 80: `def extract_image(headers,http_payload):`
+- p. 81: `def face_detect(path,file_name):`
+- p. 84: `import urllib2`
+- p. 85: `import Queue`
+- p. 85: `for files in f:`
+- p. 85: `def test_remote():`
+- p. 86: `function to walk through all of the files and directories in the local web`
+- p. 88: `import urllib`
+- p. 88: `def build_wordlist(wordlist_file):`
+- p. 88: `function later in this chapter.`
+- p. 89: `def dir_bruter(word_queue,extensions=None):`
+- p. 89: `while not word_queue.empty():`
+- p. 89: `for extension in extensions:`
+- p. 89: `for brute in attempt_list:`
+- p. 90: `for i in range(threads):`
+- p. 92: `import cookielib`
+- p. 92: `from HTMLParser import HTMLParser`
+- p. 93: `class Bruter(object):`
+- p. 93: `def __init__(self, username, words):`
+- p. 93: `def run_bruteforce(self):`
+- p. 93: `for i in range(user_thread):`
+- p. 93: `def web_bruter(self):`
+- p. 93: `while not self.password_q.empty() and not self.found:`
+- p. 94: `class BruteParser(HTMLParser):`
+- p. 94: `def __init__(self):`
+- p. 94: `def handle_starttag(self, tag, attrs):`
+- p. 95: `function will be called any time an opening HTML tag is encountered, and the`
+- p. 95: `function from our previous section and add the following code:`
+- p. 95: `class and watch the magic happen.`
+- p. 101: `class as well as the IIntruderPayloadGeneratorFactory class. Next we see that`
+- p. 101: `from burp import IIntruderPayloadGeneratorFactory`
+- p. 101: `from burp import IIntruderPayloadGenerator`
+- p. 101: `from java.util import List, ArrayList`
+- p. 101: `import random`
+- p. 101: `def registerExtenderCallbacks(self, callbacks):`
+- p. 102: `class so we know what to implement.`
+- p. 103: `from the HTTP request that you trapped. Or, if you have selected multiple`
+- p. 103: `def __init__(self, extender, attack):`
+- p. 104: `def reset(self):`
+- p. 104: `function that returns without doing anything.`
+- p. 104: `def mutate_payload(self,original_payload):`
+- p. 105: `for i in range(repeater):`
+- p. 110: `from burp import IBurpExtender`
+- p. 110: `from burp import IContextMenuFactory`
+- p. 110: `from javax.swing import JMenuItem`
+- p. 110: `from java.net import URL`
+- p. 110: `import json`
+- p. 110: `import base64`
+- p. 110: `def createMenuItems(self, context_menu):`
+- p. 111: `def bing_menu(self,event):`
+- p. 111: `for traffic in http_traffic:`
+- p. 111: `def bing_search(self,host):`
+- p. 112: `def bing_query(self,bing_query_string):`
+- p. 112: `for site in r["d"]["results"]:`
+- p. 116: `from datetime import datetime`
+- p. 116: `class TagStripper(HTMLParser):`
+- p. 116: `def handle_data(self, data):`
+- p. 116: `def handle_comment(self, data):`
+- p. 116: `def strip(self, html):`
+- p. 116: `class BurpExtender(IBurpExtender, IContextMenuFactory):`
+- p. 117: `def wordlist_menu(self,event):`
+- p. 117: `def get_words(self, http_response):`
+- p. 118: `for word in words:`
+- p. 118: `def mangle(self, word):`
+- p. 118: `for password in (word, word.capitalize()):`
+- p. 118: `for suffix in suffixes:`
+- p. 118: `def display_wordlist(self):`
+- p. 118: `for word in sorted(self.wordlist):`
+- p. 118: `for password in self.mangle(word):`
+- p. 125: `def run(**args):`
+- p. 127: `import imp`
+- p. 127: `from github3 import login`
+- p. 127: `def connect_to_github():`
+- p. 128: `def get_file_contents(filepath):`
+- p. 128: `for filename in tree.tree:`
+- p. 128: `def get_trojan_config():`
+- p. 128: `for task in config:`
+- p. 128: `def store_module_result(data):`
+- p. 129: `class GitImporter(object):`
+- p. 129: `def find_module(self,fullname,path=None):`
+- p. 129: `def load_module(self,name):`
+- p. 130: `def module_runner(module):`
+- p. 134: `import pythoncom`
+- p. 134: `import pyHook`
+- p. 134: `import win32clipboard`
+- p. 134: `def get_current_process():`
+- p. 135: `function to retrieve the window’s process ID. We then open the process `
+- p. 135: `function we output all of the information  in a nice header so that you`
+- p. 135: `def KeyStroke(event):`
+- p. 137: `import win32gui`
+- p. 137: `import win32ui`
+- p. 137: `import win32con`
+- p. 137: `import win32api`
+- p. 138: `import ctypes`
+- p. 141: `class LASTINPUTINFO(ctypes.Structure):`
+- p. 141: `def get_last_input():`
+- p. 142: `def get_key_press():`
+- p. 142: `function call. If the key is detected as being pressed, we check if it is 0x1 ,`
+- p. 142: `def detect_sandbox():`
+- p. 143: `while not detection_complete:`
+- p. 146: `import win32com.client`
+- p. 146: `import urlparse`
+- p. 147: `from a target site because we don’t want to keep forcing them to log in`
+- p. 147: `for i in full_doc:`
+- p. 149: `def wait_for_browser(browser):`
+- p. 149: `while browser.ReadyState != 4 and browser.ReadyState != "complete":`
+- p. 149: `import SimpleHTTPServer`
+- p. 149: `import SocketServer`
+- p. 149: `class CredRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):`
+- p. 149: `def do_POST(self):`
+- p. 151: `from just sending the document to an IP address or web server that we con-`
+- p. 151: `import fnmatch`
+- p. 151: `from Crypto.PublicKey import RSA`
+- p. 151: `from Crypto.Cipher import PKCS1_OAEP`
+- p. 151: `def encrypt_string(plaintext):`
+- p. 152: `def encrypt_post(filename):`
+- p. 153: `def login_to_tumblr(ie):`
+- p. 154: `def post_to_tumblr(ie,title,post):`
+- p. 154: `def exfiltrate(document_path):`
+- p. 155: `for filename in fnmatch.filter(filenames,"*%s" % doc_type):`
+- p. 156: `while offset < len(encrypted):`
+- p. 162: `import win32security`
+- p. 162: `import wmi`
+- p. 162: `def log_to_file(message):`
+- p. 164: `def get_process_privileges(pid):`
+- p. 165: `for i in privs:`
+- p. 166: `import tempfile`
+- p. 166: `import win32file`
+- p. 167: `def start_monitor(path_to_watch):`
+- p. 167: `while 1:`
+- p. 168: `for path in dirs_to_monitor:`
+- p. 170: `def inject_code(full_filename,extension,contents):`
+- p. 174: `function properly, or Volatility will throw errors indicating that it couldn’t`
+- p. 176: `import volatility.conf as conf`
+- p. 176: `import volatility.registry as registry`
+- p. 176: `import volatility.commands as commands`
+- p. 176: `import volatility.addrspace as addrspace`
+- p. 176: `from volatility.plugins.registry.registryapi import RegistryApi`
+- p. 176: `from volatility.plugins.registry.lsadump import HashDump`
+- p. 177: `for offset in registry.all_offsets:`
+- p. 178: `from immlib import *`
+- p. 178: `class cc_hook(LogBpHook):`
+- p. 178: `def run(self,regs):`
+- p. 179: `def main(args):`
+- p. 179: `for function in functions:`
+- p. 180: `import volatility.plugins.taskmods as taskmods`
+- p. 181: `for page in pages:`
+- p. 183: `from calc.exe to try this technique against. You can also extend this technique`
+- p. 1: — Charlie Miller, from the foreword Python Programming for
+- p. 1: tive hacking tools, Python is the language of
+- p. 1: choice for most security analysts. But just how
+- p. 1: In Black Hat Python, the latest from Justin Seitz
+- p. 1: Python Programming for Hackers and Pentesters
+- p. 1: (author of the best-selling Gray Hat Python), Exfiltrate data from a network most
+- p. 1: you’ll explore the darker side of Python’s sneakily
+- p. 1: creating stealthy trojans, and more. You’ll and how to write your own exploits.
+- p. 1: When it comes to offensive security, your
+- p. 1: GitHub indispensable. Learn how in Black Hat Python.
+- p. 1: Justin Seitz is a senior security researcher
+- p. 1: Use offensive memory forensics tricks exploits, and coding Python. He is the author
+- p. 1: to retrieve password hashes and inject of Gray Hat Python (No Starch Press), the first
+- p. 1: shellcode into a virtual machine book to cover Python for security analysis.
+- p. 1: $34.95 ($36.95 CDN) Shelve In: Computers/Security Seitz
+- p. 6: Black Hat Python. Copyright © 2015 by Justin Seitz.
+- p. 6: electronic or mechanical, including photocopying, recording, or by any information storage or retrieval
+- p. 6: in an editorial fashion and to the benefit of the trademark owner, with no intention of infringement of the
+- p. 9: Justin Seitz is a senior security researcher for Immunity, Inc., where he
+- p. 9: spends his time bug hunting, reverse engineering, writing exploits, and
+- p. 9: coding Python. He is the author of Gray Hat Python, the first book to cover
+- p. 9: Dan Frisch has over ten years of experience in information security.
+- p. 9: Currently, he is a senior security analyst in a Canadian law enforcement
+- p. 9: agency. Prior to that role, he worked as a consultant providing security
+- p. 9: discovered his career passion when he moved to information security in
+- p. 9: happily employed as a security consultant, doing everything from policy
+- p. 13: Setting Up Your Python Environment 1
+- p. 17: Python is still the dominant language in the world of
+- p. 17: information security, even if the conversation about
+- p. 17: religious war. Python-based tools include all manner
+- p. 17: of fuzzers, proxies, and even the occasional exploit.
+- p. 17: Exploit frameworks like CANVAS are written in Python
+- p. 17: Just about every fuzzer or exploit I have written has been in Python.
+- p. 17: If you are interested in tinkering with information security tasks,
+- p. 17: Python is a great language to learn because of the large number of reverse
+- p. 17: engineering and exploitation libraries available for your use. Now if only
+- p. 17: Ruby to Python, our community would be united.
+- p. 18: as well as anything you might need for web application auditing and attack-
+- p. 18: specifics with attacking Windows systems. In general, Black Hat Python is a fun
+- p. 19: Python hacker. Those are two words you really could
+- p. 19: code Python. I am not one of those people. I spend a
+- p. 19: requires rapid Python tool development, with a focus on execution and
+- p. 19: I also feel as though it is part of what makes me a strong pentester. I hope
+- p. 20: As with any technical book, readers at different skill levels with Python
+- p. 20: (or information security in general) will experience this book differently.
+- p. 20: recommend that if you are a novice to intermediate Python programmer
+- p. 20: goes for the explanations. If you are relatively new to Python I encourage
+- p. 23: ment in which to write and test Python. We are going
+- p. 23: to do a crash course in setting up a Kali Linux virtual
+- p. 24: Kali is the successor to the BackTrack Linux distribution, designed by
+- p. 24: Offensive Security from the ground up as a penetration testing operating
+- p. 24: Linux, so you’ll also be able to install a wide variety of additional tools and
+- p. 24: Python is installed. This book will use Python 2.7 throughout. In the shell
+- p. 24: 2. For a “clickable” list of the links in this chapter, visit http://nostarch.com/blackhatpython/.
+- p. 25: Python 2.7 will be automatically installed. Please note that using a dif-
+- p. 25: ferent version of Python might break some of the code examples in this
+- p. 25: Now let’s add some useful pieces of Python package management in the
+- p. 25: because they allow you to directly install Python libraries, without having
+- p. 25: root@kali:~#: apt-get install python-setuptools python-pip
+- p. 25: Then drop into a Python shell and validate that it was installed correctly:
+- p. 25: Python 2.7.3 (default, Mar 14 2014, 11:57:14)
+- p. 25: tion” in your Python environment and you have brought great shame to our
+- p. 25: Python dojo! In this case, make sure that you followed all the steps above
+- p. 25: develop your code in a variety of environments, including Mac, Linux, and
+- p. 25: Setting Up Your Python Environment 3
+- p. 26: the 32-bit .deb package for WingIDE, and save it to your user directory.
+- p. 27: Fire up WingIDE and open a new, blank Python file. Then follow along
+- p. 27: Setting Up Your Python Environment 5
+- p. 28: Figure 1-4: Setting the current Python script for debugging
+- p. 29: Setting Up Your Python Environment 7
+- p. 30: line 3 of our Python script. This becomes very useful if you have recursive
+- p. 30: the Stack Data tab will come in very handy in your Python developing career!
+- p. 30: to drop into a Python shell that is executing within the current context
+- p. 31: for a hacker. An attacker can do almost anything with
+- p. 31: packets, sniff data, remotely exploit hosts, and much
+- p. 31: more. But if you are an attacker who has worked your
+- p. 31: network attacks. No netcat. No Wireshark. No compiler and no means to
+- p. 31: you’ll find a Python install, and so that is where we will begin.
+- p. 31: This chapter will give you some basics on Python networking using the
+- p. 31: 1. The full socket documentation can be found here: http://docs.python.org/2/library/socket.html.
+- p. 32: ­servers and clients in Python, but the core module for all of those tools is
+- p. 33: handling in sockets, and the like, it’s quite rare for pentesters to build these
+- p. 33: niceties into the quick-and-dirty tools for recon or exploitation work, so
+- p. 33: A Python UDP client is not much different than a TCP client; we need to
+- p. 34: Creating TCP servers in Python is just as easy as creating a client. You might
+- p. 35: systems administrators remove it from their systems. On more than one
+- p. 35: have Python. In these cases, it’s useful to create a simple network client
+- p. 35: definitely worth dropping a Python callback to give you secondary access
+- p. 35: tool like this is also a great Python exercise, so let’s get started.
+- p. 41: having the malware remove our Python callback. First we receive the file
+- p. 41: makes it netcat-friendly. However, if you are conjuring up a Python client
+- p. 42: dation on how to hack together some client and server sockets in Python
+- p. 42: against your target host. I have employed a simple Python proxy in a num-
+- p. 48: this is a book about Python. In Python, you could use raw sockets and
+- p. 49: Let’s run a quick test by connecting to our Linux server:
+- p. 50: if (username == 'justin') and (password == 'lovesthepython'):
+- p. 51: to run commands) connects to. This could be a Linux, Windows, or even
+- p. 51: OS X system that has Python and Paramiko installed.
+- p. 55: to http://127.0.0.1:8080 on my Linux server, I connect to the web server at
+- p. 55: develop a firm grasp of using Python networking to create tools that you
+- p. 55: can use during penetration tests, post-exploitation, or while bug-hunting.
+- p. 55: then we’ll combine the two to create a pure Python host discovery scanner.
+- p. 57: many practical uses before and after exploitation. In
+- p. 57: wireshark.org/) to monitor traffic, or use a Pythonic
+- p. 57: will also likely pick up some new Python techniques and perhaps a better
+- p. 58: intend to perform any low-level attacks such as ARP poisoning or you are
+- p. 58: target network. Attackers want to be able to see all of the potential targets
+- p. 58: on a network so that they can focus their reconnaissance and exploitation
+- p. 58: implement this host scanner for both Windows and Linux to maximize
+- p. 58: network attack surface. These are exercises left for the reader, and I look
+- p. 58: Packet Sniffing on Windows and Linux
+- p. 58: Accessing raw sockets in Windows is slightly different than on its Linux
+- p. 59: between Windows and Linux is that Windows will allow us to sniff all
+- p. 59: incoming packets regardless of protocol, whereas Linux forces us to spec-
+- p. 59: which requires administrative privileges on Windows or root on Linux.
+- p. 60: If you are running this example on Linux, then you would receive the
+- p. 61: Python ctypes module to create a C-like structure will allow us to have a
+- p. 61: values. Using C code as a reference when translating to Python objects can
+- p. 61: be useful because it makes it seamless to convert them to pure Python. Of
+- p. 61: will use a pure Python solution to make sure these fields map correctly so
+
+## [[bug-hunter-diary-85c1b2cc]]
+- p. 18: `while others seek personal gain in the form of fame, media attention,`
+- p. 18: `while it’s executing. Both techniques have pros and cons, and most bug`
+- p. 29: `from the TiVo file is assigned to the pointer p_peek. Then, in line 1867,`
+- p. 33: `from taking control of EIP and executing arbitrary code from the`
+- p. 42: `while looking for coding errors. After a few hours, I found the`
+- p. 43: `function ip_process_ioctl() is called. In line 26717, the value of ci.ci_`
+- p. 46: `while the first parameter, ci.ci_ipif, is still set to NULL (see line 26717).`
+- p. 55: `from the zero page. Therefore, all values of the ill structure can be`
+- p. 55: `function pointer declared in line 154 (see line 273). This function`
+- p. 62: `from a restricted, non-global Solaris Zone and then gain superuser`
+- p. 68: `from the header data and stores the value in the signed int variable`
+- p. 77: `function that’s called directly after the vulnerability happens (see`
+- p. 77: `function with FFmpeg internal FFmpeg internal`
+- p. 86: `class ClassId`
+- p. 89: `from the webex.com domain. In practice, this requirement can be`
+- p. 90: `while debugging the browser.`
+- p. 90: `function usually performs the actual call. This function is exported by`
+- p. 95: `from cbData as well as the string “Authoring” (9 bytes) and the format`
+- p. 103: `function at address .text:0001064D. The illustrated assembly snippet of`
+- p. 106: `from ntddk.h):`
+- p. 123: `function pointer 41414141 ...`
+- p. 141: `from where to start the search and the pattern to search for. I wanted`
+- p. 144: `function returns with an error (see line 809). So Theo was right—the`
+- p. 154: `while processing one of the test cases. This finding is logged to`
+- p. 189: `from the XNU kernel source code to the include directory of the`
+- p. 1: “Give a man an exploit and you make him a hacker for
+- p. 1: a day; teach a man to exploit bugs and you make him a
+- p. 1: drastic consequences, allowing that verifies the security flaw
+- p. 1: Along the way you’ll learn how to: Tobias Klein is a security researcher
+- p. 1: * Exploit vulnerabilities like language by dpunkt.verlag.
+- p. 6: means, electronic or mechanical, including photocopying, recording, or by any information storage
+- p. 6: For information on book distributors or translations, please contact No Starch Press, Inc. directly:
+- p. 6: A bug hunter's diary : a guided tour through the wilds of software security / by Tobias Klein.
+- p. 6: 1. Debugging in computer science. 2. Computer security. 3. Malware (Computer software) I.
+- p. 6: names only in an editorial fashion and to the benefit of the trademark owner, with no intention of
+- p. 12: Step 1: Install an Ancient Red Hat 7.3 Linux Operating System . . . . . . . . . . . 173
+- p. 12: Security Cookies (/GS), Stack-Smashing Protection (SSP), or
+- p. 15: seven interesting, real-life software security vulnerabilities I found over
+- p. 15: how I found the bug, the steps I took to exploit it, and how the vendor
+- p. 15: security vulnerabilities, how they create proof-of-concept code to test
+- p. 15: the vulnerabilities, and how they can report vulnerabilities to the
+- p. 15: The secondary goal of this book is to tell the story behind each of
+- p. 15: This book is aimed at security researchers, security consultants, C/C++
+- p. 16: If you are new to vulnerability research, this book will help you to
+- p. 16: get acquainted with the different aspects of hunting, exploiting, and
+- p. 16: reporting software vulnerabilities. If you are an already-experienced
+- p. 16: against, and mitigate software security vulnerabilities. Understanding
+- p. 16: the techniques used to find and exploit vulnerabilities is necessary to
+- p. 16: simple port scanners as well as working exploits. Therefore, to comply
+- p. 16: with the law, no full working exploit code is provided in this book.
+- p. 17: describe the process of finding security-critical software bugs. Security-
+- p. 17: critical bugs, also called software security vulnerabilities, allow an
+- p. 17: attacker to remotely compromise systems, escalate local privileges,
+- p. 17: About a decade ago, hunting for software security vulnerabilities
+- p. 17: it’s possible to profit from vulnerabilities.1
+- p. 17: Software security vulnerabilities, and programs that take advan-
+- p. 17: tage of such vulnerabilities (known as exploits), get a lot of press cov­
+- p. 17: the process of exploiting these vulnerabilities, and there are perpetual
+- p. 17: terms like software vulnerability or exploit are widely used, many people—
+- p. 17: even many information security professionals­—don’t know how bug
+- p. 17: hunters find security vulnerabilities in software.
+- p. 17: software for security-related bugs, you will most likely get 10 different
+- p. 18: you can find some interesting security-critical software bugs.
+- p. 18: Some independent bug hunters want to improve software security,
+- p. 18: through the software, while looking for any potentially exploitable
+- p. 18: dynamic approaches when developing an exploit.
+- p. 19: After I’ve found a bug, I want to prove if it’s actually exploitable,
+- p. 19: so I attempt to build an exploit for it. When I build such an exploit, I
+- p. 19: ing potentially vulnerable locations in the code is to look at the code
+- p. 19: extension vulnerabilities. If you find a potentially vulnerable code loca-
+- p. 19: these code fragments expose any vulnerabilities accessible from an
+- p. 19: these crashes are not security relevant (e.g., a division-by-zero bug in a
+- p. 19: finding security vulnerabilities in source code, I recommend Mark
+- p. 19: Dowd, John McDonald, and Justin Schuh’s The Art of Software Security
+- p. 19: Assessment: Identifying and Preventing Software Vulnerabilities (Addison-
+- p. 19: Force Vulnerability Discovery (Addison-Wesley, 2007).
+- p. 20: The vulnerabilities described in this book have one thing in common:
+- p. 20: They all lead to exploitable memory errors. Such memory errors occur
+- p. 20: of the programming errors and vulnerabilities discussed in this book.
+- p. 20: In addition to exploitable memory errors, dozens of other vul-
+- p. 20: vulnerabilities like cross-site scripting, cross-site request forgery, and
+- p. 20: SQL injection, to name just a few. However, these other vulnerability
+- p. 20: book were the result of exploitable memory errors.
+- p. 20: When searching for bugs, or building exploits to test them, I need a
+- p. 20: points or single-stepping. Each operating system typically ships with its
+- p. 21: These debuggers will be used to identify, analyze and exploit the
+- p. 21: vulnerabilities that I discovered. See also Sections B.1, B.2, and B.4 for
+- p. 21: To illustrate the security implications of ← Instruction pointe
+- p. 21: of the vulnerable program by controlling
+- p. 21: the vulnerable process. To demonstrate instruction pointer con-
+- p. 22: many ways to turn it into a fully working, weaponized exploit. For
+- p. 22: more information on the process of exploit development, you can
+- p. 22: refer to Jon Erickson’s Hacking: The Art of Exploitation, 2nd edition
+- p. 22: (No Starch Press, 2008), or you can type exploit writing into Google
+- p. 22: 1. See Pedram Amini, “Mostrame la guita! Adventures in Buying Vulnerabili-
+- p. 22: Miller, “The Legitimate Vulnerability Market: Inside the Secretive World
+- p. 22: of 0-day Exploit Sales,” 2007, http://weis2007.econinfosec.org/papers/29.pdf ;
+- p. 22: iDefense Labs Vulnerability Contribution Program, https://labs.idefense.com/
+- p. 22: 2. See Daniel Hodson, “Uninitialized Variables: Finding, Exploiting, Auto-
+- p. 22: tionary Definition (2.0), CWE-415: Double Free at http://cwe.mitre.org/data/
+- p. 23: the first vulnerability took me only about half a day. It was a ­classic
+- p. 24: heard of this file format, but that didn’t stop me from exploiting it.
+- p. 24: Here is how I found the vulnerability: ← I used VL
+- p. 24: most of them in different C files in the directory vlc-0.9.4\modules\
+- p. 25: 1632 different sizes depending on the bits per entry. We store them
+- p. 26: stores them in the stack buffer mst_buf, declared in line 1626. The
+- p. 26: mst_buf and stores it in the signed int variable i_map_size. In line 1650,
+- p. 26: the stream_Read() function stores user-controlled data from the media
+- p. 26: flow (see Section A.1) that can be easily exploited.
+- p. 26: To exploit the vulnerability, I performed the following steps:
+- p. 26: • Step 2: Find a code path to reach the vulnerable code.
+- p. 27: Figure 2-2: Overview of the vulnerability from input to stack buffer overflow
+- p. 27: There’s more than one way to exploit a file-format bug. You can
+- p. 27: Step 2: Find a Code Path to Reach the Vulnerable Code
+- p. 29: vulnerable function parse_master() gets called (see line 1870).
+- p. 29: To reach the vulnerable function using this code path, the TiVo
+- p. 29: loaded already triggers the vulnerable parse_master() function, so it
+- p. 30: overwrite the return address stored after the buffer on the stack (see
+- p. 32: build a working exploit, intended to achieve arbitrary code execution,
+- p. 32: Exploit Methods Between Linux and Windows” by David Litchfield.4
+- p. 32: a full working exploit, but if you’re interested, you can watch a short
+- p. 32: video I recorded that shows the exploit in action.5
+- p. 32: Now that I’ve discovered a security vulnerability, I could disclose it in
+- p. 32: On the other hand, I could sell my findings to a vulnerability broker
+- p. 32: in the commercial vulnerability market are Verisign’s iDefense Labs,
+- p. 32: with its Vulnerability Contribution Program (VCP), and Tipping Point’s
+- p. 32: release the vulnerability information to the public without notifying
+- p. 32: In the case of the VLC vulnerability described in this chapter, I
+- p. 32: oped the following patch to address the vulnerability:7
+- p. 33: The changes are quite straightforward. The formerly vulnerable
+- p. 33: But wait—is the vulnerability really gone? The variable i_map_size is
+- p. 33: tains another buffer overflow vulnerability. I also reported that bug to
+- p. 33: exploit mitigation techniques of Windows Vista were able to stop me
+- p. 33: stack using the jmp reg technique. The security cookie or /GS feature
+- p. 34: DEP can be controlled by system policy through special APIs and
+- p. 34: compile-time options (see Microsoft’s Security Research and Defense
+- p. 35: pile time, or you could use the SetProcessDEPPolicy API to allow an
+- p. 35: To get an overview of the security-relevant compile-time options
+- p. 35: which analyzes binaries for a wide variety of security protections with
+- p. 35: ties designed to provide the look and feel of Linux within the Windows
+- p. 36: exploit mitigation techniques provided by Windows Vista or later
+- p. 36: exploited today as 20 years ago, when none of these security features
+- p. 36: • Always make use of the exploit mitigation techniques offered by
+- p. 36: Since the vulnerability was fixed and a new version of VLC is now avail-
+- p. 36: able, I released a detailed security advisory on my website (Figure 2-10
+
+## [[the-hacker-playbook-3-practical-guide-to-penetration-testing-0d16e56a]]
+- p. 8: `from personal experience and what actually worked. I think there has been a major`
+- p. 9: `from readers is that they tend to gain the most benefit from the books after reading`
+- p. 23: `from the web, as AV might trigger on it. Also, a simple solution is obfuscation using`
+- p. 23: `from scratch to evade both host and network based detection tools.`
+- p. 38: `#!/bin/bash`
+- p. 38: `if [ -e /opt/nmap_diff/scan_$y.xml ]; then`
+- p. 42: `from SSL certificates. Typically, one of the major difficulties for Red Teamers is`
+- p. 98: `from the outside and find that no other web ports are currently listening, but what`
+- p. 102: `from parsing the XML file.`
+- p. 129: `import to gather this data:`
+- p. 130: `from WinSCP, PuTTY, SuperPuTTY, FileZilla, and Microsoft Remote Desktop. One`
+- p. 144: `from Empire):`
+- p. 153: `from a Domain Controller. Generally limited to the Domain Admins, Enterprise`
+- p. 166: `from our attacker machine, through the dnscat, to the Jenkins box (172.16.250.30) over`
+- p. 193: `from turtle.opvn and save`
+- p. 207: `function are an integer that tells Windows how to interpret the message. Two of these`
+- p. 207: `function to chain to the next hook procedure is optional, but it is highly recommended;`
+- p. 208: `function looks like this:`
+- p. 212: `from touching disk.`
+- p. 252: `from your toolset, how quickly will your IR teams see it and react to it?`
+- p. 3: reproduced or distributed in any form or by any means, or stored in a database or
+- p. 4: Penetration Testing Teams vs Red Teams
+- p. 4: 3 The Throw - Web Application Exploitation
+- p. 4: Web Attacks Introduction - Cyber Space Kittens
+- p. 4: The Red Team Web Application Attacks
+- p. 4: Cyber Space Kittens: Chat Support Systems
+- p. 5: Template Engine Attacks - Template Injections
+- p. 5: Getting Passwords from the Windows Credential Store and Browsers
+- p. 6: Exploiting Internal Jenkins with Social Engineering
+- p. 6: 6 The Onside Kick - Physical Attacks
+- p. 6: Writing Code for Red Team Campaigns
+- p. 7: 8 Special Teams - Cracking, Exploits, and Tricks
+- p. 7: Cracking the CyberSpaceKittens NTLM hashes:
+- p. 7: Building Training Labs and Monitor with Defensive Tools
+- p. 8: of all the new vulnerabilities and attacks that will be discussed. In addition to the new
+- p. 8: content, some attacks and techniques from the prior books (which are still relevant
+- p. 8: Setting Up Your Red Team Infrastructure
+- p. 8: reiterate that I am not a professional author. I just love security and love teaching
+- p. 8: security and this is one of my passion projects. I hope you enjoy it.
+- p. 8: in which to test your attacks, along with the newest tips and tricks of penetration
+- p. 8: sections that help provide a way to test a vulnerability or exploit.
+- p. 8: possible. I also try to stay away from theoretical attacks and focus on what I have seen
+- p. 9: shift in the industry from penetration testers to Red Teamers, and I want to show you
+- p. 9: you to get into the mindset of an attacker and understand “the how” of the attacks;
+- p. 9: repo/technical blog speaks volumes in security over a good resume. Whether you live
+- p. 9: penetration testing/red teaming for major financial institutions, large utility companies,
+- p. 9: spent years teaching offensive network security at colleges, spoken at multiple security
+- p. 9: conferences, been referenced in many security publications, taught courses all over the
+- p. 9: country, ran multiple public CTF competitions, and started my own security school.
+- p. 9: One of my big passion project was building a free and open security community in
+- p. 9: occasionally run into some pentesters who claim they only use open source tools. As a
+- p. 9: “real world” attack, the “bad guys” do not have these restrictions; therefore, you need
+- p. 9: whom this book is specifically intended as I truly believe anyone in security can learn.
+- p. 9: easy for advanced hackers, and other parts might not even be in your field of security.
+- p. 9: For those who are just getting into security, one of the most common things I hear
+- p. 9: labs/examples, build your lab, push your scripts/code to a public Github repository,
+- p. 10: Lastly, being a Red Team member is half about technical ability and half about having
+- p. 10: I can't reiterate this enough: Do not go looking for vulnerable servers and exploits on
+- p. 10: systems you don't own without the proper approval. Do not try to do any of the attacks
+- p. 10: bounty programs and vulnerable sites/VMs to learn off of in order to continue
+- p. 10: growing. Even for some bug bounty programs, breaking scope or going too far can get
+- p. 10: Finally, I am not an expert in Windows, coding, exploit dev, Linux, or really anything
+- p. 13: the Cyber Kittens weapons facility. They are now back with their brand new space
+- p. 13: division called Cyber Space Kittens (CSK). This new division took all the lessons
+- p. 13: learned from the prior security assessment to harden their systems, set up a local
+- p. 13: security operations center, and even create security policies. They have hired you to
+- p. 13: see if all of their security controls have helped their overall posture.
+- p. 13: From the little details we have picked up, it looks like Cyber Space Kittens has
+- p. 13: CSK has hired us to perform a Red Team assessment to make sure they are secure, and
+- p. 13: vulnerabilities, use the latest exploits, use chained vulnerabilities, and see if their
+- p. 13: campaign, you are going to need to do a ton of reconnaissance and discovery, look for
+- p. 13: Before we can dive into the technical ideals behind Red Teams, I need to clarify my
+- p. 13: definitions of Penetration Testing and Red Teams. These words get thrown around
+- p. 13: Penetration Testing Execution Standard (PTES: http://www.pentest-standard.org) – it
+- p. 13: the motions of Scoping, Intel Gathering, Vulnerability Analysis, Exploitation, Post
+- p. 13: Exploitation, and Reporting. In the traditional network test, we usually scan for
+- p. 14: vulnerabilities, find and take advantage of an exploitable system or application, maybe
+- p. 14: do a little post exploitation, find domain admin, and write up a report. These types of
+- p. 14: tests create a matrix of vulnerabilities, patching issues, and very actionable results.
+- p. 14: internal security teams. Companies still need penetration testers to be a part of their
+- p. 14: Nowadays, even though companies have vulnerability management programs, S-
+- p. 14: the very expensive security tools, they still get compromised. If we look at any of the
+- p. 14: companies. We have seen in other security reports that some compromises could have
+- p. 14: these exact same bad guys or actor sets came after your company with the exact same
+- p. 14: This is where Red Teams come into play. The Red Team’s mission is to emulate the
+- p. 14: world and hard facts on how a company will respond, find gaps within a security
+- p. 14: program, identify skill gaps within employees, and ultimately increase their security
+- p. 14: For Red Teams, it is not as methodical as penetration tests. Since we are simulating
+- p. 14: where I see a huge difference between Penetration Tests and Red Team campaigns.
+- p. 14: For network pentests, we love getting to Domain Admin (DA) to gain access to the
+- p. 14: Domain Controller (DC) and calling it a day. For Red Team campaigns, based on the
+- p. 14: application whitelisting, integrity monitoring, lots of IDS/IPS/HIPS rules, and even
+- p. 14: we follow is that we almost never run a vulnerability scan against the internal
+- p. 14: network. How many adversaries have you seen start to perform full vulnerability
+- p. 14: Vulnerability scans are very loud on the network and will most likely get caught in
+- p. 15: lucky to get two weeks, if not one. Whereas, Red Teams must build campaigns that
+- p. 15: last from 2 weeks to 6 months. This is because we need to simulate real attacks, social
+- p. 15: two types of teams. Instead of a list of vulnerabilities, Red Team findings need to be
+- p. 15: geared more toward gaps in blue team processes, policies, tools, and skills. In your
+- p. 15: final report, you may have some vulnerability findings that were used for the
+- p. 15: campaign, but most findings will be gaps in the security program. Remember findings
+- p. 15: should be mainly for the security program, not IT.
+- p. 15: Methodical Security Assessments: Flexible Security Assessments:
+- p. 15: With Red Teams, we need to show value back to the company. It isn’t about the
+- p. 15: number of total vulnerability counts or criticality of individual vulnerabilities; it is
+- p. 15: about proving how the security program is running. The goal of the Red Team is to
+- p. 15: not new concepts, but still valuable ones for Red Teams.
+- p. 15: Even though their AV, host-based security system, or monitoring tools might trigger,
+- p. 16: when the firewall block, DNS sinkhole, or network isolation is implemented. The
+- p. 16: other valuable information to record is how the Security Teams work with IT, how
+- p. 16: mature our programs, but they don't always provide real world security for a
+- p. 16: company. As Red Teamers, our job is to test if the overall security program is
+- p. 16: As you read through this book, I want you to put yourself in the Red Team mindset
+- p. 16: Live in a world of constant Red Team infections
+- p. 16: Challenge the system… Provide real data to prove security gaps.
+- p. 18: As a Red Team, we don’t really care as much about the origins of an attack. Instead,
+- p. 18: detailed report from FireEye on an attack they analyzed
+- p. 18: A detailed breakdown for APT attacks is MITRE’s Adversarial Tactics, Techniques,
+- p. 18: TTPs commonly used with all sorts of attacks.
+- p. 18: suspected APT groups and their toolsets. This is a useful list for us as Red Teamers to
+- p. 18: simulate different attacks. Of course, we might not use the same tools as documented
+- p. 19: This is where Red Team campaigns heavily differ from penetration tests. Since Red
+- p. 19: Team campaigns focus on detection/mitigation instead of vulnerabilities, we can do
+- p. 19: In these scenarios, Red Teams work with a limited group of people inside the company
+- p. 19: This is one of my favorite parts of running Red Teams. Before you compromise your
+- p. 19: first system, you need to scope out your Red Team campaign. In a lot of penetration
+- p. 19: In Red Team campaigns, we start out with a few objectives. These objectives can
+- p. 20: What techniques are you going to use? We talked about using MITRE
+- p. 20: world with the abundance of Virtual Private Servers (VPS), standing up your attacker
+- p. 20: After you have fully created an image you like, you can rapidly clone that image to
+- p. 20: Storage space usually isn't an issue
+- p. 21: way to build your servers is to integrate TrustedSec's The PenTesters Framework
+- p. 21: quick example of installing all of our exploitation, intel gathering, post exploitation,
+- p. 21: PowerShell, and vulnerability analysis tools.
+- p. 21: If we take a look at our attacker VPS, we can see all of the tools installed on our box.
+- p. 22: attacker server, you will want to limit where SSH authentications can initiate from,
+- p. 22: reported/). You definitely don't want your attacker servers compromised with your
+- p. 22: I have also seen some Red Teams run Kali Linux (or at least Metasploit) in Docker
+- p. 22: for Red Teams [https://github.com/Coalfire-Research/Red-Baron]. Whether you want
+- p. 22: There are a myriad of tools a Red Team might use, but let’s talk about some of the
+
+## [[the-bug-hunters-methodology-2-cdaa5fd1]]
+- p. 2: ★ Head of Trust and Security @Bugcrowd
+- p. 4: ★ bypass or filter evasion techniques ★ CSRF
+- p. 8: ❏ Intro to scraping for subdomains ○ brutesubs
+- p. 8: ❏ Enumall (recon-ng, Alt-DNS wrapper) ★ (sub bruting) MaSSDNS ++
+- p. 10: ssltools.com API Google (Recon-ng now handles captcha) Baidu
+- p. 11: ○ Update Docker IMage with non core
+- p. 13: time python dns-queue.py $TARGET.com 100 $TARGET_outputfile -i /root/work/bin/all.txt
+- p. 13: time ./blacksheepwall_linux_amd64 -clean -dictionary /root/work/bin/all.txt -domain $TARGET.com
+- p. 17: ★ Because of the nature of scraping and dns redirects
+- p. 33: OWASP SSTI Workshop - https://speakerdeck.com/owaspmontreal/workshop-server-side-template-i
+- p. 33: Rails Dynamic Render to https://nvisium.com/blog/2016/01/26/rails-dynamic-render-to-rce-cve-201
+- p. 35: SSRF Common Parameters or Injection
+- p. 35: ❏ Well kinda... SSRF ○ SSRF Bible (black magic)
+- p. 35: (visually) looks very ★ Exploit locale= template=
+- p. 35: similar to LFI / RFI / ○ Burp Collaborator
+- p. 39: SSRF Pivoting from blind SSRF to RCE with HashiCorp http://www.kernelpicnic.net/2017/05/29/Pivoting-from-blind-SSRF
+- p. 39: Exploiting Server Side Request Forgery on a https://sethsec.blogspot.com/2015/12/exploiting-server-side-requ
+- p. 39: How To: Server-Side Request Forgery (SSRF) - https://www.hackerone.com/blog-How-To-Server-Side-Request-F
+- p. 39: Escalating XSS in PhantomJS Image Rendering to http://buer.haus/2017/06/29/escalating-xss-in-phantomjs-image-r
+- p. 39: SSRF/Local-File Read - Brett Buerhaus endering-to-ssrflocal-file-read/
+- p. 39: Burp, Collaborate, and Listen: A Pentester https://www.bishopfox.com/blog/2016/02/burp-collaborate-listen-
+- p. 39: Reviews the Latest Burp Suite Addition - Max pentester-reviews-latest-burp-suite-addition/
+- p. 55: Scumsec (non-core recon-ng modules) https://github.com/scumsec/Recon-ng-modules
+- p. 55: Vlad Styran (non-core recon-ng modules) https://bitbucket.org/LaNMaSteR53/recon-ng/pull-requests/260/add-passivetotal-subdomains-enumer
+- p. 56: Netflix (SleepyPuppy Blind XSS framework) https://github.com/Netflix/sleepy-puppy
+- p. 56: 0xSobky (XSS polyglot #4) https://github.com/0xsobky/HackVault/wiki/Unleashing-an-Ultimate-XSS-Polyglot
+
+## [[real-world-bug-hunting-a-field-guide-to-web-hacking-e112338e]]
+- p. 27: `from you. Bug hunting can be lonely work if you’re struggling. But it’s`
+- p. 31: `from 0 to 255. IPv6 is the newest version of the Internet Protocol. It was`
+- p. 51: `from code that isn’t directly visible. For example, let’s say your bank`
+- p. 51: `def prepare_transfer(➊params)`
+- p. 52: `def transfer_money(params)`
+- p. 52: `from 0, params[0] accesses the value at the ﬁrst location in the array,`
+- p. 53: `function called in prepare_transfer, the from variable would take the third`
+- p. 67: `from another, malicious site. Sometimes the HTTP body of the POST`
+- p. 67: `from what trusted origins. This is referred to as a preﬂight OPTIONS call.`
+- p. 67: `from each other is called cross-origin resource sharing (CORS). CORS`
+- p. 68: `from its server. This allows for CSRF vulnerabilities but might also`
+- p. 69: `from the site. Regardless of the method, only the target’s web browser`
+- p. 75: `function window.onload, which deﬁnes an anonymous JavaScript function`
+- p. 75: `function will always be called when the page is loaded.`
+- p. 75: `function takes and splits a string into an array of strings at each '='`
+- p. 98: `from another origin. The SOP protects innocent websites from`
+- p. 106: `from those input boxes weren’t properly sanitized when setting up`
+- p. 110: `from Google.`
+- p. 122: `from the aforementioned resources without a Sandbox bypass. If it’s less`
+- p. 132: `for themselves in the database.`
+- p. 141: `from the user function using the mid function. Then he compared`
+- p. 142: `import string`
+- p. 142: `import requests`
+- p. 142: `from urllib import quote`
+- p. 142: `from base64 import b64encode`
+- p. 143: `function that the script is trying to brute-force. Once the script has a`
+- p. 146: `function executes. To understand the signiﬁcance of this process, let’s`
+- p. 151: `from visitors and send requests on to other servers that are publicly`
+- p. 180: `function would execute the ping and id commands. The id command`
+- p. 182: `function to read the contents of a ﬁle into a string. In this case, the ﬁle`
+- p. 186: `from https://imagetragick.com/, but could have easily used the SVG ﬁle as`
+- p. 207: `from its AWS account without deleting the CNAME record. So,`
+- p. 224: `from Shopify but didn’t visit the URL right away. Instead, in the`
+- p. 262: `from 98.136.0.0 to 98.139.255.255 or 98.136.0.0/14, which is 260,000`
+- p. 262: `#!/bin/bash`
+- p. 264: `from the servers. For example, a site might enable admin-related`
+- p. 289: `while operating a bounty program:`
+- p. 290: `from you to validate and reproduce a bug, that delays the bug ﬁx`
+- p. 293: `from the bug reports in the book that the proxy allows you to`
+- p. 324: `function execution, 121–122`
+- p. 350: `while you’re at it.`
+- p. 3: storage or retrieval system, without the prior written permission of the copyright owner and
+- p. 3: Developmental Editors: Jan Cash and Annie Choi
+- p. 3: (Computer security) | Web sites--Testing. | BISAC: COMPUTERS / Security
+- p. 3: Viruses. | COMPUTERS / Security / General. | COMPUTERS / Networking /
+- p. 4: trademarked name, we are using the names only in an editorial fashion and to the beneﬁt of the
+- p. 5: referenced in this book. He is also a successful bug bounty hunter with
+- p. 5: Shopify as an Application Security Engineer, helping to make
+- p. 6: Tsang Chi Hong, also known as FileDescriptor, is a pentester and a bug
+- p. 6: bounty hunter. He lives in Hong Kong. He writes about web security at
+- p. 7: Chapter 18: Application Logic and Conﬁguration Vulnerabilities
+- p. 13: Attacking Users with SSRF Responses
+- p. 13: ESEA SSRF and Querying AWS Metadata
+- p. 19: public and private sectors across the entire world. Our hacking
+- p. 19: security vulnerability reports that resulted in real bug bounties, along
+- p. 21: receiving end of vulnerability reports, which helped me develop
+- p. 21: Arne Swinnen, FileDescriptor, and the many others who sat down with
+- p. 22: process of responsibly discovering security vulnerabilities and reporting
+- p. 22: hacking, I wanted to know not just what vulnerabilities hackers found
+- p. 22: What vulnerabilities are hackers ﬁnding in applications?
+- p. 22: How did hackers learn about those vulnerabilities found in
+- p. 22: How can I get started hacking and ﬁnding vulnerabilities?
+- p. 22: I eventually landed on HackerOne, a bug bounty platform designed
+- p. 22: struggled to understand what vulnerabilities people were ﬁnding and
+- p. 23: you understand different types of web vulnerabilities. You’ll learn how
+- p. 23: to ﬁnd vulnerabilities, how to report them, how to get paid for doing
+- p. 23: you discover vulnerabilities and recognize the impact of the bugs you
+- p. 23: vulnerabilities involving an application’s logic and brainstorming how a
+- p. 24: Each chapter that describes a vulnerability type has the following
+- p. 24: 1. A description of the vulnerability type
+- p. 24: 2. Examples of the vulnerability type
+- p. 24: Each vulnerability example includes the following:
+- p. 24: The URL associated with the location in which the vulnerability
+- p. 24: The date the vulnerability was reported
+- p. 24: A clear description of the vulnerability
+- p. 24: Chapter 1: Bug Bounty Basics explains what vulnerabilities and
+- p. 25: Chapter 2: Open Redirect covers attacks that exploit the trust of a
+- p. 25: Chapter 3: HTTP Parameter Pollution covers how attackers
+- p. 25: the vulnerable target website trusts and that lead to unexpected
+- p. 25: Chapter 4: Cross-Site Request Forgery covers how an attacker
+- p. 25: attackers inject encoded characters into HTTP messages to alter
+- p. 25: Chapter 7: Cross-Site Scripting explains how attackers exploit a
+- p. 25: Chapter 8: Template Injection explains how attackers exploit
+- p. 25: Chapter 9: SQL Injection describes how a vulnerability on a
+- p. 25: database-backed site can allow an attacker to unexpectedly query or
+- p. 25: attacker makes a server perform unintended network requests.
+- p. 25: Chapter 11: XML External Entity shows how attackers exploit
+- p. 25: Chapter 12: Remote Code Execution covers how attackers can
+- p. 25: exploit a server or application to run their own code.
+- p. 26: Chapter 13: Memory Vulnerabilitites explains how attackers
+- p. 26: exploit an application’s memory management to cause unintended
+- p. 26: behavior, including possibly executing the attacker’s own injected
+- p. 26: takeovers occur when an attacker can control a subdomain on behalf
+- p. 26: Chapter 15: Race Conditions reveals how attackers exploit
+- p. 26: vulnerabilities that occur when an attacker can access or modify a
+- p. 26: Chapter 17: OAuth Vulnerabilities covers bugs in the
+- p. 26: Vulnerabilities explains how an attacker can exploit a coding logic
+- p. 26: unintended action that results in a vulnerability.
+- p. 26: Chapter 19: Finding Your Own Bug Bounties gives tips on
+- p. 26: where and how to look for vulnerabilities based on my experience
+- p. 26: Chapter 20: Vulnerability Reports discusses how to write credible
+- p. 26: and informative vulnerability reports so programs won’t reject your
+- p. 27: When you read about public vulnerability disclosures and see the
+- p. 27: but you’re less likely to ﬁnd stories about the failures that happen along
+- p. 27: stories). Because you’ll mostly hear about people’s hacking successes,
+- p. 28: vulnerabilities, bug bounties, clients, servers, IP addresses, and HTTP.
+- p. 28: can result in vulnerabilities. Then, we’ll see what happens when you
+- p. 28: A vulnerability is a weakness in an application that allows a malicious
+- p. 29: As you learn and test applications, keep in mind that vulnerabilities
+- p. 29: can result from attackers performing intended and unintended actions.
+- p. 29: vulnerability. Even though the site kept your information private from
+- p. 29: A bug bounty is a reward a website or company gives to anyone who
+- p. 29: ethically discovers a vulnerability and reports it to that website or
+- p. 29: vulnerabilities. Note that this is different from companies that operate a
+- p. 29: vulnerability disclosure program (VDP). Bug bounties offer some monetary
+- p. 29: vulnerabilities to a company for that company to ﬁx. Although not all
+- p. 29: hackers participating in bug bounty programs.
+- p. 35: languages, JavaScript has built-in functions and can store values in
+- p. 35: access to various browser application programming interfaces (APIs).
+- p. 35: These APIs enable JavaScript to interact with other systems, the most
+- p. 35: HTML and CSS. This is signiﬁcant because if an attacker can execute
+- p. 36: consider vulnerability examples in applications expecting these method
+- p. 36: used synonymously with Uniform Resource Locator (URL).
+- p. 37: (CSRF) vulnerabilities discussed in Chapter 4. Visiting any URL or
+- p. 37: redirect vulnerabilities discussed in Chapter 2.
+- p. 38: it serves as a CSRF vulnerability protection.
+- p. 39: vulnerabilities result from someone performing an unintended action
+- p. 39: vulnerabilities to the owners of websites.
+- p. 40: We’ll begin our discussion with open redirect vulnerabilities, which occur
+- p. 40: exploit the trust of a given domain to lure targets to a malicious
+- p. 40: website. A phishing attack can also accompany a redirect to trick users
+- p. 40: combined with other attacks, open redirects can also enable attackers to
+- p. 40: Google bug bounty program typically considers open redirects too low
+- p. 40: risk to reward. The Open Web Application Security Project (OWASP),
+- p. 40: which is a community that focuses on application security and curates a
+- p. 40: list of the most critical security ﬂaws in web applications, also removed
+- p. 40: open redirects from its 2017 list of top 10 vulnerabilities.
+- p. 40: Although open redirects are low-impact vulnerabilities, they’re great
+- p. 40: you’ll learn how to exploit open redirects and how to identify key
+- p. 41: Open redirects occur when a developer mistrusts attacker-controlled
+- p. 41: Now, suppose an attacker changed the original URL to the
+- p. 41: its own legitimate sites where it intends to send visitors, an attacker
+- p. 41: https://www.<attacker>.com/. After the attacker has you on their malicious
+- p. 41: site, they could carry out other attacks.
+- p. 42: When looking for these vulnerabilities, keep an eye out for URL
+- p. 42: In addition to parameter-based attacks, HTML <meta> tags and
+- p. 42: https://www.google.com . Attackers can use this redirect behavior in
+- p. 42: a <meta> tag or to inject their own tag via some other vulnerability.
+- p. 42: An attacker can also use JavaScript to redirect users by modifying
+- p. 42: (DOM). The DOM is an API for HTML and XML documents that
+- p. 42: redirect to the speciﬁed URL. An attacker can modify the window’s
+- p. 42: where an attacker can execute JavaScript, either via a cross-site scripting
+- p. 43: vulnerability or where the website intentionally allows users to deﬁne a
+- p. 43: vulnerability detailed later in the chapter on page 15.
+- p. 43: When you’re searching for open redirect vulnerabilities, you’ll
+- p. 43: usually be monitoring your proxy history for a GET request sent to the
+- p. 43: stores to sell goods. Shopify allows administrators to customize the
+- p. 43: look and feel of their stores by changing their theme. As part of that
+- p. 43: theme by redirecting the store owners to a URL. The redirect URL
+- p. 43: user’s store domain and added /admin to the end of the URL. Shopify
+- p. 43: was expecting that the domain_name would always be a user’s store and
+
+## [[mastering-modern-web-penetration-testing-68fcc418]]
+- p. 5: `from India. He has been a successful participant in various bug bounty programs`
+- p. 24: `from performing actions on your behalf on an actual Gmail web page.`
+- p. 109: `while assuming that a form's POST request will not get forged. But in reality this`
+- p. 116: `from the request altogether and the AppCenter app was still getting accepted.`
+- p. 117: `from 1-100, this will effectively make sure that all possible values in the range of`
+- p. 117: `from the Flash file to a JavaScript callback function to perform source parsing. The`
+- p. 118: `function nice(x)`
+- p. 128: `from it; but in case there are multiple parameters to look into, then we can use -p`
+- p. 147: `from the aforementioned file and then specify the vulnerable parameter, which in`
+- p. 162: `while ( disr != null ) {`
+- p. 166: `from the server and we can happily execute commands through this interactive`
+- p. 166: `class XSS {`
+- p. 166: `function XSS() {`
+- p. 188: `while testing. By this, I'm referring to the auxiliary modules to test for DoS`
+- p. 217: `from a quadratic blowup vulnerability, it was discovered by Israeli security`
+- p. 248: `class Packt`
+- p. 248: `function __construct($n){`
+- p. 250: `class LogWriter`
+- p. 250: `function __destruct()`
+- p. 2: Master the art of conducting modern pen testing attacks
+- p. 3: All rights reserved. No part of this book may be reproduced, stored in a retrieval
+- p. 3: Publishing, and its dealers and distributors will be held liable for any damages
+- p. 3: companies and products mentioned in this book by the appropriate use of capitals.
+- p. 4: Content Development Editor Production Coordinator
+- p. 5: Prakhar Prasad is a web application security researcher and penetration tester
+- p. 5: from India. He has been a successful participant in various bug bounty programs
+- p. 5: and has discovered security flaws on websites such as Google, Facebook, Twitter,
+- p. 5: the most widely respected certifications in the information security industry. He
+- p. 5: occasionally performs training and security assessment for various government,
+- p. 5: I am thankful from the bottom of my heart to the editors of this
+- p. 5: The last chapter of this book on API testing is written entirely by
+- p. 5: application security, who is a very good friend of mine and a down-
+- p. 6: Kubilay Onur Gungor has been working in the cyber security field for more than
+- p. 6: application security expert and incident management and response expert in Sony
+- p. 6: He believes in multidisciplinary approach on cyber security and defines it as
+- p. 6: management and response, cyber terrorism, criminal profiling, unorthodox methods,
+- p. 6: program is up and running in Istanbul in the name of Cyber Struggle
+- p. 6: Besides security, he holds certificates in foreign policy, brand management, surviving
+- p. 6: in extreme conditions, international cyber conflicts, anti-terrorism accreditation board,
+- p. 8: Chapter 1: Common Security Protocols 1
+- p. 8: IIS 5.0 directory traversal code execution – CVE-2001-0333 12
+- p. 8: Using double encoding to evade XSS filters 13
+- p. 9: Demonstrating reflected XSS vulnerability 52
+- p. 9: Stored XSS through spoofed IP addresses 64
+- p. 9: Flash-based XSS – ExternalInterface.call() 67
+- p. 10: Exploiting POST-request based CSRF 86
+- p. 10: PayPal's CSRF vulnerability to change phone numbers 87
+- p. 10: Exploiting CSRF in JSON requests 90
+- p. 10: Using XSS to steal anti-CSRF tokens 92
+- p. 10: Exploring pseudo anti-CSRF tokens 93
+- p. 10: Defeating XMLHTTPRequest-based CSRF protection 98
+- p. 10: Chapter 5: Exploiting SQL Injection 101
+- p. 10: Installation of SQLMap under Kali Linux 102
+- p. 11: Chapter 6: File Upload Vulnerabilities 135
+- p. 11: Introducing file upload vulnerability 136
+- p. 12: WordPress 3.9 quadratic blowup vulnerability – Case Study 194
+- p. 12: Chapter 9: Emerging Attack Vectors 197
+- p. 12: Protocol Handlers for SSRF URLs 201
+- p. 12: Case Study – MailChimp port scan SSRF 203
+- p. 13: Exploiting OAuth for fun and profit 239
+- p. 13: Chapter 11: API Testing Methodology 247
+- p. 14: Basic methodology to test developer APIs 261
+- p. 16: enough, imagine these services were hacked and all the sensitive data stored in
+- p. 16: iCloud service API was breached by hackers and sensitive photos were leaked on the
+- p. 16: mentioned cases clearly prove the point. However, we can beef up security to an
+- p. 16: can be a hundred per cent secure, but improving security never hurt anybody.
+- p. 17: In a classic penetration test of web applications, different types of attacking
+- p. 17: techniques are used to find vulnerabilities and use them to break into systems.
+- p. 17: techniques, such as XML attack vectors, which include the recently popular XXE
+- p. 17: attack. Then we have OAuth 2.0, which varies with implementations, and this results
+- p. 17: in flaws, such as account takeovers. Among older techniques, we have XSS, CSRF,
+- p. 17: Chapter 1, Common Security Protocols, focuses on different basic concepts of the Web
+- p. 17: and security in general, which you will find beneficial when conducting tests in
+- p. 17: Chapter 2, Information Gathering, deals with various reconnaissance or enumeration
+- p. 17: techniques to discover surfaces that can be attacked. The more someone enumerates
+- p. 17: a particular web target, the better the chances are of finding a vulnerability inside it.
+- p. 17: Chapter 3, Cross-Site Scripting, is a refresher on one of the most exploited flaws on the
+- p. 17: Web: cross-site scripting. This chapter contains different techniques of XSS, and some
+- p. 17: of them are really nasty, such as performing XSS by spoofing an IP address.
+- p. 18: Chapter 4, Cross-Site Request Forgery, highlights the importance of CSRF as an attack
+- p. 18: vector, teaches newer ways to perform CSRF, for instance, when the request is a
+- p. 18: JSON object. Then, there is a real-life case study on a critical CSRF vulnerability
+- p. 18: Chapter 5, Exploiting SQL Injection, doesn't need any introduction at all. This chapter
+- p. 18: makes use of SQLMap and explores it to detect and exploit SQL injection flaws.
+- p. 18: Chapter 6, File Upload Vulnerabilities, deals with security flaws plaguing file upload
+- p. 18: web application security. It covers how to generate a web backdoor payload through
+- p. 18: Chapter 8, XML Attacks, covers attack vectors, which exploit XML parsing
+- p. 18: implementation in a web application; XXE is a vector covered here apart from
+- p. 18: DoS issues, such as the XQB attack.
+- p. 18: Chapter 9, Emerging Attack Vectors, includes some latest or unpopular techniques,
+- p. 18: Chapter 10, OAuth 2.0 Security, discusses various flaws in implementing the OAuth
+- p. 18: Chapter 11, API Testing Methodology, is the last chapter of this book and a guest
+- p. 18: chapter by security researcher and my friend Pranav Hivarekar. It covers the basics
+- p. 18: of REST APIs and then goes on to explain fundamental issues and mistakes made by
+- p. 19: This book targets security professionals and penetration testers who want to
+- p. 19: stored inside localStorage is also governed by this policy, that is, origin-separated."
+- p. 24: This is the first chapter of this book and it will cover some basic security protocols
+- p. 24: prevents web pages from bashing together (in a simple sense). Then we've cross-origin
+- p. 24: Same-origin policy is a security enforcement found in most common browsers that
+- p. 24: concept of security which runs web applications of various kinds.
+- p. 25: Flash, and so on. Data stored inside localStorage is also governed by this policy,
+- p. 27: the same-origin policy; it skips the policy checks if the following situations
+- p. 27: • IE skips the origin check if the origin falls under the Trust Zone, for example,
+- p. 28: URL which is at a different origin is a different story altogether. Let us attempt to
+- p. 28: As soon as this code runs, we get the following security error inside the Google
+- p. 28: domain XMLHTTPRequest() will drop as per security enforcement. Consider an
+- p. 28: Request Forgery (CSRF) tokens, and then they can be used to mount a CSRF attack.
+- p. 29: stored. Most content delivery networks (CDNs) which provide resource-hosting
+- p. 30: dropped and a security error is raised (as seen earlier in the last section),
+- p. 30: are fully compatible (protocol, security, and so on) with each other before the data is
+- p. 34: here, 41 is the hexadecimal for 65, which, in turn, is the ASCII code for capital A.
+- p. 34: It is the same technique that was used in the infamous IIS 5.0 directory traversal
+- p. 34: Typically ../../ or ..\..\ is used to traverse back to the parent directory; some
+- p. 35: IIS 5.0 directory traversal code execution –
+- p. 35: In 2001, a directory traversal vulnerability in Microsoft's popular IIS 5.0 web server
+- p. 35: appeared. The vulnerability was critical because it was a zero authentication code
+- p. 35: execution vulnerability. The vulnerability was due to double decoding of a URL
+- p. 35: Microsoft issued security bulletin MS01-026 to address this flaw and also described
+- p. 35: the vulnerability in their own words. I'll quote the technical advisory published at
+- p. 35: A vulnerability that could enable an attacker to run operating system commands on
+- p. 35: form, then performs security checks on the decoded request. A vulnerability results
+- p. 35: because a second, superfluous decoding pass is performed after the security checks
+- p. 35: are completed. If an attacker submitted a specially constructed request, it could
+- p. 35: be possible for the request to pass the security checks, but then be mapped via the
+- p. 35: the virtual folder structure. These would be executed in the security context of the
+- p. 35: group, would grant the attacker capabilities similar to those of a non-administrative
+- p. 35: This excerpt mentions specifically that a vulnerability results because a second,
+- p. 35: superfluous decoding pass is performed after the security checks are completed.
+- p. 35: outside the root directory then the request would have got blocked as it is a clear
+- p. 35: path traversal outside of the root directory.
+- p. 36: Assuming that the root directory is a Windows folder, if we send the following
+- p. 36: request, it will be blocked as it contains ../../ for directory traversal inside
+- p. 36: Using double encoding to evade XSS filters
+- p. 36: We have covered a directory traversal security check bypass through the double
+- p. 36: encoding technique. In this section, I'll cover how we can evade some XSS filters or
+- p. 36: Assuming that we've an XSS filter that detects <, >, /, or their percent-encoded forms,
+- p. 36: we can apply the double encoding technique to our XSS payload, if our input gets
+- p. 36: Original request with XSS payload (blocked): http://www.example.com/search.
+- p. 37: decoding). It can be applied to other attack techniques such as SQL injections.
+
+## [[hacking-apis-early-access-691dcdd7]]
+- p. 34: `from making any other request for an hour. However, if the user pays this`
+- p. 38: `from the bug bounty provider but legal trouble as well. The bounty pro-`
+- p. 44: `from the web application in a response. Not all headers are required, and`
+- p. 46: `from viewing the page.`
+- p. 50: `from the database, the asterisk is a wildcard character that will select all of`
+- p. 57: `from having to remember the consumer from one request to another.`
+- p. 62: `from the server.`
+- p. 74: `while it adds security to the authorization process, it also expands the poten-`
+- p. 102: `from the browser to Burp Suite. This is done with the use of a web proxy.`
+- p. 104: `from your web browser and Postman. The proxy we set up will send any web`
+- p. 109: `function level authorization, mass assignment, injection, and improper assets`
+- p. 110: `from manually adding headers such as X-Originating-IP, X-Forwarded-For,`
+- p. 112: `from parent.`
+- p. 116: `from https://age-of-empires-2-api.herokuapp.com/apispec.json as follows:`
+- p. 162: `from a target by port or vulnerability scanning, pinging, sending HTTP`
+- p. 162: `from the previous phase: phase one, detection scanning, uses automated`
+- p. 162: `while automated scans are running in the background. Whenever you’ve`
+- p. 196: `from the unique status codes.`
+- p. 202: `from the application (see Figure 7-19). You’ll need to include this Bearer`
+- p. 224: `from the intercepted request. Open a terminal and run JWT_Tool. As a`
+- p. 247: `while all other requests are receiving a 404 Not Found status code. Anomaly!`
+- p. 261: `from discovering the user’s exact location and gaining the ability to track`
+- p. 266: `from an endpoint and then flex your fuzzing skills by submitting requests`
+- p. 321: `from the beginning of the request body and give it a name (for example,`
+- p. 326: `from requesting private pastes. Send the paste request in Figure 14-12 to`
+- p. 339: `function loadBambooHRUsers() {`
+- p. 2: Hacking APIs (Early Access) © 2022 by Corey Ball
+- p. 2: Welcome to the Early Access edition of the as yet unpublished Hacking APIs
+- p. 3: Compositor: Maureen Forys, Happenstance Type-O-Rama
+- p. 3: marked name, we are using the names only in an editorial fashion and to the benefit of the
+- p. 3: tion storage or retrieval system, without the prior written permission of the copyright owner
+- p. 4: PART I: THE STATE OF WEB API SECURITY
+- p. 4: Chapter 0: Preparing for API Security Testing
+- p. 4: Chapter 4: Setting Up an API Hacking System
+- p. 4: Chapter 5: Setting Up Vulnerable API Targets
+- p. 4: Chapter 8: Attacking API Authentication
+- p. 4: Chapter 10: Exploiting API Authorization
+- p. 4: Chapter 11: Exploiting Mass Assignment
+- p. 6: Corey Ball is a cybersecurity consulting leader at Moss Adams, where he
+- p. 6: working in IT and cybersecurity across several industries, including aero-
+- p. 6: Alex Rifman is a security industry veteran with a background in defense
+- p. 6: management. He currently serves as a head of customer success at APIsec,
+- p. 6: an API security company, where he works with customers to ensure their
+- p. 9: PART I: THE STATE OF WEB API SECURITY 1
+- p. 9: PREPARING FOR API SECURITY TESTING 3
+- p. 10: SETTING UP AN API HACKING SYSTEM 71
+- p. 11: Performing Reconnaissance with OWASP Amass . . . . . . . . . . . . . . . . . . . . . . 97
+- p. 11: SETTING UP VULNERABLE API TARGETS 109
+- p. 12: Lab #4: Building a crAPI Collection and Discovering Excessive Data Exposure . . . . . . . . 174
+- p. 12: Password Reset and Multifactor Authentication Brute-Force Attacks . . . . . . . . . 181
+- p. 12: Including Base64 Authentication in Brute-Force Attacks . . . . . . . . . . . . . . . . . 185
+- p. 13: Lab #6: Fuzzing for Improper Assets Management Vulnerabilities . . . . . . . . . . . . . . . . . 219
+- p. 13: Automating Mass Assignment Attacks with Arjun and Burp Suite Intruder . . . . . . . . . . . 241
+- p. 14: PART IV: REAL-WORLD API HACKING 265
+- p. 14: Directory Brute-Forcing for the GraphQL Endpoint . . . . . . . . . . . . . . . . . . . . 290
+- p. 14: Reverse Engineering a GraphQL Collection Using Introspection . . . . . . . . . . . 296
+- p. 17: monitoring your daily steps, exercise data, and nutri-
+- p. 17: ago. But APIs have changed all that. They are the glue that has enabled col-
+- p. 17: run applications. Indeed, APIs have become so pervasive that an Akamai
+- p. 17: report from October 2018 found that API calls accounted for an astounding
+- p. 17: cybercriminals will take notice. To these criminals, APIs are highly fertile
+- p. 18: Consider the role APIs play in a typical application architecture. When
+- p. 18: you check your bank balance on a mobile app, an API behind the scenes
+- p. 18: for a loan, an API allows the bank to request your credit history. APIs sit in a
+- p. 18: a cybercriminal can compromise the API layer, they could get direct access
+- p. 18: While APIs have reached an unprecedented level of adoption, their
+- p. 18: security continues to lag. I recently spoke with the chief information
+- p. 18: security officer of a 100-year-old energy company and was surprised
+- p. 18: to learn they use APIs throughout the organization. But, he quickly
+- p. 18: to consider the security implications of every change they make, and so
+- p. 18: undiscovered vulnerabilities weasel their way into products.
+- p. 18: Unfortunately, lax API security practices too often result in unexpected
+- p. 18: API called Informed Visibility that allowed organizations and users to track
+- p. 18: packages. Appropriately, the API required users to validate their identity
+- p. 18: and authenticate in order to access any information via the API. However,
+- p. 18: ment) with APIs. But because one of its APIs required no authentication
+- p. 18: APIs to power its applications and connect to financial institutions. One of
+- p. 18: its APIs served a marketing function by showing recent, anonymized trans-
+- p. 18: mation, the API would return all transaction details when called directly.
+- p. 18: Malicious users harvested some 200 million transactions via this API.
+- p. 18: firm Gartner has predicted that API breaches will become the “most fre-
+- p. 18: quent attack vector” by 2022, and IBM has reported that two-thirds of
+- p. 18: cloud breaches are the result of API misconfigurations. The breaches also
+- p. 18: highlight the need for new approaches to securing APIs. The application
+- p. 18: security solutions of the past focus only on the most common attack types
+- p. 18: and vulnerabilities. For example, automated scanners search the Common
+- p. 18: Vulnerabilities and Exposures (CVE) database for flaws in IT systems, and
+- p. 18: web application firewalls monitor traffic in real time to block malicious
+- p. 19: traditional threats, but they fail to address the core security challenges
+- p. 19: The problem is that API vulnerabilities are not common. Not only do
+- p. 19: they vary highly from one API to another, but they also tend to differ from
+- p. 19: Put more succinctly, these unique API logic flaws are effectively zero-
+- p. 19: day vulnerabilities, each of which belongs only to a specific API. Because
+- p. 19: penetration testers and bug bounty hunters interested in keeping APIs
+- p. 19: secure. Additionally, as security shifts “left” to the engineering and develop-
+- p. 19: ment processes, API security is no longer strictly the domain of companies’
+- p. 19: information security departments. This book can be a guide to any modern
+- p. 19: engineering team that conducts security testing alongside functional and
+- p. 19: When done properly, API security testing programs are continuous and
+- p. 19: and cover the API’s entire footprint. Finding API vulnerabilities takes new
+- p. 19: skills, new tools, and new approaches. The world needs Hacking APIs now
+- p. 19: Chief Strategy Officer, APIsec.ai Inc.
+- p. 21: Kevin Villanueva for volunteering me to lead the API penetration test-
+- p. 21: else on the Moss Adams Cybersecurity team for challenging, helping, and
+- p. 21: Gary Lamb, Eric Wilson, and Scott Gnile for being a such great mentors
+- p. 21: port. Also, the rest of the APIsec.ai team for their API security articles,
+- p. 21: webinars, and their awesome API security testing platform.
+- p. 21: providing me with beta access to crAPI. Additional thanks to the rest of the
+- p. 21: OWASP API Security Top 10 project team, Erez Yalon and Paulo Silva.
+- p. 21: content, and diligence to secure all the APIs.
+- p. 21: only providing one of the best API hacking suites out there but also for giv-
+- p. 21: ing me the opportunity to evangelize API security.
+- p. 21: Dolev Farhi for Damn GraphQL, his excellent conference talks, and all
+- p. 21: his help with the GraphQL sections of this book.
+- p. 21: Sean Yeoh and the rest of the great team at Assetnote for their API
+- p. 21: the realities of writing and releasing a cybersecurity book.
+- p. 22: APIsecurity.io for providing the world some of the best API security
+- p. 22: API security content and participate in webinars.
+- p. 22: an API hacking madman and turning them into this book. Bill, thanks for
+- p. 23: tion programming interface (API) calls
+- p. 23: As you’ll see in this book, APIs are an excellent attack vector. After all,
+- p. 23: penetrate the perimeter of a network firewall, bypass an advanced antivirus,
+- p. 23: The goal of this book is to introduce you to web APIs and show you
+- p. 23: ing the security of REST APIs, the most common API format used in web
+- p. 24: applications, but will cover attacking GraphQL APIs as well. You’ll first
+- p. 24: learn tools and techniques for using APIs as intended. Next, you’ll probe
+- p. 24: them for vulnerabilities and learn how to exploit those vulnerabilities. You
+- p. 24: resource is no longer oil, but data.” APIs are digital pipelines that allow a
+- p. 24: Simply put, an API is a technology that enables communication
+- p. 24: between different applications. When, for example, a Python application
+- p. 24: very quickly. By relying on APIs, developers can design modular applica-
+- p. 24: APIs. Yet new technologies often get quite a head start before cybersecurity
+- p. 24: has a chance to ask any questions, and APIs have hugely expanded these
+- p. 24: applications’ attack surfaces. They’ve been so poorly defended that attack-
+- p. 24: ers can use them as a direct route to their data. In addition, many APIs
+- p. 24: lack the security controls that other attack vectors have in place, making
+- p. 24: Due to these reasons, Gartner predicted years ago that by 2022, APIs
+- p. 24: will be the leading attack vector. As hackers, we need to secure them by
+- p. 24: catching up to the speed of technological innovation. By attacking APIs,
+- p. 24: Attacking APIs is not as challenging as you may think. Once you under-
+- p. 24: late well to APIs. You can’t, for instance, throw a generic vulnerability scan
+- p. 24: at an API and expect useful results. I’ve often run these scans against vul-
+- p. 24: nerable APIs only to receive false negatives. When APIs are not tested prop-
+- p. 24: erly, organizations are given a false sense of security that leaves them with a
+- p. 25: Part I: The State of Web API Security First, I will introduce you to
+- p. 25: the basic knowledge you need about web applications and the APIs that
+
+## [[blackhat-graphql-1fe9b81c]]
+- p. 34: `function may connect to an external database such as MySQL, and query its`
+- p. 41: `while a /users endpoint might support both GET- and POST-based requests,`
+- p. 68: `from a client’s point of view. Next, we’ll review its type system from a serv-`
+- p. 71: `from HTTP to WebSocket, as indicated by the response code of 101`
+- p. 81: `from the response. When the if condition in the directive’s argument is`
+- p. 84: `from a list of possible values. For example, an application may want to allow`
+- p. 95: `from its API in several ways. In Chapter 6, we’ll teach you how to leverage`
+- p. 96: `from clients. In Chapter 8, you will learn about specific GraphQL injection`
+- p. 106: `def possible_graphql_paths():`
+- p. 125: `from computationally complex queries.`
+- p. 135: `for host in $(cat hosts.txt); do`
+- p. 142: `for _ in range(THREADS):`
+- p. 146: `def start_attack():`
+- p. 146: `while True:`
+- p. 146: `for i in range(300):`
+- p. 147: `for t in threads:`
+- p. 150: `import requests`
+- p. 151: `for _ in range(FIELD_REPEAT):`
+- p. 151: `for _ in range(ARRAY_LENGTH):`
+- p. 157: `from recursive queries, applications can set query depth limits. For example,`
+- p. 157: `class MySchema < GraphQL::Schema`
+- p. 159: `def resolve_pastes(self, info, public=False):`
+- p. 169: `from executing, they often filter out any requests that contain the keyword`
+- p. 180: `from the DVGA interface:`
+- p. 190: `from the GraphQL application.`
+- p. 208: `from the DVGA’s schema, in which three queries access the PasteObject:`
+- p. 215: `from external sources is unsafe. This approach is very common, but design-`
+- p. 218: `from the client and uses that data to create a brand-new paste in the data-`
+- p. 218: `while public is of the scalar type Boolean.`
+- p. 222: `from a database, either from the application’s specific SQL tables or`
+- p. 222: `from other tables in the same database. This information could include`
+- p. 232: `from that URL into its own filesystem. Consider the following function in`
+- p. 232: `def download():`
+- p. 234: `from the GraphQL server, confirming our hypothesis that OS command`
+- p. 234: `from being accepted. These security controls make it difficult to identify`
+- p. 236: `def resolve_system_debug(self, info, arg=None):`
+- p. 245: `from those that impact databases and operating systems to those that affect`
+- p. 248: `from one account to another, disable account security settings such as mul-`
+- p. 255: `function sleep(ms) {`
+- p. 262: `while for a failed attempt, it wouldn’t send an email at all.`
+- p. 264: `from the URL. This type of functionality screams SSRF! Let’s manually`
+- p. 264: `import a paste from. The mutation will force DVGA to import a paste by`
+- p. 270: `from urllib.parse import unquote; print(unquote(sys.stdin.read()));"`
+- p. 274: `from the previous step 10 times, effectively providing a value to the`
+- p. 280: `for _ in range(0, CHAINED_REQUESTS):`
+- p. 292: `class UserObject(SQLAlchemyObjectType):`
+- p. 292: `class Meta:`
+- p. 1: “A must-read for anyone in API security.”
+- p. 1: Black Hat GraphQL Attacking Next Generation APIs
+- p. 1: —Corey Ball, author of Hacking APIs
+- p. 1: Black Hat GraphQL is for anyone interested in  Uncover injection-based vulnerabilities in
+- p. 1: learning how to break and protect GraphQL servers, databases, and client browsers
+- p. 1: APIs with the aid of offensive security testing.
+- p. 1:  Exploit cross-site and server-side request
+- p. 1: Whether you’re a penetration tester, security
+- p. 1: analyst, or software engineer, you’ll learn how forgery vulnerabilities, as well as cross-
+- p. 1: to attack GraphQL APIs, develop hardening site WebSocket hijacking, to force a server
+- p. 1: procedures, build automated security testing to request sensitive information on your
+- p. 1: controls, all with no prior exposure to GraphQL  Dissect vulnerability disclosure reports
+- p. 1: required. and review exploit code to reveal how
+- p. 1: CODE REPOSITORY: The Black Hat GraphQL code companies
+- p. 1: -Hat-GraphQL) includes code samples, exploits, This comprehensive resource provides
+- p. 1: queries, and coverage of newer resources. everything you need to defend GraphQL APIs
+- p. 1: your umbrella in a lightning storm.
+- p. 1: between GraphQL and REST APIs, run your first About the Authors
+- p. 1: Nick Aleks is the senior director of security at
+- p. 1: You’ll also learn how to: Wealthsimple, a co-founder of DEFCON Toronto,
+- p. 1: Dolev Farhi is a distinguished security
+- p. 1:  Defend APIs against denial-of-service engineer at Palo Alto Networks and co-founder
+- p. 1: attacks and exploit insecure configurations of DEFCON Toronto. In his spare time he
+- p. 1: in GraphQL servers to gather information researches IoT vulnerabilities, participates in
+- p. 1: on hardened targets CTF challenges, and contributes to Exploit-DB.
+- p. 6: BLACK HAT GRAPHQL. Copyright © 2023 by Nick Aleks and Dolev Farhi.
+- p. 6: electronic or mechanical, including photocopying, recording, or by any information storage or retrieval
+- p. 6: Compositor: Maureen Forys, Happenstance Type-O-Rama
+- p. 6: in an editorial fashion and to the benefit of the trademark owner, with no intention of infringement of
+- p. 7: Nick Aleks is a leader in Toronto’s cybersecurity community and a dis-
+- p. 7: tinguished and patented security engineer, speaker, and researcher. He
+- p. 7: is currently the senior director of security at Wealthsimple; leads his
+- p. 7: own security firm, ASEC.IO; and is a senior advisory board member for
+- p. 7: of Cybersecurity and Threat Intelligence program. A founder of DEFCON
+- p. 7: Toronto (DC416), he specializes in offensive security and penetration test-
+- p. 7: Dolev Farhi is a security engineer and author with extensive experience
+- p. 7: leading security engineering teams in the fintech and cybersecurity
+- p. 7: industries. Currently, he is a distinguished security engineer at Palo Alto
+- p. 7: Networks, building defenses for the largest cybersecurity company in the
+- p. 7: world. He has worked for several fintech and security firms and provided
+- p. 7: training for official Linux certification tracks. He is also one of the found-
+- p. 7: ers of DEFCON Toronto (DC416), a popular Toronto-based hacker group.
+- p. 7: In his spare time, he enjoys researching vulnerabilities in IoT devices, build-
+- p. 7: ing open source offensive security tools, participating in and building CTF
+- p. 7: challenges, and contributing exploits to Exploit-DB.
+- p. 7: Corey Ball is the author of Hacking APIs (No Starch Press, 2022) and
+- p. 7: of experience working in IT and cybersecurity across several industries. He
+- p. 7: is the creator of the APIsec University, a free resource where anyone can
+- p. 7: learn about API security. In addition to a bachelor’s degree in English and
+- p. 11: SETTING UP A GRAPHQL SECURITY LAB 21
+- p. 11: Deploying the Damn Vulnerable GraphQL Application . . . . . . . . . . . . . . . . . . 29
+- p. 13: Visualizing Introspection with GraphQL Voyager . . . . . . . . . . . . . . . . . . . . . . 92
+- p. 15: Automating Testing with BatchQL and GraphQL Cop . . . . . . . . . . . . . . . . . . 232
+- p. 15: Searching for Vulnerable Operations, Fields, and Arguments . . . . . . . . . . . . 236
+- p. 15: DISCLOSED VULNERABILITIES AND EXPLOITS 247
+- p. 15: Array-Based Batching for Field Duplication (WPGraphQL) . . . . . . . . . . . . . . 253
+- p. 17: new query language and interpreter/parser combination (GraphQL being
+- p. 17: Vulnerability classes like denial of service (DoS), injection, information
+- p. 17: classes of vulnerabilities hard to solve. It’s an ecosystem problem.
+- p. 17: being exposed to the internet, layering security controls on top of them is
+- p. 17: self-reference as many times as necessary. Yet for an attacker, necessary might
+- p. 18: our lowest-common-denominator internet users can handle it. It should
+- p. 18: bored, or determined attackers. No effective self-correcting and communi-
+- p. 18: interests doesn’t exactly inspire the group to think about security. And as
+- p. 18: privacy and security risks to standards so that companies can continue to
+- p. 18: back to this book. If you’re learning how to attack interpreted query lan-
+- p. 18: foundational approaches to do more than just hack GraphQL. The same
+- p. 18: If you’re reading this book to better understand GraphQL (or skim-
+- p. 18: little gotchas, and GraphQL-specific quirks and subtleties that would other-
+- p. 18: insights into the GraphQL ecosystem should help quickly elevate your work
+- p. 18: beyond finding the vulnerability and allow you to move to an adversarial simu-
+- p. 19: studying common technical problems and understanding GraphQL’s eco-
+- p. 19: system challenges, hopefully you’ll pick up tips on what to avoid and con-
+- p. 21: through advice and guidance, and indirectly, by publishing GraphQL tools,
+- p. 21: he was hacking both GraphQL and Microsoft Word to get this book out
+- p. 21: We thank Corey Ball, author of Hacking APIs and the senior manager of
+- p. 21: this book for technical accuracies, for his excellent security and book-­w riting
+- p. 22: GraphQL API for WordPress, who provided us with a tremendous amount
+- p. 22: of insightful information about the GraphQL ecosystem. Through his open
+- p. 22: GraphQL tools for the entire community’s benefit. You are not only great
+- p. 22: engineers, but also effectively trailblazing the GraphQL space and making
+- p. 22: GraphQL APIs safer to use for everyone in the community.
+- p. 22: tunity to translate our experience into a full-blown security book. We’d
+- p. 22: like to extend our thanks to Frances Saux, our amazing editor, who was an
+- p. 23: fee shop in downtown Toronto, hoping to
+- p. 23: meeting was the genesis of Toronto’s official
+- p. 23: and APIs. In more recent years, we’ve focused our
+- p. 23: A relatively new technology, the GraphQL query language has shifted
+- p. 23: the API paradigm, appealing to many companies looking to optimize per-
+- p. 23: language’s security implications takes time. Our collaboration has unlocked
+- p. 23: a vast number of novel insights about GraphQL and its ecosystem. In fact,
+- p. 23: many of the vulnerabilities and exploits referenced in this book have never
+- p. 24: ourselves are the authors and maintainers of many of the GraphQL security
+- p. 24: tools, educational security platforms, and exploits highlighted herein.
+- p. 24: This book provides a practical resource for offensive security engineers
+- p. 24: and the GraphQL ecosystem, we aim to improve this increasingly popular
+- p. 24: technology, strengthening the security of the many industries that use it
+- p. 24: and educating engineers on how to attack and defend their GraphQL APIs.
+- p. 24: GraphQL APIs through applied offensive security testing. Whether you’re
+- p. 24: a penetration tester who has heard of GraphQL and want to develop your
+- p. 24: hacking expertise, a security analyst looking to improve your knowledge
+- p. 24: of how to defend GraphQL APIs, or a software engineer planning to build
+- p. 24: a GraphQL-backed application, you should gain a lot of useful informa-
+- p. 24: tion from this book. By learning how to attack GraphQL APIs, you can
+- p. 24: develop hardening procedures, build automated security testing into your
+- p. 24: This book assumes that you have no prior exposure to GraphQL. If you
+- p. 24: then delve into the offensive security aspects beginning in Chapter 4.
+- p. 24: You can practice everything covered in this book in its dedicated security
+- p. 24: lab, which we’ve curated specifically for GraphQL hacking. We highly rec-
+- p. 24: ters by running the various tools and querying GraphQL APIs. You’ll set up
+- p. 24: In addition, we encourage you to clone the book’s code repository,
+- p. 24: located at https://github.com/dolevf/Black-Hat-GraphQL. The repository includes
+- p. 24: artifacts sorted by chapter, such as GraphQL code samples, exploits, queries,
+- p. 24: and more. We also acknowledge that, as the security community better learns
+- p. 24: how to hack and secure GraphQL APIs, new tools and research papers will
+- p. 24: emerge. As such, we’ve created a special section of the repository for docu-
+- p. 24: The book lays out fundamental and advanced GraphQL concepts in the
+- p. 24: security professionals need for security testing of GraphQL APIs. By
+- p. 25: Chapter 4, you will have a solid understanding how GraphQL as a tech-
+- p. 25: practicing the art of GraphQL penetration testing, which will allow you to
+
+## [[black-hat-bash-0c39b1c3]]
+- p. 11: `#!/bin/bash`
+- p. 11: `#!/usr/bin/env bash`
+- p. 12: `#!/bin/bash -x`
+- p. 12: `#!/bin/bash -r`
+- p. 17: `from within a certain block of code. These variables are called local`
+- p. 18: `print_name(){`
+- p. 18: `function and attempt to access the name variable as part of a`
+- p. 18: `function can access it. So, it will simply return without a value.`
+- p. 35: `if [[ condition ]]; then`
+- p. 35: `if [[ -f "${FILENAME}" ]]; then`
+- p. 36: `if [[ ! -f "${FILENAME}" ]]; then`
+- p. 36: `if [[ "${VARIABLE_ONE}" == "${VARIABLE_TWO}" ]]; then`
+- p. 37: `if [[ "${VARIABLE_ONE}" -gt "${VARIABLE_TWO}" ]]; then`
+- p. 37: `if [[ -f "file.txt" ]] && [[ -s "file.txt" ]]; then`
+- p. 37: `if [[ -f "${DIR_NAME}" ]] || [[ -d "${DIR_NAME}" ]]; then`
+- p. 39: `say_name(){`
+- p. 40: `print_args(){`
+- p. 41: `while some_condition; do`
+- p. 41: `while true; do`
+- p. 42: `while loop 2 checks using a file test operator. The loop won’t exit until the`
+- p. 44: `for variable_name in LIST; do`
+- p. 44: `for index in $(seq 1 10); do`
+- p. 44: `for ip_address in "$@"; do`
+- p. 45: `for file in $(ls .); do`
+- p. 45: `if [[ "${file}" == "example_file1" ]]; then`
+- p. 46: `case EXPRESSION in`
+- p. 47: `case ${IP_ADDRESS} in`
+- p. 54: `import it using the source command. To achieve this, create a ~/.pentest.sh file`
+- p. 54: `import it at the end of the file:`
+- p. 55: `if [[ ! -d ~/sessions ]]; then`
+- p. 71: `from APT:`
+- p. 74: `for ip in $(seq 1 254); do`
+- p. 76: `from the user, then prints a list of fully qualified subdomains using`
+- p. 76: `while read -r subdomain; do`
+- p. 78: `while passing the hosts file. You should see that it picks up a few`
+- p. 87: `while read -r line; do`
+- p. 89: `service_discovery(){`
+- p. 94: `if [[ -z "${ip_address}" ]]; then 3`
+- p. 94: `if [[ -z "${port}" ]]; then 4`
+- p. 104: `if [[ ! -s "${FILE}" ]]; then 1`
+- p. 104: `if [[ -z "${OUTPUT_FOLDER}" ]]; then`
+- p. 104: `if [[ -n "${url}" ]]; then`
+- p. 113: `from robots.txt file, and make an HTTP request to the URL. We then`
+- p. 114: `from which to start crawling.`
+- p. 117: `import os, subprocess`
+- p. 117: `from flask import (`
+- p. 126: `if [[ -n "${result}" ]]; then`
+- p. 3: marked name, we are using the names only in an editorial fashion and to the benefit of the
+- p. 3: tion storage or retrieval system, without the prior written permission of the copyright owner
+- p. 4: Chapter 5: Vulnerability Scanning and Fuzzing
+- p. 5: Black Hat Bash (Early Access) © 2023 by Dolev Farhi and Nick Aleks
+- p. 5: Bash is a shell scripting language used to interact with
+- p. 5: components of the Linux operating system. As penetration
+- p. 5: testers and security practitioners, we frequently write bash
+- p. 5: your bash development environment, explore useful Linux
+- p. 5: variables, arrays, streams, arguments, and operators.
+- p. 6: Before you begin learning bash, you need both a bash shell
+- p. 6: running in a terminal and a text editor. You can access these on any
+- p. 6: NOTE Beginning in Chapter 4, you’ll run bash commands and complete hack-
+- p. 6: ing labs using Kali Linux. If you’d like to set up Kali now, consult the
+- p. 6: If you’re running Linux or macOS, bash should already be
+- p. 6: available. On Linux, open the Terminal application by entering
+- p. 6: new terminal window, you’ll have to enter exec bash to switch to
+- p. 6: a bash shell before you run commands. If you want to change your
+- p. 6: default shell to bash so you don’t have to manually switch shells,
+- p. 6: you can use the command chsh -s /bin/bash.
+- p. 6: Subsystem for Linux (WSL), which lets you run Linux distributions
+- p. 6: directly on Windows, providing access to a bash environment
+- p. 6: An alternative to WSL is Cygwin, which emulates a Linux
+- p. 6: environment by providing a collection of Linux utilities and system-
+- p. 6: path. To execute your bash scripts, save the scripts in the directory
+- p. 6: able to change the directory to the home directory to run your scripts.
+- p. 7: To start writing bash scripts, you’ll need a text editor, preferably
+- p. 7: choose between terminal-based text editors and graphical user
+- p. 7: interface-based text editors. Terminal-based text editors (such as vi
+- p. 7: If you prefer graphical text editors, Sublime Text
+- p. 7: bash scripts by clicking Plain Text in the bottom-right corner and
+- p. 7: choosing bash from the drop-down list of languages. If you’re using
+- p. 7: a different text editor, reference its official documentation to learn
+- p. 7: Now that you have a functional bash environment, it’s time to
+- p. 7: editor, you’ll also probably find yourself frequently running single
+- p. 7: including it in a script. Let’s get started by running some bash
+- p. 7: When running in a terminal, bash loads a set of environment
+- p. 7: their home directory, their default shell, and more.
+- p. 8: To see the list of environment variables set by bash, run the env
+- p. 8: surrounded by curly braces ({}). This will cause bash to expand the
+- p. 8: Table 1-2 Bash Environment Variables
+- p. 8: BASH_VERSION The bash version running
+- p. 8: BASHPID The process ID of the current bash process
+- p. 9: The bash scripts you’ll write in this book will run common Linux
+- p. 9: can insert it before any Linux command to open a terminal-based
+- p. 9: List information about the FILEs (the current directory by default).
+- p. 9: Mandatory arguments to long options are mandatory for short options too.
+- p. 9: Linux commands can accept many types of input on the
+- p. 9: arguments to see files and directories, or pass it arguments to, for
+- p. 9: directories using a short-form argument syntax:
+- p. 10: hidden files in Linux), but you could also pass the argument --all,
+- p. 10: Let’s execute some simple Linux commands so you can see the
+- p. 10: variation of options each offers. First, create a single directory with
+- p. 10: Now let’s create two directories with mkdir:
+- p. 11: In this section, you’ll learn the building blocks of a bash script,
+- p. 11: to tell Linux to use a specific interpreter to execute the script, and
+- p. 11: Bash doesn’t have an official style guide, but we recommend
+- p. 11: best practices to follow when developing bash code. If you work on
+- p. 11: a team of penetration testers and have an exploit code repository,
+- p. 11: shows an example of a shebang line for a typical bash script.
+- p. 11: The bash interpreter is typically located at /bin/bash. If you
+- p. 11: instead wrote scripts in Python or Ruby, your shebang line would
+- p. 11: include the full path to the Python or Ruby interpreter.
+- p. 11: You’ll sometimes encounter bash scripts that make use of a
+- p. 11: portable than the one in Listing 1-3. Some Linux distributions place
+- p. 11: the bash interpreter in different system locations, and this shebang
+- p. 11: the location of the bash interpreter on the target machine. For
+- p. 12: argument -x to your bash shebang, like so:
+- p. 12: This optional argument will create a restricted bash shell, which
+- p. 12: example, navigate to certain directories, change sensitive
+- p. 12: modifying the script, but you can also pass arguments to the bash
+- p. 12: Listing 1-5 Passing an argument to bash
+- p. 12: Whether you pass arguments to the bash interpreter on the
+- p. 12: Comments are parts of a script that the bash interpreter won’t
+- p. 12: Comments in bash start with a pound sign (#), as shown in
+- p. 12: Listing 1-6 A comment in a bash script
+- p. 13: bash would consider the second one to be a comment.
+- p. 13: Scripts can be as short as two lines: the shebang line and a Linux
+- p. 13: the terminal. Open your text editor and enter the following:
+- p. 13: interpreter of choice, bash. Then, we use the echo command to print
+- p. 13: terminal, and navigate to the directory where the script resides. If
+- p. 13: you saved the file in your home directory, you run the following set
+- p. 13: We use the cd command to change directories. The tilde (~)
+- p. 13: represents the home directory of the current running user. Next, we
+- p. 14: (.) represents the current directory, so we’re essentially telling bash
+- p. 14: to run helloworld.sh from the current working directory.
+- p. 14: You can also run a bash script with the following syntax:
+- p. 14: Because we specified the bash command, the script will run
+- p. 14: using the bash interpreter and won’t require a shebang line. Also, if
+- p. 14: you use the bash command, the script doesn’t have to be set with an
+- p. 14: Errors will inevitably occur when you’re developing bash scripts.
+- p. 15: and debug a script. Now you’ll learn some bash syntax so you can
+- p. 15: The most basic bash scripts are just lists of Linux commands
+- p. 15: # All this script does is create a directory, create a file
+- p. 15: # within the directory, and then list the content of the directory.
+- p. 15: In this example, we use mkdir to create a directory named
+- p. 15: mydirectory. Next, we use the touch command to create a file
+- p. 15: named myfile within the directory. Lastly, we run the ls -l
+- p. 15: command to list the contents of the mydirectory directory.
+- p. 15: ways. First, when a command runs, bash waits until it finishes before
+- p. 16: directories? Or what if we checked whether the directory and file
+- p. 16: execute bash commands and store their output as variable values to
+- p. 16: arrays. In bash, variables are untyped; they’re all considered
+- p. 16: character strings. Even so, you’ll see that bash allows you to create
+- p. 16: The following rules govern the naming of bash variables:
+- p. 16: (=), assign the value black hat bash to it. Now we can use this
+- p. 17: between the two parentheses. You’ll use this syntax often in bash
+- p. 17: named root_directory and then use echo to print the output of
+- p. 17: some metadata about the root directory (/), such as its type and
+- p. 17: variables in bash can also be scoped so that they are only accessible
+- p. 18: value "Black Hat Bash". Then we call the print_name()
+- p. 18: Arithmetic operators allow you to perform mathematical
+- p. 18: operators available. The full list of the available arithmetic operators
+- p. 19: You can perform these arithmetic operations in bash in a few
+- p. 19: Bash allows you to create single-dimension arrays. Arrays are a
+- p. 19: starts from zero. In bash scripts, you might use arrays whenever you
+- p. 20: Here is how to create an array in bash. Save this code to a file
+- p. 20: As you can see, we were able to get bash to print all elements in
+- p. 21: (whether a built-in Linux utility such as ls or mkdir or one that
+- p. 21: bash, there are three standard data streams, as shown in Table 1-4.
+- p. 21: Stream name Description File descriptor number
+
+## [[black-hat-go-21619c7f]]
+- p. 46: `from that link.`
+- p. 54: `package main`
+- p. 54: `func main() {`
+- p. 57: `func Println(a ...interface{}) (n int, err error)`
+- p. 60: `import statements, and more.`
+- p. 68: `func foo(i❶ interface{}) {`
+- p. 73: `func foo() error {`
+- p. 88: `from the sync package, which is a thread-safe way to control`
+- p. 90: `func worker(ports chan int, wg *sync.WaitGroup) {`
+- p. 92: `from earlier in the section, and it would work just fine.`
+- p. 99: `function that can be used to simplify the main() function. The`
+- p. 99: `function prototype is as follows:`
+- p. 99: `func Copy(dst io.Writer, src io.Reader) (written int64, error)`
+- p. 99: `function with the code in Listing 2-10.`
+- p. 101: `func echo(conn net.Conn) {`
+- p. 103: `from earlier discussions in this section that Conn is both a Reader`
+- p. 103: `function ❼. This call is prefaced with the go keyword, making`
+- p. 105: `from source to destination.`
+- p. 107: `func handle(src net.Conn) {`
+- p. 111: `func NewFlusher(w io.Writer) *Flusher {`
+- p. 112: `func handle(conn net.Conn) {`
+- p. 113: `func Pipe() (*PipeReader, *PipeWriter)`
+- p. 117: `function is slightly more complex than the Get() and Head()`
+- p. 118: `func PostForm(url string, data url.Values) (resp *Response, err error)`
+- p. 119: `func NewRequest(❶method, ❷url string, ❸body io.Reader) (req *Request, err`
+- p. 128: `func APIInfo(token, url string) { --snip-- }`
+- p. 128: `func HostSearch(token, url string) { --snip-- }`
+- p. 128: `package shodan`
+- p. 129: `function parameters. You can change your API function calls,`
+- p. 134: `function in Listing 3-10, which is similar to the APIInfo()`
+- p. 145: `func New(host, user, pass string) *Metasploit {`
+- p. 149: `func New(host, user, pass string) (*Metasploit, error)❶ {`
+- p. 155: `function for determining the recognizable Office version that`
+- p. 157: `func NewProperties(r *zip.Reader) (*OfficeCoreProperty, *OfficeAppProperty,`
+- p. 158: `func process(f *zip.File, prop interface{}) error {❻`
+- p. 163: `function you created earlier in your metadata package,`
+- p. 167: `func hello(w http.ResponseWriter, r *http.Request) {`
+- p. 173: `package that allows you to route based on both simple and`
+- p. 180: `package that writes security headers to a response, you would`
+- p. 190: `func login(w http.ResponseWriter, r *http.Request) {`
+- p. 194: `function keypress(evt) {`
+- p. 196: `func init() {`
+- p. 196: `func serveWS(w http.ResponseWriter, r *http.Request) {`
+- p. 196: `func serveFile(w http.ResponseWriter, r *http.Request) {`
+- p. 205: `function that creates a reverse proxy from a URL. Even better,`
+- p. 205: `function named Host that accepts a hostname to match Host`
+- p. 209: `package called the Go DNS package written by Miek Gieben.`
+- p. 217: `func lookupA(fqdn, serverAddr string) ([]string, error) {`
+- p. 218: `func lookupCNAME(fqdn, serverAddr string) ([]string, error) {`
+- p. 219: `func lookup(fqdn, serverAddr string) []result {`
+- p. 220: `function will need a final string argument to specify the DNS`
+- p. 221: `func worker(tracker chan empty, fqdns chan string, gather chan []result,`
+- p. 221: `function and checking to ensure there is at least one result,`
+- p. 230: `package to write a basic server and a proxy. You can use DNS`
+- p. 245: `function early. This is a pattern used throughout the handler. If`
+- p. 245: `from the records map.`
+- p. 247: `func parse(filename string) (map[string]string, error) {`
+- p. 252: `package to perform remote password guessing, use the pass-`
+- p. 253: `from one dialect to the next, a client and server must agree on`
+- p. 255: `package wasn’t built for general-purpose use; so you must take`
+- p. 256: `package that implements the SMB specification. Rather than`
+- p. 259: `func marshal(v interface{}, meta *Metadata) ([]byte, error) {`
+- p. 260: `func unmarshal(buf []byte, v interface{}, meta *Metadata) (interface{}, error) {`
+- p. 261: `while leaving other fields in your Message struct as-is. To do`
+- p. 265: `func parseTags(sf reflect.StructField❶) (*TagMap, error) {`
+- p. 274: `function is smart enough to read bytes up until our destination`
+- p. 276: `function does a lot of heavy lifting for you behind the scenes:`
+- p. 276: `function will return an error if authentication fails, and a`
+- p. 278: `func Ntowfv2(pass, user, domain string) []byte {`
+- p. 278: `func ComputeResponseNTLMv2(nthash❶, lmhash, clientChallenge,`
+- p. 281: `func NewAuthenticatePass(domain, user, workstation, password string, c`
+- p. 281: `func NewAuthenticateHash(domain, user, workstation, hash string, c Challenge)`
+- p. 292: `from a Go client. We’ve divided this discussion into two`
+- p. 297: `package so that the MySQL driver itself handles the function`
+- p. 297: `from your transactions table ❹, and then loop over the rows,`
+- p. 298: `package dbminer`
+- p. 300: `function starts by calling m.GetSchema() to retrieve the schema`
+- p. 303: `function retrieves the raw document that, unlike a typical`
+- p. 304: `function to bootstrap everything, and then calls dbminer.Search(),`
+- p. 305: `from logically trying to differentiate and categorize each row`
+- p. 305: `while defining your GetSchema() function. For example,`
+- p. 306: `func New(host string) (*MySQLMiner, error) {`
+- p. 322: `from a compromised user workstation. In this example, we’ll`
+- p. 324: `from the packet and check to see whether it actually exists ❷,`
+- p. 326: `from the target after you’ve established a connection. You can`
+- p. 328: `func capture(iface, target string) { ❷`
+- p. 331: `function itself bootstraps the packet capture much in the same`
+- p. 331: `function ❼. Using a goroutine ensures that your packet`
+- p. 335: `from the owner.`
+- p. 339: `from 1 to 2,500 characters in length.`
+- p. 343: `from an HTTP parameter. The value of the username variable`
+- p. 351: `def jboss_attack(HOST, PORT, SSL_On, _cmd):`
+- p. 352: `function receives a host, port, SSL indicator, and operating`
+- p. 353: `func jboss(host string, ssl bool, cmd string) (int, error) {`
+- p. 355: `package to easily decode your hexadecimal string.`
+- p. 355: `package does that for you automatically. Finally, you send`
+- p. 356: `function that translates a hexadecimal string to its equivalent`
+- p. 361: `while Listing 9-7 shows them in Go.`
+- p. 363: `func madvise() {`
+- p. 363: `func procselfmem(payload []byte) {`
+- p. 364: `while the C function uses an integer value to signal when to break the loop after`
+- p. 365: `function by searching Linux documentation. This is how we are able to call`
+- p. 365: `func waitForWrite() {`
+- p. 378: `from a tool, the contents of a binary file, or crypto keys.`
+- p. 379: `package to get the job done:`
+- p. 385: `package scanner`
+- p. 391: `func New() scanner.Checker { ❻`
+- p. 395: `from a defined plug-ins directory. You’ll build the same`
+- p. 395: `func head(l *lua.LState❶) int {`
+- p. 396: `function call, expecting it to be a string. You do this for each`
+- p. 397: `function by issuing an HTTP request to your target endpoint.`
+- p. 398: `func get(l *lua.LState) int {`
+- p. 400: `function in Listing 10-6 centralizes this registration process.`
+- p. 400: `func register(l *lua.LState) {`
+- p. 402: `function you created earlier ❸, which registers your custom`
+- p. 407: `from falling into a deep sleep.`
+- p. 407: `function outputs either the encrypted data (called ciphertext)`
+- p. 408: `function consumes the data itself, a secret key, and an`
+- p. 410: `package adheres to more stringent compatibility requirements.`
+- p. 415: `package doesn’t contain the bcrypt functionality. You then`
+- p. 416: `function parses the encoded hash to determine the cost and`
+- p. 417: `function performs the hashing algorithm by using the same salt`
+- p. 418: `func checkMAC(message, recvMAC []byte) bool { ❷`
+- p. 419: `function that returns a hash.Hash instance, and the shared secret`
+- p. 420: `function solves this problem by comparing the slices in a way`
+- p. 420: `from the transmission. Since this is just a simulation, you`
+- p. 421: `function ❼, passing it your received message and HMAC. As`
+- p. 422: `func unpad(buf []byte) []byte { ❶`
+- p. 423: `func decrypt(ciphertext, key []byte) ([]byte, error) { ❷`
+- p. 424: `function performs some validation to confirm that the`
+- p. 430: `function returns an error (if the inputs cause the algorithm to`
+- p. 433: `func helloHandler(w http.ResponseWriter, r *http.Request) { ❶`
+- p. 440: `from pilfering filesystem data or source code—that the data is`
+- p. 448: `function later to wait for your goroutines to complete.`
+- p. 451: `for use in a call to math.Ceil()—you check whether the maximum`
+- p. 453: `from it. Finally, you block main() again by calling consWg.Wait()`
+- p. 461: `func state() {`
+- p. 462: `func createEvents(s string)❽ *string {`
+- p. 463: `func createEvents(s string) *string {`
+- p. 466: `function as a means to call a native exported Windows DLL`
+- p. 471: `func OpenProcessHandle(i *Inject) error {`
+- p. 473: `func VirtualAllocEx(i *Inject) error {`
+- p. 474: `func WriteProcessMemory(i *Inject) error {`
+- p. 475: `func GetLoadLibAddress(i *Inject) error {`
+- p. 476: `function takes two arguments: the first is a handle to Kernel32.dll`
+- p. 477: `func CreateRemoteThread(i *Inject) error {`
+- p. 478: `func WaitForSingleObject(i *Inject) error {`
+- p. 479: `function should have been called, and our DLL will have been`
+- p. 479: `func VirtualFreeEx(i *Inject) error {`
+- p. 481: `import name table, thread local storage, and resource`
+- p. 492: `function of the Data Directory.`
+- p. 494: `package implements the Data Directory as a struct object, so`
+- p. 504: `from PowerSploit`
+- p. 505: `from sRDI to generate shellcode from the DLL, and then pass`
+- p. 511: `func PreProcessImage(dat *os.File) (*bytes.Reader, error) {`
+- p. 512: `package to read byte data. You’ll first read the header data and`
+- p. 520: `package models`
+- p. 523: `package we created named utils (Listing 13-14).`
+- p. 523: `func WriteData(r *bytes.Reader❶, c *models.CmdLineOpts❷, b []byte❸) {`
+- p. 527: `func encodeDecode(input []byte❶, key string❷) []byte {`
+- p. 528: `function to facilitate the encoding and decoding process.`
+- p. 528: `function to encrypt the payload. The modifications, shown in`
+- p. 531: `from the original PNG file, while the Payload Decode value ❷ is`
+- p. 533: `func WriteData(r *bytes.Reader, c *models.CmdLineOpts, b []byte) {`
+- p. 535: `function produces a decoded chunk segment, but never updates the CRC`
+- p. 542: `from the grpcapi directory:`
+- p. 543: `from and to shared channels.`
+- p. 544: `func NewAdminServer(work, output chan *grpcapi.Command) *adminServer {`
+- p. 547: `from the admin client and the other to receive polling from the`
+- p. 548: `from our implant API.`
+- p. 551: `function stubs necessary to facilitate remote communications.`
+- p. 561: `from conferences, such as GopherCon, that can guide you`
+- p. 571: `import address table (IAT), 279`
+- p. 582: `while loops, 15`
+- p. 2: 2. Bypassing Firewalls with Port Forwarding
+- p. 2: 4. Parsing Document Metadata with Bing Scraping
+- p. 3: 3. Keylogging with the WebSocket API
+- p. 3: 1. Setting Up Databases with Docker
+- p. 3: 18. 9 WRITING AND PORTING EXPLOIT CODE
+- p. 4: 20. 11 IMPLEMENTING AND ATTACKING CRYPTOGRAPHY
+- p. 4: 1. The Windows API’s OpenProcess() Function
+- p. 4: 2. Defining and Building the gRPC API
+- p. 16: recording, or by any information storage or retrieval system, without the prior
+- p. 16: Developmental Editors: Frances Saux and Zach Lebowski
+- p. 16: Names: Steele, Tom (Security Consultant), author. | Patten, Chris, author.
+- p. 16: Title: Black Hat Go : Go programming for hackers and pentesters / Tom
+- p. 17: Subjects: LCSH: Penetration testing (Computer security) | Go (Computer
+- p. 17: editorial fashion and to the benefit of the trademark owner, with no intention of
+- p. 18: experience performing adversarial and research-based security
+- p. 18: STACKTITAN, a specialized adversarial services security
+- p. 18: consultancy. Chris has been practicing in the security industry
+- p. 18: government organizations on diverse security issues, including
+- p. 18: Operations Groups on sensitive cyber warfare initiatives.
+- p. 19: information security and application delivery.
+- p. 19: Dan has presented at various national and regional security
+- p. 19: programming. He moved into information security about 15
+- p. 19: years ago, focusing on security testing and research. Never one
+- p. 20: Chapter 9: Writing and Porting Exploit Code
+- p. 20: Chapter 11: Implementing and Attacking Cryptography
+- p. 21: Bypassing Firewalls with Port Forwarding
+- p. 22: Reviewing the Steps for Building an API Client
+- p. 22: Parsing Document Metadata with Bing Scraping
+- p. 26: The Windows API’s OpenProcess() Function
+- p. 26: Obtaining a Process Token with the OpenProcess Windows API
+- p. 26: Manipulating Memory with the VirtualAllocEx Windows API
+- p. 26: Writing to Memory with the WriteProcessMemory Windows API
+- p. 26: Finding LoadLibraryA with the GetProcessAddress Windows API
+- p. 26: Verifying Injection with the WaitforSingleObject Windows API
+- p. 26: Cleaning Up with the VirtualFreeEx Windows API
+- p. 26: Creating a Message Box Using C and the Windows API
+- p. 27: Installing Protocol Buffers for Defining a gRPC API
+- p. 28: information security. The design constraints, standard
+- p. 28: language end up defining the attack surface of any application
+- p. 28: built on them. Security tooling is no different; the right
+- p. 28: make it an amazing choice for security tool development. Go
+- p. 28: and the creation of security tools, enabling faster, safer, and
+- p. 28: software development; in order to keep up in security, your
+- p. 28: The authors of Black Hat Go are pioneers in Go security
+- p. 29: with Go development in the security space without getting
+- p. 29: into security tool development, this book will introduce the
+- p. 29: in security may learn a lot from the approaches taken here, as
+- p. 29: building tools to attack other software requires a different
+- p. 29: goals include bypassing security controls and evading
+- p. 29: If you already work in offensive security, this book will
+- p. 31: unchartered territory of writing our first book. Life happens—
+- p. 32: you. Thank you to my mentors and friends who have believed
+- p. 34: colleagues in the security industry to try it. We felt the benefits
+- p. 34: programming language from the perspective of security
+- p. 35: filesystems and databases, port exploits from other languages
+- p. 35: to Go, write the core functions of an SMB client, attack
+- p. 35: libraries, interact with the Windows API, and much, much
+- p. 35: security professionals. Specifically, the ability to code
+- p. 35: eliminate false positives, and locate obscure vulnerabilities.
+- p. 35: clone the book’s official code repository so you have all the
+- p. 36: but an introduction to using Go for developing security tools.
+- p. 36: dynamically typed languages—such as Python, Ruby, or PHP
+- p. 37: ancestor, making development more user-friendly. At the same
+- p. 37: These reasons for using Go don’t concern security
+- p. 37: your Linux or Mac system but compile the code in a
+- p. 38: This can be a drawback, particularly for security
+- p. 38: processing, looping, or error handling. A Python one-liner
+- p. 39: data pilfering, packet sniffing, and exploit development.
+- p. 39: attacking Microsoft Windows, and implementing
+- p. 40: solution. Lastly, we’ll re-create Netcat’s “gaping security
+- p. 41: policy, as well as perform password-guessing attacks.
+- p. 42: common technique used during post-exploitation. We’ll also
+- p. 42: This chapter focuses almost solely on creating exploits. It
+- p. 42: vulnerabilities. The second half of the chapter discusses how
+- p. 42: to port existing exploits to Go from other languages. This
+- p. 42: discussion includes a port of a Java deserialization exploit and
+- p. 42: the Dirty COW privilege escalation exploit. We conclude the
+- p. 43: Chapter 11: Implementing and Attacking
+- p. 43: In our discussion on attacking Windows, we’ll demonstrate
+- p. 43: methods of interacting with the Windows native API, explore
+- p. 44: signature-based security controls and attempt to circumvent
+- p. 46: https://golang.org/dl/. Binaries exist for Windows, Linux, and
+- p. 46: specific. On Linux or macOS, you can add this to your
+- p. 47: chosen or created this base workspace directory, create the
+- p. 47: following three subdirectories within: bin, pkg, and src (more
+- p. 47: on these directories shortly). Then, set an environment
+- p. 47: directory. For example, if you want to place your projects in a
+- p. 47: directory called gocode located within your home directory on
+- p. 47: Linux, you set GOPATH to the following:
+- p. 47: The bin directory will contain your compiled and installed
+- p. 47: directory stores various package objects, including third-party
+- p. 47: elegantly handles HTTP routing. The pkg directory will
+- p. 47: implementation in your code. Finally, the src directory will
+- p. 48: directories within must match this naming convention and
+- p. 48: this common directory structure. Without this important setup,
+- p. 48: can do this on Linux and Windows via the set command. Also,
+- p. 48: them in this chapter. For a more complete list of IDE or editor
+- p. 48: . This book is IDE/editor agnostic, meaning we won’t force
+- p. 49: The Vim text editor, available in many operating-system
+- p. 50: text editor with a large offering of community-driven
+- p. 53: Go ships with several useful commands that simplify the
+- p. 54: directory within $GOPATH/src (remember, you created this
+- p. 54: From the command line, within the directory containing
+- p. 56: on a Linux 64-bit architecture. You can accomplish this via the
+- p. 56: $ GOOS="linux" GOARCH="amd64" go build hello.go
+- p. 58: The following directory tree illustrates the placement of the
+- p. 58: constructed in a way that avoids assigning the same name to
+- p. 60: the language in a preconfigured environment. It’s worth noting
+- p. 60: (https://tour.golang.org/) tutorial. It’s a comprehensive, hands-
+- p. 61: that type. In the second example, you use the := operator to
+- p. 62: of 42. There really is no difference between the two operators.
+- p. 62: the := operator is an ugly symbol that reduces readability.
+- p. 63: to retrieve the value stored there. As you do in C, you use the
+- p. 63: & operator to retrieve the address in memory of some variable,
+- p. 63: and the * operator to dereference the address. The following
+- p. 63: pointer ❷ by using the & operator. This returns the address of
+- p. 63: You then use the * operator ❹ to assign a new value to the
+- p. 64: capitalization to determine scope: types and fields that begin
+- p. 64: with a capital letter are exported and accessible outside the
+- p. 71: Notice a new operator: <-. This operator indicates whether
+

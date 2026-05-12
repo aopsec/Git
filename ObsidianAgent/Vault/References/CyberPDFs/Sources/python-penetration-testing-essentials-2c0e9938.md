@@ -1,0 +1,409 @@
+# Python Penetration Testing Essentials
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 12 strong cyber signals, 21 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/PT_books/Python Penetration Testing Essentials.pdf`
+- SHA256: `2c0e9938c87d5e509a87086948ef940140e20196e160b3cfad729dbeb1ecd894`
+- Pages: `178`
+- Text characters: `265854`
+- Author: `n/a`
+- Copied PDF: [[PDFs/python-penetration-testing-essentials-2c0e9938.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 136: burp
+- p. 15: kali
+- p. 5: linux
+- p. 2: python
+- p. 3: tor
+- p. 71: monit
+
+## Commands
+- none
+
+## Code And Script Lines
+- p. 15: `import socket`
+- p. 15: `for port in portlist:`
+- p. 19: `from online business. A hacker or group of black hat hackers ind a vulnerability`
+- p. 24: `from the client. Before using this method, the socket.bind(address) and`
+- p. 28: `while True:`
+- p. 39: `def get_protnumber(prefix):`
+- p. 39: `for a in dir(socket)`
+- p. 39: `for res in socket.getaddrinfo('www.thapar.edu', 'http'):`
+- p. 43: `import os`
+- p. 43: `for line in response.readlines():`
+- p. 45: `import platform`
+- p. 45: `from datetime import datetime`
+- p. 46: `for ip in xrange(st1,en1):`
+- p. 48: `def scan(addr):`
+- p. 48: `def run1():`
+- p. 50: `import collections`
+- p. 50: `import socket, subprocess,sys`
+- p. 50: `import threading`
+- p. 51: `class myThread (threading.Thread):`
+- p. 51: `def __init__(self,st,en):`
+- p. 51: `def run(self):`
+- p. 51: `def run1(st1,en1):`
+- p. 51: `for i in xrange(total_thread):`
+- p. 52: `for t in threads:`
+- p. 52: `for key in dict:`
+- p. 54: `import time`
+- p. 54: `import thread`
+- p. 56: `class threading`
+- p. 58: `for port in range(r1,r2):`
+- p. 60: `import shelve`
+- p. 60: `def __init__(self, threadName,rmip,r1,r2,c):`
+- p. 60: `def scantcp(threadName,rmip,r1,r2,c):`
+- p. 62: `for i in range(tnum):`
+- p. 65: `def create():`
+- p. 66: `def update():`
+- p. 66: `def del1():`
+- p. 66: `def list1():`
+- p. 72: `import struct`
+- p. 75: `from your native byte order to the network byte order and back again. Now, let's`
+- p. 78: `import binascii`
+- p. 86: `while 1:`
+- p. 90: `from scapy.all import *`
+- p. 101: `while True :`
+- p. 103: `def info(fm):`
+- p. 105: `class Dot11Elt(Packet):`
+- p. 108: `def probesniff(fm):`
+- p. 109: `import sys`
+- p. 112: `from port 2. Hence, the switch makes an entry stating that the MAC B computer is`
+- p. 117: `from error handling. However, from a pentester's point of view, it is very important`
+- p. 117: `import re`
+- p. 117: `import random`
+- p. 117: `import urllib`
+- p. 117: `while flag ==0:`
+- p. 117: `for match in re.finditer(a_tag,content):`
+- p. 123: `from bs4 import BeautifulSoup`
+- p. 123: `for link in b_object.find_all('a'):`
+- p. 125: `for match in re.finditer("Domain Name:",who_is1):`
+- p. 125: `for line in lines :`
+- p. 134: `function validateForm()`
+- p. 136: `import mechanize`
+- p. 136: `for form in br.forms():`
+- p. 142: `for srcport in range(1,65535):`
+- p. 143: `for srcport in range(st,en):`
+- p. 151: `import httplib`
+- p. 151: `import shelve # to store login pages name`
+- p. 151: `for u in s['php']:`
+- p. 153: `for x in range(val1):`
+- p. 153: `def retrieve():`
+- p. 153: `for key in r:`
+- p. 153: `while (True):`
+- p. 155: `for link in br.links():`
+- p. 156: `for l in list:`
+- p. 156: `for match in re.findall(l,data1):`
+- p. 162: `while flag =="y":`
+- p. 162: `while loop execute at least one time. The interesting thing is that, when we used`
+- p. 167: `for i in xrange(0,field):`
+- p. 167: `for i in xrange(0, len(list_a)):`
+- p. 167: `for i in xrange(0, len(list_n)):`
+- p. 177: `from start to inish and then verify your results`
+
+## URLs
+- p. 8: https://www2.packtpub.com/books/subscription/packtlib
+- p. 16: http://www.
+- p. 16: http://www.packtpub.com/support
+- p. 17: http://www.packtpub.com/
+- p. 17: https://www.packtpub.com/books/
+- p. 34: http://www.packtpub.com
+- p. 121: http://www.juggyboy.com/
+- p. 121: http://192.168.0.5/.
+- p. 122: http://192.168.0.5/
+- p. 124: https://www.hackthissite.org
+- p. 125: http://smartwhois.com/.
+- p. 125: http://smartwhois.com/whois/
+- p. 127: http://www.crummy.com/software/
+- p. 139: https://addons.mozilla.org/
+- p. 150: http://192.168.0.4/login.php,
+- p. 150: http://192.168.0.4/login.html.
+- p. 153: http://192.168.0.6/admin
+- p. 153: http://192.168.0.6/admin/
+
+## Technique Signals
+- p. 3: companies and products mentioned in this book by the appropriate use of capitals.
+- p. 10: The TCP scan concept and its implementation using a Python script 34
+- p. 10: How to create an eficient IP scanner 37
+- p. 11: How to create an eficient port scanner 47
+- p. 12: Chapter 7: Pentesting of SQLI and XSS 135
+- p. 14: such as parameter tampering, DDOS, XSS, and SQL injection.
+- p. 14: Chapter 2, Scanning Pentesting, covers how network scanning is done to gather
+- p. 14: to bypass client-side validation. This chapter covers the implantation of four types of
+- p. 15: Chapter 7, Pentesting of SQLI and XSS, covers two major web attacks, SQL injection
+- p. 15: and XSS. In SQL injection, you will learn how to ind the admin login page using a
+- p. 18: or to exploit vulnerability for personal enmity.
+- p. 19: a proactive exercise to minimize the chance of being exploited
+- p. 20: • Be ready to show how to exploit the vulnerabilities
+- p. 21: ° Scans and identifies the remote system for potential vulnerabilities
+- p. 21: ° Maps the vulnerabilities with proper exploits
+- p. 21: ° Exploits the remote system with proper care to avoid disruption
+- p. 23: scanning and snifing pentesting, you will need a small network of attached devices.
+- p. 38: advantage of this function to scan the ports. Run the connet_ex.py program:
+- p. 38: is a rudimentary port scanner. The program is using the IP address 127.0.0.1; this
+- p. 40: In the next chapter, you will see scanning pentesting, which includes IP address
+- p. 40: scanning to detect the live hosts. To carry out IP scanning, ping sweep and TCP
+- p. 40: scanning are used. You will learn how to detect services running on a remote host
+- p. 42: Network scanning refers to a set of procedures that investigate a live host, the type of
+- p. 42: host, open ports, and the type of services running on the host. Network scanning is a
+- p. 42: • How to create an eficient IP scanner
+- p. 42: • How to create an eficient port scanner
+- p. 43: Ping scan involves sending an ICMP ECHO Request to a host. If a host is live, it will
+- p. 46: print "scanning complete in " , total
+- p. 46: datetime.now() to calculate the total time taken to scan.
+- p. 47: To scan 60 IP addresses, the program has taken 2 minutes 35 seconds.
+- p. 47: The TCP scan concept and its implementation
+- p. 47: packets. In this situation, your ping sweep scanner might not work. In this case, you
+- p. 47: need a TCP scan. I hope you are familiar with the three-way handshake, as shown in
+- p. 48: Now, let's see the following code of a TCP scan:
+- p. 49: use two functions. Firstly, the scan(addr) function uses the socket as discussed
+- p. 49: we used port 135; this scanner works for the Windows system. There are some
+- p. 49: The output of the iptcpscan.py program is as follows:
+- p. 50: How to create an eficient IP scanner
+- p. 50: So far, you have seen the ping sweep scanner and the IP TCP scanner. Imagine that
+- p. 50: very slow. To scan 60 hosts, the ping_sweep.py program took 2 minutes 35 seconds
+- p. 50: for the same range of IP addresses for which the TCP scanner took nearly one
+- p. 52: variable is the total number of IPs to be scanned. The signiicance of the tn =20
+- p. 52: variable is that it states that 20 IPs will be scanned by one thread. The total_thread
+- p. 52: variable contains the total number of threads that need to scan total_ip, which
+- p. 54: Scanning has been completed in 1 minute 11 seconds. As an exercise, change the
+- p. 54: multithreading program with the TCP scan method:
+- p. 56: both the scanners into one scanner.
+- p. 57: Now you are familiar with how to scan the IP address and identify a live host within
+- p. 57: scanning is to check whether any illegitimate service is running on the host machine.
+- p. 57: hacker. In this situation, port scanning helps to identify the unknown services that
+- p. 57: TCP's three-way handshake serves as logic for the port scanner; in the TCP/IP
+- p. 57: scanner, you have seen that the port (137 or 135) is one in which IP addresses are in a
+- p. 57: range. However, in the port scanner, IP is only one port in a range. Take one IP and
+- p. 57: I have written a very simple code for port scanning:
+- p. 57: rmip = raw_input("\t Enter the remote host IP to scan:")
+- p. 57: print "\n Mohit's Scanner is working on ",rmip
+- p. 58: Enter the remote host IP to scan:192.168.0.3
+- p. 58: Mohit's Scanner is working on 192.168.0.3
+- p. 59: The preceding output shows that the port scanner scanned the 1000 ports in 0.7
+- p. 59: seconds; the connectivity was full because the target machine and the scanner
+- p. 59: Enter the remote host IP to scan:10.0.0.1
+- p. 59: Mohit's Scanner is working on 10.0.0.1
+- p. 59: Now, let's analyze the output; to scan 4,000 ports, the scanner took 1:06:43.272751
+- p. 59: hours, scanning took lot of time. The topology is:
+- p. 59: socket.setdefaulttimeout(1), which means the scanner machine will spend a
+- p. 59: nevertheless, it would be still be a long. Nobody will use our scanner. The time taken
+- p. 60: How to create an eficient port scanner
+- p. 60: I have stated some points that should be taken into account for a good port scanner:
+- p. 60: • The port scanner should have the capability to take host names as well as
+- p. 60: • The total time should be taken into account for port scanning
+- p. 60: • To scan ports 0 to 65536, the time taken should be around 3 minutes
+- p. 60: So now, I have written my port scanner, which I usually use for port scanning:
+- p. 61: print " \tWelcome this is the Port scanner of Mohit\n "
+- p. 61: rmserver = raw_input("\t Enter the Domain Name to scan:\t")
+- p. 61: rmip = raw_input("\t Enter the IP Address to scan: ")
+- p. 63: run() function, the scantcp() function is called. Section 3 is the engine of the
+- p. 63: car, which was explained in the Concept of port scanner section. The data.get(port,
+- p. 64: Welcome this is the Port scanner of Mohit
+- p. 64: Enter the IP Address to scan: 10.0.0.1
+- p. 64: Our eficient port scanner has given the same output as the previous simple scanner,
+- p. 64: by a simple scanner was 1:06:43.272751, but the new multithreaded scanner took
+- p. 65: activeCount() method in the simple scanner program, and then check
+- p. 69: I hope you've got a fair idea of the port scanner; in a nutshell, the port scanner
+- p. 69: comprises three iles, the irst ile is the scanner (portsc14.py), the second ile is the
+- p. 69: Network scanning is done to gather information on the networks, hosts, and services
+- p. 69: that are running on the hosts. Network scanning is done by the ping command of
+- p. 69: the OS; ping sweep takes advantage of the ping facility and scans the list of IPs.
+- p. 69: ping sweep scanner might not work. In such scenarios, we have to take advantage
+- p. 69: choose the port number on which we want to carry out the TCP connect scan. Some
+- p. 69: ports. The irst main section is dedicated to network scanning; when you perform
+- p. 69: network scanning, your program should have maximum performance and take
+- p. 69: After the scanning of live hosts, port scanning is used to check the services running
+- p. 69: allows Trojans; port scanning can detect these types of threats. To make an eficient
+- p. 69: port scan, multithreading plays a vital role because port numbers range from 0 to
+- p. 69: 65536. To scan a huge list, multithreading must be used.
+- p. 83: irewall rule sets, port scan, and the behavior of the operating system. Lots of tools
+- p. 89: The half-open scan or stealth scan, as the name suggests, is a special type of
+- p. 89: scanning. Stealth-scanning techniques are used to bypass irewall rules and prevent
+- p. 89: being detected by logging systems. However, it is a special type of scan that is done
+- p. 89: Before writing the code, let's understand the concept of the half-open scan.
+- p. 89: The following steps deine the stealth scan:
+- p. 90: of the stealth scan. For the irst step, the client sends an SYN packet to the server. In
+- p. 93: SYN scans. In an FIN scan attack, a TCP packet is sent to the remote host with only
+- p. 93: The following is the code for the FIN scan:
+- p. 95: The ACK scanning method is used to determine whether the host is protected by
+- p. 95: In this scanning method, the attacker sends an ACK probe packet with a random
+- p. 97: explained. Half open, FIN scan, and ACK lag scan are special types of scanning that
+- p. 116: world, e-commerce is growing rapidly. Due to this, web servers became a prime
+- p. 116: this information, we can build our exploits. Obtaining this information is known as
+- p. 129: chance of exploitation of the web server. The server can at least be secured
+- p. 136: So our challenge here is to bypass validation and submit the form. You may have
+- p. 136: done this earlier using the Burp suite. Now, we will do this using Python.
+- p. 136: values. By using mechanize, we are going to bypass the validation, as shown in the
+- p. 138: Now, you must have got a fair idea of how to bypass the validations. Generally,
+- p. 138: then you are just inviting attackers to exploit your website. In the following topic,
+- p. 147: In this chapter, we learned about client-side validation as well as how to bypass
+- p. 147: (XSS). You will learn how to take advantages of Python to carry out SQL injection
+- p. 147: tests. You'll also learn how to automate an XSS attack by using Python scripts.
+- p. 148: and XSS attacks. In Chapter 5, Foot Printing of a Web Server and a Web Application, you
+- p. 154: I hope you remember the port scanner program in which we used a database ile that
+- p. 154: Tautology-based SQL injection is usually used to bypass user authentication.
+- p. 159: The SQL injection username query exploitation
+- p. 161: In this section, we will discuss the Cross-Site Scripting (XSS) attack. XSS attacks
+- p. 161: exploit vulnerabilities in dynamically-generated web pages, and this happens when
+- p. 161: the URL or in the search ield. In this chapter, we will work on stored XSS.
+- p. 161: Let's now look at the code for the XSS attack. The logic of the code is to send an
+- p. 161: exploit to a website. In the following code, we will attack one ield of a form:
+- p. 162: This small piece of code will give you an idea of how to accomplish the XSS attack.
+- p. 162: statement. In the code, we stored the exploit code in the mohit.xss shelve ile. The
+- p. 162: iled. The br.form[att] = s['xss'][p] statement shows that the selected ield
+- p. 162: will be illed by the XSS exploit string. The ch = raw_input("Do you continue
+- p. 162: press y ") statement asks for user input for the next exploit. If a user enters y or Y,
+- p. 164: y key, the code sends the XSS exploit.
+- p. 164: this ield is not affected by the XSS attack because of the secure coding in PHP. At the
+- p. 165: Now, let's take a look at the code of xss_data_handler.py, from which you can
+- p. 165: print "Total Number ", len(r['xss'])
+- p. 166: The preceding screenshot shows the contents of the mohit.xss ile; the xss.py ile
+- p. 167: name on which you want to send XSS exploits, and list_n contains the ield(s)
+- p. 167: name on which you don't want to send XSS exploits.
+- p. 167: Now, let's look at the program. If you understood the xss.py program, you would
+- p. 167: notice that we made an amendment to xss.py to create xss_list.py:
+- p. 170: been illed by XSS attacks. So far, you have learned how to automate the XSS attack.
+- p. 170: an XSS attack. In the preceding igure, you can see that the comment ield is not
+- p. 170: affected by an XSS attack. The following screenshot shows the coding part of the
+- p. 170: XSS. In SQL injection, you learned how to ind the admin login page using Python
+- p. 170: attack of SQLI, you learned how to make a comment after a valid username. In the
+- p. 170: next XSS, you saw how to apply XSS exploits to the form ield. In the mohit.xss ile,
+- p. 172: ARP request 71 Cross-Site Scripting. See XSS
+- p. 173: about 127 half-open scan (stealth scan)
+- p. 173: Distributed Denial-of-Service. See DDoS IP scanner
+- p. 173: foot printing IP scanner, creating 37
+- p. 174: nonpersistent (relected) XSS 148-157 SQL injection attack 137-147
+- p. 174: used, for implementing TCP scan 34-36
+- p. 174: persistent (stored) XSS 148 website information, gathering by parser
+- p. 175: port scanner, creating 47 nonpersistent (relected) XSS 148-157
+- p. 175: running services 44 persistent (stored) XSS 148
+- p. 177: 2. Explore advanced techniques to bypass
+- p. 177: 3. Discover advanced exploitation methods on
+- p. 178: stealthily exploited, and learn how to identify
+
+## Extracted Operational Notes
+- p. 2: Employ the power of Python to get the best out
+- p. 3: All rights reserved. No part of this book may be reproduced, stored in a retrieval
+- p. 3: Publishing, and its dealers and distributors will be held liable for any damages
+- p. 3: companies and products mentioned in this book by the appropriate use of capitals.
+- p. 4: Content Development Editor Production Coordinator
+- p. 5: Mohit (also known as Mohit Raj) is an application developer and Python
+- p. 5: programmer, with a keen interest in the ield of information security. He has done
+- p. 5: a Wireless Deauthentication Attack! in Open Source For You in July 2014. He is also a
+- p. 5: certiied Certiied Security Analyst (ECSA). He has been working in IBM India for
+- p. 5: more than 2 years. He is also a freelance professional trainer for CEH and Python in
+- p. 5: CODEC Networks. Apart from this, he is familiar with Red Hat and CentOS Linux
+- p. 5: especially the technical reviewers and also the editors Merwyn
+- p. 6: secure cloud storage, and wireless network security.
+- p. 6: I would like to thank Alex Perry, my favorite Pythoneer, for being an
+- p. 6: India, and is a long-time advocator of open source. He is a steady contributor to the
+- p. 6: created the world's irst one-of-a-kind security-testing browser bundle, PenQ, which
+- p. 6: is an open source Linux-based penetration testing browser bundle, preconigured
+- p. 7: Rejah is also an active member of the OWASP and the chapter leader of OWASP,
+- p. 7: Kerala. He is also one of the moderators of the OWASP Google+ group and an
+- p. 7: Cyber Security division of DBG now, Rejah is also a fan of process automation,
+- p. 7: has built a wide variety of software, from those meant to run on a calculator to those
+- p. 7: engineering, information security, hardware programming, and web development.
+- p. 10: Chapter 1: Python with Penetration Testing and Networking 5
+- p. 10: Introducing the scope of pentesting 6
+- p. 10: Learning the common testing platforms with Python 10
+- p. 10: The TCP scan concept and its implementation using a Python script 34
+- p. 11: Implementing a network sniffer using Python 58
+- p. 11: Introducing ARP spooing and implementing it using Python 70
+- p. 11: Testing the security system using custom packet crafting
+- p. 11: Wireless SSID inding and wireless trafic analysis by Python 88
+- p. 11: The deauthentication (deauth) attacks 96
+- p. 12: Chapter 6: Client-side and DDoS Attacks 119
+- p. 12: Tampering with the client-side parameter with Python 120
+- p. 12: Chapter 7: Pentesting of SQLI and XSS 135
+- p. 12: Introducing the SQL injection attack 136
+- p. 12: Understanding the SQL injection attack by a Python script 137
+- p. 14: This book is a practical guide that shows you the advantages of using Python for
+- p. 14: pentesting, with the help of detailed code examples. This book starts by exploring
+- p. 14: the basics of networking with Python and then proceeds to network and wireless
+- p. 14: pentesting, including information gathering and attacking. Later on, we delve into
+- p. 14: such as parameter tampering, DDOS, XSS, and SQL injection.
+- p. 14: Chapter 1, Python with Penetration Testing and Networking, aims to complete the
+- p. 14: Chapter 2, Scanning Pentesting, covers how network scanning is done to gather
+- p. 14: how to create a layer 4 sniffer, and how to perform layer 3 and layer 4 attacks.
+- p. 14: Chapter 4, Wireless Pentesting, teaches wireless frames and how to obtain information
+- p. 14: such as SSID, BSSID, and the channel number from a wireless frame using a Python
+- p. 14: script. In this type of attack, you will learn how to perform pentesting attacks on
+- p. 14: Chapter 6, Client-side and DDoS Attacks, teaches client-side validation as well as how
+- p. 15: Chapter 7, Pentesting of SQLI and XSS, covers two major web attacks, SQL injection
+- p. 15: and XSS. In SQL injection, you will learn how to ind the admin login page using a
+- p. 15: You will need to have Python 2.7, Apache 2.x, RHEL 5.0 or CentOS 5.0, and Kali Linux.
+- p. 15: If you are a Python programmer or a security researcher who has basic knowledge
+- p. 15: of Python programming and want to learn about penetration testing with the help of
+- p. 15: Python, this book is ideal for you. Even if you are new to the ield of ethical hacking,
+- p. 15: this book can help you ind the vulnerabilities in your system so that you are ready
+- p. 15: to tackle any kind of attack or intrusion.
+- p. 18: hackers hack for any purpose such as fame, selling vulnerability for money,
+- p. 18: or to exploit vulnerability for personal enmity.
+- p. 18: Lots of well-trained hackers have got jobs in the information security ield by
+- p. 18: hacking into a system and then informing the victim of the security bug(s)
+- p. 18: company to secure its system. A pentester performs hacking attempts to break
+- p. 18: of their indings. To become an expert in pentesting, a person should have deep
+- p. 19: Python with Penetration Testing and Networking
+- p. 19: Introducing the scope of pentesting
+- p. 19: In simple words, penetration testing is to test the information security measures of
+- p. 19: a company. Information security measures entail a company's network, database,
+- p. 19: website, public-facing servers, security policies, and everything else speciied by
+- p. 19: the client. At the end of the day, a pentester must present a detailed report of their
+- p. 19: indings such as weakness, vulnerability in the company's infrastructure, and the
+- p. 19: risk level of particular vulnerability, and provide solutions if possible.
+- p. 19: There are several points that describe the signiicance of pentesting:
+- p. 19: • Pentesting identiies the threats that might expose the conidentiality
+- p. 19: • Expert pentesting provides assurance to the organization with a complete
+- p. 19: and detailed assessment of organizational security
+- p. 19: • Pentesting assesses the network's eficiency by producing huge amount
+- p. 19: of trafic and scrutinizes the security of devices such as irewalls, routers,
+- p. 19: or network design might lead to vulnerabilities that can be detected
+- p. 19: • In today's world, potential threats are increasing signiicantly; pentesting is
+- p. 19: a proactive exercise to minimize the chance of being exploited
+- p. 19: • Pentesting ensures whether suitable security policies are being followed
+- p. 19: from online business. A hacker or group of black hat hackers ind a vulnerability
+- p. 20: An organization should conduct a risk assessment operation before pentesting;
+- p. 20: this will help identify the main threats such as misconiguration or vulnerability in:
+- p. 20: The following points describe the qualities of good pentester. They should:
+- p. 20: • Be ready to show how to exploit the vulnerabilities
+- p. 20: A pentester tests the network using manual techniques or the relevant tools. There
+- p. 20: also perform more R&D. If you are interested in pentesting and want to make your
+- p. 20: own tools, then the Python programming language is the best, as extensive and
+- p. 20: freely available pentesting packages are available in Python, in addition to its ease
+- p. 20: and mechanize, reduces code size. In Python, to make a program, you don't need to
+- p. 20: deine big classes such as Java. It's more productive to write code in Python than in
+- p. 20: If you know some programming in Python and are interested in pentesting this book
+- p. 21: Before we get into pentesting, the scope of pentesting should be deined.
+- p. 21: of the organization, then pentester Alice would deine the scope of pentesting
+- p. 21: of a web server, and so on, might change the scope of pentesting.
+- p. 21: The scope of pentesting is deined in two types of tests:
+- p. 21: ° Scans and identifies the remote system for potential vulnerabilities
+- p. 21: ° Maps the vulnerabilities with proper exploits
+- p. 21: ° Exploits the remote system with proper care to avoid disruption
+- p. 21: ° Does not attempt a Denial-of-Service (DoS) attack
+- p. 21: ° Attempts DoS and buffer overflow attacks, which have the
+- p. 21: There are three types of approaches to pentesting:
+- p. 21: • Black-box pentesting follows non-deterministic approach of testing
+- p. 21: ° It is like hacking with the knowledge of an outside attacker
+- p. 22: • White-box pentesting follows deterministic approach of testing
+- p. 22: • Gray-box pentesting follows hybrid approach of black and white box testing
+- p. 22: trial and error on the part of the pentester
+- p. 22: ° It performs the security assessment and testing internally
+- p. 22: Before you start reading this book, you should know the basics of Python
+- p. 22: In this book, all experiments and demonstration have been done in Python 2.7.8
+- p. 22: Version. If you use Linux OS such as Kali or BackTrack, then there will be no issue,
+- p. 22: platform. Kali Linux also uses the 2.7 Version. If you love to work on Red Hat or
+- p. 23: scanning and snifing pentesting, you will need a small network of attached devices.
+- p. 23: attack, you will need an Apache server running on the Linux platform. It will be
+- p. 23: this contains the RPM of Apache and PHP. For the Python script, we will use
+- p. 23: You will now perform pentesting; I hope you are well acquainted with networking
+- p. 23: meaning of ports, network addresses, and broadcast addresses. A pentester must
+- p. 23: you are thinking of using Linux, then you are on the right track. In this book, we will
+- p. 23: execute our programs on Windows as well as Linux. In this book, Windows, CentOS,
+- p. 23: A hacker always loves to work on a Linux system. As it is free and open source,

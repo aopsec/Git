@@ -1,0 +1,8 @@
+{
+  "commandline": "ffuf -u https://app.example.com/FUZZ -w wordlist.txt",
+  "results": [
+    {"url": "https://app.example.com/admin", "status": 401, "length": 4521},
+    {"url": "https://app.example.com/api", "status": 200, "length": 2048},
+    {"url": "https://app.example.com/static", "status": 301, "length": 178}
+  ]
+}

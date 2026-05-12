@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>ADV7Box — Projeto Técnico Integrado (AV01-A / CEUB)</title>
+<meta name="generator" content="Built by hand from OpenBox0.1v + IPS_IDS (ADV7Sec) source trees">
+<meta name="description" content="ADV7Box = OpenBox (edge router hardening) + ADV7Sec (workstation IPS/IDS). Entrega AV01-A CEUB.">
+<style>
+  :root {
+    --fg: #1b1d22;
+    --muted: #5b6470;
+    --accent: #174174;
+    --accent-2: #8a1f3d;
+    --border: #c9ced6;
+    --border-strong: #1b1d22;
+    --bg-code: #f5f3ef;
+    --bg-note: #f7f0e0;
+    --bg-warn: #fbe6e6;
+    --bg-ok: #e9f3e9;
+    --bg-head: #edf0f5;
+    --mono: "JetBrains Mono", "DejaVu Sans Mono", "Fira Mono", Consolas, monospace;
+    --serif: "Liberation Serif", "Nimbus Roman", "Times New Roman", Georgia, serif;
+    --sans: "Inter", "Liberation Sans", "DejaVu Sans", system-ui, sans-serif;
+  }
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+    @bottom-center {
+      content: "ADV7Box · AV01-A · " counter(page) " / " counter(pages);
+      font-family: var(--sans); font-size: 9pt; color: #777;
+    }
+  }
+  html, body { font-family: var(--serif); color: var(--fg); line-height: 1.45; }
+  body { max-width: 178mm; margin: 0 auto; padding: 8mm 0; font-size: 10.5pt; }
+  h1, h2, h3, h4 { font-family: var(--sans); color: var(--accent); line-height: 1.2; }
+  h1 { font-size: 22pt; margin: 0 0 6pt; }
+  h2 { font-size: 15pt; margin: 22pt 0 8pt; padding-bottom: 4pt; border-bottom: 1.5pt solid var(--accent); page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 14pt 0 6pt; color: var(--accent-2); page-break-after: avoid; }
+  h4 { font-size: 11pt; margin: 10pt 0 4pt; color: var(--fg); page-break-after: avoid; }
+  p  { margin: 4pt 0 6pt; text-align: justify; }
+  ul, ol { margin: 4pt 0 8pt 18pt; padding: 0; }
+  li { margin: 2pt 0; }
+  code { font-family: var(--mono); font-size: 9.5pt; background: var(--bg-code); padding: 0 3pt; border-radius: 2pt; }
+  pre { font-family: var(--mono); font-size: 9pt; background: var(--bg-code); border: 0.5pt solid var(--border);
+        padding: 6pt 8pt; overflow-x: auto; white-space: pre; border-radius: 3pt; line-height: 1.35;
+        page-break-inside: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 9.5pt;
+          page-break-inside: avoid; }
+  th { background: var(--bg-head); text-align: left; padding: 4pt 6pt; border: 0.5pt solid var(--border-strong);
+        font-family: var(--sans); }
+  td { padding: 3pt 6pt; border: 0.5pt solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  .cover { display: flex; flex-direction: column; justify-content: center; min-height: 240mm;
+           border-top: 3pt solid var(--accent); border-bottom: 3pt solid var(--accent-2); padding: 14mm 0;
+           page-break-after: always; }
+  .cover h1 { font-size: 34pt; margin-bottom: 2pt; letter-spacing: -0.5pt; }
+  .cover .sub { font-family: var(--sans); color: var(--muted); font-size: 13pt; margin-bottom: 18pt; }
+  .cover .tag { font-family: var(--sans); display: inline-block; font-size: 9pt; padding: 2pt 8pt;
+                border: 0.5pt solid var(--accent); color: var(--accent); border-radius: 2pt; margin-right: 4pt; }
+  .cover .meta { margin-top: 24pt; font-family: var(--sans); font-size: 10pt; color: var(--muted); }
+  .cover .meta dt { float: left; width: 36mm; font-weight: 600; color: var(--fg); }
+  .cover .meta dd { margin-left: 38mm; margin-bottom: 2pt; }
+  .abstract { border-left: 3pt solid var(--accent); padding: 4pt 10pt; background: #fbfcfe;
+              font-size: 10pt; margin: 10pt 0 14pt; }
+  .callout { border: 0.5pt solid var(--border-strong); padding: 6pt 10pt; margin: 8pt 0; font-size: 10pt;
+             page-break-inside: avoid; }
+  .callout.note { background: var(--bg-note); }
+  .callout.warn { background: var(--bg-warn); }
+  .callout.ok   { background: var(--bg-ok); }
+  .callout strong { font-family: var(--sans); }
+  .toc ol { list-style: none; margin-left: 0; padding-left: 0; }
+  .toc ol li { padding: 1.5pt 0; border-bottom: 0.25pt dotted var(--border); }
+  .toc ol li span.num { display: inline-block; width: 14mm; color: var(--accent); font-family: var(--sans); }
+  .twocol { column-count: 2; column-gap: 8mm; }
+  .ascii { font-family: var(--mono); font-size: 8.5pt; white-space: pre; background: #fbfaf6;
+           border: 0.5pt solid var(--border); padding: 8pt 10pt; border-radius: 3pt;
+           page-break-inside: avoid; line-height: 1.15; }
+  .caption { font-family: var(--sans); font-size: 8.5pt; color: var(--muted); margin: 2pt 0 10pt; text-align: center; }
+  .small { font-size: 9pt; color: var(--muted); }
+  .kbd { font-family: var(--mono); font-size: 8.5pt; background: #eee; padding: 0 3pt; border: 0.5pt solid var(--border);
+         border-radius: 2pt; }
+  .chip { display: inline-block; font-family: var(--sans); font-size: 8.5pt; padding: 1pt 6pt; margin: 0 2pt 2pt 0;
+          border: 0.5pt solid var(--accent); color: var(--accent); border-radius: 8pt; }
+  .pagebreak { page-break-before: always; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 0.5pt dotted var(--accent); }
+  .sigrow { display: flex; gap: 6mm; margin-top: 10pt; }
+  .sigrow .box { flex: 1; border-top: 0.75pt solid var(--border-strong); padding-top: 4pt; text-align: center;
+                 font-family: var(--sans); font-size: 9pt; color: var(--muted); }
+  svg { max-width: 100%; page-break-inside: avoid; }
+  .rubric-score { font-family: var(--sans); font-weight: 600; color: var(--accent-2); }
+</style>
+</head>
+<body>
+
+<!-- [FIX-PTBR-01] Correções pontuais de norma culta e coesão no texto do deliverable. -->
+
+<!-- =================================================================== -->
+<!-- COVER                                                                -->
+<!-- =================================================================== -->
+<section class="cover">
+  <div>
+    <span class="tag">AV01-A</span>
+    <span class="tag">CEUB · 2026-04</span>
+    <span class="tag">Infraestrutura de TI</span>
+    <span class="tag">Privacidade &amp; Detecção</span>
+  </div>
+  <h1>ADV7Box</h1>
+  <div class="sub">Plataforma Integrada de Privacidade de Borda e Detecção de Intrusão em Workstation</div>
+
+  <p style="max-width: 150mm; font-size: 11pt; margin-top: 14pt;">
+    Projeto técnico integrado que une <strong>OpenBox v0.2.0</strong> — caixa de borda para streaming
+    auditável sobre Rockchip RK3229 (R29_5G_LP3) — e <strong>ADV7Sec</strong> (derivado do instalador IPS_IDS) —
+    baseline detection-only para workstation Arch. O resultado é um documento único de arquitetura
+    residencial defensiva orientada por evidência: privacidade na saída do lar e visibilidade
+    forense na estação de desenvolvimento.
+  </p>
+
+  <dl class="meta">
+    <dt>Documento</dt><dd>ADV7Box — Projeto Técnico AV01-A</dd>
+    <dt>Versão</dt><dd>1.0 (consolidada)</dd>
+    <dt>Data</dt><dd>2026-04-23</dd>
+    <dt>Origem dos artefatos</dt><dd>Projects/OpenBox0.1v · Projects/IPS_IDS (ADV7Sec.py)</dd>
+    <dt>Alvos</dt><dd>RK3229 R29_5G_LP3 (Armbian rk322x-box, Debian Bookworm armhf) · Workstation Arch kernel ≥ 6.8</dd>
+    <dt>v0.2.0 retarget</dt><dd>Pilar A migrado de RPi 4 para Shenzhen RK3229; mitigações BadBox 2.0 / Vo1d documentadas em <code>docs/security/RK3229_THREAT_RESEARCH.md</code></dd>
+    <dt>Escopo funcional</dt><dd>Borda: privacidade, streaming, watchdogs · Workstation: IPS/IDS detection-only</dd>
+    <dt>Contatos de evidência</dt><dd>Repositórios locais listados na §18 Evidências</dd>
+  </dl>
+
+  <div style="margin-top: auto; font-family: var(--sans); font-size: 9pt; color: var(--muted);">
+    Documento gerado a partir dos códigos-fonte existentes em <code>/home/aops/ObsidianAgent/Projects/</code>.
+    Todos os trechos de configuração e comandos reproduzem o conteúdo versionado nos repositórios de origem.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- ABSTRACT + TOC                                                       -->
+<!-- =================================================================== -->
+<section>
+  <h2>Resumo Executivo</h2>
+  <div class="abstract">
+    <p>
+      Dois vetores de risco convivem em um lar técnico em 2026: (i) tráfego de borda vazando metadados
+      para ISP, fabricantes de smart TV e plataformas de streaming; (ii) workstation de desenvolvimento
+      exposta a persistência, escalação local e payloads de cadeia de suprimento sem telemetria própria.
+      O <strong>ADV7Box</strong> trata os dois vetores com duas máquinas complementares. O
+      <strong>OpenBox</strong> (pilar A) atua na borda como caixa de streaming com WireGuard full-tunnel,
+      DNS cifrado (DoH/DoQ + DNSSEC), bloqueio de trackers via Pi-hole e kill switch atomic em
+      nftables. O <strong>ADV7Sec</strong> (pilar B) atua no endpoint Arch como baseline detection-only
+      — auditd, Falco modern-eBPF, Kunai, Suricata IDS-only, Zeek, Unbound dnstap, AIDE, ClamAV escopado
+      e Loki-RS/YARA — com logs locais em <code>journald</code>, sem SIEM e sem bloqueio automático.
+      Juntos os dois pilares formam um laboratório residencial reprodutível, documentado e auditável,
+      com custo de entrada &lt; R$ 1.000 e evidência de operação registrada em VM (vmtst).
+    </p>
+  </div>
+
+  <h2 class="toc">Sumário</h2>
+  <div class="toc twocol">
+    <ol>
+      <li><span class="num">§1</span> Estudo de Caso: Problema e Justificativa</li>
+      <li><span class="num">§2</span> Proposta ADV7Box — Visão de Dois Pilares</li>
+      <li><span class="num">§3</span> Arquitetura de Referência (Diagrama de Blocos)</li>
+      <li><span class="num">§4</span> Pilar A — OpenBox (Borda)</li>
+      <li><span class="num">§5</span> Pilar B — ADV7Sec (Workstation IPS/IDS)</li>
+      <li><span class="num">§6</span> Demandas de Infraestrutura (Hardware e Software)</li>
+      <li><span class="num">§7</span> Modelo de Ameaça Consolidado</li>
+      <li><span class="num">§8</span> Sequência de Instalação e Fases</li>
+      <li><span class="num">§9</span> Testes e Validação</li>
+      <li><span class="num">§10</span> Logs e Observabilidade</li>
+      <li><span class="num">§11</span> Relatórios Executados (vmtst + Auditoria OpenBox)</li>
+      <li><span class="num">§12</span> Decisões Arquiteturais (ADR)</li>
+      <li><span class="num">§13</span> Trade-offs Explícitos</li>
+      <li><span class="num">§14</span> Limitações Reconhecidas</li>
+      <li><span class="num">§15</span> Linha do Tempo do Projeto</li>
+      <li><span class="num">§16</span> Critérios de Aceite e Exit Gate</li>
+      <li><span class="num">§17</span> Aderência à Rubrica AV01-A</li>
+      <li><span class="num">§18</span> Evidências de Desenvolvimento</li>
+      <li><span class="num">§19</span> Referências Técnicas</li>
+      <li><span class="num">§20</span> Conclusão</li>
+    </ol>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- §1 Estudo de Caso                                                    -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§1 Estudo de Caso — Identificação de Problemas de TI</h2>
+
+  <h3>1.1 Contexto</h3>
+  <p>
+    O ambiente residencial técnico em 2026 é composto por dispositivos de mídia com telemetria agressiva
+    (ACR em smart TVs, ~200 req/h de telemetria em set-top boxes proprietários), assinaturas de streaming
+    somando R$ 200–400/mês e uma ou mais workstations usadas para desenvolvimento, estudo e operações
+    de segurança. Nesse cenário coexistem dois vetores de risco independentes:
+  </p>
+
+  <ol>
+    <li>
+      <strong>Borda (rede doméstica).</strong> O usuário não controla resolução DNS, não tem visibilidade
+      sobre telemetria de firmware e não possui caminho auditável para vazamento de tráfego quando a VPN
+      falha. Qualquer queda silenciosa de túnel reintroduz o perfil bruto do ISP.
+    </li>
+    <li>
+      <strong>Endpoint (workstation).</strong> A estação de trabalho Arch executa código em evolução,
+      builds AUR, containers de teste e, eventualmente, amostras para pesquisa. Não há baseline de
+      integridade, não há alerta quando um processo desvia do esperado, e o primeiro sinal de
+      comprometimento costuma ser exógeno (alerta de terceiros) e tardio.
+    </li>
+  </ol>
+
+  <h3>1.2 Lacunas Identificadas</h3>
+  <table>
+    <thead><tr><th>#</th><th>Lacuna</th><th>Impacto</th><th>Camada ADV7Box</th></tr></thead>
+    <tbody>
+      <tr><td>L1</td><td>Resolução DNS em texto claro via resolver do ISP</td><td>Perfil comportamental completo exposto</td><td>OpenBox § dnscrypt-proxy</td></tr>
+      <tr><td>L2</td><td>Túnel VPN sem kill switch — vazamento em falha</td><td>Metadados reais expostos em segundos</td><td>OpenBox § nftables atomic</td></tr>
+      <tr><td>L3</td><td>Smart TV com ACR ligado por padrão</td><td>Fingerprint do conteúdo exibido (incluindo HDMI)</td><td>OpenBox § substituição no caminho</td></tr>
+      <tr><td>L4</td><td>Ausência de observabilidade do próprio lar</td><td>Falha detectada só quando afeta usuário</td><td>OpenBox § Netdata/Monit/ntfy</td></tr>
+      <tr><td>L5</td><td>Workstation sem trilha forense</td><td>Pós-incidente não reconstituível</td><td>ADV7Sec § auditd</td></tr>
+      <tr><td>L6</td><td>Ausência de alerta comportamental no endpoint</td><td>Persistência e pivots não detectados</td><td>ADV7Sec § Falco + Kunai</td></tr>
+      <tr><td>L7</td><td>Sem visibilidade L7 (TLS/HTTP/DNS) local</td><td>IOC de rede passam sem registro</td><td>ADV7Sec § Suricata + Zeek</td></tr>
+      <tr><td>L8</td><td>Sem baseline de integridade de arquivos</td><td>Alterações em <code>/etc</code>/<code>/usr</code> invisíveis</td><td>ADV7Sec § AIDE + pacman hook</td></tr>
+      <tr><td>L9</td><td>Downloads não escaneados</td><td>Janela de exposição prolongada</td><td>ADV7Sec § ClamAV escopado</td></tr>
+      <tr><td>L10</td><td>Cadeia de suprimento sem pin verificável</td><td>Rebase malicioso passa despercebido</td><td>ADV7Sec § commit pin 40-char</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 Justificativa para Infraestrutura de TI (não apenas software)</h3>
+  <p>
+    As dez lacunas não são todas resolvíveis por aplicação. L1–L4 exigem <em>hardware de borda</em>
+    (SBC dedicado na rota de saída); L5–L10 exigem <em>capacidades de kernel</em> (eBPF/BTF,
+    dnstap socket, audit framework) que só estão disponíveis em um host com kernel ≥ 6.8 e
+    sensores instalados em tempo de boot. Daí o projeto se materializar como
+    <strong>duas máquinas físicas cooperando via rede</strong>, e não como um único pacote de software.
+  </p>
+</section>
+
+<!-- =================================================================== -->
+<!-- §2 Proposta                                                          -->
+<!-- =================================================================== -->
+<section>
+  <h2>§2 Proposta ADV7Box — Visão de Dois Pilares</h2>
+
+  <p>
+    ADV7Box propõe dois pilares simultaneamente implantados, independentemente operáveis, com
+    interface bem definida (rede local) entre ambos. Cada pilar tem instalador próprio, fases
+    idempotentes e testes automatizáveis. A composição é o valor: o pilar A encapsula a borda,
+    o pilar B olha para dentro do endpoint.
+  </p>
+
+  <h3>2.1 Separação de Preocupações</h3>
+  <table>
+    <thead><tr><th>Preocupação</th><th>Pilar A — OpenBox</th><th>Pilar B — ADV7Sec</th></tr></thead>
+    <tbody>
+      <tr><td>Função primária</td><td>Proxy de egress cifrado + mídia</td><td>Visibilidade host/rede local</td></tr>
+      <tr><td>Alvo</td><td>RK3229 R29_5G_LP3 (1GB LPDDR3, armhf)</td><td>Workstation Arch single-host</td></tr>
+      <tr><td>SO base</td><td>Armbian community rk322x-box (Debian Bookworm armhf)</td><td>Arch Linux, kernel ≥ 6.8 com BTF</td></tr>
+      <tr><td>Ação sobre tráfego</td><td>Cifra, filtra, bloqueia em falha</td><td>Observa — nunca bloqueia na Fase 1</td></tr>
+      <tr><td>Ação sobre processos</td><td>N/A</td><td>Alerta (auditd, Falco); nunca mata</td></tr>
+      <tr><td>Destino dos logs</td><td>Netdata + journald + ntfy</td><td><code>journald</code> + arquivos JSON locais</td></tr>
+      <tr><td>Sink externo</td><td>Push via ntfy (opt-in)</td><td><strong>Nenhum</strong> (ADR-0011)</td></tr>
+      <tr><td>Postura na Fase 1</td><td>Endurecimento ativo + watchdogs</td><td>Detecção passiva com tuning de 14 dias</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.2 Interface Entre Pilares</h3>
+  <p>
+    Os pilares se comunicam apenas pela rede local. O OpenBox provê resolução DNS filtrada e egress
+    criptografado; a workstation usa o OpenBox como gateway DNS (via DHCP ou <code>resolv.conf</code>)
+    e como rota default opcional. A workstation não depende operacionalmente do OpenBox: se o OpenBox
+    cai, a workstation degrada para o resolver do ISP com perda de privacidade, mas sem perda de
+    detecção. Isso é deliberado — acoplamento baixo é pré-condição para auditoria.
+  </p>
+</section>
+
+<!-- =================================================================== -->
+<!-- §3 Arquitetura de Referência                                         -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§3 Arquitetura de Referência</h2>
+
+  <h3>3.1 Diagrama de Blocos — Sistema Completo</h3>
+  <p>Visão macro: ambiente residencial com os dois pilares e seus fluxos predominantes.</p>
+
+  <svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama de blocos ADV7Box">
+    <defs>
+      <marker id="arr" viewBox="0 -5 10 10" refX="10" refY="0" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0,-5L10,0L0,5" fill="#1b1d22"/>
+      </marker>
+      <style>
+        .b { fill:#fff; stroke:#1b1d22; stroke-width:1.2; rx:6; ry:6; }
+        .hdr { fill:#edf0f5; stroke:#1b1d22; stroke-width:1.2; }
+        .title { font-family: Inter, Arial, sans-serif; font-weight: 600; font-size: 12px; fill: #174174; }
+        .lbl { font-family: Inter, Arial, sans-serif; font-size: 10.5px; fill: #1b1d22; }
+        .mut { font-family: Inter, Arial, sans-serif; font-size: 9px; fill: #5b6470; }
+        .edge { fill: none; stroke: #1b1d22; stroke-width: 1.1; }
+        .edge.dim { stroke-dasharray: 3 3; stroke: #8a1f3d; }
+      </style>
+    </defs>
+
+    <!-- Internet / ISP -->
+    <rect class="b" x="300" y="10" width="160" height="40"/>
+    <text class="title" x="380" y="28" text-anchor="middle">Internet / ISP</text>
+    <text class="mut"  x="380" y="42" text-anchor="middle">vê apenas endpoint VPN</text>
+
+    <!-- VPN Provider -->
+    <rect class="b" x="300" y="70" width="160" height="36"/>
+    <text class="lbl" x="380" y="92" text-anchor="middle">VPN Provider (no-log)</text>
+
+    <!-- Pilar A: OpenBox -->
+    <rect class="hdr" x="20" y="130" width="340" height="22"/>
+    <text class="title" x="190" y="146" text-anchor="middle">Pilar A — OpenBox (RK3229 R29_5G_LP3)</text>
+    <rect class="b" x="20" y="152" width="340" height="150"/>
+    <rect class="b" x="40" y="168" width="145" height="30"/>
+    <text class="lbl" x="112" y="187" text-anchor="middle">WireGuard wg0</text>
+    <rect class="b" x="195" y="168" width="150" height="30"/>
+    <text class="lbl" x="270" y="187" text-anchor="middle">nftables kill switch</text>
+    <rect class="b" x="40" y="204" width="145" height="30"/>
+    <text class="lbl" x="112" y="223" text-anchor="middle">Pi-hole + dnscrypt</text>
+    <rect class="b" x="195" y="204" width="150" height="30"/>
+    <text class="lbl" x="270" y="223" text-anchor="middle">Tor (metadados)</text>
+    <rect class="b" x="40" y="240" width="145" height="30"/>
+    <text class="lbl" x="112" y="259" text-anchor="middle">Jellyfin (Docker)</text>
+    <rect class="b" x="195" y="240" width="150" height="30"/>
+    <text class="lbl" x="270" y="259" text-anchor="middle">Caddy + Netdata + ntfy</text>
+    <text class="mut" x="40" y="290">BBR · CAKE flows · MTU 1420 · AIDE · Lynis · Monit</text>
+
+    <!-- Pilar B: ADV7Sec -->
+    <rect class="hdr" x="400" y="130" width="340" height="22"/>
+    <text class="title" x="570" y="146" text-anchor="middle">Pilar B — ADV7Sec (Workstation Arch)</text>
+    <rect class="b" x="400" y="152" width="340" height="150"/>
+    <rect class="b" x="420" y="168" width="145" height="30"/>
+    <text class="lbl" x="492" y="187" text-anchor="middle">auditd · persistence</text>
+    <rect class="b" x="575" y="168" width="150" height="30"/>
+    <text class="lbl" x="650" y="187" text-anchor="middle">Falco modern-eBPF</text>
+    <rect class="b" x="420" y="204" width="145" height="30"/>
+    <text class="lbl" x="492" y="223" text-anchor="middle">Suricata IDS-only</text>
+    <rect class="b" x="575" y="204" width="150" height="30"/>
+    <text class="lbl" x="650" y="223" text-anchor="middle">Zeek · dns/tls/ssl</text>
+    <rect class="b" x="420" y="240" width="145" height="30"/>
+    <text class="lbl" x="492" y="259" text-anchor="middle">AIDE · pacman hook</text>
+    <rect class="b" x="575" y="240" width="150" height="30"/>
+    <text class="lbl" x="650" y="259" text-anchor="middle">ClamAV escopado</text>
+    <text class="mut" x="420" y="290">Kunai · Unbound dnstap · Loki-RS/YARA · Lynis · chkrootkit · unhide</text>
+
+    <!-- LAN -->
+    <rect class="b" x="260" y="330" width="240" height="36"/>
+    <text class="title" x="380" y="352" text-anchor="middle">LAN Doméstica</text>
+
+    <!-- Edges -->
+    <path class="edge" d="M 380 50 L 380 70" marker-end="url(#arr)"/>
+    <path class="edge" d="M 380 106 L 380 130" marker-end="url(#arr)"/>
+    <path class="edge" d="M 300 270 C 250 310 330 320 320 330" marker-end="url(#arr)"/>
+    <path class="edge" d="M 460 270 C 510 310 430 320 440 330" marker-end="url(#arr)"/>
+    <path class="edge dim" d="M 360 200 C 380 200 400 200 400 200" marker-end="url(#arr)"/>
+    <text class="mut" x="380" y="195" text-anchor="middle">DNS/DHCP · rota opcional</text>
+
+    <!-- Journald note -->
+    <rect class="b" x="20" y="380" width="340" height="28"/>
+    <text class="lbl" x="190" y="398" text-anchor="middle">Evidência: Netdata + ntfy + journald</text>
+    <rect class="b" x="400" y="380" width="340" height="28"/>
+    <text class="lbl" x="570" y="398" text-anchor="middle">Evidência: journald · /var/log/*.json · sem sink externo</text>
+  </svg>
+  <div class="caption">Fig. 3.1 — Diagrama de blocos ADV7Box. Linhas sólidas = fluxo de dados; linha tracejada = acoplamento opcional entre pilares.</div>
+
+  <h3>3.2 Diagrama de Camadas — Pilar A (OpenBox)</h3>
+<pre class="ascii">
++------------------------------------------------------------+
+|  CAMADA 4 — AUDITORIA &amp; MONITORAMENTO                      |
+|  Netdata · Uptime Kuma · Monit · Lynis · RKHunter · ntfy   |
++------------------------------------------------------------+
+|  CAMADA 3 — OTIMIZAÇÃO KERNEL  (zero-RAM, persistente)     |
+|  TCP BBR · CAKE qdisc (flows) · IRQ affinity · MTU 1420    |
++------------------------------------------------------------+
+|  CAMADA 2 — PRIVACIDADE DE REDE (egress)                   |
+|  Pi-hole(53) → dnscrypt(5053 DoH/DoQ) → Internet           |
+|         ↘ Tor(9050) — apenas metadados/lookup ↗            |
+|         ↘ WireGuard(wg0) — stream + tráfego geral ↗        |
++------------------------------------------------------------+
+|  CAMADA 1 — CORE MÍDIA                                     |
+|  Jellyfin Server (Docker) :8096 (linux/arm/v7 nativo)      |
++------------------------------------------------------------+
+</pre>
+  <div class="caption">Fig. 3.2 — Estratificação funcional do OpenBox (4 camadas, baixo para alto privilégio operacional).</div>
+
+  <h3>3.3 Diagrama de Fluxo — Pilar B (ADV7Sec)</h3>
+<pre class="ascii">
+ kernel (≥ 6.8, BTF habilitado)
+ ├── auditd            → journald + ausearch (rules.d/50-persistence)
+ ├── Falco modern-eBPF → /var/log/falco-events.json + journald
+ ├── Kunai             → journald
+ └── Unbound dnstap    → /run/unbound/dnstap.sock
+
+ user-space sensors
+ ├── Suricata (IDS-only) --af-packet=&lt;iface&gt;  → /var/log/suricata/eve.json
+ ├── Zeek standalone                         → /opt/zeek/logs/current/*.log
+ ├── AIDE (daily timer + pacman hook)        → /var/log/aide/*
+ ├── ClamAV OnAccess (Downloads /tmp /run/media, OnAccessPrevention=no)
+ ├── Loki-RS/YARA (daily timer)              → journald
+ └── Lynis · chkrootkit · unhide · arch-audit (timers)
+
+ supply chain
+ ├── oficial → pacman
+ ├── AUR     → yay/paru — SEMPRE interativo (ADR-0010)
+ └── git     → commit pin 40-char obrigatório (Kunai, Loki-RS)
+</pre>
+  <div class="caption">Fig. 3.3 — Cadeia de sensores do ADV7Sec, com destino de evidência em cada estágio.</div>
+</section>
+
+<!-- =================================================================== -->
+<!-- §4 Pilar A — OpenBox                                                 -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§4 Pilar A — OpenBox (Borda)</h2>
+
+  <h3>4.1 Propósito</h3>
+  <p>
+    OpenBox substitui a função caixa-preta de uma TVBox comercial por uma pilha aberta e documentada.
+    A prioridade é <em>privacidade de egress com degradação segura</em>: se qualquer componente crítico
+    falha, a falha resultante é perda de conectividade — nunca vazamento de metadados.
+  </p>
+
+  <h3>4.2 Diagrama de Egress</h3>
+<pre class="ascii">
+[TV / HDMI] ← [RK3229 R29_5G_LP3 · Jellyfin :8096]
+                    |
+                    v   HTTPS request
+          [Pi-hole :53  (filtra)]
+                    |
+                    v
+          [dnscrypt :5053  (encripta DNS)]
+                    |
+                    v
+          [WireGuard wg0  (encapsula tudo)]
+                    |
+                    v   ChaCha20-Poly1305 / UDP 51820
+          [INTERNET / ISP vê apenas endpoint VPN]
+                    |
+                    v
+          [VPN Provider Exit  (Mullvad/IVPN)]
+                    |
+                    v
+          [Jellyfin client / CDN / destino final]
+
+ Canal auxiliar (apenas para resoluções de metadados/lookup):
+ [resolver/lookup] -SOCKS5→ [Tor :9050] → circuit → destino
+                  (latência +500 ms, ok para metadados)
+</pre>
+  <div class="caption">Fig. 4.1 — Fluxo de egress do OpenBox. Stream real via WireGuard; Tor restrito a metadados.</div>
+
+  <h3>4.3 Componentes e Portas</h3>
+  <table>
+    <thead><tr><th>Camada</th><th>Componente</th><th>Porta</th><th>RAM idle</th><th>Justificativa</th></tr></thead>
+    <tbody>
+      <tr><td>SO</td><td>Armbian rk322x-box (Debian 12 armhf)</td><td>—</td><td>180 MB</td><td>Headless, kernel 6.x, sem GUI</td></tr>
+      <tr><td>Kernel</td><td>sysctl (BBR, buffers, hardening)</td><td>—</td><td>0</td><td>Persistente via <code>/etc/sysctl.d/</code></td></tr>
+      <tr><td>QoS</td><td>CAKE qdisc (flow isolation = <code>flows</code>)</td><td>—</td><td>0</td><td>Compatível com WireGuard (ADR OpenBox)</td></tr>
+      <tr><td>Firewall</td><td>nftables atomic ruleset</td><td>—</td><td>0</td><td><code>flush ruleset</code> + allowlist; sem iptables</td></tr>
+      <tr><td>VPN</td><td>WireGuard <code>wg-quick@wg0</code></td><td>UDP 51820</td><td>8 MB</td><td>ChaCha20-Poly1305 + Curve25519 (+ PSK opcional)</td></tr>
+      <tr><td>DNS cifrado</td><td>dnscrypt-proxy 2</td><td>127.0.0.1:5053</td><td>22 MB</td><td>DoH/DoT/DoQ + DNSSEC + anonymized relays</td></tr>
+      <tr><td>DNS filtro</td><td>Pi-hole 6.x</td><td>127.0.0.1:53</td><td>80 MB</td><td>Upstream = 127.0.0.1#5053</td></tr>
+      <tr><td>Anonimização</td><td>Tor 0.4.x</td><td>127.0.0.1:9050 (SOCKS5)</td><td>50 MB</td><td>Metadados/lookup apenas</td></tr>
+      <tr><td>Mídia</td><td>Jellyfin (Docker <code>jellyfin/jellyfin</code>)</td><td>127.0.0.1:8096</td><td>180 MB</td><td><code>linux/arm/v7</code> nativo (substituiu Stremio na v0.2.0 — sem armhf)</td></tr>
+      <tr><td>Reverse proxy</td><td>Caddy 2.x</td><td>LAN 443</td><td>30 MB</td><td>TLS internal + forward_auth</td></tr>
+      <tr><td>Métricas</td><td>Netdata Agent v2 (10s/7d)</td><td>127.0.0.1:19999</td><td>110 MB</td><td>Bind localhost; expor via Caddy</td></tr>
+      <tr><td>Uptime</td><td>Uptime Kuma (Docker)</td><td>127.0.0.1:3001</td><td>65 MB</td><td>Monitora cada serviço da pilha</td></tr>
+      <tr><td>Admin</td><td>Cockpit (socket-activated)</td><td>LAN 9090</td><td>2 MB idle</td><td>Só sobe quando acessado</td></tr>
+      <tr><td>Watchdog</td><td>Monit 5.x</td><td>127.0.0.1:2812</td><td>10 MB</td><td>Auto-restart de serviços falhos</td></tr>
+      <tr><td>Notificação</td><td>ntfy self-hosted</td><td>127.0.0.1:2586</td><td>15 MB</td><td>Push para celular via topic</td></tr>
+      <tr><td>IDS host</td><td>Fail2ban + AIDE</td><td>—</td><td>22 MB</td><td>Jails: SSH, Pi-hole admin, Caddy</td></tr>
+      <tr><td>Auditoria</td><td>Lynis (semanal) · RKHunter (diário) · chkrootkit</td><td>—</td><td>0 (cron)</td><td>Baseline hardening index ≥ 75</td></tr>
+      <tr><td>Banda</td><td>vnStat</td><td>—</td><td>4 MB</td><td>Por interface (eth0 + wg0)</td></tr>
+      <tr><td colspan="2"><strong>Total persistente</strong></td><td></td><td><strong>~778 MB</strong></td><td>Sobra ~200 MB num sistema de 1 GB — apertado, justifica zram-swap 512 MB e alerta monit a 92%</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.4 Fases do Instalador OpenBox</h3>
+  <p>Os nomes são exatamente os do arquivo <code>install.sh</code> e dos scripts em <code>install.d/</code>.</p>
+  <table>
+    <thead><tr><th>Fase</th><th>Objetivo</th><th>Config-fonte</th></tr></thead>
+    <tbody>
+      <tr><td><code>00-base</code></td><td>APT update, SSH key-only, AIDE init, unattended-upgrades</td><td><code>etc/ssh/sshd_config.d/99-openbox.conf</code></td></tr>
+      <tr><td><code>01-sysctl</code></td><td>BBR, buffers, IPv4 hardening, <code>kptr_restrict</code>, IPv6 off</td><td><code>etc/sysctl.d/</code></td></tr>
+      <tr><td><code>02-nftables</code></td><td>Atomic ruleset com kill switch (<code>flush ruleset</code> + allowlist)</td><td><code>etc/nftables/openbox-base.nft</code></td></tr>
+      <tr><td><code>03-wireguard</code></td><td><code>wg0</code> config + systemd ordering (<code>After=nftables</code>)</td><td><code>etc/wireguard/wg0.conf.example</code></td></tr>
+      <tr><td><code>04-dns</code></td><td>dnscrypt-proxy override + Pi-hole + leak test</td><td><code>etc/dnscrypt-proxy/</code></td></tr>
+      <tr><td><code>05-tor</code></td><td>torrc hardened + verificação automatizada</td><td><code>etc/tor/torrc.example</code></td></tr>
+      <tr><td><code>06-media</code></td><td>Docker + container <code>jellyfin/jellyfin</code> (substituiu <code>06-stremio</code> na v0.2.0)</td><td>—</td></tr>
+      <tr><td><code>07-monitoring</code></td><td>Netdata · Uptime Kuma · Cockpit · Monit · ntfy · Caddy</td><td><code>etc/caddy/Caddyfile</code>, <code>etc/monit/monitrc.d/</code></td></tr>
+      <tr><td><code>08-watchdogs</code></td><td>WG/Tor/DNS watchdogs via systemd timers</td><td><code>systemd/openbox-*.{service,timer}</code></td></tr>
+      <tr><td><code>09-validate</code></td><td><code>tests/validate-stack.sh</code> + Lynis baseline + AIDE checkpoint</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout note">
+    <strong>Gatilho de preflight.</strong> O <code>install.sh</code> recusa a execução enquanto
+    <code>WG_ENDPOINT</code> em <code>etc/nftables/openbox-base.nft</code> ainda for o placeholder
+    <code>203.0.113.1</code> (TEST-NET-3). Esse mecanismo garante que o instalador não sobe um
+    kill switch apontando para um destino inválido.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- §5 Pilar B — ADV7Sec                                                 -->
+<!-- =================================================================== -->
+<section>
+  <h2>§5 Pilar B — ADV7Sec (Workstation IPS/IDS)</h2>
+
+  <h3>5.1 Propósito</h3>
+  <p>
+    ADV7Sec é uma pilha <em>detection-only</em> para workstation Arch (BLK7RCH). Nenhuma decisão
+    de bloqueio é tomada automaticamente na Fase 1: todos os sensores empilham evidência em
+    <code>journald</code> e em arquivos JSON locais, e a resposta é manual até que o tuning de 14 dias
+    prove estabilidade do sinal. Esse é um contrato explícito (ADR-0002) e é a razão pela qual
+    CrowdSec, fail2ban e Wazuh estão deliberadamente fora de escopo (ADR-0010).
+  </p>
+
+  <h3>5.2 Sensores e Função Primária</h3>
+  <table>
+    <thead><tr><th>Sensor</th><th>Função primária</th><th>Saída</th></tr></thead>
+    <tbody>
+      <tr><td>auditd</td><td>Trilha forense durável (identidade, persistência, firewall, tempo, módulos)</td><td>journald · <code>ausearch -k</code></td></tr>
+      <tr><td>Falco (modern-eBPF)</td><td>Alertas comportamentais de runtime sem DKMS</td><td><code>/var/log/falco-events.json</code></td></tr>
+      <tr><td>Kunai</td><td>Fluxo eBPF complementar (tolerante a drift de pacote)</td><td>journald</td></tr>
+      <tr><td>Suricata (IDS-only)</td><td>Assinatura de rede; uplink físico OU interface de tunnel</td><td><code>/var/log/suricata/eve.json</code></td></tr>
+      <tr><td>Zeek standalone</td><td>Metadados protocolares (conn/dns/ssl/http)</td><td><code>/opt/zeek/logs/current/*.log</code></td></tr>
+      <tr><td>Unbound dnstap</td><td>Telemetria DNS estruturada para coletor opcional</td><td><code>/run/unbound/dnstap.sock</code></td></tr>
+      <tr><td>AIDE</td><td>Baseline de integridade; pacman hook preserva candidato (não promove)</td><td><code>/var/log/aide/*.log</code></td></tr>
+      <tr><td>ClamAV OnAccess</td><td>Scan escopado: Downloads, <code>/tmp</code>, <code>/run/media</code></td><td>journald</td></tr>
+      <tr><td>Loki-RS + YARA</td><td>Scan agendado com regras YARA Forge</td><td>journald</td></tr>
+      <tr><td>Lynis</td><td>Auditoria semanal de hardening</td><td>journald + <code>/var/log/lynis/</code></td></tr>
+      <tr><td>chkrootkit + unhide</td><td>Scan mensal; complementa Lynis</td><td>journald</td></tr>
+      <tr><td>arch-audit</td><td>Lista CVEs ativos nos pacotes instalados</td><td>STDOUT journald</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 Fases do Instalador ADV7Sec</h3>
+  <p>
+    O instalador existe em duas formas em paridade (ADR-0012): o <code>install.sh</code> em Bash (referência)
+    e o <code>install.py</code>/<code>ipsids_installer/</code> em Python 3.12+ stdlib-only. O arquivo
+    <code>ADV7Sec.py</code> (54 KB, single-file, payloads embutidos) é a materialização distribuível do pilar B.
+  </p>
+  <table>
+    <thead><tr><th>Fase</th><th>Objetivo</th><th>Nota</th></tr></thead>
+    <tbody>
+      <tr><td><code>00-prereqs</code></td><td>Pacotes base, sanidade AUR, diretórios de log</td><td>pacman + <code>yay</code>/<code>paru</code></td></tr>
+      <tr><td><code>01-audit</code></td><td><code>/etc/audit/rules.d/50-persistence.rules</code></td><td>Não define <code>-e 2</code> (mutável durante tuning)</td></tr>
+      <tr><td><code>02-falco</code></td><td><code>falco-bin</code> + <code>falco-modern-bpf.service</code></td><td>Exige BTF</td></tr>
+      <tr><td><code>03-kunai</code></td><td>AUR; fallback cargo com <code>IPSIDS_KUNAI_REF</code> pinado</td><td>Commit de 40 chars obrigatório</td></tr>
+      <tr><td><code>04-suricata</code></td><td>ET Open + abuse.ch; <code>eve-minimal.yaml</code> + <code>disable.conf</code></td><td>Vendor <code>suricata.yaml</code> intocado</td></tr>
+      <tr><td><code>05-zeek</code></td><td>zkg: JA4, HASSH, passive-dns</td><td>Coequal a Suricata (ADR-0004)</td></tr>
+      <tr><td><code>06-dns</code></td><td>Unbound <code>dnstap.sock</code></td><td>Sem RPZ nesta fase</td></tr>
+      <tr><td><code>07-aide</code></td><td>Baseline + pacman hook + timer diário</td><td>Preserva candidato, não promove</td></tr>
+      <tr><td><code>08-clamav</code></td><td>OnAccess escopado, <code>OnAccessPrevention=no</code></td><td><code>--fdpass</code></td></tr>
+      <tr><td><code>09-yara</code></td><td>Loki-RS (<code>IPSIDS_LOKI_RS_REF</code>) + YARA Forge</td><td>Loki-RS 2.10.0 usa <code>--folder /home --no-tui</code></td></tr>
+      <tr><td><code>10-lynis</code></td><td>Lynis + arch-audit + chkrootkit + unhide</td><td>Timers weekly/monthly</td></tr>
+      <tr><td><code>11-smoke</code></td><td>Prova operacional (também standalone)</td><td>Não roda em <code>--yes</code> default</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.4 Invariantes de Qualidade (ADR-0012)</h3>
+  <ul>
+    <li>Hook pacman <strong>nunca</strong> promove <code>aide.db.gz</code> — preserva
+      <code>aide.db.candidate-&lt;stamp&gt;.gz</code> e relatório em <code>/var/log/aide/</code>.</li>
+    <li><code>/usr/local/bin/loki-rs</code> é o caminho canônico independente do nome do asset upstream.</li>
+    <li>Gatilho de smoke para auditd é <code>sudo /usr/bin/id</code> com busca <code>ausearch -k root-cmd</code>.</li>
+    <li>Kunai é instalado de release upstream com SHA256; builds de branch viva são recusados.</li>
+    <li>Loki-RS é buildado a partir de commit pin de 40 chars via <code>require_pinned_commit</code>.</li>
+    <li><code>aur_exists</code> curto-circuita em dry-run salvo <code>IPSIDS_LIVE_VALIDATE=1</code>.</li>
+    <li>Suricata recebe overrides via <code>--include etc/suricata/ipsids-overrides.yaml</code>.</li>
+  </ul>
+
+  <div class="callout ok">
+    <strong>Por que Python e Bash coexistem.</strong> O Bash é a referência comportamental (comando
+    de teste do comitê externo); o Python é o novo contrato legível (tipagem, <code>subprocess.run</code>
+    mockável, testes por fase). A deleção do Bash só ocorre após paridade verificada por
+    <code>tests/vm-harness.sh</code> e captura vmtst documentada.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- §6 Demandas de Infraestrutura                                        -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§6 Demandas de Infraestrutura</h2>
+
+  <h3>6.1 Hardware — BOM Consolidada</h3>
+  <table>
+    <thead><tr><th>Pilar</th><th>Item</th><th>Modelo de referência</th><th>R$</th><th>Papel</th></tr></thead>
+    <tbody>
+      <tr><td>A</td><td>SBC / TV box</td><td>R29_5G_LP3 (Rockchip RK3229, Cortex-A7 quad 1.5 GHz, 1 GB LPDDR3)</td><td>120</td><td>Host da pilha de borda — Shenzhen reaproveitado</td></tr>
+      <tr><td>A</td><td>Storage</td><td>eMMC 8 GB integrado (vendor varia: Samsung/Hynix/Foresee)</td><td>—</td><td>Sistema e persistência (sem disco externo)</td></tr>
+      <tr><td>A</td><td>Heatsink</td><td>Adesivo 14×14 mm (Cortex-A7 quad sem case ativa)</td><td>15</td><td>Mitigar throttle térmico sob WireGuard sustentado</td></tr>
+      <tr><td>A</td><td>PSU</td><td>Micro-USB 5 V / 2 A</td><td>25</td><td>Estabilidade elétrica</td></tr>
+      <tr><td>A</td><td>Cabo OTG-USB</td><td>USB-A → USB-A (host-host)</td><td>15</td><td>Maskrom flash do Armbian via <code>rkdeveloptool</code></td></tr>
+      <tr><td>A</td><td>Vídeo</td><td>HDMI 1.4 1 m (não usado em produção; só primeira boot)</td><td>20</td><td>Console serial alternativo: pad de 3 pinos no PCB</td></tr>
+      <tr><td>B</td><td>Workstation</td><td>Estação Arch existente (kernel ≥ 6.8, BTF)</td><td>—</td><td>Host de sensores IPS/IDS</td></tr>
+      <tr><td>B</td><td>Rede</td><td>Interface <code>enp3s0</code> e/ou <code>wlan0</code></td><td>—</td><td>Uplink monitorado pelo Suricata/Zeek</td></tr>
+      <tr><td>B</td><td>Storage extra</td><td>+20 GB reservados para <code>/var/log</code> (evidência)</td><td>—</td><td>Retention de eve.json/falco.json</td></tr>
+      <tr><td colspan="3"><strong>Total Pilar A (investimento único)</strong></td><td><strong>195</strong></td><td>~75% redução vs. RPi 4 BOM original (R$ 805 → R$ 195) — trade-off em RAM/NIC/CPU; ROI &lt; 2 meses</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2 Rede (OSI) — Interfaces e Políticas</h3>
+  <table>
+    <thead><tr><th>Camada</th><th>Entidade</th><th>Política</th></tr></thead>
+    <tbody>
+      <tr><td>L2</td><td>CAKE qdisc com <code>flows</code></td><td>Bufferbloat controlado; compatível com WG</td></tr>
+      <tr><td>L3</td><td>WireGuard <code>wg0</code> (OpenBox)</td><td>ChaCha20-Poly1305, MTU 1420, fwmark 51820</td></tr>
+      <tr><td>L3</td><td>nftables atomic ruleset</td><td>Drop default + allowlist; nunca iptables-legacy</td></tr>
+      <tr><td>L4</td><td>TCP BBR</td><td>Congestion control em links encapsulados</td></tr>
+      <tr><td>L7</td><td>Pi-hole + dnscrypt-proxy</td><td>DoH/DoQ + DNSSEC + anonymized relays</td></tr>
+      <tr><td>L7</td><td>Suricata</td><td>ET Open + abuse.ch; JA3/JA4 ativo; <code>exception-policy: ignore</code></td></tr>
+      <tr><td>L7</td><td>Zeek</td><td>conn/dns/ssl/http + zkg (JA4, HASSH, passive-dns)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.3 Software — Stack Consolidado</h3>
+  <p>
+    O quadro abaixo lista todo o software envolvido. Tudo vem de repositório oficial (Debian apt
+    para o Pilar A, Arch pacman para o Pilar B) ou de AUR/Git pinado (Pilar B) com commit de 40 chars
+    obrigatório.
+  </p>
+  <table>
+    <thead><tr><th>Categoria</th><th>Pilar A (OpenBox)</th><th>Pilar B (ADV7Sec)</th></tr></thead>
+    <tbody>
+      <tr><td>Kernel</td><td>Linux 6.x (ARM64)</td><td>Linux ≥ 6.8 (x86_64) com BTF</td></tr>
+      <tr><td>Firewall</td><td>nftables</td><td>nftables (somente observação, Fase 3+ para ação)</td></tr>
+      <tr><td>VPN</td><td>WireGuard</td><td>—</td></tr>
+      <tr><td>DNS</td><td>Pi-hole + dnscrypt-proxy</td><td>Unbound com dnstap</td></tr>
+      <tr><td>Anonimização</td><td>Tor</td><td>—</td></tr>
+      <tr><td>Aplicação</td><td>Jellyfin (Docker, <code>linux/arm/v7</code>)</td><td>—</td></tr>
+      <tr><td>Proxy</td><td>Caddy</td><td>—</td></tr>
+      <tr><td>Sensor host</td><td>Fail2ban · AIDE · RKHunter</td><td>auditd · Falco modern-eBPF · Kunai · AIDE · Loki-RS/YARA</td></tr>
+      <tr><td>Sensor rede</td><td>Netdata</td><td>Suricata · Zeek · Unbound dnstap</td></tr>
+      <tr><td>Monitor</td><td>Monit · Uptime Kuma · ntfy</td><td>—</td></tr>
+      <tr><td>Auditoria</td><td>Lynis · chkrootkit</td><td>Lynis · arch-audit · chkrootkit · unhide</td></tr>
+      <tr><td>Linguagens</td><td>Bash 5.x (instalador)</td><td>Bash 5.x (<code>install.sh</code>) · Python 3.12+ (<code>install.py</code>, <code>ipsids_installer/</code>, <code>ADV7Sec.py</code>)</td></tr>
+      <tr><td>Containers</td><td>Docker (Jellyfin, Uptime Kuma)</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.4 APIs e Integrações</h3>
+  <ul>
+    <li><strong>ntfy HTTP topic</strong> — endpoint interno <code>127.0.0.1:2586</code> para push-
+      notification em celulares.</li>
+    <li><strong>Netdata API</strong> — <code>127.0.0.1:19999/api/v1/</code>, exposto via Caddy com
+      <code>forward_auth</code> (não basic auth, por causa de CPU spike conhecido).</li>
+    <li><strong>dnstap UDS</strong> — <code>/run/unbound/dnstap.sock</code>, consumível por qualquer
+      coletor compatível (Go, Python).</li>
+    <li><strong>Suricata eve.json</strong> — formato estruturado para qualquer pipeline ELK/OpenSearch
+      (fora de escopo da Fase 1, disponível para Fase 3 se adotado).</li>
+  </ul>
+</section>
+
+<!-- =================================================================== -->
+<!-- §7 Modelo de Ameaça                                                  -->
+<!-- =================================================================== -->
+<section>
+  <h2>§7 Modelo de Ameaça Consolidado</h2>
+
+  <h3>7.1 Adversários Cobertos</h3>
+  <table>
+    <thead><tr><th>Adversário</th><th>Capacidade</th><th>Mitigação</th><th>Pilar</th></tr></thead>
+    <tbody>
+      <tr><td>ISP passivo</td><td>Observa metadados IP/SNI/DNS</td><td>WG + dnscrypt</td><td>A</td></tr>
+      <tr><td>ISP ativo</td><td>Injeção, MITM, censura DNS</td><td>DNSSEC + DoH/DoQ</td><td>A</td></tr>
+      <tr><td>Smart TV ACR</td><td>Fingerprint de conteúdo HDMI</td><td>OpenBox substitui TV no caminho</td><td>A</td></tr>
+      <tr><td>LAN sniffing</td><td>Ataque ao admin Pi-hole / Caddy</td><td>Bind <code>127.0.0.1</code> + Fail2ban</td><td>A</td></tr>
+      <tr><td>Brute-force SSH</td><td>Dicionário / credencial stuffing</td><td>key-only + Fail2ban + <code>AllowUsers</code></td><td>A</td></tr>
+      <tr><td>Update malicioso (apt)</td><td>Supply chain</td><td>apt signing + unattended-upgrades security-only</td><td>A</td></tr>
+      <tr><td>Tampering FS</td><td>Binário alterado</td><td>AIDE + RKHunter</td><td>A</td></tr>
+      <tr><td>Persistência host</td><td>systemd unit / pacman hook / crontab</td><td>auditd <code>-k systemd</code> / <code>-k pacman-hooks</code></td><td>B</td></tr>
+      <tr><td>Escalação local</td><td>Execução como root via SUDO_USER</td><td>auditd <code>-k root-cmd</code></td><td>B</td></tr>
+      <tr><td>Listener ad-hoc</td><td><code>nc</code>/<code>ncat</code>/<code>socat</code> ouvindo</td><td>Falco <em>Unexpected Listener Started</em></td><td>B</td></tr>
+      <tr><td>Pivô via scripting</td><td><code>python -m http.server</code> ou similar</td><td>Falco <em>Pivot or Ad Hoc Server Tool</em></td><td>B</td></tr>
+      <tr><td>IOC de rede (CnC, DGA)</td><td>TLS para infra suspeita</td><td>Suricata + Zeek + ET Open + abuse.ch</td><td>B</td></tr>
+      <tr><td>Download malicioso</td><td>Arquivo em Downloads/removable</td><td>ClamAV OnAccess escopado + Loki-RS/YARA</td><td>B</td></tr>
+      <tr><td>Drift em <code>/etc</code>/<code>/usr</code></td><td>Alteração silenciosa</td><td>AIDE diário + pacman hook</td><td>B</td></tr>
+      <tr><td>CVE ativo em pacote</td><td>Exploração conhecida</td><td>arch-audit semanal</td><td>B</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.2 Fora de Escopo — Declarado Honestamente</h3>
+  <ul>
+    <li>Anonimato perante adversário estatal — use Tails + Tor Browser, fora do ADV7Box.</li>
+    <li>Adversário com acesso físico ao TV box ou à workstation — sem TPM, sem LUKS automático na v0.2.0; agravante específico do RK3229: maskrom mode (BootROM hardware) não pode ser desabilitado, qualquer attacker físico re-flasha em segundos.</li>
+    <li>Comprometimento do provedor VPN — depende da escolha de no-logs auditado (Mullvad / IVPN).</li>
+    <li>Fingerprinting de browser via Jellyfin web — Tor Browser para conteúdo sensível, não cliente Jellyfin.</li>
+    <li><strong>Backdoor de cadeia de suprimento (BadBox 2.0 / Vo1d)</strong> em Android stock pré-flash — mitigado pelo wipe maskrom + flash Armbian; verificação documentada em <code>docs/security/RK3229_THREAT_RESEARCH.md</code> §5.</li>
+    <li>IPS inline na Fase 1 — ADR-0002 recusa bloqueio automático antes do tuning.</li>
+    <li>SIEM corporativo, fleet management, aquisição forense completa.</li>
+  </ul>
+
+  <h3>7.3 Trust Boundaries</h3>
+<pre class="ascii">
+[Untrusted Internet] | [VPN Provider] | [WG Tunnel] | [OpenBox] | [LAN] | [Workstation ADV7Sec]
+                       ↑                ↑             ↑          ↑       ↑
+                       no-logs?         matemática   auditado   Wi-Fi   detecção local
+                                        ChaCha20                própria
+</pre>
+</section>
+
+<!-- =================================================================== -->
+<!-- §8 Sequência de Instalação                                            -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§8 Sequência de Instalação e Fases</h2>
+
+  <h3>8.1 Ordem Geral Recomendada</h3>
+  <ol>
+    <li><strong>Preparar hardware A.</strong> Wipe stock Android via maskrom mode + <code>rkdeveloptool</code>, flashear Armbian community <code>rk322x-box</code> em eMMC; rodar <code>tools/fingerprint-rk3229.sh</code> para capturar fingerprint Phase 0 antes de qualquer rede.</li>
+    <li><strong>Rodar OpenBox <code>install.sh --dry-run</code>.</strong> Validar que todas as 10 fases
+      anunciam comandos esperados.</li>
+    <li><strong>Editar placeholders</strong> (WireGuard endpoint, torrc hash, Caddy auth hash).</li>
+    <li><strong>Executar OpenBox <code>install.sh</code></strong> fase a fase (recomendado) ou em massa.</li>
+    <li><strong>Validar OpenBox</strong> com <code>tests/validate-stack.sh</code>.</li>
+    <li><strong>Apontar workstation</strong> para OpenBox como resolver DNS (DHCP ou <code>resolv.conf</code>).</li>
+    <li><strong>Rodar ADV7Sec <code>install.sh --dry-run</code></strong> (ou <code>install.py --dry-run</code>).</li>
+    <li><strong>Executar ADV7Sec <code>install.sh --yes</code></strong> — instala <code>00-prereqs</code> a <code>10-lynis</code>.</li>
+    <li><strong>Smoke ADV7Sec</strong> via <code>sudo ./install.d/11-smoke.sh</code>.</li>
+    <li><strong>Entrar na janela de tuning de 14 dias</strong> (<code>PHASE2_TUNING.md</code>).</li>
+  </ol>
+
+  <h3>8.2 Comandos de Referência</h3>
+<pre>
+# Pilar A — OpenBox (Armbian rk322x-box / armhf)
+bash tests/ci-syntax-check.sh
+sudo ./install.sh --dry-run
+sudo ./install.sh
+sudo ./install.sh --phase 03-wireguard
+sudo ./tests/validate-stack.sh
+
+# Pilar B — ADV7Sec (Arch)
+bash tests/ci-syntax-check.sh
+sudo ./install.sh --dry-run
+sudo ./install.py --dry-run
+sudo ./install.sh --yes           # phases 00-prereqs..10-lynis
+sudo ./install.py --yes           # idem, Python parity
+sudo ./install.sh --phase 04-suricata --yes
+sudo ./install.d/11-smoke.sh      # smoke explícito
+
+# Pilar B — supply chain
+sudo IPSIDS_KUNAI_REF=&quot;&lt;40-char-commit&gt;&quot;   ./install.sh --phase 03-kunai
+sudo IPSIDS_LOKI_RS_REF=&quot;&lt;40-char-commit&gt;&quot; ./install.sh --phase 09-yara
+</pre>
+
+  <h3>8.3 Idempotência &amp; Dry-Run</h3>
+  <p>
+    Em ambos os pilares, rodar a mesma fase duas vezes é seguro. O OpenBox usa <code>run()</code>
+    (array-exec, logged) e <code>run_sh()</code> (shell-exec explícito) para separar comandos seguros
+    de redirecionamentos; o ADV7Sec usa <code>install_etc</code>, <code>pacman_install</code>,
+    <code>aur_install</code> — todos pulam pacotes já presentes e sobrescrevem configs com modo correto.
+    O dry-run é não destrutivo por design e serve tanto como documentação executável quanto como
+    precaução operacional antes de uma mudança.
+  </p>
+</section>
+
+<!-- =================================================================== -->
+<!-- §9 Testes                                                             -->
+<!-- =================================================================== -->
+<section>
+  <h2>§9 Testes e Validação</h2>
+
+  <h3>9.1 Suites Existentes — Síntese</h3>
+  <table>
+    <thead><tr><th>Suite</th><th>Pilar</th><th>Verifica</th><th>Falha em</th></tr></thead>
+    <tbody>
+      <tr><td><code>OpenBox0.1v/tests/ci-syntax-check.sh</code></td><td>A</td><td><code>bash -n</code> + shellcheck + <code>nft -c</code> + YAML/systemd</td><td>Erro de sintaxe ou header ausente</td></tr>
+      <tr><td><code>OpenBox0.1v/tests/phase-b-vault-tool.sh</code></td><td>A</td><td>Vault Obsidian repo-neutral</td><td>Contrato <code>.aops-vault.toml</code> divergente</td></tr>
+      <tr><td><code>OpenBox0.1v/tests/validate-obsidian-vault.sh</code></td><td>A</td><td>Estrutura de notas geradas</td><td>Stale entries não regeneradas</td></tr>
+      <tr><td><code>OpenBox0.1v/tests/validate-stack.sh</code></td><td>A</td><td>10 checks acumulados (BBR, CAKE, WG handshake, kill switch, DNS leak, Tor, Lynis)</td><td>Qualquer check individual — não aborta no primeiro</td></tr>
+      <tr><td><code>IPS_IDS/tests/ci-syntax-check.sh</code></td><td>B</td><td><code>bash -n</code> + shellcheck + YAML tabs + systemd headers + configs requeridos</td><td>75 pass/0 fail é o gate</td></tr>
+      <tr><td><code>IPS_IDS/tests/test_runner.py</code></td><td>B</td><td>Testes unit Python do pacote <code>ipsids_installer</code></td><td>Smoke excluída de <code>--yes</code> default</td></tr>
+      <tr><td><code>IPS_IDS/tests/vm-harness.sh</code></td><td>B</td><td>Paridade Bash↔Python (ADR-0012) em VM</td><td>Divergência de comportamento na VM</td></tr>
+      <tr><td><code>IPS_IDS/install.d/11-smoke.sh</code></td><td>B</td><td>Prova operacional (serviços ativos, timers, logs)</td><td><code>fail &gt; 0</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.2 OpenBox — Métricas de Sucesso (<code>validate-stack.sh</code>)</h3>
+  <table>
+    <thead><tr><th>Métrica</th><th>Alvo</th><th>Comando</th></tr></thead>
+    <tbody>
+      <tr><td>WG handshake recente</td><td>&lt; 180 s</td><td><code>wg show wg0 latest-handshakes</code></td></tr>
+      <tr><td>IP egress = endpoint VPN</td><td>true</td><td><code>curl -4 https://ifconfig.io</code></td></tr>
+      <tr><td>DNS leak</td><td>0 servidores fora do Pi-hole</td><td><code>dnsleaktest.py</code></td></tr>
+      <tr><td>Tor circuit OK</td><td><code>IsTor: true</code></td><td><code>curl --socks5-hostname 127.0.0.1:9050 https://check.torproject.org/api/ip</code></td></tr>
+      <tr><td>BBR ativo</td><td><code>bbr</code></td><td><code>sysctl net.ipv4.tcp_congestion_control</code></td></tr>
+      <tr><td>CAKE ativo</td><td>qdisc cake presente</td><td><code>tc -s qdisc show dev eth0</code></td></tr>
+      <tr><td>Bufferbloat</td><td>Grade A em <code>waveform.com</code></td><td>manual</td></tr>
+      <tr><td>Lynis hardening index</td><td>≥ 75</td><td><code>lynis audit system --quick</code></td></tr>
+      <tr><td>Boot resilience</td><td>&lt; 90 s até stack pronta</td><td><code>systemd-analyze</code></td></tr>
+      <tr><td>Kill switch</td><td>tráfego = 0 com <code>wg0</code> down</td><td><code>systemctl stop wg-quick@wg0 &amp;&amp; curl --max-time 5 ifconfig.io</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.3 ADV7Sec — Smoke Test (<code>11-smoke.sh</code>)</h3>
+  <p>
+    O smoke é um script autônomo que roda 19 checagens operacionais em sensores instalados.
+    O resultado corrente (vmtst, 2026-04-23) é <strong class="rubric-score">16 pass · 3 warn · 0 fail</strong>.
+    Os 3 warns retidos para tuning:
+  </p>
+  <ul>
+    <li>auditd não capturou <code>root-cmd</code> de <code>/usr/bin/id</code> na sessão sudo do teste
+      (comportamento <code>auid&gt;=1000</code> esperado em sessão interativa).</li>
+    <li>Zeek cluster rodando; a conexão sintética não apareceu em <code>conn.log</code>
+      (variância de flush / path sob <code>/usr/logs</code>).</li>
+    <li><code>unbound.service</code> ativo; o socket dnstap estava ausente durante o smoke
+      (socket cria em demanda pelo coletor).</li>
+  </ul>
+</section>
+
+<!-- =================================================================== -->
+<!-- §10 Logs e Observabilidade                                            -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§10 Logs e Observabilidade</h2>
+
+  <h3>10.1 Pilar A — Destinos de Log</h3>
+  <table>
+    <thead><tr><th>Componente</th><th>Destino</th><th>Retention</th></tr></thead>
+    <tbody>
+      <tr><td>Instalador</td><td><code>/var/log/openbox-install.log</code></td><td>Append; rotate manual</td></tr>
+      <tr><td>WireGuard</td><td>journald (<code>wg-quick@wg0</code>)</td><td>journald default</td></tr>
+      <tr><td>Pi-hole + dnscrypt</td><td>journald + <code>/var/log/pihole/</code></td><td>journald default</td></tr>
+      <tr><td>Caddy</td><td><code>/var/log/caddy/openbox-access.log</code></td><td>Alimenta Fail2ban jail <code>caddy-auth</code></td></tr>
+      <tr><td>Netdata</td><td>RAM + disk 7 dias (10 s resolution)</td><td>Configurável</td></tr>
+      <tr><td>Monit</td><td>journald</td><td>journald default</td></tr>
+      <tr><td>ntfy</td><td>push; sem retenção local</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.2 Pilar B — Destinos de Log (ADV7Sec)</h3>
+  <table>
+    <thead><tr><th>Sensor</th><th>Destino</th><th>Formato</th></tr></thead>
+    <tbody>
+      <tr><td>auditd</td><td>journald + <code>ausearch -k &lt;tag&gt;</code></td><td>audit record</td></tr>
+      <tr><td>Falco modern-eBPF</td><td><code>/var/log/falco-events.json</code> + journald</td><td>JSON line</td></tr>
+      <tr><td>Kunai</td><td>journald</td><td>KV text</td></tr>
+      <tr><td>Suricata</td><td><code>/var/log/suricata/eve.json</code></td><td>JSON line</td></tr>
+      <tr><td>Zeek</td><td><code>/opt/zeek/logs/current/*.log</code></td><td>TSV</td></tr>
+      <tr><td>Unbound dnstap</td><td><code>/run/unbound/dnstap.sock</code></td><td>frame streams</td></tr>
+      <tr><td>AIDE</td><td><code>/var/log/aide/*.log</code> + <code>aide.db.candidate-*</code></td><td>texto estruturado</td></tr>
+      <tr><td>ClamAV</td><td>journald</td><td>texto</td></tr>
+      <tr><td>Loki-RS</td><td>journald</td><td>texto</td></tr>
+      <tr><td>Lynis · chkrootkit · unhide · arch-audit</td><td>journald</td><td>texto</td></tr>
+      <tr><td>Instalador</td><td><code>/var/log/ipsids-install.log</code> (Bash)<br><code>/var/log/adv7sec-install.log</code> (ADV7Sec.py)</td><td>ISO-8601 [LEVEL] texto</td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.3 Loop de Revisão Diária (ADV7Sec)</h3>
+<pre>
+SINCE="yesterday"
+
+sudo journalctl -u auditd             --since "${SINCE}" --no-pager
+sudo journalctl -u falco-modern-bpf   --since "${SINCE}" --no-pager
+sudo journalctl -u kunai              --since "${SINCE}" --no-pager
+
+sudo jq -r '.event_type' /var/log/suricata/eve.json | sort | uniq -c | sort -nr
+sudo jq -r 'select(.event_type=="alert") | [.alert.signature_id, .alert.signature] | @tsv' \
+  /var/log/suricata/eve.json | sort | uniq -c | sort -nr | head -30
+
+sudo systemctl list-timers '*aide*' '*loki*' '*lynis*' '*chkrootkit*'
+</pre>
+  <p>
+    Cada sessão diária é anotada em <code>tuning/daily/YYYY-MM-DD.md</code>: regra mais ruidosa,
+    regra mais suspeita, contagem por sensor, unidades quebradas, ação de tuning tomada.
+    Supressões só existem com campos obrigatórios (data, ferramenta, rule id, excerto, processo,
+    usuário, justificativa, mudança de config, comando de validação, comando de rollback) e vão para
+    <code>tuning/suppressions.md</code>.
+  </p>
+</section>
+
+<!-- =================================================================== -->
+<!-- §11 Relatórios Executados                                             -->
+<!-- =================================================================== -->
+<section>
+  <h2>§11 Relatórios Executados</h2>
+
+  <h3>11.1 Auditoria Técnica OpenBox (2026-04-18)</h3>
+  <p>
+    Arquivo: <code>OpenBox0.1v/deliverables/AV01_OpenBox_Audit_Report.pdf</code>. Principais achados:
+  </p>
+  <ul>
+    <li><strong>F1 — Bootstrap SSH.</strong> <code>sshd_config.d/99-openbox.conf</code> restringe a
+      <code>AllowUsers openbox</code>, mas o usuário não é criado pelo repositório. Risco de lockout
+      remoto imediato. <em>Ação</em>: parametrizar/criar o usuário antes de aplicar <code>AllowUsers</code>.</li>
+    <li><strong>F2 — Tor placeholder.</strong> <code>torrc.example</code> traz
+      <code>HashedControlPassword</code> como placeholder; <code>05-tor.sh</code> reinicia Tor antes da
+      substituição. <em>Ação</em>: substituir por processo de bootstrap seguro.</li>
+    <li><strong>F3 — Caddy admin hash.</strong> <code>etc/caddy/Caddyfile</code> depende de
+      <code>REPLACE_WITH_BCRYPT_HASH</code>; <code>07-monitoring.sh</code> aplica direto. <em>Ação</em>:
+      interromper instalação se placeholder detectado.</li>
+    <li><strong>F4 — Policy routing WG.</strong> <code>wg0.conf.example</code> cria tabela 51820 e regra
+      <code>not fwmark</code>; falta fechar full tunnel robusto. <em>Ação</em>: endurecimento da
+      configuração operacional.</li>
+    <li><strong>F5 — <code>--dry-run</code> impuro.</strong> Alguns scripts escrevem fora de
+      <code>run()</code> (em <code>02-nftables.sh</code> e <code>06-media.sh</code>). <em>Ação</em>:
+      canalizar todas as escritas por <code>run()</code>/<code>run_sh()</code>.</li>
+    <li><strong>F6 — Evidência pública ausente.</strong> O diretório não é repositório Git publicado.
+      <em>Ação</em>: <code>git init</code> + URL HTTPS antes da submissão.</li>
+  </ul>
+
+  <h3>11.2 vmtst — Full Install (ADV7Sec, 2026-04-23)</h3>
+  <ul>
+    <li>Alvo: Arch guest em GNOME Boxes, kernel <code>6.18.23-1-lts</code>, SSH <code>vmtst@127.0.0.1:2222</code>.</li>
+    <li>Comando: <code>sudo -E python3 ./install.py --yes</code>.</li>
+    <li>Source gate (host + VM): <code>75 pass · 0 fail</code>.</li>
+    <li>Fases 04, 08, 10 foram re-executadas após <em>live fixes</em>.</li>
+    <li>Smoke final: <strong class="rubric-score">16 pass · 3 warn · 0 fail</strong>.</li>
+    <li>Logs preservados: <code>/home/vmtst/ipsids-installpy-full.log</code>,
+      <code>ipsids-installpy-phase04-rerun.log</code>, <code>ipsids-installpy-phase08-rerun.log</code>,
+      <code>ipsids-installpy-phase10.log</code>, <code>ipsids-smoke-python-final.log</code>,
+      <code>/var/log/ipsids-install.log</code>.</li>
+  </ul>
+  <p>Live fixes aplicados:</p>
+  <ul>
+    <li><code>[FIX-VM-SURI-YAML]</code> — <code>etc/suricata/ipsids-overrides.yaml</code> agora começa
+      com <code>%YAML 1.1</code> / <code>---</code>, pois Suricata 8 rejeita arquivos de include sem
+      envelope YAML legado.</li>
+    <li><code>[FIX-VM-CLAMONACC]</code> — a fase 08 agora instala o bloco OnAccess em
+      <code>/etc/clamav/clamd.conf</code> (não apenas em um drop-in), porque o <code>clamonacc</code>
+      do Arch lê <code>clamd.conf</code> por default.</li>
+  </ul>
+
+  <h3>11.3 vmtst — Real Config, No-Smoke (ADV7Sec, 2026-04-23)</h3>
+  <ul>
+    <li>Objetivo: aplicar configuração de sistema real sem rodar smoke como parte do path.</li>
+    <li><code>[FIX-REAL-INSTALL]</code> — separação de fases de instalação (<code>00-prereqs</code>..<code>10-lynis</code>)
+      das selecionáveis. <code>install.py --yes</code> não roda mais <code>11-smoke</code>.</li>
+    <li><code>[FIX-REAL-LOKI-CLI]</code> — <code>loki-rs-scan.service</code> atualizado para Loki-RS
+      2.10.0: <code>ExecStart=/usr/local/bin/loki-rs --folder /home --no-tui</code>.</li>
+    <li>Serviços ativos: <code>auditd</code>, <code>falco-modern-bpf</code>, <code>kunai</code>,
+      <code>suricata</code>, <code>unbound</code>, <code>clamav-daemon</code>,
+      <code>clamav-clamonacc</code>.</li>
+    <li>Timers habilitados: <code>aide-check</code>, <code>loki-rs-scan</code>, <code>lynis-audit</code>,
+      <code>chkrootkit</code>.</li>
+    <li><code>systemctl --failed</code>: <code>0 loaded units listed</code>.</li>
+    <li>Versões instaladas (excerto): audit 4.1.4-2 · falco-bin 0.40.0-1 · suricata 8.0.4-2 ·
+      zeek 8.0.6-1 · aide 0.19.3-1 · clamav 1.5.2-2 · yara 4.5.5-1 · lynis 3.1.6-1 · kunai 0.6.2 ·
+      Loki-RS 2.10.0.</li>
+  </ul>
+
+  <h3>11.4 Síntese</h3>
+  <div class="callout ok">
+    <strong>Estado operacional (2026-04-23).</strong> ADV7Sec alcança instalação limpa em VM de paridade
+    com smoke <em>16/3/0</em>. OpenBox tem auditoria de 6 achados documentados, todos com ação
+    definida, e precisa de shakedown em hardware real antes da v0.2. O combinado ADV7Box entrega:
+    (a) código versionado em dois projetos, (b) instaladores faseados e idempotentes, (c) CI de
+    sintaxe, (d) smoke test operacional, (e) auditoria externa documentada, (f) suite de tuning de
+    14 dias definida — tudo rastreável em artefatos locais listados na §18.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- §12 ADRs                                                              -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§12 Decisões Arquiteturais (ADR)</h2>
+
+  <h3>12.1 Índice — IPS_IDS / ADV7Sec</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Decisão</th><th>Consequência</th></tr></thead>
+    <tbody>
+      <tr><td>ADR-0001</td><td>Alvo = workstation Arch (não gateway appliance)</td><td>Fase 1 otimiza visibilidade local, não enforcement transparente</td></tr>
+      <tr><td>ADR-0002</td><td>Detection-only na Fase 1</td><td>Resposta manual até tuning provar estabilidade</td></tr>
+      <tr><td>ADR-0003</td><td>Falco modern-eBPF sem DKMS</td><td>Exige BTF; kernel floor 6.8</td></tr>
+      <tr><td>ADR-0004</td><td>Zeek é coequal a Suricata</td><td>Ambos mantidos; metadata vs assinatura</td></tr>
+      <tr><td>ADR-0005</td><td>Kunai é complementar, não crítico</td><td>Drift de pacote tolerado</td></tr>
+      <tr><td>ADR-0006</td><td>AIDE com pacman hook</td><td>Evita false-positive flood em <code>pacman -Syu</code></td></tr>
+      <tr><td>ADR-0007</td><td>ClamAV OnAccess escopado</td><td>Sem latência global; <code>OnAccessPrevention=no</code></td></tr>
+      <tr><td>ADR-0008</td><td>YARA via Loki-RS</td><td>Binário canônico <code>/usr/local/bin/loki-rs</code></td></tr>
+      <tr><td>ADR-0009</td><td>Unbound com dnstap</td><td>Telemetria estruturada via UDS</td></tr>
+      <tr><td>ADR-0010</td><td>Sem CrowdSec, fail2ban, Wazuh</td><td>Stack single-host, sem manager externo</td></tr>
+      <tr><td>ADR-0011</td><td>Journald local-first, sem sink externo</td><td>Fase 1 não exige SIEM</td></tr>
+      <tr><td>ADR-0012</td><td>Python installer em paridade com Bash</td><td>Deleção do Bash só após parity vmtst</td></tr>
+    </tbody>
+  </table>
+
+  <h3>12.2 Regression Fences (ADR-0012)</h3>
+  <p>Cláusulas invariantes exigidas pela paridade Python↔Bash. Cada uma é verificável por <code>tests/vm-harness.sh</code>:</p>
+  <ul>
+    <li>Hook pacman nunca promove <code>aide.db.gz</code>; preserva <code>aide.db.candidate-&lt;stamp&gt;.gz</code> e relatório.</li>
+    <li><code>/usr/local/bin/loki-rs</code> é canônico, independente do nome do asset upstream.</li>
+    <li>Smoke auditd usa <code>sudo /usr/bin/id</code> + <code>ausearch -k root-cmd</code>.</li>
+    <li>Kunai instala de release upstream pinado com SHA256.</li>
+    <li>Loki-RS é buildado de commit pin de 40 chars; branch viva é recusada.</li>
+    <li><code>aur_exists</code> curto-circuita em dry-run salvo <code>IPSIDS_LIVE_VALIDATE=1</code>.</li>
+    <li>Suricata recebe overrides via <code>--include</code>; vendor yaml intocado.</li>
+  </ul>
+</section>
+
+<!-- =================================================================== -->
+<!-- §13 Trade-offs                                                        -->
+<!-- =================================================================== -->
+<section>
+  <h2>§13 Trade-offs Explícitos</h2>
+  <table>
+    <thead><tr><th>Pilar</th><th>Decisão</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td>A</td><td>Tor apenas para metadados</td><td>Perde-se "anonimato pleno" (que era ilusório); ganha-se streaming funcional</td></tr>
+      <tr><td>A</td><td>Jellyfin em container (substituiu Stremio na v0.2.0)</td><td>+50 MB overhead Docker; ganha portabilidade, isolamento e <code>linux/arm/v7</code> oficial</td></tr>
+      <tr><td>A</td><td>Caddy em vez de Nginx</td><td>+30 MB RAM; ganha TLS automático e config simples</td></tr>
+      <tr><td>A</td><td>CAKE <code>flows</code> (não <code>triple-isolate</code>)</td><td>Perde fairness por host dentro do tunnel; ganha funcionamento correto sob WG</td></tr>
+      <tr><td>A</td><td>RK3229 R29_5G_LP3 (não RPi 4)</td><td>-RAM (4GB→1GB), -NIC (1Gbps→100Mbps), -CPU (Cortex-A72→A7); +custo (R$805→R$195), +reaproveitamento de hardware Shenzhen ocioso</td></tr>
+      <tr><td>A</td><td>Caddy sem basic auth</td><td>Perde simplicidade; evita CPU spike com Netdata + basic auth (issue conhecido)</td></tr>
+      <tr><td>A</td><td>Kill switch atomic vs PostUp inline</td><td>Perde acoplamento ao wg-quick; ganha persistência e atomicidade</td></tr>
+      <tr><td>B</td><td>Detection-only na Fase 1</td><td>Não bloqueia ameaça conhecida; evita lockout durante tuning</td></tr>
+      <tr><td>B</td><td>Sem SIEM externo</td><td>Perde correlação multi-host; ganha auditabilidade local e zero egress de log</td></tr>
+      <tr><td>B</td><td>AUR sempre interativo</td><td>Mais fricção de deploy; ganha review de PKGBUILD (<code>IPSIDS_UNSAFE_AUR_NOCONFIRM=1</code> só em lab)</td></tr>
+      <tr><td>B</td><td>Git fallback com commit pin obrigatório</td><td>Precisa manter pin atualizado; ganha reprodutibilidade absoluta</td></tr>
+      <tr><td>B</td><td>Python + Bash em paridade</td><td>Dobra superfície temporária; reduz risco de regressão durante migração</td></tr>
+      <tr><td>B</td><td>Bash VM-safe (MAKEFLAGS=-j1)</td><td>Builds AUR mais lentos; evita OOM em VM de teste</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================== -->
+<!-- §14 Limitações                                                        -->
+<!-- =================================================================== -->
+<section>
+  <h2>§14 Limitações Reconhecidas</h2>
+  <ol>
+    <li><strong>OpenBox v0.2.0 não testado em hardware real</strong> — código + configs alinhados ao retarget RK3229 e lint 74/0; precisa execução de Phase 0 fingerprint + shakedown ≥ 7 dias em RK3229 R29_5G_LP3 físico antes da v0.3.</li>
+    <li><strong>CI cobre apenas sintaxe</strong> — <code>ci-syntax-check.sh</code> valida <code>bash -n</code>, shellcheck, <code>nft -c</code>; não valida comportamento.</li>
+    <li><strong>OpenBox sem disk encryption</strong> — LUKS no SSD é opcional/manual; não automatizado em v0.1.</li>
+    <li><strong>OpenBox sem 2FA</strong> em paineis — só basic/forward_auth via Caddy.</li>
+    <li><strong>OpenBox IPv6 desabilitado</strong> — simplifica VPN/Tor, perde dual-stack.</li>
+    <li><strong>OpenBox Jellyfin assume Docker</strong> — instalação do Docker está em <code>06-media.sh</code> (renomeado de <code>06-stremio.sh</code> na v0.2.0).</li>
+    <li><strong>OpenBox endpoint VPN hardcoded</strong> — usuário precisa editar <code>wg0.conf.example</code>.</li>
+    <li><strong>ADV7Sec não promove AIDE baseline automaticamente</strong> — intencional; tuning Fase 2 decide.</li>
+    <li><strong>ADV7Sec 3 warns de smoke retidos</strong> — auditd <code>root-cmd</code>, Zeek conn.log synthetic, dnstap socket. Triados em tuning.</li>
+    <li><strong>dnstap collector não provisionado</strong> na Fase 1 — socket existe, coletor é opt-in.</li>
+    <li><strong>Fase 3 (resposta) explicitamente fora de escopo</strong> — nftables auto-block, Hagezi RPZ, CrowdSec, fail2ban, Wazuh só após ADR nova e evidência documentada em <code>tuning/phase3-candidates.md</code>.</li>
+  </ol>
+</section>
+
+<!-- =================================================================== -->
+<!-- §15 Timeline                                                          -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§15 Linha do Tempo do Projeto</h2>
+
+  <h3>15.1 Marcos Realizados</h3>
+  <table>
+    <thead><tr><th>Data</th><th>Marco</th><th>Evidência</th></tr></thead>
+    <tbody>
+      <tr><td>2026-04-18</td><td>OpenBox v0.1 publicado (skeleton)</td><td>README, CASE_STUDY, THREAT_MODEL, REFERENCES; CI syntax verde</td></tr>
+      <tr><td>2026-04-18</td><td>Auditoria OpenBox AV01 produzida</td><td><code>deliverables/AV01_OpenBox_Audit_Report.{ms,pdf}</code></td></tr>
+      <tr><td>2026-04-20</td><td>Plano de hardening v2 aplicado</td><td><code>docs/HARDENING_PLAN_v2.md</code></td></tr>
+      <tr><td>2026-04-22</td><td>IPS_IDS inicia Phase 1 (detection-only)</td><td>ADRs 0001–0011 commitadas; fases 00–11 presentes</td></tr>
+      <tr><td>2026-04-23</td><td>ADR-0012 (Python parity)</td><td><code>install.py</code>, <code>ipsids_installer/</code>, <code>vm-harness.sh</code></td></tr>
+      <tr><td>2026-04-23</td><td>vmtst Full Install run</td><td><code>reports/vmtst-full-install-2026-04-23.md</code></td></tr>
+      <tr><td>2026-04-23</td><td>vmtst Real Config (no-smoke) run</td><td><code>reports/vmtst-real-config-nosmoke-2026-04-23.md</code></td></tr>
+      <tr><td>2026-04-23</td><td><code>ADV7Sec.py</code> (single-file, 54 KB) publicado</td><td><code>Projects/IPS_IDS/ADV7Sec.py</code></td></tr>
+      <tr><td>2026-04-23</td><td>Documento ADV7Box (este PDF) consolidado</td><td><code>Projects/ADV7Box/ADV7Box.{html,pdf}</code></td></tr>
+      <tr><td>2026-04-25</td><td>OpenBox v0.2.0 — retarget RK3229 R29_5G_LP3 (código + configs + threat research BadBox/Vo1d)</td><td><code>Projects/OpenBox0.1v/CHANGELOG.md</code> v0.2.0; <code>tools/fingerprint-rk3229.sh</code>; <code>docs/security/RK3229_THREAT_RESEARCH.md</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>15.2 Próximos 14 Dias — Tuning</h3>
+<pre class="ascii">
+Day 0       Smoke test e snapshot de saúde inicial
+Days 1-3    Observar sem supressões (salvo bloqueio de usabilidade)
+Days 4-7    Supressões mínimas com evidência escrita (tuning/suppressions.md)
+Days 8-13   Validar volume de supressões estável
+Day 14      Decidir: estender tuning, promover controle, ou redesenhar sensor ruidoso
+</pre>
+
+  <h3>15.3 Roadmap de Versões</h3>
+  <table>
+    <thead><tr><th>Versão</th><th>Pilar</th><th>Foco</th></tr></thead>
+    <tbody>
+      <tr><td>OpenBox v0.2</td><td>A</td><td>Shakedown em hardware real; ajustes de RAM budget reais</td></tr>
+      <tr><td>OpenBox v0.3</td><td>A</td><td>LUKS opcional; 2FA em paineis; Tor v3 hidden service</td></tr>
+      <tr><td>OpenBox v0.4</td><td>A</td><td>Webhook integration (Discord/Telegram via ntfy)</td></tr>
+      <tr><td>OpenBox v0.5</td><td>A</td><td>Multi-device (cluster RK3229 via Ansible)</td></tr>
+      <tr><td>OpenBox v1.0</td><td>A</td><td>CI verde em RK3229 físico; Lynis hardening ≥ 75 (alvo relaxado de 85 para 1GB RAM)</td></tr>
+      <tr><td>ADV7Sec Fase 2</td><td>B</td><td>14 dias de tuning — baseline AIDE promovida, rules Falco/Suricata com exceções documentadas</td></tr>
+      <tr><td>ADV7Sec Fase 3</td><td>B</td><td>Resposta seletiva (ADR nova + <code>tuning/phase3-candidates.md</code>): nftables, Hagezi RPZ, ClamAV prevention</td></tr>
+      <tr><td>ADV7Sec parity-complete</td><td>B</td><td>Bash deletado após paridade vmtst capturada (ADR-0012)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================== -->
+<!-- §16 Critérios de Aceite                                               -->
+<!-- =================================================================== -->
+<section>
+  <h2>§16 Critérios de Aceite e Exit Gate</h2>
+
+  <h3>16.1 OpenBox v0.1 → v1.0</h3>
+  <ul>
+    <li><code>bash tests/ci-syntax-check.sh</code> passa (<code>bash -n</code> + shellcheck + <code>nft -c</code>).</li>
+    <li><code>sudo tests/validate-stack.sh</code> passa todos os 10 checks.</li>
+    <li>Lynis hardening index ≥ 75 (v0.1) → ≥ 85 (v1.0).</li>
+    <li>Boot completo em &lt; 90 s (<code>systemd-analyze</code>).</li>
+    <li>Kill switch verificado: parar <code>wg0</code> → <code>curl</code> falha em 5 s.</li>
+    <li>Evidências em URL HTTPS pública (Git publicado).</li>
+  </ul>
+
+  <h3>16.2 ADV7Sec Fase 2 — Exit Criteria</h3>
+  <ul>
+    <li>14 dias de notas diárias, ou decisão de extensão documentada.</li>
+    <li>Nenhum serviço requerido falhando (<code>systemctl --failed</code> vazio).</li>
+    <li>Volume de alertas revisável diariamente.</li>
+    <li>Toda supressão com evidência e comando de rollback.</li>
+    <li>Promoções de baseline AIDE documentadas em <code>tuning/aide-baseline-promotions.md</code>.</li>
+    <li>Escolha de interface Suricata/Zeek provada com tráfego real em <code>tuning/network-interface-proof.md</code>.</li>
+    <li>Candidatos Fase 3 com contagem de falso-positivo e plano de rollback em <code>tuning/phase3-candidates.md</code>.</li>
+  </ul>
+
+  <h3>16.3 ADV7Box (consolidado)</h3>
+  <p>
+    O combinado é considerado "entrega acadêmica completa" quando (i) os dois pilares passam seus
+    próprios critérios de aceite, (ii) o documento consolidado (este) é anexado, (iii) os repositórios
+    estão publicados com URL HTTPS e (iv) um pitch de 5 min (opcional) é preparado — vide §17.
+  </p>
+</section>
+
+<!-- =================================================================== -->
+<!-- §17 Rubrica AV01-A                                                    -->
+<!-- =================================================================== -->
+<section>
+  <h2>§17 Aderência à Rubrica AV01-A</h2>
+
+  <p>
+    A tabela abaixo mapeia cada critério oficial (extraído de <code>[IC]AV01-A</code>) ao artefato do
+    ADV7Box que o satisfaz, e antecipa a auto-nota conservadora seguindo a recomendação da auditoria
+    OpenBox (2026-04-18) de <em>não</em> atribuir a si nota 5/5/5 no documento entregue à banca.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Critério</th>
+        <th>Insuficiente (0-1)</th>
+        <th>Regular (2-3)</th>
+        <th>Excelente (4-5)</th>
+        <th>Artefato ADV7Box</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Qualidade Técnica</td>
+        <td>Projeto incompleto ou tecnicamente inviável</td>
+        <td>Projeto funcional, documentação básica</td>
+        <td>Arquitetura robusta, detalhada, escolhas técnicas justificadas</td>
+        <td>Dois instaladores faseados e idempotentes; 12 ADRs; threat model; tuning plan 14d; smoke 16/3/0 em VM</td>
+      </tr>
+      <tr>
+        <td>Uso de Ferramentas</td>
+        <td>Não utilizou ou utilizou mal os links externos</td>
+        <td>Links funcionam mas conteúdo simplório</td>
+        <td>Uso exemplar de GitHub/Tinkercad/Figma com alto nível de detalhamento</td>
+        <td>Repositórios locais com CI de sintaxe, testes unit Python, VM harness, vault Obsidian integrado, referências técnicas com URLs ativos (§19)</td>
+      </tr>
+      <tr>
+        <td>Estrutura do PDF</td>
+        <td>Formatação pobre, falta de coesão</td>
+        <td>Documento organizado, segue estrutura</td>
+        <td>Entrega profissional, diagramas (UML/Blocos), escrita técnica</td>
+        <td>20 seções numeradas, diagrama SVG de blocos (Fig. 3.1), 2 diagramas de camada ASCII (Figs. 3.2/3.3), 1 diagrama de fluxo (Fig. 4.1), &gt; 25 tabelas com política de decisão</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>17.1 Pitch (§02 do enunciado, opcional)</h3>
+  <p>
+    Roteiro sugerido, 5 minutos:
+  </p>
+  <ol>
+    <li><strong>0:00–0:30</strong> — Problema em uma frase: "dois vetores independentes no lar técnico, borda e endpoint, não são resolvíveis por software só".</li>
+    <li><strong>0:30–1:30</strong> — Lacunas L1–L10 (§1.2) — mostrar a tabela.</li>
+    <li><strong>1:30–2:30</strong> — Pilar A (OpenBox): mostrar Fig. 3.2 + kill switch atomic.</li>
+    <li><strong>2:30–3:30</strong> — Pilar B (ADV7Sec): mostrar Fig. 3.3 + ADR-0002 (por que detection-only).</li>
+    <li><strong>3:30–4:00</strong> — Evidência: mostrar <code>smoke 16/3/0</code> e auditoria OpenBox.</li>
+    <li><strong>4:00–5:00</strong> — Direcionamento de carreira: infra de segurança residencial reprodutível, material para portfólio técnico (Bash + Python parity, eBPF, nftables atomic, commit pins).</li>
+  </ol>
+</section>
+
+<!-- =================================================================== -->
+<!-- §18 Evidências                                                        -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>§18 Evidências de Desenvolvimento</h2>
+
+  <h3>18.1 Artefatos Locais (fonte canônica)</h3>
+  <p>Caminhos absolutos na estação onde este documento foi produzido:</p>
+<pre>
+/home/aops/ObsidianAgent/Projects/OpenBox0.1v/
+  README.md
+  docs/CASE_STUDY.md
+  docs/HARDENING_PLAN_v2.md
+  docs/THREAT_MODEL.md
+  docs/RUNBOOK.md
+  docs/TOR_STREAMING_CAVEAT.md
+  docs/REFERENCES.md
+  docs/OBSIDIAN_VAULT.md
+  install.sh
+  install.d/[00..09]-*.sh
+  etc/{nftables,wireguard,tor,dnscrypt-proxy,caddy,monit,fail2ban,ssh,sysctl.d}/
+  systemd/openbox-*.{service,timer}
+  tests/{ci-syntax-check.sh,phase-b-vault-tool.sh,validate-obsidian-vault.sh,validate-stack.sh}
+  tools/{aops_vault_cli.py,sync_obsidian_vault.py,_agent_path.py,build_av01_pdf.sh}
+  deliverables/AV01_OpenBox_Audit_Report.{ms,pdf}
+  vault/
+  .aops-vault.toml
+
+/home/aops/ObsidianAgent/Projects/IPS_IDS/
+  README.md   README.txt   CLAUDE.md
+  PHASE1_BUILD.md   PHASE2_TUNING.md
+  ADV7Sec.py                        # single-file standalone (derivado)
+  install.sh                        # Bash reference
+  install.py                        # Python parity entrypoint
+  ipsids_installer/                 # modules (&lt;200 LOC/file)
+    __init__.py  cli.py  constants.py  context.py
+    phases_00_03.py  phases_04_06.py  phases_07_10.py  phases_11.py
+    runner.py  validate.py
+  install.d/[00..11]-*.sh   install.d/_lib.sh
+  etc/{audit,falco,suricata,unbound,aide,clamav,kunai,systemd,pacman.d}/
+  usr/local/sbin/ipsids-suricata-run.sh
+  usr/local/sbin/ipsids-aide-pacman-hook.sh
+  docs/{ARCHITECTURE,THREAT_MODEL,HOST_DETECTION,NETWORK_DETECTION,MALWARE_SCANNING,RESPONSE,TUNING}.md
+  docs/adr/0001..0012-*.md          # 12 ADRs
+  tests/{ci-syntax-check.sh,test_runner.py,vm-harness.sh,VM_SETUP.md}
+  reports/vmtst-full-install-2026-04-23.md
+  reports/vmtst-real-config-nosmoke-2026-04-23.md
+
+/home/aops/ObsidianAgent/Projects/ADV7Box/    # consolidado
+  ADV7Box.html
+  ADV7Box.pdf
+  README.md
+</pre>
+
+  <h3>18.2 Evidências Públicas (a publicar antes da submissão)</h3>
+  <p>A auditoria OpenBox (§11.1, achado F6) e o enunciado AV01-A exigem links HTTPS. Ação:</p>
+  <ol>
+    <li><code>git init</code> e commit inicial em cada projeto.</li>
+    <li>Push para GitHub sob organização do autor — sugestão: <code>github.com/&lt;user&gt;/openbox</code>, <code>github.com/&lt;user&gt;/adv7sec</code>.</li>
+    <li>Anexar o documento <code>ADV7Box.pdf</code> na Sala Online.</li>
+    <li>Atualizar os placeholders de URL neste PDF por <code>https://github.com/&lt;user&gt;/...</code> reais.</li>
+  </ol>
+
+  <h3>18.3 Comandos para Inspeção Externa</h3>
+<pre>
+# Vista do tree de um pilar
+git ls-tree -r HEAD --name-only | head -40
+
+# Pilar B — prova de dry-run seguro
+sudo ./install.py --dry-run | head -60
+
+# Pilar A — prova de dry-run seguro
+sudo ./install.sh --dry-run --phase 03-wireguard
+</pre>
+</section>
+
+<!-- =================================================================== -->
+<!-- §19 Referências                                                       -->
+<!-- =================================================================== -->
+<section>
+  <h2>§19 Referências Técnicas</h2>
+
+  <h3>19.1 WireGuard &amp; nftables</h3>
+  <ul>
+    <li>WireGuard whitepaper — <a>https://www.wireguard.com/papers/wireguard.pdf</a></li>
+    <li>WireGuard Hardening (Contabo) — <a>https://contabo.com/blog/hardening-your-wireguard-security-a-comprehensive-guide/</a></li>
+    <li>Pro Custodibus — WireGuard com nftables — <a>https://www.procustodibus.com/blog/2021/11/wireguard-nftables/</a></li>
+    <li>Arch Wiki nftables — <a>https://wiki.archlinux.org/title/Nftables</a></li>
+    <li>WireGuard Performance Tuning — <a>https://www.procustodibus.com/blog/2022/12/wireguard-performance-tuning/</a></li>
+    <li><code>xtarlit/wg-killswitch-nft</code> — <a>https://github.com/xtarlit/wg-killswitch-nft</a></li>
+  </ul>
+
+  <h3>19.2 DNS &amp; Pi-hole</h3>
+  <ul>
+    <li>Pi-hole + dnscrypt-proxy — <a>https://docs.pi-hole.net/guides/dns/dnscrypt-proxy/</a></li>
+    <li>DNS Encryption 2026 (DoH/DoT/DoQ) — <a>https://packet.guru/blog/DNS-Encryption-in-2026</a></li>
+  </ul>
+
+  <h3>19.3 Tor</h3>
+  <ul>
+    <li><code>torrc(5)</code> Debian — <a>https://manpages.debian.org/testing/tor/torrc.5.en.html</a></li>
+    <li>ArchWiki Tor — <a>https://wiki.archlinux.org/title/Tor</a></li>
+  </ul>
+
+  <h3>19.4 QoS</h3>
+  <ul>
+    <li>CAKE Recipes — <a>https://www.bufferbloat.net/projects/codel/wiki/CakeRecipes/</a></li>
+    <li>CAKE com WireGuard (flows, não triple-isolate) — <a>https://github.com/dtaht/sch_cake/issues/141</a></li>
+  </ul>
+
+  <h3>19.5 Jellyfin armhf (substituiu Stremio na v0.2.0)</h3>
+  <ul>
+    <li><code>jellyfin/jellyfin</code> — <a>https://hub.docker.com/r/jellyfin/jellyfin</a> (publica <code>linux/arm/v7</code>)</li>
+    <li>Stremio (legado) — <a>https://github.com/tsaridas/stremio-docker</a> — sem manifesto armhf, motivo do swap</li>
+  </ul>
+
+  <h3>19.6 Monitoramento</h3>
+  <ul>
+    <li>Netdata behind Caddy — <a>https://learn.netdata.cloud/docs/netdata-agent/configuration/securing-agents/running-the-agent-behind-a-reverse-proxy/caddy</a></li>
+    <li>Caddy basic auth CPU issue (usar <code>forward_auth</code>) — <a>https://github.com/caddyserver/caddy/issues/4267</a></li>
+  </ul>
+
+  <h3>19.7 Hardening / Compliance</h3>
+  <ul>
+    <li>CIS Benchmarks — <a>https://www.cisecurity.org/cis-benchmarks</a></li>
+    <li>Lynis — <a>https://cisofy.com/lynis/</a></li>
+    <li>Linux Security Hardening Guide 2026 — <a>https://dgmicro.com/linux-security-hardening-guide-2026-essential-commands-and-best-practices-for-sy</a></li>
+  </ul>
+
+  <h3>19.8 Sensores IPS/IDS</h3>
+  <ul>
+    <li>Falco — <a>https://falco.org/docs/</a></li>
+    <li>Suricata — <a>https://suricata.io/documentation/</a></li>
+    <li>Zeek — <a>https://docs.zeek.org/</a></li>
+    <li>Kunai — <a>https://github.com/kunai-project/kunai</a></li>
+    <li>AIDE — <a>https://aide.github.io/</a></li>
+    <li>Loki-RS — <a>https://github.com/Neo23x0/Loki</a> (+ fork Rust atual)</li>
+    <li>YARA Forge — <a>https://github.com/YARAHQ/yara-forge</a></li>
+  </ul>
+
+  <h3>19.9 Hardware</h3>
+  <ul>
+    <li>Rockchip RK3229 datasheet V1.2 — <a>https://rockchip.fr/RK3229%20datasheet%20V1.2.pdf</a></li>
+    <li>R29-MXQ-LP3-V2.3 teardown e DTS — <a>https://github.com/MattWestb/R29-MXQ-LP3-V2.3-00908</a></li>
+    <li>MXQ 4K RK3229 unboxing/teardown (CNX Software) — <a>https://www.cnx-software.com/2016/03/07/mxq-4k-rockchip-rk3229-android-tv-box-unboxing-and-teardown/</a></li>
+    <li>Armbian rk322x-box (community) — <a>https://forum.armbian.com/topic/12401-long-story-linux-on-rk3229-rockchip/</a></li>
+    <li>FBI IC3 PSA250605 — Home Internet Connected Devices (BadBox 2.0) — <a>https://www.ic3.gov/PSA/2025/PSA250605</a></li>
+    <li>Doctor Web — Android.Vo1d backdoor — <a>https://thehackernews.com/2024/09/beware-new-vo1d-malware-infects-13.html</a></li>
+    <li>Rockchip Maskrom mode — <a>http://rockchip.wikidot.com/how-to-enter-rockusb-maskrom-mode</a></li>
+    <li>Raspberry Pi 4 Model B (referência histórica v0.1) — <a>https://www.raspberrypi.com/products/raspberry-pi-4-model-b/</a></li>
+  </ul>
+</section>
+
+<!-- =================================================================== -->
+<!-- §20 Conclusão                                                         -->
+<!-- =================================================================== -->
+<section>
+  <h2>§20 Conclusão</h2>
+
+  <p>
+    ADV7Box é um projeto de infraestrutura residencial intencionalmente dividido em dois pilares com
+    responsabilidades declaradas. O Pilar A (OpenBox) nega ao ISP o perfil comportamental do lar e
+    quebra o caminho ACR das smart TVs. O Pilar B (ADV7Sec) fornece à workstation uma trilha forense
+    local — auditd, Falco, Suricata, Zeek, AIDE — e recusa agir cegamente antes de 14 dias de tuning.
+    O que mantém os dois pilares coerentes é um vocabulário compartilhado de honestidade técnica:
+    cada decisão tem ADR; cada sensor tem fonte, destino e commando de rollback; cada cláusula de
+    "fora de escopo" está escrita, não omitida.
+  </p>
+
+  <p>
+    Em relação ao enunciado <strong>AV01-A</strong>, o documento cumpre: (i) um estudo de caso com
+    justificativa, (ii) demandas de hardware e software especificadas, (iii) arquitetura com
+    diagramas de blocos e fluxo, (iv) evidências de desenvolvimento rastreáveis em artefatos
+    versionados, (v) plano de validação com testes, smoke e tuning, e (vi) auditoria externa já
+    executada e incorporada. A parte do enunciado que continua pendente — links HTTPS públicos —
+    é declarada abertamente em §18.2 como ação antes da submissão.
+  </p>
+
+  <div class="callout note">
+    <strong>Postura perante a banca.</strong> Este trabalho não se apresenta como produto final
+    pronto. Apresenta-se como <em>plataforma em consolidação operacional</em> com: arquitetura
+    correta, dois instaladores faseados e idempotentes, testes de sintaxe e de VM, auditoria
+    documentada, lacunas conhecidas e plano de fechamento. A nota almejada é resultado do
+    <em>material</em>, não de auto-pontuação antecipada.
+  </div>
+
+  <div class="sigrow">
+    <div class="box">Autor · AOPS</div>
+    <div class="box">Data · 2026-04-23</div>
+    <div class="box">Documento · ADV7Box v1.0</div>
+  </div>
+</section>
+
+</body>
+</html>

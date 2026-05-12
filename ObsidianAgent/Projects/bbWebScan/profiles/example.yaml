@@ -1,0 +1,25 @@
+program_name: example-program
+seed_urls:
+  - https://app.example.com
+allowed_hosts:
+  - example.com
+denied_hosts:
+  - admin.example.com
+auth:
+  headers:
+    X-Bug-Bounty-Context: authorized
+  cookies: {}
+  raw_request: null
+mode_default: safe
+enabled_tools:
+  - httpx
+  - katana
+wordlist: /usr/share/dirb/wordlists/common.txt
+threads: 10
+rate: 25
+tool_timeout_s: 15
+command_wall_clock_s: 900
+retry:
+  max_attempts: 2
+  backoff_s: 2.0
+  transient_exit_codes: [124, 137, 143]

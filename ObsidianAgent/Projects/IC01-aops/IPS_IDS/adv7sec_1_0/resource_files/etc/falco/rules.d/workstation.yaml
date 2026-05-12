@@ -1,0 +1,45 @@
+# [IPS-PH1] High-signal workstation rules. Tune with exceptions before broad disables.
+
+- rule: Unexpected Shell From Non Terminal GUI Parent
+  desc: Alert when common GUI clients spawn an interactive shell.
+  condition: >
+    spawned_process and shell_procs and
+    proc.pname in (firefox, chromium, google-chrome, thunderbird, discord, slack)
+  output: >
+    Unexpected shell from non-terminal GUI parent
+    (user=%user.name parent=%proc.pname cmd=%proc.cmdline)
+  priority: WARNING
+  tags: [host, workstation, shell]
+
+- rule: Unexpected Pivot Or Ad Hoc Server Tool Execution
+  desc: Alert on ad hoc listener and pivot tooling.
+  condition: >
+    (spawned_process and proc.name in (nc, ncat, socat)) or
+    (spawned_process and proc.name in (python, python3) and proc.cmdline contains "http.server")
+  output: >
+    Sensitive pivot or ad hoc server tool execution
+    (user=%user.name proc=%proc.name cmd=%proc.cmdline)
+  priority: NOTICE
+  tags: [host, workstation, network]
+
+- rule: Sensitive Config Write
+  desc: Alert on writes to key admin and network config locations.
+  condition: >
+    open_write and
+    fd.name in (/etc/passwd, /etc/shadow, /etc/sudoers, /etc/nftables.conf)
+  output: >
+    Sensitive config write
+    (user=%user.name file=%fd.name proc=%proc.name cmd=%proc.cmdline)
+  priority: WARNING
+  tags: [host, workstation, persistence]
+
+- rule: Unexpected Listener Started
+  desc: Alert when uncommon scripting or pivot binaries start listening sockets.
+  condition: >
+    evt.type = listen and
+    proc.name in (python, python3, ruby, perl, php, nc, ncat, socat)
+  output: >
+    Unexpected listener started
+    (user=%user.name proc=%proc.name cmd=%proc.cmdline addr=%fd.name)
+  priority: WARNING
+  tags: [host, workstation, listener]

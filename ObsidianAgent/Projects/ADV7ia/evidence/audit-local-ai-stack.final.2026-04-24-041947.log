@@ -1,0 +1,152 @@
+
+===== System =====
+Linux BLK7RCH 6.19.13-arch1-1 #1 SMP PREEMPT_DYNAMIC Tue, 21 Apr 2026 23:38:22 +0000 x86_64 GNU/Linux
+2026-04-24T04:19:47+00:00
+
+===== Docker services =====
+active
+active
+active
+active
+
+===== Docker containers =====
+NAMES           STATUS             IMAGE                                          PORTS
+qdrant-local    Up 15 minutes      qdrant/qdrant:v1.17.1                          127.0.0.1:6333->6333/tcp, 6334/tcp
+openhands-app   Up About an hour   docker.openhands.dev/openhands/openhands:1.6   
+
+===== LM Studio =====
+Server: ON (port: 1234)
+
+Loaded Models
+  · qwen3-coder-local - 32.48 GB
+  · text-embedding-nomic-embed-text-v1.5 - 84.11 MB
+
+IDENTIFIER                              MODEL                                   STATUS    SIZE        CONTEXT    PARALLEL    DEVICE    TTL     
+qwen3-coder-local                       qwen3-coder-30b-a3b-instruct            IDLE      32.48 GB    32768      4           Local     2h / 2h 
+text-embedding-nomic-embed-text-v1.5    text-embedding-nomic-embed-text-v1.5    IDLE      84.11 MB    2048       -           Local     58m / 1h
+
+qwen3-coder-local
+text-embedding-nomic-embed-text-v1.5
+qwen3-coder-30b-a3b-instruct
+dphn.dolphin-mistral-24b-venice-edition
+
+===== LM Studio Docker bridge =====
+qwen3-coder-local
+text-embedding-nomic-embed-text-v1.5
+qwen3-coder-30b-a3b-instruct
+dphn.dolphin-mistral-24b-venice-edition
+
+===== OpenHands health =====
+"OK"
+
+===== OpenCode MCP =====
+┌  MCP Servers
+│
+●  ✓ fs_aider_test [90mconnected
+│      [90m/home/aops/bin/mcp-filesystem-aider-test
+│
+●  ✓ git_aider_test [90mconnected
+│      [90m/home/aops/bin/mcp-git-aider-test
+│
+●  ✓ rag_aider_test [90mconnected
+│      [90m/home/aops/bin/mcp-rag-aider-test
+│
+└  3 server(s)
+
+
+===== Qdrant =====
+{
+  "result": {
+    "collections": [
+      {
+        "name": "aider_test_docs"
+      },
+      {
+        "name": "aider_test_repo_rag"
+      }
+    ]
+  },
+  "status": "ok",
+  "time": 0.000004269
+}
+
+===== RAG smoke =====
+QDRANT_RAG_OK
+collection: aider_test_docs
+vector_size: 768
+top_score: 0.7070321
+top_text: Qdrant local RAG OK. OpenHands, Aider, Cline and OpenCode are validated with LM Studio.
+
+===== RAG repo query =====
+RAG_QUERY_OK
+query: filesystem MCP and git MCP validation
+
+[1] score=0.812340
+path: MCP_FILESYSTEM_OK.md
+chunk: 0
+text: MCP filesystem OK
+
+[2] score=0.811526
+path: GIT_MCP_OK.md
+chunk: 0
+text: Git MCP OK
+
+[3] score=0.617536
+path: RAG_QDRANT_OK.md
+chunk: 0
+text: # Local RAG validation  Qdrant local RAG OK  Collection: aider_test_repo_rag Embedding model: text-embedding-nomic-embed-text-v1.5 Vector size: 768  Validated agents: - OpenHands - Aider - Cline - OpenCode  Validated MCP
+
+[4] score=0.504509
+path: .aider.conf.yml
+chunk: 0
+text: model: lm_studio/qwen3-coder-local auto-commits: true dirty-commits: true attribute-author: false attribute-committer: false check-update: false show-release-notes: false no-show-model-warnings: true
+
+[5] score=0.499794
+path: .aider.chat.history.md
+chunk: 0
+text: # aider chat started at 2026-04-24 03:25:37  > You can skip this check with --no-gitignore   > Add .aider* to .gitignore (recommended)? (Y)es/(N)o [Yes]: y   > Added .aider* to .gitignore   > /home/aops/.local/bin/aider 
+
+===== Ports =====
+LISTEN 0      511        127.0.0.1:1234       0.0.0.0:*    users:(("llmster",pid=18041,fd=35))
+LISTEN 0      5         172.17.0.1:1234       0.0.0.0:*   
+LISTEN 0      4096       127.0.0.1:6333       0.0.0.0:*   
+LISTEN 0      2048         0.0.0.0:3000       0.0.0.0:*   
+
+===== OpenCode permissions =====
+{
+  "edit": "ask",
+  "bash": "ask"
+}
+{
+  "fs_aider_test": {
+    "type": "local",
+    "command": [
+      "/home/aops/bin/mcp-filesystem-aider-test"
+    ],
+    "enabled": true
+  },
+  "git_aider_test": {
+    "type": "local",
+    "command": [
+      "/home/aops/bin/mcp-git-aider-test"
+    ],
+    "enabled": true
+  },
+  "rag_aider_test": {
+    "type": "local",
+    "command": [
+      "/home/aops/bin/mcp-rag-aider-test"
+    ],
+    "enabled": true
+  }
+}
+
+===== Repo =====
+5f05212 (HEAD -> master) validate custom rag mcp with opencode
+c9f4f6f validate qdrant local rag pipeline
+8f653c0 validate git mcp with opencode
+fce3b4f validate filesystem mcp with opencode
+a192876 validate opencode local lm studio setup
+733e541 validate cline local lm studio setup
+99d03eb docs: add aider config confirmation to README.md ```
+276683e configure aider local setup

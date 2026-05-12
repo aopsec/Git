@@ -1,0 +1,7 @@
+[Unit]
+Description=OpenBox Lynis security audit (weekly)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/lynis audit system --quiet --no-colors --report-file /var/log/lynis-report.dat
+ExecStartPost=/usr/local/sbin/openbox-lynis-notify.sh

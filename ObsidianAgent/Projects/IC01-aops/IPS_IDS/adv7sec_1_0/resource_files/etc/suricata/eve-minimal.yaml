@@ -1,0 +1,22 @@
+%YAML 1.1
+---
+# [FIX-VM-SURI-YAML] Suricata --include requires a complete YAML document header.
+# [IPS-PH1] Merge into /etc/suricata/suricata.yaml; do not replace full upstream config.
+
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: /var/log/suricata/eve.json
+      types:
+        - alert
+        - anomaly
+        - dns
+        - http
+        - tls
+        - ssh
+        - flow
+        - stats:
+            totals: yes
+            threads: no
+            deltas: yes

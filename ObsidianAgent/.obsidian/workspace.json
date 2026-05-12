@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "4f3990df58ce3b08",
+        "id": "5e00941365c14ef8",
         "type": "tabs",
         "children": [
           {
-            "id": "11523009b134e7d0",
+            "id": "254c9966b13e35b3",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/IPS_IDS/ADV7Sec_1.0_AUDIT.md",
+                "file": "Projects/bbWebScan/README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ADV7Sec_1.0_AUDIT"
+              "title": "README"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200
   },
   "right": {
     "id": "817a422b2ffcb8a2",
@@ -183,42 +183,43 @@
       "bases:Create new base": false
     }
   },
-  "active": "11523009b134e7d0",
+  "active": "254c9966b13e35b3",
   "lastOpenFiles": [
-    "Projects/IPS_IDS/CLAUDE.md",
-    "Projects/IPS_IDS/PHASE2_TUNING.md",
-    "Projects/IPS_IDS/README.md",
-    "Projects/IPS_IDS/adv7sec_1_0/__pycache__/linux.cpython-314.pyc.140378108833712",
-    "Projects/IPS_IDS/__pycache__/ADV7Sec.cpython-314.pyc",
-    "Projects/IPS_IDS/__pycache__",
-    "CLAUDE.md.tmp.1706829.1776954827675",
-    "CLAUDE.md.tmp.1706829.1776954822098",
-    "CLAUDE.md.tmp.1706829.1776954817739",
-    "Projects/IPS_IDS/__pycache__/ADV7Sec.cpython-314.pyc.140357391052720",
-    "Projects/IPS_IDS/ipsids_installer/__pycache__/phases_07_10.cpython-314.pyc.139987732674528",
-    "Projects/IPS_IDS/tests/__pycache__/test_runner.cpython-314.pyc.139980698529712",
-    "Projects/IPS_IDS/ipsids_installer/__pycache__/phases_00_03.cpython-314.pyc.140048111482928",
-    "Projects/IPS_IDS/reports/vmtst-real-config-nosmoke-2026-04-23.md",
-    "Projects/IPS_IDS/reports/vmtst-full-install-2026-04-23.md",
-    "Projects/IPS_IDS/tests/VM_SETUP.md",
-    "Projects/IPS_IDS/docs/adr/0012-python-installer-rewrite.md",
-    "Projects/IPS_IDS/docs/adr/0011-local-journald-first.md",
-    "Projects/IPS_IDS/docs/adr/0001-arch-workstation-target.md",
-    "Projects/IPS_IDS/docs/TUNING.md",
-    "Projects/IPS_IDS/docs/THREAT_MODEL.md",
-    "Projects/IPS_IDS/docs/RESPONSE.md",
-    "Projects/IPS_IDS/docs/NETWORK_DETECTION.md",
-    "Projects/IPS_IDS/docs/MALWARE_SCANNING.md",
-    "Projects/IPS_IDS/docs/HOST_DETECTION.md",
-    "Projects/IPS_IDS/PHASE1_BUILD.md",
-    "Projects/IPS_IDS/PHASE1_ARCH_IMPLEMENTATION.md",
-    "Vault/Generated/Project Overviews/Project Overview - IPS_IDS.md",
-    "Projects/OpenBox0.1v/docs/CASE_STUDY.md",
-    "Projects/OpenBox0.1v/vault/Generated/Install Phases/Install Phase - Lib.md",
-    "Projects/OpenBox0.1v/vault/Generated/Automation/Automation - Openbox Lynis Notify.md",
-    "Projects/OpenBox0.1v/vault/Generated/Automation/Automation - Openbox Container Running.md",
-    "Untitled.md",
-    "Projects/OpenBox0.1v/docs/HARDENING_PLAN_v2.md",
-    "Projects/OpenBox0.1v/docs/OBSIDIAN_VAULT.md"
+    "Projects/bbWebScan/README.md.tmp.1769937.c8617b201a98",
+    "Projects/bbWebScan/CHANGELOG.md.tmp.1769937.485ac0db42e9",
+    "Vault/References/CyberPDFs/Sources/black-hat-bash-0c39b1c3.md",
+    "Projects/bbWebScan/pyproject.toml.tmp.1769937.280f2ac4ed4c",
+    "Projects/bbWebScan/tests/__pycache__/test_stages.cpython-314-pytest-9.0.3.pyc.2859948",
+    "Projects/bbWebScan/tests/__pycache__/test_preflight.cpython-314-pytest-9.0.3.pyc.2859948",
+    "Projects/bbWebScan/tests/__pycache__/test_pipeline.cpython-314-pytest-9.0.3.pyc.2859948",
+    "Projects/bbWebScan/tests/test_preflight.py.tmp.1769937.c423df4d4763",
+    "Projects/bbWebScan/tests/sed1SXiZO",
+    "Projects/bbWebScan/tests/sedNdXyZJ",
+    "Projects/bbWebScan/tests/test_pipeline.py.tmp.1769937.5c06683cbe00",
+    "Projects/bbWebScan/tests/sedXdfgpM",
+    "Vault/References/CyberPDFs/Certification.md",
+    "Vault/References/CyberPDFs/Cyber PDF Reference Policy.md",
+    "Vault/References/CyberPDFs/Index.md",
+    "Vault/References/CyberPDFs/Sources/black-hat-go-21619c7f.md",
+    "Vault/References/CyberPDFs/Sources/python-penetration-testing-essentials-2c0e9938.md",
+    "Vault/References/CyberPDFs/Tool Index.md",
+    "Vault/References/CyberPDFs/Technique Index.md",
+    "Vault/References/CyberPDFs/Study Roadmap.md",
+    "Vault/References/CyberPDFs/Source Manifest.md",
+    "Vault/References/CyberPDFs/Scripts And Snippets.md",
+    "Projects/bbWebScan/README.md",
+    "Projects/bbWebScan/CHANGELOG.md",
+    "Vault/References/CyberPDFs/Sources/desafio-inicial-1-adf6d924.md",
+    "Vault/Vault Home.md",
+    "Vault/References/CyberPDFs/Sources/adv7box-e02ba532.md",
+    "Vault/References/CyberPDFs/Sources/75609179-0a0e-4b01-8993-edf5c9cd90d8-55ef10c4.md",
+    "Projects/IC01-aops/OpenBox0.1v/docs/THREAT_MODEL.md",
+    "Vault/Generated/Project Manifests/Project Manifest - ADV7ia.md",
+    "Vault/References/CyberPDFs/Sources/portfoliohub-alcides-olivo-pollazzon-soterio-a62691d4.md",
+    "Vault/References/CyberPDFs/Sources/matematica-discreta-scheinerman-pdf-free-6aa5b34d.md",
+    "Vault/References/CyberPDFs/Sources/final-portfolio-report-84a2774f.md",
+    "Vault/References/CyberPDFs/Sources/cap2-matematicadiscreta-62e9a881.md",
+    "Vault/References/CyberPDFs/Sources/ic-av01-a-1de28922.md",
+    "Vault/References/CyberPDFs/Sources/ic-av01-a-1-1de28922.md"
   ]
 }

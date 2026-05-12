@@ -1,0 +1,112 @@
+{
+  "container_spec": {
+    "service_name": "openhands-app",
+    "container_name": "openhands-app",
+    "compose_file": "deploy/openhands/compose.yaml",
+    "image": "docker.openhands.dev/openhands/openhands:1.6",
+    "restart_policy": "unless-stopped",
+    "network_mode": "bridge",
+    "privileged": false,
+    "published_ports": [
+      {
+        "host_ip": "127.0.0.1",
+        "host_port": 3000,
+        "container_port": 3000
+      }
+    ],
+    "required_env": {
+      "SANDBOX_USER_ID": "1000",
+      "SANDBOX_RUNTIME_BINDING_ADDRESS": "127.0.0.1",
+      "USE_HOST_NETWORK": "false",
+      "FILE_STORE": "local",
+      "FILE_STORE_PATH": "/.openhands",
+      "SANDBOX_VOLUMES": "${ADV7IA_ROOT}:/workspace/adv7ia:rw"
+    },
+    "required_mounts": [
+      "${HOME}/.openhands:/.openhands",
+      "${HOME}/.openhands:/home/openhands/.openhands",
+      "${HOME}/.openhands:/root/.openhands",
+      "${HOME}/.openhands/config.toml:/app/config.toml:ro",
+      "/var/run/docker.sock:/var/run/docker.sock"
+    ],
+    "required_extra_hosts": [
+      "host.docker.internal:host-gateway"
+    ],
+    "required_security_opt": [
+      "no-new-privileges:true"
+    ],
+    "command": [
+      "uvicorn",
+      "openhands.server.listen:app",
+      "--host",
+      "0.0.0.0",
+      "--port",
+      "3000"
+    ]
+  },
+  "openhands_settings": {
+    "settings_file": "${HOME}/.openhands/settings.json",
+    "apply_mode": "auto",
+    "managed_settings": {
+      "language": {
+        "mode": "literal",
+        "value": "en"
+      },
+      "agent": {
+        "mode": "literal",
+        "value": "CodeActAgent"
+      },
+      "confirmation_mode": {
+        "mode": "literal",
+        "value": false
+      },
+      "llm_model": {
+        "mode": "literal",
+        "value": "lm_studio/qwen3-coder-local"
+      },
+      "llm_api_key": {
+        "mode": "env",
+        "env_var": "ADV7IA_OPENHANDS_LLM_API_KEY",
+        "default": "dummy-api-key"
+      },
+      "llm_base_url": {
+        "mode": "literal",
+        "value": "http://host.docker.internal:1234/v1"
+      },
+      "enable_default_condenser": {
+        "mode": "literal",
+        "value": true
+      },
+      "enable_sound_notifications": {
+        "mode": "literal",
+        "value": false
+      },
+      "user_consents_to_analytics": {
+        "mode": "literal",
+        "value": false
+      },
+      "mcp_config": {
+        "mode": "literal",
+        "value": {
+          "sse_servers": [],
+          "stdio_servers": [],
+          "shttp_servers": []
+        }
+      },
+      "v1_enabled": {
+        "mode": "literal",
+        "value": true
+      },
+      "sandbox_grouping_strategy": {
+        "mode": "literal",
+        "value": "NO_GROUPING"
+      }
+    }
+  },
+  "cutover_policy": {
+    "allow_recreate": true,
+    "require_proxy": true,
+    "recreate_timeout_seconds": 120,
+    "restart_conversations_on_llm_change": true
+  }
+}

@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bbwebscan"
+version = "0.5.2"
+description = "Scope-aware bug bounty web recon orchestrator"
+requires-python = ">=3.12"
+dependencies = [
+  "pydantic>=2.8,<3.0",
+  "publicsuffix2>=2.20191221",
+  "PyYAML>=6.0",
+  "rich>=13",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy>=1.11",
+  "pytest>=8.3",
+  "ruff>=0.6",
+  "types-PyYAML>=6.0",
+]
+cov = [
+  "pytest-cov>=5.0",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["bbwebscan"]
+
+[tool.coverage.report]
+fail_under = 85
+exclude_lines = [
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+]
+
+[project.scripts]
+bbwebscan = "bbwebscan.cli:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "PL"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PLR2004"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["bbwebscan", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools]
+packages = ["bbwebscan", "bbwebscan.stages"]

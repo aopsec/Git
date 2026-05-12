@@ -1,0 +1,699 @@
+# Real-World Bug Hunting
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 16 strong cyber signals, 25 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Real-World Bug Hunting - A Field Guide to Web Hacking.pdf`
+- SHA256: `e112338e882c39e70d1bb36878a2562fee720ee70e5f607b1407ae0cff5046ab`
+- Pages: `350`
+- Text characters: `533254`
+- Author: `Peter Yaworski`
+- Copied PDF: [[PDFs/real-world-bug-hunting-a-field-guide-to-web-hacking-e112338e.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 190: nmap
+- p. 71: burp
+- p. 189: metasploit
+- p. 347: kali
+- p. 126: linux
+- p. 180: bash
+- p. 14: python
+- p. 3: tor
+- p. 43: monit
+
+## Commands
+- p. 185: `wget -q -O "%o" "https://example.com";|ls "-la"`
+
+## Code And Script Lines
+- p. 27: `from you. Bug hunting can be lonely work if you’re struggling. But it’s`
+- p. 31: `from 0 to 255. IPv6 is the newest version of the Internet Protocol. It was`
+- p. 51: `from code that isn’t directly visible. For example, let’s say your bank`
+- p. 51: `def prepare_transfer(➊params)`
+- p. 52: `def transfer_money(params)`
+- p. 52: `from 0, params[0] accesses the value at the ﬁrst location in the array,`
+- p. 53: `function called in prepare_transfer, the from variable would take the third`
+- p. 67: `from another, malicious site. Sometimes the HTTP body of the POST`
+- p. 67: `from what trusted origins. This is referred to as a preﬂight OPTIONS call.`
+- p. 67: `from each other is called cross-origin resource sharing (CORS). CORS`
+- p. 68: `from its server. This allows for CSRF vulnerabilities but might also`
+- p. 69: `from the site. Regardless of the method, only the target’s web browser`
+- p. 75: `function window.onload, which deﬁnes an anonymous JavaScript function`
+- p. 75: `function will always be called when the page is loaded.`
+- p. 75: `function takes and splits a string into an array of strings at each '='`
+- p. 98: `from another origin. The SOP protects innocent websites from`
+- p. 106: `from those input boxes weren’t properly sanitized when setting up`
+- p. 110: `from Google.`
+- p. 122: `from the aforementioned resources without a Sandbox bypass. If it’s less`
+- p. 132: `for themselves in the database.`
+- p. 141: `from the user function using the mid function. Then he compared`
+- p. 142: `import string`
+- p. 142: `import requests`
+- p. 142: `from urllib import quote`
+- p. 142: `from base64 import b64encode`
+- p. 143: `function that the script is trying to brute-force. Once the script has a`
+- p. 146: `function executes. To understand the signiﬁcance of this process, let’s`
+- p. 151: `from visitors and send requests on to other servers that are publicly`
+- p. 180: `function would execute the ping and id commands. The id command`
+- p. 182: `function to read the contents of a ﬁle into a string. In this case, the ﬁle`
+- p. 186: `from https://imagetragick.com/, but could have easily used the SVG ﬁle as`
+- p. 207: `from its AWS account without deleting the CNAME record. So,`
+- p. 224: `from Shopify but didn’t visit the URL right away. Instead, in the`
+- p. 262: `from 98.136.0.0 to 98.139.255.255 or 98.136.0.0/14, which is 260,000`
+- p. 262: `#!/bin/bash`
+- p. 264: `from the servers. For example, a site might enable admin-related`
+- p. 289: `while operating a bounty program:`
+- p. 290: `from you to validate and reproduce a bug, that delays the bug ﬁx`
+- p. 293: `from the bug reports in the book that the proxy allows you to`
+- p. 324: `function execution, 121–122`
+- p. 350: `while you’re at it.`
+
+## URLs
+- p. 3: https://lccn.loc.gov/2018060556
+- p. 6: https://blog.innerht.ml,
+- p. 30: http://www.google.com/,
+- p. 32: http://.
+- p. 32: http://www.google.com/
+- p. 34: https://www.google.com/
+- p. 36: http://www.google.com/<example
+- p. 37: http://www.google.com.
+- p. 41: https://www.google.com/?redirect_to=https://www.gmail.com
+- p. 41: https://www.gmail.com/,
+- p. 41: https://www.google.com/?redirect_to=https://www.attacker.com
+- p. 41: https://www.<attacker
+- p. 42: https://www.google.com
+- p. 43: https://apps.shopify.com/services/google/themes/preview/supply--
+- p. 43: https://www.hackerone.com/reports/101962/
+- p. 43: https://app.shopify.com/services/google/themes/preview/supply--blue?
+- p. 43: http://<attacker
+- p. 44: http://mystore.myshopify.com/account/login/
+- p. 44: https://www.hackerone.com/reports/103772/
+- p. 44: http://mystore.myshopify.com/account/login?checkout_url=.attacker.com
+- p. 44: http://mystore.myshopify.com.<attacker
+- p. 45: http://mystore.myshopify.com/.
+- p. 45: https://www.hackerone.com/reports/111968/
+- p. 46: https://support.hackerone.com/
+- p. 46: https://support.hackerone.com
+- p. 46: http://compayn.zendesk.com.
+- p. 46: http://evil.com»;</script
+- p. 46: http://evil.com.
+- p. 47: http://evil.com:
+- p. 47: https://hackerone.com/zendesk_session?
+- p. 50: https://www.bank.com/transfer?from=12345&to=67890&amount=5000
+- p. 50: https://www.bank.com/transfer?from=12345&to=67890&amount=5000&from=ABCDEF
+- p. 51: https://www.owasp.org/images/b/ba/AppsecEU09_CarettoniDiPaola_v0.8.pdf
+- p. 51: https://www.bank.com/transfer?to=67890&amount=5000
+- p. 52: https://www.bank.com/transfer?to=67890&amount=5000&from=ABCDEF
+- p. 53: http://host/page.php?par=123%26action=edit
+- p. 54: https://hackerone.com/blog/introducing-signal-and-impact/
+- p. 54: https://hackerone.com/reports/105953/
+- p. 55: https://hackerone.com/blog/introducing-signal
+- p. 55: https://vk.com/durov
+- p. 55: https://www.facebook.com/sharer.php?
+- p. 55: https://hackerone.com/blog/introducing
+- p. 55: https://hackerone.com/blog/introducing-signal?&u=https://vk.com/
+- p. 55: https://vk.com/durov”
+- p. 56: https://www.twitter.com/
+- p. 56: https://blog.mert.ninja/twitter-hpp-vulnerability/
+- p. 56: https://twitter.com/i/u?
+- p. 57: https://twitter.com/
+- p. 57: https://ericrafaloff.com/parameter-tampering-attack-on-twitter-
+- p. 58: https://twitter.com/intent/intentType?parameter_name=parameterValue
+- p. 58: https://twitter.com/intent/follow?
+- p. 59: https://twitter.com/intent/like?tweet_i.d=6616252302978211845&screen
+- p. 63: http://www.
+- p. 65: https://www.bank.com/transfer?from=bob&to=joe&amount=500
+- p. 66: http://bank.com/transfer
+- p. 70: https://twitter-commerce.shopifyapps.com/auth/twitter/disconnect/
+- p. 70: https://www.hackerone.com/reports/111216/
+- p. 71: https://twitter-commerce.shopifyapps.com/account
+- p. 71: https://twitter-
+- p. 71: https://twitter-commerce.shopifyapps.com
+- p. 72: https://admin.instacart.com/api/v2/zones/
+- p. 72: https://hackerone.com/reports/157993/
+- p. 72: https://admin.instacart.com/api/v2/zones
+- p. 73: https://www.badoo.com/
+- p. 73: https://hackerone.com/reports/127703/
+- p. 73: https://www.badoo.com/,
+- p. 74: https://eu1.badoo.com/worker-scope/chrome-service-worker.js,
+- p. 74: https://eu1.badoo.com/chrome-push-stats?ws=1&rt=
+- p. 74: https://eu1.badoo.com/worker-scope/chrome-service-worker.
+- p. 74: https://eu1.badoo.com/google/verify.phtml?
+- p. 75: https://eu1.badoo.com/chrome-push-stats?ws,1&rt,<rt_param_value
+- p. 78: http://attacker.com/capture.php
+- p. 78: https://coinbase.com/apps/
+- p. 78: https://hackerone.com/reports/104543/
+- p. 80: https://gchq.github.io/CyberChef/.
+- p. 80: https://hackerone.com/reports/<report_id
+- p. 80: https://hackerone.com/reports/110578/
+- p. 81: https://torontowebsitedeveloper.com
+- p. 82: https://evil.com/log.php?text=
+- p. 82: https://evil.com/log.php?text=.
+- p. 82: https://evil.com/log.php?
+- p. 83: https://blog.innerht.ml/csp-2015/#contentexﬁltration,
+- p. 83: https://hackerone.com/reports/112935/
+- p. 84: http://www.torontowebsitedeveloper.com
+- p. 85: https://withinsecurity.com/wp-login.php
+- p. 85: https://hackerone.com/reports/111094/
+- p. 85: https://withinsecurity.com/wp-login.php?error=access_denied
+- p. 85: https://withinsecurity.com/wp-login.php?
+- p. 91: https://hackerone.com/reports/106427/
+- p. 92: https://twitter.com/i/safety/report_story/
+- p. 92: https://hackerone.com/reports/52042/
+- p. 94: https://twitter.com/login?redirect_after_login=https://twitter.com:21/%E5
+- p. 94: https://twitter.com/login?redirect_after_login=https://twitter.com:21/
+- p. 97: https://www.<example
+- p. 98: http://www.<example
+- p. 98: http://store.<example
+- p. 100: http://html5sec.org/,
+- p. 101: https://blog.innerht.ml/the-misunderstood-
+- p. 101: https://github.com/masatokinugawa/ﬁlterbypass/wiki/Browser’s-XSS-Filter-
+- p. 103: https://xsshunter.com/
+- p. 104: https://whitton.io/articles/uber-turning-self-xss-into-good-xss/.
+- p. 104: https://hackerone.com/reports/106293/
+- p. 105: https://nostarch.com/
+- p. 106: https://hackerone.com/reports/104359/
+- p. 108: https://klikki.ﬁ/adv/yahoo.html
+- p. 110: https://mahmoudsec.blogspot.com/2015/09/how-i-found-xss-
+- p. 110: http://www.google.com/imgres?imgurl=https://lh3.googleuser.com/...
+- p. 111: https://blog.it-securityguard.com/bugbounty-the-5000-google-xss/
+- p. 113: http://strukt93.blogspot.jp/2016/07/united-to-xss-united.html
+- p. 120: https://pastebin.com/xMXwsm0N
+- p. 120: https://jsﬁddle.net/89aj1n7m/.
+- p. 120: https://developer.uber.com/
+- p. 120: https://hackerone.com/reports/125027/
+- p. 121: https://developer.uber.com/docs/deep-linking?
+- p. 122: https://riders.uber.com/
+- p. 122: https://hackerone.com/reports/125980/
+- p. 122: https://eng.uber.com/bug-bounty/
+- p. 122: https://medium.com/uber-security-privacy/uber-bug-bounty-treasure-
+- p. 124: https://nvisium.com/blog/2016/03/09/exploring-ssti-in-ﬂask-jinja2.html.
+- p. 125: https://nvisium.com/blog/2016/01/26/rails-dynamic-render-to-
+- p. 127: https://hackerone.com/reports/164224/
+- p. 128: http://blog.portswigger.net/2015/08/server-side-template-
+- p. 133: https://www.
+- p. 133: https://www
+- p. 135: https://rails-sqli.org/
+- p. 135: https://sports.yahoo.com
+- p. 140: http://sctrack.email.uber.com.cn/track/unsubscribe.do/
+- p. 140: https://hackerone.com/reports/150156/
+- p. 140: http://sctrack.email.uber.com.cn/track/unsubscribe.do?
+- p. 142: http://sctrack.email.uber.com.cn/track/unsubscribe.
+- p. 144: https://hackerone.com/reports/31756/
+- p. 152: https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-
+- p. 154: https://play.esea.net/global/media_preview.php?url=/
+- p. 155: http://buer.haus/2016/04/18/esea-server-side-request-forgery-
+- p. 155: https://play.esea.net/
+- p. 155: https://play.esea.net/global/media_preview.php?url=
+- p. 155: https://play.esea.net/global/media_preview.php?url=http://ziot.org.
+- p. 155: https://play.esea.net/global/media_preview.php?url=http://ziot.org/1.png
+- p. 156: https://play.esea.net/global/media_preview.php?url=http://ziot.org%00/1.png,
+- p. 156: https://play.esea.net/global/media_preview.php?
+- p. 156: http://ziot.org///1.png,
+- p. 156: https://play.esea.net/global/media_preview.php?url=http://ziot.org/1.png,
+- p. 156: https://play.esea.net/global/media_preview.php?url=http://ziot.org?
+- p. 156: http://ziot.org
+- p. 156: http://169.254.169.254/latest/meta-data/hostname.
+- p. 157: http://169.254.169.254/latest/meta-data/iam/security-credentials/
+- p. 157: https://toolbox.googleapps.com/
+- p. 157: https://www.rcesecurity.com/2017/03/ok-google-give-me-all-
+- p. 158: https://toolbox.googleapps.com
+- p. 162: http://localhost
+- p. 162: http://127.0.0.1,
+- p. 163: https://www.psyon.org/tools/ip_address_converter.php?ip=127.0.0.1/
+- p. 171: https://www.owasp.org/index.php/XML_External_Entity_(XXE
+- p. 171: https://google.com/gadgets/directory?synd=toolbar/
+- p. 171: https://blog.detectify.com/2014/04/11/how-we-got-read-access-
+- p. 172: https://facebook.com/careers/
+- p. 173: http://197.37.102.90/ext.dtd
+- p. 173: http://197.37.102.90/FACEBOOK-HACKED?%file;
+- p. 175: https://wikiloc.com/
+- p. 175: https://www.davidsopas.com/wikiloc-xxe-vulnerability/
+- p. 176: http://www.davidsopas.com/XXE
+- p. 176: http://www.gpsbabel.org
+- p. 176: http://www.w3.org/2001/XMLSchema-instance
+- p. 176: http://www.topografix.com/GPX/1/0
+- p. 176: http://www.topografix.com/GPX/1/1
+- p. 176: http://www.topografix
+- p. 177: http://www.davidsopas.com/poc/xxe.dtd
+- p. 177: http://www.davidsopas.com/XXE?
+- p. 184: http://nahamsec.com/exploiting-imagemagick-on-yahoo/
+- p. 185: https://example.com
+- p. 185: https://imagetragick.com/.
+- p. 186: https://imagetragick.com/,
+- p. 186: https://127.0.0.1/x.php?x=`id
+- p. 186: http://SOMEIPADDRESS:8080/
+- p. 186: https://127.0.0.1/x.php?x=.
+- p. 187: https://hackerone.com/reports/134321/
+- p. 188: https://github.com/algolia/facebook-
+- p. 189: https://www.youtube.com/watch?v=VviY3O-euVQ/
+- p. 189: https://www.youtube.com/watch?v=ZBfBYoK_Wr0/
+- p. 199: https://bugs.php.net/bug.php?id=69545/
+- p. 200: http://bugs.python.org/issue24481
+- p. 201: http://curl.haxx.se/docs/adv_20141105.html
+- p. 206: https://www.youtube.com/watch?v=76TIDwaxtyk
+- p. 206: https://github.com/danielmiessler/SecLists/
+- p. 207: http://assets.goubiquiti.com/
+- p. 207: https://hackerone.com/reports/109699/
+- p. 208: http://support.scan.me/
+- p. 208: https://hackerone.com/reports/114134/
+- p. 209: http://windsor.shopify.com/
+- p. 209: https://hackerone.com/reports/150374/
+- p. 210: http://fastly.sc-cdn.net/takeover.html
+- p. 210: https://hackerone.com/reports/154425/
+- p. 210: http://fastly.sc-cdn.net
+- p. 211: https://api.legalrobot.com/
+- p. 211: https://hackerone.com/reports/148770/
+- p. 213: https://em.uber.com/
+- p. 213: https://hackerone.com/reports/156536/
+- p. 214: https://github.com/EdOverﬂow/can-i-take-over-xyz/.
+- p. 217: https://hackerone.com/reports/119354/
+- p. 220: https://keybase.io/_/api/1.0/send_invitations.json/
+- p. 220: https://hackerone.com/reports/115007/
+- p. 220: https://keybase.io/account/invitations/
+- p. 223: https://hackerone.com/reports/300305/
+- p. 228: https://hackerone.com/reports/98247/
+- p. 230: https://moneybird.com/user/applications/
+- p. 230: https://hackerone.com/reports/135989/
+- p. 230: https://moneybird.com/user/applications/new
+- p. 231: https://moneybird.com/ABCDEFGHIJKLMNOP/,
+- p. 231: https://mopub.com/api/v3/organizations/ID/mopub/activate/
+- p. 231: https://hackerone.com/reports/95552/
+- p. 232: https://fabric.io/img-srcx-onerrorprompt15/android/apps/app
+- p. 233: http://crashes.to/s/<11
+- p. 233: http://crashes.to/s/.
+- p. 233: https://app.mopub.com/complete/htsdk/?code=
+- p. 234: https://www.<acme
+- p. 238: https://<STORE
+- p. 239: https://www.facebook.com/v2.0/dialog/oauth?
+- p. 240: https://www.quora.com?
+- p. 242: https://slack.com/oauth/authorize/
+- p. 242: http://hackerone.com/reports/2575/
+- p. 243: https://<attacker
+- p. 243: https://slack.com/oauth/authorize?
+- p. 243: https://www.example.com.at
+- p. 243: https://ﬂurry.com/auth/v1/account/
+- p. 243: https://lightningsecurity.io/blog/password-not-provided/
+- p. 244: https://login.flurry.com/signup
+- p. 244: https://login.ﬂurry.com/
+- p. 245: https://login.microsoftonline.com
+- p. 245: https://whitton.io/articles/obtaining-tokens-outlook-ofﬁce-azure-
+- p. 246: https://outlook.ofﬁce.com.
+- p. 246: https://login.microsoftonline.com/login.srf?
+- p. 246: https://outlook.ofﬁce.com%f
+- p. 246: https://outlook.ofﬁce.com%2f@example.com/?wa=wsignin1.0.
+- p. 246: https://outlook.ofﬁce.com%2f@example.com
+- p. 247: https://outlook.ofﬁce.com/@example.com.
+- p. 247: https://www.facebook.com
+- p. 248: http://philippeharewood.com/swiping-facebook-ofﬁcial-access-
+- p. 248: https://www.facebook.com/search/me/apps-
+- p. 248: https://facebook.com/v2.5/dialog/oauth?
+- p. 248: http://REDIRECT_URI/#token=access_token_appended_here/.
+- p. 252: https://github.com/rails/rails/issues/5228/.
+- p. 253: https://hackerone.com/reports/100938/
+- p. 254: https://twitter.com
+- p. 256: https://hackerone.com/reports/106305
+- p. 257: https://hackerone.com/reports/128088/
+- p. 257: https://community.rapid7.com/community/infosec/blog/2013/03/27/1951-
+- p. 257: https://digi.ninja/projects/bucket_ﬁnder.php/.
+- p. 259: https://hackerone.com/reports/128085/
+- p. 261: http://nc10.n9323.mail.ne1.yahoo.com/phpinfo.php/
+- p. 261: https://blog.it-securityguard.com/bugbounty-yahoo-phpinfo-php-
+- p. 262: http://whois.arin.net/rest/net/NET-98-136-0-0-1
+- p. 262: http://${ipa}/phpinfo.php;
+- p. 263: http://nc10.n9323.mail.ne1.yahoo.com
+- p. 263: https://hackerone.com/hacktivity/
+- p. 263: https://hackerone.com/reports/137503/
+- p. 265: https://github.com/nahamsec/JSParser
+- p. 265: https://blog.zsec.uk/pwning-pornhub/
+- p. 266: http://nmap.org
+- p. 271: https://gist.github.com/jhaddix/86a06c5dc309d08580a018c66354a056/.
+- p. 275: https://www.exploit-db.com/google-
+- p. 282: https://philippeharewood.com/.
+- p. 282: https://blog.detectify.com/.
+- p. 284: https://www.openwall.com/lists/oss-security/2018/08/21/2.
+- p. 287: https://labs.detectify.com/2016/03/17/bypassing-sop-and-shouting-hello-
+- p. 287: http://example.com..
+- p. 287: http://example.com...evil.com
+- p. 287: http://example.com..evil.com
+- p. 291: https://www.quora.com/How-do-I-become-a-successful-Bug-bounty-hunter/
+- p. 293: https://portswigger.net/burp/
+- p. 294: https://www.charlesproxy.com/
+- p. 294: https://www.telerik.com/ﬁddler/
+- p. 294: https://www.wireshark.org/
+- p. 295: https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project.
+- p. 295: https://github.com/OWASP/Amass
+- p. 295: https://crt.sh/
+- p. 296: https://github.com/guelfoweb/knock/
+- p. 296: https://github.com/subﬁnder/subﬁnder/
+- p. 296: https://github.com/OJ/gobuster/
+- p. 297: https://github.com/xmendez/wfuzz/
+- p. 297: https://github.com/FortyNorthSecurity/EyeWitness/
+- p. 297: https://github.com/sensepost/gowitness/
+- p. 297: https://github.com/breenmachine/httpscreenshot/
+- p. 298: https://github.com/robertdavidgraham/masscan/
+- p. 298: https://nmap.org/
+- p. 299: http://builtwith.com/
+- p. 299: https://censys.io/
+- p. 299: https://www.exploit-db.com/google-hacking-database/
+- p. 299: https://www.shodan.io/
+- p. 300: http://www.whatcms.org/
+- p. 300: https://digi.ninja/ﬁles/bucket_ﬁnder_1.1.tar.bz2
+- p. 300: https://gchq.github.io/CyberChef/
+- p. 300: https://github.com/michenriksen/gitrob/
+- p. 301: https://www.onlinehashcrack.com/
+- p. 301: http://sqlmap.org/
+- p. 301: https://github.com/frohoff/ysoserial/
+- p. 302: https://sourceforge.net/projects/dex2jar/
+- p. 302: https://www.hopperapp.com/
+- p. 302: https://github.com/java-decompiler/jd-gui/
+- p. 304: https://www.torontowebsitedeveloper.com/hacking-resources/
+- p. 304: https://nostarch.com/bughunting/.
+- p. 304: https://www.coursera.org/specializations/cyber-security/
+- p. 305: https://www.exploit-db.com/
+- p. 305: https://google-gruyere.appspot.com/
+- p. 305: https://www.hacker101.com/
+- p. 305: https://www.hackthebox.eu/
+- p. 305: https://pentesterlab.com/
+- p. 306: https://www.udacity.com/course/intro-to-
+- p. 306: https://www.udacity.com/course/javascript-basics--ud804/
+- p. 306: https://www.udacity.com/course/intro-to-computer-
+- p. 306: https://bountyfactory.io/
+- p. 306: https://bugbounty.jp/
+- p. 306: https://www.bugcrowd.com/
+- p. 307: https://cobalt.io/
+- p. 307: https://www.hackerone.com/
+- p. 307: https://www.intigriti.com/
+- p. 307: https://www.synack.com/
+- p. 307: https://www.zerocopter.com/
+- p. 308: https://github.com/jhaddix/tbhm/
+- p. 308: https://github.com/cure53/browser-sec-whitepaper/.
+- p. 308: https://www.hackerone.com/hacktivity/
+- p. 309: https://bugzilla.mozilla.org/
+- p. 309: https://owasp.org.
+- p. 310: https://www.youtube.com/playlist?list=PLIK9nm3mu-S5InvR-
+- p. 310: https://www.youtube.com/playlist?list=PLIK9nm3mu-
+- p. 310: https://www.youtube.com/LiveOverﬂowCTF/
+- p. 311: https://www.youtube.com/yaworsk1/
+- p. 311: https://buer.haus/
+- p. 311: https://www.bugcrowd.com/about/blog/
+- p. 311: https://labs.detectify.com/
+- p. 312: https://thehackerblog.com/,
+- p. 312: https://www.hackerone.com/blog/
+- p. 312: https://whitton.io/.
+- p. 312: https://lcamtuf.blogspot.com/.
+- p. 312: https://nahamsec.com/
+- p. 312: http://blog.orange.tw/
+- p. 313: https://blog.it-securityguard.com/.
+- p. 313: https://portswigger.net/blog/.
+- p. 313: https://googleprojectzero.blogspot.com/.
+- p. 313: https://ngailong.wordpress.com/.
+- p. 314: https://blog.innerht.ml/
+- p. 314: https://blog.zsec.uk/
+- p. 344: https://nostarch.com/bughunting/
+
+## Technique Signals
+- p. 11: HackerOne Unintended HTML Include Fix Bypass
+- p. 13: Attacking Users with SSRF Responses
+- p. 13: ESEA SSRF and Querying AWS Metadata
+- p. 13: Internal Port Scanning Using Webhooks
+- p. 25: Chapter 2: Open Redirect covers attacks that exploit the trust of a
+- p. 25: Chapter 7: Cross-Site Scripting explains how attackers exploit a
+- p. 25: Chapter 8: Template Injection explains how attackers exploit
+- p. 25: Chapter 11: XML External Entity shows how attackers exploit
+- p. 25: exploit a server or application to run their own code.
+- p. 26: exploit an application’s memory management to cause unintended
+- p. 26: Chapter 15: Race Conditions reveals how attackers exploit
+- p. 26: Chapter 17: OAuth Vulnerabilities covers bugs in the
+- p. 26: Vulnerabilities explains how an attacker can exploit a coding logic
+- p. 26: including proxying web trafﬁc, subdomain enumeration,
+- p. 35: access to various browser application programming interfaces (APIs).
+- p. 35: These APIs enable JavaScript to interact with other systems, the most
+- p. 37: (CSRF) vulnerabilities discussed in Chapter 4. Visiting any URL or
+- p. 38: it serves as a CSRF vulnerability protection.
+- p. 40: exploit the trust of a given domain to lure targets to a malicious
+- p. 40: distribute malware from the malicious site or to steal OAuth tokens (a
+- p. 40: you’ll learn how to exploit open redirects and how to identify key
+- p. 42: (DOM). The DOM is an API for HTML and XML documents that
+- p. 43: attacker could exploit the parameter to redirect a target to
+- p. 47: digging to see how the missing interstitial could be exploited.
+- p. 47: the exploit or combine it with another vulnerability to demonstrate
+- p. 49: persistence but can be worth the effort.
+- p. 56: persistence. In August 2015, hacker Mert Tasci noticed an interesting
+- p. 57: Tasci’s efforts demonstrate the importance of persistence and
+- p. 60: might be able to exploit similar behavior.
+- p. 61: A cross-site request forgery (CSRF) attack occurs when an attacker can
+- p. 61: CSRF attack is successful, the attacker is able to modify server-side
+- p. 61: website doesn’t have any CSRF protections, it processes the
+- p. 62: techniques covered here to exploit CSRF vulnerabilities that use basic
+- p. 64: designed to perform a CSRF attack by instructing Bob’s browser to
+- p. 64: The way the malicious site exploits Bob’s banking site depends on
+- p. 64: hidden form technique in the next section, “CSRF with POST Requests.”
+- p. 65: principle, and so they’ll automatically add CSRF protections to POST
+- p. 65: different approach to create a CSRF attack. An attacker couldn’t use an
+- p. 66: ➋ <form method='POST' action='http://bank.com/transfer' target="csrf-frame"
+- p. 67: form ("csrf-form") that we set in the second line ➋ as an argument. As
+- p. 67: a request that is an application/json type will have a CSRF token. This
+- p. 67: custom header with a name like X-CSRF-TOKEN. When a browser sends an
+- p. 67: some CSRF vulnerabilities: the malicious sites won’t be listed as trusted
+- p. 68: tested allows it. In some situations, you can bypass these protections by
+- p. 68: a CSRF request might work. If it doesn’t, look at the Access-Control-
+- p. 68: from its server. This allows for CSRF vulnerabilities but might also
+- p. 68: You can mitigate CSRF vulnerabilities in a number of ways. One of the
+- p. 68: most popular forms of protection against CSRF attacks is the CSRF
+- p. 68: token. Protected sites require the CSRF token when requests are
+- p. 68: but some potential examples of names include X-CSRF-TOKEN, lia-token, rt,
+- p. 69: In this example, the site could get the CSRF token from a cookie, an
+- p. 69: request and wouldn’t be able to carry out a CSRF attack. However, just
+- p. 69: because a site uses CSRF tokens doesn’t mean it’s a dead end when
+- p. 69: you’re searching for vulnerabilities to exploit. Try removing the token,
+- p. 69: access responses. Attackers can sometimes bypass CORS by changing
+- p. 69: misconﬁgurations on the server side. The reason the bypass works is
+- p. 69: Lastly, there are two additional and less common CSRF mitigation
+- p. 69: them remotely (obviously, this excludes exploiting a vulnerability in
+- p. 70: When you’re looking for potential CSRF vulnerabilities, be on the
+- p. 71: a proxy server, such as Burp or OWASP’s ZAP, to monitor the HTTP
+- p. 72: website’s API endpoints as well as its web pages. Instacart is a grocery
+- p. 72: subdomain was vulnerable to CSRF. For example, you could modify a
+- p. 72: HTTP POST request to the /api/v2/zones endpoint ➊. The hacker
+- p. 72: code 10001 ➋ and one to set the API’s override parameter to true ➌ so the
+- p. 72: the exploit by using the techniques described earlier, such as using a
+- p. 73: When you’re looking for exploits, broaden your attack scope and look
+- p. 73: beyond just a website’s pages to include its API endpoints, which offer
+- p. 73: hackers can discover and exploit API endpoints, because they aren’t
+- p. 73: make HTTP requests to API endpoints, which you can monitor with
+- p. 73: Burp or ZAP just as you do websites.
+- p. 73: Although developers often use CSRF tokens to protect against CSRF
+- p. 73: https://www.badoo.com/, you’ll see that it uses CSRF tokens. More
+- p. 73: ﬁnd a way to exploit it. However, the hacker Mahmoud Jamal did.
+- p. 74: page Jamal used to accomplish this exploit:
+- p. 74: ➍ var csrf_code = getCSRFcode(url_stats);
+- p. 75: Next, Jamal created a csrf_code variable ➍ and assigned it the return
+- p. 75: value of a function he deﬁned at ➋ called getCSRFcode. The getCSRFcode
+- p. 75: the rt value, and assigns that to csrf_code.
+- p. 75: Once he had the CSRF token, Jamal created the csrf_url variable,
+- p. 75: hardcoded value. Instead, csrf_code is concatenated to the end of the
+- p. 75: csrf_url , which redirects the visiting user’s browser to the URL at ➎.
+- p. 76: someplace where an attacker could access and exploit it, which in this
+- p. 76: digging. In this case, I thought it was odd that the CSRF token would
+- p. 76: are being called when you visit a site or application. Burp allows you to
+- p. 76: CSRF vulnerabilities represent another attack vector that attackers can
+- p. 76: action. Finding CSRF vulnerabilities can take some ingenuity and a
+- p. 76: example of it, if you see that a site is sending a CSRF token with a POST
+- p. 76: request, you can try changing the CSRF token value or removing it
+- p. 78: caused by sites either escaping any included HTML or HTML tags
+- p. 82: <input type="hidden" name="csrf-token" value= "ab34513cdfe123ad1f">
+- p. 82: be the sensitive cross-site request forgery (CSRF) token from the
+- p. 83: is an API for HTML and XML documents that allows developers to
+- p. 83: injecting HTML directly into the DOM without escaping it.
+- p. 83: Although De Ceukelaire couldn’t exploit the vulnerability, he did
+- p. 83: HackerOne was rendering a CSRF token. So conceptually, if
+- p. 83: could exﬁltrate a target’s CSRF token and perform a CSRF attack.
+- p. 83: has a great explanation about the <meta> refresh exploit at
+- p. 84: <a title="test" ismap="alert xss" yyy="test" ref="http://
+- p. 84: HTML. Although I couldn’t immediately exploit this bug, the
+- p. 90: examples of how to exploit a CRLF injection to achieve HTTP request
+- p. 90: HTTP request smuggling occurs when an attacker exploits a CRLF
+- p. 90: new headers that browsers interpret. An attacker can exploit a split
+- p. 90: characters. This leads to the second method of exploiting response
+- p. 91: website, or cross-site scripting (XSS), an attack we’ll cover in Chapter 7.
+- p. 91: characters %0d%0a (capitalization doesn’t matter to encoding) in the URL
+- p. 91: krankopwnz injected as part of a shop name to test whether this exploit
+- p. 92: include XSS, which we will cover in Chapter 7.
+- p. 92: vulnerability is best exploited when it occurs with little user
+- p. 93: and potentially could allow users to inject malicious payloads to a
+- p. 94: CRLF attacks can be even more dangerous when they allow for XSS
+- p. 94: attacks. While the details of exploiting XSS aren’t important for this
+- p. 94: vulnerability could be exploited to execute malicious JavaScript with
+- p. 95: The payload is decoded to inject the header content-type text/html,
+- p. 95: by altering their headers. Exploiting CRLF vulnerabilities can lead to
+- p. 96: One of the most famous examples of a cross-site scripting (XSS)
+- p. 96: October 2005, Kamkar exploited a vulnerability on Myspace that
+- p. 96: allowed him to store a JavaScript payload on his proﬁle. Whenever a
+- p. 96: logged-in user would visit his Myspace proﬁle, the payload code would
+- p. 96: Kamkar’s worm is an extreme example, but his exploit shows the
+- p. 96: broad impact an XSS vulnerability could have on a website. Similar to
+- p. 96: other vulnerabilities I’ve covered so far, XSS occurs when websites
+- p. 96: malicious JavaScript. Characters that allow an XSS vulnerability to
+- p. 97: When you submit this payload to a website that renders it
+- p. 97: the JavaScript between them. The payload executes the alert function,
+- p. 97: returns the domain name of the site. For example, if the payload
+- p. 97: When you’ve found an XSS vulnerability, conﬁrm its impact because
+- p. 97: not all XSS vulnerabilities are the same. Conﬁrming the impact of a
+- p. 97: For example, an XSS vulnerability on a site that doesn’t use the
+- p. 97: httponly ﬂag on sensitive cookies is different from an XSS vulnerability
+- p. 97: that does. When a site has no httponly ﬂag, your XSS can read cookie
+- p. 98: But the XSS might not be a vulnerability for the site if you don’t
+- p. 98: malicious sites attempting to exploit the website through the user. For
+- p. 99: these two contexts differently. When you ﬁnd an XSS vulnerability,
+- p. 99: conﬁrms the origin where the XSS executes, especially when the URL
+- p. 99: shown in the browser is different from the origin the XSS executes
+- p. 99: tag to achieve XSS, you can’t always submit HTML tags when you ﬁnd
+- p. 99: or double quotes to inject an XSS payload. The XSS could be
+- p. 99: the existing quote and inject a malicious XSS payload into the tag. You
+- p. 100: depending on the browser. When the payload runs, it would alert on
+- p. 100: As you now know, you can execute XSS using several methods. The
+- p. 100: Cure53 maintain, is a great reference for XSS payloads.
+- p. 100: There are two main types of XSS: reﬂected and stored. Reﬂected XSS
+- p. 100: site delivers and executes the XSS payload. Browsers, including
+- p. 101: vulnerability by introducing XSS Auditors (in July 2018, Microsoft
+- p. 101: announced they are retiring the XSS Auditor in the Edge browser due
+- p. 101: to other security mechanisms available to prevent XSS). XSS Auditors
+- p. 101: When an XSS attempt occurs, the browser shows a broken page with a
+- p. 101: Figure 7-1: A page blocked by the XSS Auditor in Google Chrome
+- p. 101: Despite browser developers’ best efforts, attackers frequently bypass
+- p. 101: XSS Auditors because JavaScript can execute in complex ways on a site.
+- p. 101: Because these methods of bypassing XSS Auditors often change, they’re
+- p. 101: x-xss-protection/ and Masato Kinugawa’s ﬁlter bypass cheat sheet at
+- p. 101: In contrast, stored XSS occurs when a site saves a malicious payload
+- p. 101: and renders it unsanitized. Sites might also render the inputted payload
+- p. 101: in various locations. The payload might not execute immediately after
+- p. 101: example, if you create a proﬁle on a website with an XSS payload as
+- p. 101: your name, the XSS might not execute when you view your proﬁle;
+- p. 102: You can also sort XSS attacks into the following three subcategories:
+- p. 102: DOM-based, blind, and self. DOM-based XSS attacks involve
+- p. 102: malicious input. It might be possible to execute XSS.
+
+## Extracted Operational Notes
+- p. 3: storage or retrieval system, without the prior written permission of the copyright owner and
+- p. 3: Developmental Editors: Jan Cash and Annie Choi
+- p. 3: (Computer security) | Web sites--Testing. | BISAC: COMPUTERS / Security
+- p. 3: Viruses. | COMPUTERS / Security / General. | COMPUTERS / Networking /
+- p. 4: trademarked name, we are using the names only in an editorial fashion and to the beneﬁt of the
+- p. 5: referenced in this book. He is also a successful bug bounty hunter with
+- p. 5: Shopify as an Application Security Engineer, helping to make
+- p. 6: Tsang Chi Hong, also known as FileDescriptor, is a pentester and a bug
+- p. 6: bounty hunter. He lives in Hong Kong. He writes about web security at
+- p. 7: Chapter 18: Application Logic and Conﬁguration Vulnerabilities
+- p. 13: Attacking Users with SSRF Responses
+- p. 13: ESEA SSRF and Querying AWS Metadata
+- p. 19: public and private sectors across the entire world. Our hacking
+- p. 19: security vulnerability reports that resulted in real bug bounties, along
+- p. 21: receiving end of vulnerability reports, which helped me develop
+- p. 21: Arne Swinnen, FileDescriptor, and the many others who sat down with
+- p. 22: process of responsibly discovering security vulnerabilities and reporting
+- p. 22: hacking, I wanted to know not just what vulnerabilities hackers found
+- p. 22: What vulnerabilities are hackers ﬁnding in applications?
+- p. 22: How did hackers learn about those vulnerabilities found in
+- p. 22: How can I get started hacking and ﬁnding vulnerabilities?
+- p. 22: I eventually landed on HackerOne, a bug bounty platform designed
+- p. 22: struggled to understand what vulnerabilities people were ﬁnding and
+- p. 23: you understand different types of web vulnerabilities. You’ll learn how
+- p. 23: to ﬁnd vulnerabilities, how to report them, how to get paid for doing
+- p. 23: you discover vulnerabilities and recognize the impact of the bugs you
+- p. 23: vulnerabilities involving an application’s logic and brainstorming how a
+- p. 24: Each chapter that describes a vulnerability type has the following
+- p. 24: 1. A description of the vulnerability type
+- p. 24: 2. Examples of the vulnerability type
+- p. 24: Each vulnerability example includes the following:
+- p. 24: The URL associated with the location in which the vulnerability
+- p. 24: The date the vulnerability was reported
+- p. 24: A clear description of the vulnerability
+- p. 24: Chapter 1: Bug Bounty Basics explains what vulnerabilities and
+- p. 25: Chapter 2: Open Redirect covers attacks that exploit the trust of a
+- p. 25: Chapter 3: HTTP Parameter Pollution covers how attackers
+- p. 25: the vulnerable target website trusts and that lead to unexpected
+- p. 25: Chapter 4: Cross-Site Request Forgery covers how an attacker
+- p. 25: attackers inject encoded characters into HTTP messages to alter
+- p. 25: Chapter 7: Cross-Site Scripting explains how attackers exploit a
+- p. 25: Chapter 8: Template Injection explains how attackers exploit
+- p. 25: Chapter 9: SQL Injection describes how a vulnerability on a
+- p. 25: database-backed site can allow an attacker to unexpectedly query or
+- p. 25: attacker makes a server perform unintended network requests.
+- p. 25: Chapter 11: XML External Entity shows how attackers exploit
+- p. 25: Chapter 12: Remote Code Execution covers how attackers can
+- p. 25: exploit a server or application to run their own code.
+- p. 26: Chapter 13: Memory Vulnerabilitites explains how attackers
+- p. 26: exploit an application’s memory management to cause unintended
+- p. 26: behavior, including possibly executing the attacker’s own injected
+- p. 26: takeovers occur when an attacker can control a subdomain on behalf
+- p. 26: Chapter 15: Race Conditions reveals how attackers exploit
+- p. 26: vulnerabilities that occur when an attacker can access or modify a
+- p. 26: Chapter 17: OAuth Vulnerabilities covers bugs in the
+- p. 26: Vulnerabilities explains how an attacker can exploit a coding logic
+- p. 26: unintended action that results in a vulnerability.
+- p. 26: Chapter 19: Finding Your Own Bug Bounties gives tips on
+- p. 26: where and how to look for vulnerabilities based on my experience
+- p. 26: Chapter 20: Vulnerability Reports discusses how to write credible
+- p. 26: and informative vulnerability reports so programs won’t reject your
+- p. 27: When you read about public vulnerability disclosures and see the
+- p. 27: but you’re less likely to ﬁnd stories about the failures that happen along
+- p. 27: stories). Because you’ll mostly hear about people’s hacking successes,
+- p. 28: vulnerabilities, bug bounties, clients, servers, IP addresses, and HTTP.
+- p. 28: can result in vulnerabilities. Then, we’ll see what happens when you
+- p. 28: A vulnerability is a weakness in an application that allows a malicious
+- p. 29: As you learn and test applications, keep in mind that vulnerabilities
+- p. 29: can result from attackers performing intended and unintended actions.
+- p. 29: vulnerability. Even though the site kept your information private from
+- p. 29: A bug bounty is a reward a website or company gives to anyone who
+- p. 29: ethically discovers a vulnerability and reports it to that website or
+- p. 29: vulnerabilities. Note that this is different from companies that operate a
+- p. 29: vulnerability disclosure program (VDP). Bug bounties offer some monetary
+- p. 29: vulnerabilities to a company for that company to ﬁx. Although not all
+- p. 29: hackers participating in bug bounty programs.
+- p. 35: languages, JavaScript has built-in functions and can store values in
+- p. 35: access to various browser application programming interfaces (APIs).
+- p. 35: These APIs enable JavaScript to interact with other systems, the most
+- p. 35: HTML and CSS. This is signiﬁcant because if an attacker can execute
+- p. 36: consider vulnerability examples in applications expecting these method
+- p. 36: used synonymously with Uniform Resource Locator (URL).
+- p. 37: (CSRF) vulnerabilities discussed in Chapter 4. Visiting any URL or
+- p. 37: redirect vulnerabilities discussed in Chapter 2.
+- p. 38: it serves as a CSRF vulnerability protection.
+- p. 39: vulnerabilities result from someone performing an unintended action
+- p. 39: vulnerabilities to the owners of websites.
+- p. 40: We’ll begin our discussion with open redirect vulnerabilities, which occur
+- p. 40: exploit the trust of a given domain to lure targets to a malicious
+- p. 40: website. A phishing attack can also accompany a redirect to trick users
+- p. 40: combined with other attacks, open redirects can also enable attackers to
+- p. 40: Google bug bounty program typically considers open redirects too low
+- p. 40: risk to reward. The Open Web Application Security Project (OWASP),
+- p. 40: which is a community that focuses on application security and curates a
+- p. 40: list of the most critical security ﬂaws in web applications, also removed
+- p. 40: open redirects from its 2017 list of top 10 vulnerabilities.
+- p. 40: Although open redirects are low-impact vulnerabilities, they’re great
+- p. 40: you’ll learn how to exploit open redirects and how to identify key
+- p. 41: Open redirects occur when a developer mistrusts attacker-controlled
+- p. 41: Now, suppose an attacker changed the original URL to the
+- p. 41: its own legitimate sites where it intends to send visitors, an attacker
+- p. 41: https://www.<attacker>.com/. After the attacker has you on their malicious
+- p. 41: site, they could carry out other attacks.
+- p. 42: When looking for these vulnerabilities, keep an eye out for URL
+- p. 42: In addition to parameter-based attacks, HTML <meta> tags and
+- p. 42: https://www.google.com . Attackers can use this redirect behavior in
+- p. 42: a <meta> tag or to inject their own tag via some other vulnerability.
+- p. 42: An attacker can also use JavaScript to redirect users by modifying
+- p. 42: (DOM). The DOM is an API for HTML and XML documents that
+- p. 42: redirect to the speciﬁed URL. An attacker can modify the window’s
+- p. 42: where an attacker can execute JavaScript, either via a cross-site scripting
+- p. 43: vulnerability or where the website intentionally allows users to deﬁne a
+- p. 43: vulnerability detailed later in the chapter on page 15.
+- p. 43: When you’re searching for open redirect vulnerabilities, you’ll
+- p. 43: usually be monitoring your proxy history for a GET request sent to the
+- p. 43: stores to sell goods. Shopify allows administrators to customize the
+- p. 43: look and feel of their stores by changing their theme. As part of that
+- p. 43: theme by redirecting the store owners to a URL. The redirect URL
+- p. 43: user’s store domain and added /admin to the end of the URL. Shopify
+- p. 43: was expecting that the domain_name would always be a user’s store and

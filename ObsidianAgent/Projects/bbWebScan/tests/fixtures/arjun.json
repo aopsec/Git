@@ -1,0 +1,4 @@
+{
+  "https://app.example.com/login": ["username", "password", "csrf_token", "next"],
+  "https://app.example.com/search": ["q", "page", "limit"]
+}

@@ -1,0 +1,5 @@
+{"uri":"https://app.example.com/api/v1/users","status_code":200,"length":4521}
+{"uri":"https://app.example.com/api/admin","status_code":401,"length":42}
+{"uri":"https://app.example.com/internal","status_code":403,"length":18}
+not-json-line
+{"uri":"https://app.example.com/health","status_code":200,"length":12}

@@ -1,0 +1,7 @@
+{
+  "alwaysUpdateLinks": true,
+  "attachmentFolderPath": "vault/Assets",
+  "newFileFolderPath": "vault/Inbox",
+  "newFileLocation": "folder",
+  "showUnsupportedFiles": true
+}

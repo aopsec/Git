@@ -1,0 +1,658 @@
+# Black Hat Go
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 10 strong cyber signals, 21 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Go.pdf`
+- SHA256: `21619c7f03e26581567fad65bf01aa35446ae79b8e549dcaba91a46b6268731d`
+- Pages: `593`
+- Text characters: `759265`
+- Author: `Dan Kottmann & Chris Patten & Tom Steele`
+- Copied PDF: [[PDFs/black-hat-go-21619c7f.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 83: nmap
+- p. 2: metasploit
+- p. 202: kali
+- p. 3: docker
+- p. 37: linux
+- p. 109: bash
+- p. 25: python
+- p. 16: tor
+- p. 106: monit
+- p. 246: caddy
+
+## Commands
+- p. 48: `$ go version`
+- p. 48: `go version go1.11.5 linux/amd64`
+- p. 55: `$ go build -ldflags "-w -s"`
+- p. 57: `$ go doc fmt.Println`
+- p. 84: `go/bhg/.)`
+- p. 99: `$ go run main.go`
+- p. 109: `$ curl -i -X GET http://joesproxy.com`
+- p. 139: `$ go get gopkg.in/vmihailenco/msgpack.v2`
+- p. 153: `$ go get github.com/PuerkitoBio/goquery`
+- p. 164: `$ go run main.go nytimes.com docx`
+- p. 169: `$ curl -i http://localhost:8000/hello?name=alice`
+- p. 171: `$ curl http://localhost:8000/a`
+- p. 171: `$ curl http://localhost:8000/d`
+- p. 172: `$ go build -o simple_middleware`
+- p. 173: `$ go get github.com/gorilla/mux`
+- p. 175: `$ curl http://localhost:8000/users/bob`
+- p. 175: `$ curl -i http://localhost:8000/users/bob1`
+- p. 176: `$ go get github.com/urfave/negroni`
+- p. 178: `$ go build -s negroni_example`
+- p. 183: `$ curl -i http://localhost:8000/hello`
+- p. 183: `$ curl -i 'http://localhost:8000/hello?username=admin&password=password'`
+- p. 186: `$ go build -o template_example`
+- p. 188: `$ docker run --rm -it -p 127.0.0.180:80 robbertkl/roundcube`
+- p. 192: `$ go build -o credential_harvester`
+- p. 199: `$ go run main.go -listen-addr=127.0.0.1:8080 -ws-addr=127.0.0.1:8080`
+- p. 209: `$ go get github.com/miekg/dns`
+- p. 232: `$ docker version`
+- p. 232: `$ docker pull java`
+- p. 237: `$ docker run --rm❶ -it❷ -p 2020:53❸ -p 50051:50050❹ -v❺ full path to`
+- p. 238: `$ docker run --rm -it -p 2021:53 -p 50052:50050-v full path to cobalt strike`
+- p. 243: `$ go build`
+- p. 252: `go/bhg/blob/master/ch-6/smb/. Although we won’t show you`
+- p. 260: `go/bhg/blob/master/ch-6/smb/smb/encoder/encoder.go. Both`
+- p. 262: `go/bhg/blob/master/ch-6/smb/ntlmssp/ntlmssp.go contains an`
+- p. 274: `$ go get github.com/bhg/ch-6/smb`
+- p. 286: `$ docker run --name some-mongo -p 27017:27017 mongo`
+- p. 287: `$ docker ps`
+- p. 287: `$ docker start some-mongo`
+- p. 287: `$ docker run -it --link some-mongo:mongo --rm mongo sh \`
+- p. 289: `$ docker run --name some-mysql -p 3306:3306 -e`
+- p. 289: `$ docker run --name some-postgres -p 5432:5432 -e`
+- p. 289: `$ docker run -it --link some-mysql:mysql --rm mysql sh -c \`
+- p. 290: `$ docker run -it --rm --link some-postgres:postgres postgres psql -h postgres -`
+- p. 291: `$ docker run --name some-mssql -p 1433:1433 -e 'ACCEPT_EULA=Y' \`
+- p. 291: `$ docker exec -it some-mssql /opt/mssql-tools/bin/sqlcmd -S localhost \`
+- p. 293: `$ go get gopkg.in/mgo.v2`
+- p. 295: `$ go get github.com/go-sql-driver/mysql`
+- p. 304: `$ go run main.go 127.0.0.1`
+- p. 312: `$ go run main.go ./somepath`
+- p. 315: `$ go get github.com/google/gopacket`
+- p. 320: `$ go build -o filter && sudo ./filter`
+- p. 325: `$ go build -o ftp && sudo ./ftp`
+- p. 332: `$ go build -o syn-flood && sudo ./syn-flood enp0s5 10.1.100.100`
+- p. 383: `$ go build -buildmode=plugin`
+- p. 383: `$ go build -buildmode=c-shared`
+- p. 392: `$ go build -buildmode=plugin -o /path/to/plugins/tomcat.so`
+- p. 394: `$ go get github.com/yuin/gopher-lua`
+- p. 410: `$ go get -u golang.org/x/crypto/bcrypt`
+- p. 416: `$ go run main.go someWrongPassword`
+- p. 416: `$ go run main.go someC0mpl3xP@ssw0rd`
+- p. 435: `$ curl -ik -X GET --cert badCrt.pem --key badKey.pem \`
+- p. 436: `$ curl -ik -X GET --cert clientCrt.pem --key clientKey.pem \`
+- p. 441: `$ go get github.com/joeljunstrom/go-luhn`
+- p. 508: `go/bhg/blob/master/ch-13/imgInject/images/battlecat.png;`
+- p. 525: `$ go run main.go -i images/battlecat.png -o newPNGfile --inject -offset \`
+- p. 529: `$ go run main.go -i images/battlecat.png --inject --offset 0x85258 --encode \`
+- p. 531: `$ go run main.go -i encodePNGfile -o decodePNGfile --offset 0x85258 -`
+- p. 555: `$ go run client/client.go 'cat /etc/resolv.conf'`
+- p. 560: `$ go build -ldflags="-s -w" implant/implant.go`
+
+## Code And Script Lines
+- p. 46: `from that link.`
+- p. 54: `package main`
+- p. 54: `func main() {`
+- p. 57: `func Println(a ...interface{}) (n int, err error)`
+- p. 60: `import statements, and more.`
+- p. 68: `func foo(i❶ interface{}) {`
+- p. 73: `func foo() error {`
+- p. 88: `from the sync package, which is a thread-safe way to control`
+- p. 90: `func worker(ports chan int, wg *sync.WaitGroup) {`
+- p. 92: `from earlier in the section, and it would work just fine.`
+- p. 99: `function that can be used to simplify the main() function. The`
+- p. 99: `function prototype is as follows:`
+- p. 99: `func Copy(dst io.Writer, src io.Reader) (written int64, error)`
+- p. 99: `function with the code in Listing 2-10.`
+- p. 101: `func echo(conn net.Conn) {`
+- p. 103: `from earlier discussions in this section that Conn is both a Reader`
+- p. 103: `function ❼. This call is prefaced with the go keyword, making`
+- p. 105: `from source to destination.`
+- p. 107: `func handle(src net.Conn) {`
+- p. 111: `func NewFlusher(w io.Writer) *Flusher {`
+- p. 112: `func handle(conn net.Conn) {`
+- p. 113: `func Pipe() (*PipeReader, *PipeWriter)`
+- p. 117: `function is slightly more complex than the Get() and Head()`
+- p. 118: `func PostForm(url string, data url.Values) (resp *Response, err error)`
+- p. 119: `func NewRequest(❶method, ❷url string, ❸body io.Reader) (req *Request, err`
+- p. 128: `func APIInfo(token, url string) { --snip-- }`
+- p. 128: `func HostSearch(token, url string) { --snip-- }`
+- p. 128: `package shodan`
+- p. 129: `function parameters. You can change your API function calls,`
+- p. 134: `function in Listing 3-10, which is similar to the APIInfo()`
+- p. 145: `func New(host, user, pass string) *Metasploit {`
+- p. 149: `func New(host, user, pass string) (*Metasploit, error)❶ {`
+- p. 155: `function for determining the recognizable Office version that`
+- p. 157: `func NewProperties(r *zip.Reader) (*OfficeCoreProperty, *OfficeAppProperty,`
+- p. 158: `func process(f *zip.File, prop interface{}) error {❻`
+- p. 163: `function you created earlier in your metadata package,`
+- p. 167: `func hello(w http.ResponseWriter, r *http.Request) {`
+- p. 173: `package that allows you to route based on both simple and`
+- p. 180: `package that writes security headers to a response, you would`
+- p. 190: `func login(w http.ResponseWriter, r *http.Request) {`
+- p. 194: `function keypress(evt) {`
+- p. 196: `func init() {`
+- p. 196: `func serveWS(w http.ResponseWriter, r *http.Request) {`
+- p. 196: `func serveFile(w http.ResponseWriter, r *http.Request) {`
+- p. 205: `function that creates a reverse proxy from a URL. Even better,`
+- p. 205: `function named Host that accepts a hostname to match Host`
+- p. 209: `package called the Go DNS package written by Miek Gieben.`
+- p. 217: `func lookupA(fqdn, serverAddr string) ([]string, error) {`
+- p. 218: `func lookupCNAME(fqdn, serverAddr string) ([]string, error) {`
+- p. 219: `func lookup(fqdn, serverAddr string) []result {`
+- p. 220: `function will need a final string argument to specify the DNS`
+- p. 221: `func worker(tracker chan empty, fqdns chan string, gather chan []result,`
+- p. 221: `function and checking to ensure there is at least one result,`
+- p. 230: `package to write a basic server and a proxy. You can use DNS`
+- p. 245: `function early. This is a pattern used throughout the handler. If`
+- p. 245: `from the records map.`
+- p. 247: `func parse(filename string) (map[string]string, error) {`
+- p. 252: `package to perform remote password guessing, use the pass-`
+- p. 253: `from one dialect to the next, a client and server must agree on`
+- p. 255: `package wasn’t built for general-purpose use; so you must take`
+- p. 256: `package that implements the SMB specification. Rather than`
+- p. 259: `func marshal(v interface{}, meta *Metadata) ([]byte, error) {`
+- p. 260: `func unmarshal(buf []byte, v interface{}, meta *Metadata) (interface{}, error) {`
+- p. 261: `while leaving other fields in your Message struct as-is. To do`
+- p. 265: `func parseTags(sf reflect.StructField❶) (*TagMap, error) {`
+- p. 274: `function is smart enough to read bytes up until our destination`
+- p. 276: `function does a lot of heavy lifting for you behind the scenes:`
+- p. 276: `function will return an error if authentication fails, and a`
+- p. 278: `func Ntowfv2(pass, user, domain string) []byte {`
+- p. 278: `func ComputeResponseNTLMv2(nthash❶, lmhash, clientChallenge,`
+- p. 281: `func NewAuthenticatePass(domain, user, workstation, password string, c`
+- p. 281: `func NewAuthenticateHash(domain, user, workstation, hash string, c Challenge)`
+- p. 292: `from a Go client. We’ve divided this discussion into two`
+- p. 297: `package so that the MySQL driver itself handles the function`
+- p. 297: `from your transactions table ❹, and then loop over the rows,`
+- p. 298: `package dbminer`
+- p. 300: `function starts by calling m.GetSchema() to retrieve the schema`
+- p. 303: `function retrieves the raw document that, unlike a typical`
+- p. 304: `function to bootstrap everything, and then calls dbminer.Search(),`
+- p. 305: `from logically trying to differentiate and categorize each row`
+- p. 305: `while defining your GetSchema() function. For example,`
+- p. 306: `func New(host string) (*MySQLMiner, error) {`
+- p. 322: `from a compromised user workstation. In this example, we’ll`
+- p. 324: `from the packet and check to see whether it actually exists ❷,`
+- p. 326: `from the target after you’ve established a connection. You can`
+- p. 328: `func capture(iface, target string) { ❷`
+- p. 331: `function itself bootstraps the packet capture much in the same`
+- p. 331: `function ❼. Using a goroutine ensures that your packet`
+- p. 335: `from the owner.`
+- p. 339: `from 1 to 2,500 characters in length.`
+- p. 343: `from an HTTP parameter. The value of the username variable`
+- p. 351: `def jboss_attack(HOST, PORT, SSL_On, _cmd):`
+- p. 352: `function receives a host, port, SSL indicator, and operating`
+- p. 353: `func jboss(host string, ssl bool, cmd string) (int, error) {`
+- p. 355: `package to easily decode your hexadecimal string.`
+- p. 355: `package does that for you automatically. Finally, you send`
+- p. 356: `function that translates a hexadecimal string to its equivalent`
+- p. 361: `while Listing 9-7 shows them in Go.`
+- p. 363: `func madvise() {`
+- p. 363: `func procselfmem(payload []byte) {`
+- p. 364: `while the C function uses an integer value to signal when to break the loop after`
+- p. 365: `function by searching Linux documentation. This is how we are able to call`
+- p. 365: `func waitForWrite() {`
+- p. 378: `from a tool, the contents of a binary file, or crypto keys.`
+- p. 379: `package to get the job done:`
+- p. 385: `package scanner`
+- p. 391: `func New() scanner.Checker { ❻`
+- p. 395: `from a defined plug-ins directory. You’ll build the same`
+- p. 395: `func head(l *lua.LState❶) int {`
+- p. 396: `function call, expecting it to be a string. You do this for each`
+- p. 397: `function by issuing an HTTP request to your target endpoint.`
+- p. 398: `func get(l *lua.LState) int {`
+- p. 400: `function in Listing 10-6 centralizes this registration process.`
+- p. 400: `func register(l *lua.LState) {`
+- p. 402: `function you created earlier ❸, which registers your custom`
+- p. 407: `from falling into a deep sleep.`
+- p. 407: `function outputs either the encrypted data (called ciphertext)`
+- p. 408: `function consumes the data itself, a secret key, and an`
+- p. 410: `package adheres to more stringent compatibility requirements.`
+- p. 415: `package doesn’t contain the bcrypt functionality. You then`
+- p. 416: `function parses the encoded hash to determine the cost and`
+- p. 417: `function performs the hashing algorithm by using the same salt`
+- p. 418: `func checkMAC(message, recvMAC []byte) bool { ❷`
+- p. 419: `function that returns a hash.Hash instance, and the shared secret`
+- p. 420: `function solves this problem by comparing the slices in a way`
+- p. 420: `from the transmission. Since this is just a simulation, you`
+- p. 421: `function ❼, passing it your received message and HMAC. As`
+- p. 422: `func unpad(buf []byte) []byte { ❶`
+- p. 423: `func decrypt(ciphertext, key []byte) ([]byte, error) { ❷`
+- p. 424: `function performs some validation to confirm that the`
+- p. 430: `function returns an error (if the inputs cause the algorithm to`
+- p. 433: `func helloHandler(w http.ResponseWriter, r *http.Request) { ❶`
+- p. 440: `from pilfering filesystem data or source code—that the data is`
+- p. 448: `function later to wait for your goroutines to complete.`
+- p. 451: `for use in a call to math.Ceil()—you check whether the maximum`
+- p. 453: `from it. Finally, you block main() again by calling consWg.Wait()`
+- p. 461: `func state() {`
+- p. 462: `func createEvents(s string)❽ *string {`
+- p. 463: `func createEvents(s string) *string {`
+- p. 466: `function as a means to call a native exported Windows DLL`
+- p. 471: `func OpenProcessHandle(i *Inject) error {`
+- p. 473: `func VirtualAllocEx(i *Inject) error {`
+- p. 474: `func WriteProcessMemory(i *Inject) error {`
+- p. 475: `func GetLoadLibAddress(i *Inject) error {`
+- p. 476: `function takes two arguments: the first is a handle to Kernel32.dll`
+- p. 477: `func CreateRemoteThread(i *Inject) error {`
+- p. 478: `func WaitForSingleObject(i *Inject) error {`
+- p. 479: `function should have been called, and our DLL will have been`
+- p. 479: `func VirtualFreeEx(i *Inject) error {`
+- p. 481: `import name table, thread local storage, and resource`
+- p. 492: `function of the Data Directory.`
+- p. 494: `package implements the Data Directory as a struct object, so`
+- p. 504: `from PowerSploit`
+- p. 505: `from sRDI to generate shellcode from the DLL, and then pass`
+- p. 511: `func PreProcessImage(dat *os.File) (*bytes.Reader, error) {`
+- p. 512: `package to read byte data. You’ll first read the header data and`
+- p. 520: `package models`
+- p. 523: `package we created named utils (Listing 13-14).`
+- p. 523: `func WriteData(r *bytes.Reader❶, c *models.CmdLineOpts❷, b []byte❸) {`
+- p. 527: `func encodeDecode(input []byte❶, key string❷) []byte {`
+- p. 528: `function to facilitate the encoding and decoding process.`
+- p. 528: `function to encrypt the payload. The modifications, shown in`
+- p. 531: `from the original PNG file, while the Payload Decode value ❷ is`
+- p. 533: `func WriteData(r *bytes.Reader, c *models.CmdLineOpts, b []byte) {`
+- p. 535: `function produces a decoded chunk segment, but never updates the CRC`
+- p. 542: `from the grpcapi directory:`
+- p. 543: `from and to shared channels.`
+- p. 544: `func NewAdminServer(work, output chan *grpcapi.Command) *adminServer {`
+- p. 547: `from the admin client and the other to receive polling from the`
+- p. 548: `from our implant API.`
+- p. 551: `function stubs necessary to facilitate remote communications.`
+- p. 561: `from conferences, such as GopherCon, that can guide you`
+- p. 571: `import address table (IAT), 279`
+- p. 582: `while loops, 15`
+
+## URLs
+- p. 17: https://lccn.loc.gov/2019041864
+- p. 17: https://lccn.loc.gov/2019041865
+- p. 35: https://github.com/blackhat-go/bhg/.
+- p. 46: https://golang.org/dl/.
+- p. 48: https://github.com/golang/go/wiki/IDEsAndTextEditorPlugins/
+- p. 49: https://github.com/fatih/vim-go/
+- p. 50: https://atom.io/
+- p. 51: https://atom.io/packages/go-plus/
+- p. 51: https://code.visualstudio.com
+- p. 52: https://github.com/Microsoft/vscode-go/
+- p. 55: https://golang.org/doc/install/source#environment/
+- p. 59: https://play.golang.org/
+- p. 60: https://tour.golang.org/
+- p. 84: https://github.com/blackhat-
+- p. 95: https://github.com/blackhat-go/bhg/blob/master/ch-
+- p. 107: http://joesproxy.com
+- p. 107: http://joescatcam.website.
+- p. 117: http://www.google.com/robots.txt
+- p. 118: https://www.google.com/robots.txt
+- p. 123: http://IP:PORT/ping
+- p. 125: https://www.shodan.io/
+- p. 127: https://api.shodan.io/
+- p. 128: https://api.shodan.io
+- p. 129: https://api.shodan.io/api-info?key={YOUR_API_KEY}
+- p. 131: https://api.shodan.io/shodan/host/search?key={YOUR_API_KEY}&query=
+- p. 138: https://metasploit.help.rapid7.com/docs/rpc-api/
+- p. 146: http://%s/api
+- p. 154: http://schemas.openxmlformats.org/package/2006/metadata
+- p. 154: http://purl.org/dc/elements/1.1/
+- p. 154: http://purl.org/dc/terms/
+- p. 154: http://purl.org/dc/dcmitype/
+- p. 154: http://www.w3.org/2001/XMLSchema-instance
+- p. 154: http://schemas.openxmlformats.org/officeDocument/2006/extended-properties
+- p. 154: http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes
+- p. 163: http://www.bing.com/search?q=%s
+- p. 164: http://graphics8.nytimes.com/packages/pdf/2012NAIHSAnnualHIVReport041713.docx
+- p. 164: http://www.nytimes.com/packages/pdf/business/Announcement.docx
+- p. 164: http://www.nytimes.com/packages/pdf/business/DOCXIndictment.docx
+- p. 164: http://www.nytimes.com/packages/pdf/business/BrownIndictment.docx
+- p. 164: http://graphics8.nytimes.com/packages/pdf/health/Introduction.docx
+- p. 169: http://localhost:8000/hello?name=alice
+- p. 171: http://localhost:8000/a
+- p. 171: http://localhost:8000/d
+- p. 175: http://localhost:8000/users/bob
+- p. 175: http://localhost:8000/users/bob1
+- p. 176: https://github.com/urfave/negroni/,
+- p. 178: http://localhost:8000.
+- p. 183: http://localhost:8000/hello
+- p. 183: http://localhost:8000/hello?username=admin&password=password
+- p. 188: http://127.0.0.1:80,
+- p. 189: http://127.0.0.1/?_task=login
+- p. 192: http://localhost:8080.
+- p. 193: http://jsbin.com
+- p. 194: http://localhost:8080/k.js
+- p. 194: http://localhost:8080/k.js.
+- p. 194: https://github.com/gopherjs/gopherjs/
+- p. 202: http://10.0.1.20:10080
+- p. 203: http://10.0.1.20:20080
+- p. 205: http://10.0.1.20:20080.
+- p. 232: https://apt.dockerproject.org/repo
+- p. 237: https://trial.cobaltstrike.com/.
+- p. 285: http://online.wsj.com/public/resources/documents/securework
+- p. 285: http://www.businessinsider.com/heres-
+- p. 286: https://docs.docker.com/install/linux/docker-
+- p. 297: https://github.com/golang/go/wiki/SQLDrivers/.
+- p. 315: https://www.winpcap.org/.
+- p. 318: http://www.tcpdump.org/manpages/pcap-filter.7.html.
+- p. 345: http://10.0.1.20:8080/WebApplication/
+- p. 345: http://10.0.1.20:8080/WebApplication/login.jsp.
+- p. 346: http://10.0.1.20:8080/WebApplication/login.jsp
+- p. 350: https://golang.org/pkg/.
+- p. 351: https://github.com/roo7break/serialator/blob/master/serialator
+- p. 354: https://%s/invoker/JMXInvokerServlet
+- p. 354: http://%s/invoker/JMXInvokerServlet
+- p. 358: https://www.exploit-
+- p. 380: https://www.exploit-db.com/
+- p. 390: http://%s:%d/manager/html
+- p. 394: https://www.lua.org/.
+- p. 395: https://github.com/yuin/gopher-lua/.
+- p. 395: http://%s:%d/%s
+- p. 410: https://golang.org/pkg/crypto/
+- p. 410: https://godoc.org/golang.org/x/crypto/.
+- p. 435: https://server.blackhat-go.local:9443/hello
+- p. 441: https://github.com/golang/crypto/blob/master/pkcs12/internal/
+- p. 456: https://docs.microsoft.com/en-
+- p. 473: https://docs.microsoft.com/en-us/windows/desktop/Memory/memory-protection-constants
+- p. 480: https://www.frida.re/
+- p. 482: https://telegram.org,
+- p. 489: https://docs.microsoft.com/en-us/windows/win32/debug/pe-
+- p. 500: https://www.msys2.org/
+- p. 504: https://github.com/monoxgas/sRDI/
+- p. 504: https://github.com/PowerShellMafia/PowerSploit/
+- p. 508: http://www.libpng.org/pub/png/spec/1.2/PNG-
+- p. 525: https://github.com/blackhat-go/bhg/tree/master/ch-
+- p. 538: https://github.com/golang/protobuf/.
+- p. 557: https://github.com/google/uuid/
+- p. 558: https://github.com/mattn/go-sqlite3/
+- p. 585: https://nostarch.com/blackhatgo/
+- p. 593: https://foxglovesecurity.com/2015/11/06/what-do-weblogic-websphere-jboss-jenkins-opennms-and-your-
+
+## Technique Signals
+- p. 2: 2. Bypassing Firewalls with Port Forwarding
+- p. 2: 4. Parsing Document Metadata with Bing Scraping
+- p. 3: 3. Keylogging with the WebSocket API
+- p. 3: 5. Port Scanning Through SYN-flood Protections
+- p. 3: 18. 9 WRITING AND PORTING EXPLOIT CODE
+- p. 4: 1. The Windows API’s OpenProcess() Function
+- p. 4: 3. Writing Image Byte Data to Implant a Payload
+- p. 4: 2. Defining and Building the gRPC API
+- p. 20: Chapter 2: TCP, Scanners, and Proxies
+- p. 20: Chapter 9: Writing and Porting Exploit Code
+- p. 21: Bypassing Firewalls with Port Forwarding
+- p. 22: Reviewing the Steps for Building an API Client
+- p. 22: Parsing Document Metadata with Bing Scraping
+- p. 24: Port Scanning Through SYN-flood Protections
+- p. 26: The Windows API’s OpenProcess() Function
+- p. 26: Obtaining a Process Token with the OpenProcess Windows API
+- p. 26: Manipulating Memory with the VirtualAllocEx Windows API
+- p. 26: Writing to Memory with the WriteProcessMemory Windows API
+- p. 26: Finding LoadLibraryA with the GetProcessAddress Windows API
+- p. 26: Verifying Injection with the WaitforSingleObject Windows API
+- p. 26: Cleaning Up with the VirtualFreeEx Windows API
+- p. 26: Creating a Message Box Using C and the Windows API
+- p. 27: Writing Image Byte Data to Implant a Payload
+- p. 27: Installing Protocol Buffers for Defining a gRPC API
+- p. 28: range of multilingual modules, extensions, and payloads.
+- p. 29: write a ridiculous fast network scanner, evil HTTP proxy, or
+- p. 29: goals include bypassing security controls and evading
+- p. 35: filesystems and databases, port exploits from other languages
+- p. 35: libraries, interact with the Windows API, and much, much
+- p. 39: data pilfering, packet sniffing, and exploit development.
+- p. 40: you through creating a simple TCP port scanner that scans a
+- p. 40: improve the efficiency and speed of this port scanner by
+- p. 40: solution. Lastly, we’ll re-create Netcat’s “gaping security
+- p. 42: common technique used during post-exploitation. We’ll also
+- p. 42: process those packets. We will then develop a port scanner
+- p. 42: that can scan reliably through various protection mechanisms,
+- p. 42: scans to show excessive false positives.
+- p. 42: This chapter focuses almost solely on creating exploits. It
+- p. 42: begins with creating a fuzzer to discover different types of
+- p. 42: to port existing exploits to Go from other languages. This
+- p. 42: discussion includes a port of a Java deserialization exploit and
+- p. 42: the Dirty COW privilege escalation exploit. We conclude the
+- p. 43: methods of interacting with the Windows native API, explore
+- p. 44: information, creating obfuscated C2 messages, and bypassing
+- p. 64: capitalization to determine scope: types and fields that begin
+- p. 64: with a capital letter are exported and accessible outside the
+- p. 78: and bypass egress restrictions through port forwarding. In this
+- p. 78: concurrent, properly throttled port scanner; create a TCP proxy
+- p. 82: You can use port forwarding to exploit several restrictive
+- p. 82: ports is by implementing a port scanner. By writing one, you’ll
+- p. 83: Once you’ve written a basic scanner, you’ll write one that’s
+- p. 83: faster. A port scanner may scan several ports by using a single
+- p. 83: consuming when your goal is to scan all 65,535 ports. You’ll
+- p. 83: scanner more suitable for larger port-scanning tasks.
+- p. 83: The first step in creating the port scanner is understanding how
+- p. 83: this example, you’ll be connecting to and scanning
+- p. 83: scanme.nmap.org, a service run by the Nmap project.1 To do
+- p. 83: scanme.nmap.org on TCP port 80, you would supply
+- p. 84: scanner, albeit an impolite one. Listing 2-1 shows how to put it
+- p. 84: _, err := net.Dial("tcp", "scanme.nmap.org:80")
+- p. 84: Listing 2-1: A basic port scanner that scans only one port (/ch-2/dial/main.go)
+- p. 84: Scanning a single port at a time isn’t useful, and it certainly
+- p. 84: testing, let’s scan ports 1 to 1024. To do this, you can use a for
+- p. 85: Listing 2-2: Scanning 1024 ports of scanme.nmap.org (/ch-2/tcp-scanner-
+- p. 86: Listing 2-3: The completed port scanner (/ch-2/tcp-scanner-slow/main.go)
+- p. 86: Compile and execute this code to conduct a light scan
+- p. 86: The previous scanner scanned multiple ports in a single go
+- p. 86: (pun intended). But your goal now is to scan multiple ports
+- p. 86: concurrently, which will make your port scanner faster. To do
+- p. 87: The most naive way to create a port scanner that runs
+- p. 87: consequences, create a new file called scan-too-fast.go with
+- p. 87: Listing 2-4: A scanner that works too fast (/ch-2/tcp-scanner-too-fast/main.go)
+- p. 87: ./tcp-scanner-too-fast 0.00s user 0.00s system 90% cpu 0.004 total
+- p. 88: Listing 2-5 shows the same port-scanning program with a
+- p. 89: Listing 2-5: A synchronized scanner that uses WaitGroup (/ch-2/tcp-scanner-wg-too-
+- p. 89: goroutine to scan a port ❷, and a deferred call to wg.Done()
+- p. 89: see inconsistent results. Scanning an excessive number of
+- p. 91: Listing 2-7: A basic worker pool (/ch-2/tcp-sync-scanner/main.go)
+- p. 92: To complete the port scanner, you could plug in your code
+- p. 92: scanner wouldn’t check them in order. To solve this problem,
+- p. 92: scan back to your main thread to order the ports before
+- p. 92: scan 1024 ports, you’re sending on the worker channel 1024
+- p. 94: Listing 2-8: Port scanning with multiple channels (/ch-2/tcp-scanner-final/main.go)
+- p. 94: There you have it: a highly efficient port scanner. Take
+- p. 95: scanned, and this isn’t necessary. The alternative requires code
+- p. 95: Second, you might want your scanner to be able to parse port-
+- p. 95: passed to Nmap. If you want to see an implementation of this,
+- p. 95: 2/scanner-port-format/. We’ll leave this as an exercise for you
+- p. 96: “gaping security hole” for remote command execution.
+- p. 100: port scanner. Based on Go’s documentation for the data type,
+- p. 106: leverage a system to bypass network segmentation.
+- p. 109: interesting functionality—specifically, its gaping security hole.
+- p. 109: this is referred to as a gaping security hole. Netcat allows you
+- p. 114: gaping security hole from the perspective of a TCP listener
+- p. 115: consume the APIs of Shodan, Bing, and Metasploit and will
+- p. 116: the data. But the endpoint can serve arbitrary data types. APIs
+- p. 119: these verbs mostly to interact with RESTful APIs, which
+- p. 122: example, imagine you’re interacting with an API that
+- p. 124: assist you in building tools to interact with third-party APIs for
+- p. 124: reconnaissance. Typically, this starts with passive techniques
+- p. 125: facilitates passive reconnaissance by maintaining a searchable
+- p. 125: Think of Shodan as a repository of scan data, even if it does
+- p. 125: interacts with the Shodan API, parsing the results and
+- p. 125: API key, which you get after you register on Shodan’s
+- p. 125: Now, get your API key from the site and set it as an
+- p. 125: only if you save your API key as the variable SHODAN_API_KEY.
+- p. 126: the demonstrated code to implement other API calls as you
+- p. 126: The client you build will implement two API calls: one to
+- p. 126: Luckily, the Shodan API is straightforward, producing
+- p. 126: starting point for learning API interaction. Here is a high-level
+- p. 126: 1. Review the service’s API documentation.
+- p. 126: 5. Build the client that interacts with the API consumer functions and types.
+- p. 126: Start by quickly reviewing the API documentation on
+- p. 126: When building an API client, you should structure it so that
+- p. 127: a consumer of the API you’ll build; in this case, you use it
+- p. 127: The files in the shodan directory—api.go, host.go, and
+- p. 127: When you perused the Shodan API documentation, you may
+- p. 127: your API key. Although you certainly can pass that value
+- p. 127: hardcoding or handling the base URL (https://api.shodan.io/).
+- p. 127: For example, defining your API functions, as in the following
+- p. 128: func APIInfo(token, url string) { --snip-- }
+- p. 128: ❶ const BaseURL = "https://api.shodan.io"
+- p. 128: ❸ func New(apiKey string) *Client {
+- p. 128: its API, you’ll have to make the change at only this one
+- p. 128: define a Client struct, used for maintaining your API token
+- p. 128: function, taking the API token as input and creating and
+- p. 128: creating your API code as arbitrary functions, you create them
+- p. 129: function parameters. You can change your API function calls,
+- p. 129: func (s *Client) APIInfo() { --snip-- }
+- p. 129: the API key through s.apiKey and retrieve the URL through
+- p. 129: API documentation, the call to query your subscription plan
+- p. 129: First, in api.go, you’ll need to define a type that can be
+- p. 130: body. In this example, name the type APIInfo:
+- p. 130: the response into your APIInfo struct:
+- p. 130: func (s *Client) APIInfo() (*APIInfo, error) {
+- p. 130: res, err := http.Get(fmt.Sprintf("%s/api-info?key=%s", BaseURL, s.apiKey))❶
+- p. 131: HTTP GET request to the /api-info resource ❶. The full URL is
+- p. 131: built using the BaseURL global constant and s.apiKey. You then
+- p. 131: decode the response into your APIInfo struct ❷ and return it to
+- p. 131: out a second, more useful API call—the host search—which
+- p. 131: the API documentation, is as follows:
+- p. 132: Compared to the initial API call you implemented, this one
+- p. 134: function in Listing 3-10, which is similar to the APIInfo()
+- p. 134: The flow and logic is exactly like the APIInfo() method,
+- p. 134: implementation for each API service you want to interact with.
+- p. 135: APIInfo() and HostSearch() methods, as in Listing 3-11.
+- p. 135: "Query Credits: %d\nScan Credits: %d\n\n",
+- p. 135: Start by reading your API key from the SHODAN_API_KEY
+- p. 135: new Client struct ❷, s, subsequently using it to call your APIInfo()
+- p. 136: $ SHODAN_API_KEY=YOUR-KEY go run main.go tomcat
+- p. 136: displaying Shodan data with your new API. You now have a
+- p. 136: adversarial techniques, including reconnaissance, exploitation,
+- p. 136: command and control, persistence, lateral network movement,
+- p. 136: payload creation and delivery, privilege escalation, and more.
+- p. 137: call (RPC) API to allow remote interaction with its
+- p. 137: did for the Shodan API key used to interact with Shodan in
+- p. 138: Because the details on exploitation and Metasploit use are
+- p. 138: Meterpreter payload for advanced post-exploitation activities.
+- p. 138: review the Metasploit API, lay out the project in library
+- p. 138: format, define data types, implement client API functions, and,
+
+## Extracted Operational Notes
+- p. 2: 2. Bypassing Firewalls with Port Forwarding
+- p. 2: 4. Parsing Document Metadata with Bing Scraping
+- p. 3: 3. Keylogging with the WebSocket API
+- p. 3: 1. Setting Up Databases with Docker
+- p. 3: 18. 9 WRITING AND PORTING EXPLOIT CODE
+- p. 4: 20. 11 IMPLEMENTING AND ATTACKING CRYPTOGRAPHY
+- p. 4: 1. The Windows API’s OpenProcess() Function
+- p. 4: 2. Defining and Building the gRPC API
+- p. 16: recording, or by any information storage or retrieval system, without the prior
+- p. 16: Developmental Editors: Frances Saux and Zach Lebowski
+- p. 16: Names: Steele, Tom (Security Consultant), author. | Patten, Chris, author.
+- p. 16: Title: Black Hat Go : Go programming for hackers and pentesters / Tom
+- p. 17: Subjects: LCSH: Penetration testing (Computer security) | Go (Computer
+- p. 17: editorial fashion and to the benefit of the trademark owner, with no intention of
+- p. 18: experience performing adversarial and research-based security
+- p. 18: STACKTITAN, a specialized adversarial services security
+- p. 18: consultancy. Chris has been practicing in the security industry
+- p. 18: government organizations on diverse security issues, including
+- p. 18: Operations Groups on sensitive cyber warfare initiatives.
+- p. 19: information security and application delivery.
+- p. 19: Dan has presented at various national and regional security
+- p. 19: programming. He moved into information security about 15
+- p. 19: years ago, focusing on security testing and research. Never one
+- p. 20: Chapter 9: Writing and Porting Exploit Code
+- p. 20: Chapter 11: Implementing and Attacking Cryptography
+- p. 21: Bypassing Firewalls with Port Forwarding
+- p. 22: Reviewing the Steps for Building an API Client
+- p. 22: Parsing Document Metadata with Bing Scraping
+- p. 26: The Windows API’s OpenProcess() Function
+- p. 26: Obtaining a Process Token with the OpenProcess Windows API
+- p. 26: Manipulating Memory with the VirtualAllocEx Windows API
+- p. 26: Writing to Memory with the WriteProcessMemory Windows API
+- p. 26: Finding LoadLibraryA with the GetProcessAddress Windows API
+- p. 26: Verifying Injection with the WaitforSingleObject Windows API
+- p. 26: Cleaning Up with the VirtualFreeEx Windows API
+- p. 26: Creating a Message Box Using C and the Windows API
+- p. 27: Installing Protocol Buffers for Defining a gRPC API
+- p. 28: information security. The design constraints, standard
+- p. 28: language end up defining the attack surface of any application
+- p. 28: built on them. Security tooling is no different; the right
+- p. 28: make it an amazing choice for security tool development. Go
+- p. 28: and the creation of security tools, enabling faster, safer, and
+- p. 28: software development; in order to keep up in security, your
+- p. 28: The authors of Black Hat Go are pioneers in Go security
+- p. 29: with Go development in the security space without getting
+- p. 29: into security tool development, this book will introduce the
+- p. 29: in security may learn a lot from the approaches taken here, as
+- p. 29: building tools to attack other software requires a different
+- p. 29: goals include bypassing security controls and evading
+- p. 29: If you already work in offensive security, this book will
+- p. 31: unchartered territory of writing our first book. Life happens—
+- p. 32: you. Thank you to my mentors and friends who have believed
+- p. 34: colleagues in the security industry to try it. We felt the benefits
+- p. 34: programming language from the perspective of security
+- p. 35: filesystems and databases, port exploits from other languages
+- p. 35: to Go, write the core functions of an SMB client, attack
+- p. 35: libraries, interact with the Windows API, and much, much
+- p. 35: security professionals. Specifically, the ability to code
+- p. 35: eliminate false positives, and locate obscure vulnerabilities.
+- p. 35: clone the book’s official code repository so you have all the
+- p. 36: but an introduction to using Go for developing security tools.
+- p. 36: dynamically typed languages—such as Python, Ruby, or PHP
+- p. 37: ancestor, making development more user-friendly. At the same
+- p. 37: These reasons for using Go don’t concern security
+- p. 37: your Linux or Mac system but compile the code in a
+- p. 38: This can be a drawback, particularly for security
+- p. 38: processing, looping, or error handling. A Python one-liner
+- p. 39: data pilfering, packet sniffing, and exploit development.
+- p. 39: attacking Microsoft Windows, and implementing
+- p. 40: solution. Lastly, we’ll re-create Netcat’s “gaping security
+- p. 41: policy, as well as perform password-guessing attacks.
+- p. 42: common technique used during post-exploitation. We’ll also
+- p. 42: This chapter focuses almost solely on creating exploits. It
+- p. 42: vulnerabilities. The second half of the chapter discusses how
+- p. 42: to port existing exploits to Go from other languages. This
+- p. 42: discussion includes a port of a Java deserialization exploit and
+- p. 42: the Dirty COW privilege escalation exploit. We conclude the
+- p. 43: Chapter 11: Implementing and Attacking
+- p. 43: In our discussion on attacking Windows, we’ll demonstrate
+- p. 43: methods of interacting with the Windows native API, explore
+- p. 44: signature-based security controls and attempt to circumvent
+- p. 46: https://golang.org/dl/. Binaries exist for Windows, Linux, and
+- p. 46: specific. On Linux or macOS, you can add this to your
+- p. 47: chosen or created this base workspace directory, create the
+- p. 47: following three subdirectories within: bin, pkg, and src (more
+- p. 47: on these directories shortly). Then, set an environment
+- p. 47: directory. For example, if you want to place your projects in a
+- p. 47: directory called gocode located within your home directory on
+- p. 47: Linux, you set GOPATH to the following:
+- p. 47: The bin directory will contain your compiled and installed
+- p. 47: directory stores various package objects, including third-party
+- p. 47: elegantly handles HTTP routing. The pkg directory will
+- p. 47: implementation in your code. Finally, the src directory will
+- p. 48: directories within must match this naming convention and
+- p. 48: this common directory structure. Without this important setup,
+- p. 48: can do this on Linux and Windows via the set command. Also,
+- p. 48: them in this chapter. For a more complete list of IDE or editor
+- p. 48: . This book is IDE/editor agnostic, meaning we won’t force
+- p. 49: The Vim text editor, available in many operating-system
+- p. 50: text editor with a large offering of community-driven
+- p. 53: Go ships with several useful commands that simplify the
+- p. 54: directory within $GOPATH/src (remember, you created this
+- p. 54: From the command line, within the directory containing
+- p. 56: on a Linux 64-bit architecture. You can accomplish this via the
+- p. 56: $ GOOS="linux" GOARCH="amd64" go build hello.go
+- p. 58: The following directory tree illustrates the placement of the
+- p. 58: constructed in a way that avoids assigning the same name to
+- p. 60: the language in a preconfigured environment. It’s worth noting
+- p. 60: (https://tour.golang.org/) tutorial. It’s a comprehensive, hands-
+- p. 61: that type. In the second example, you use the := operator to
+- p. 62: of 42. There really is no difference between the two operators.
+- p. 62: the := operator is an ugly symbol that reduces readability.
+- p. 63: to retrieve the value stored there. As you do in C, you use the
+- p. 63: & operator to retrieve the address in memory of some variable,
+- p. 63: and the * operator to dereference the address. The following
+- p. 63: pointer ❷ by using the & operator. This returns the address of
+- p. 63: You then use the * operator ❹ to assign a new value to the
+- p. 64: capitalization to determine scope: types and fields that begin
+- p. 64: with a capital letter are exported and accessible outside the
+- p. 71: Notice a new operator: <-. This operator indicates whether

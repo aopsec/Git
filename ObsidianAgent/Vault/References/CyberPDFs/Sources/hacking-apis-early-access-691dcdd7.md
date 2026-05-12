@@ -1,0 +1,577 @@
+# Hacking APIs
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 18 strong cyber signals, 30 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Hacking APIs - Early Access.pdf`
+- SHA256: `691dcdd74114267a38f8608e07111f5279c7b8c748d5c6f48f39a287d704814e`
+- Pages: `353`
+- Text characters: `805815`
+- Author: `Corey J. Ball`
+- Copied PDF: [[PDFs/hacking-apis-early-access-691dcdd7.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 11: nmap
+- p. 10: burp
+- p. 10: kali
+- p. 11: docker
+- p. 10: linux
+- p. 91: bash
+- p. 24: python
+- p. 124: dirsearch
+- p. 11: arjun
+- p. 3: tor
+- p. 17: monit
+
+## Commands
+- p. 98: `$ sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb`
+- p. 110: `$ sudo wget https://dl.pstmn.io/download/latest/linux64 -O postman-linux-x64.tar.gz`
+- p. 123: `$ curl https://raw.githubusercontent.com/OWASP/Amass/master/examples/config.ini >$HOME/.config/`
+- p. 124: `$ git clone https://github.com/assetnote/kiterunner.git`
+- p. 125: `$ curl https://wordlists-cdn.assetnote.io/data/automated/httparchive_apiroutes_2021_06_28.txt >`
+- p. 125: `$ wget -r --no-parent -R "index.html*" https://wordlists-cdn.assetnote.io/data/ -nH`
+- p. 128: `$ sudo git clone https://github.com/s0med3v/Arjun.git`
+- p. 129: `$ python3 /opt/Arjun/arjun.py -u http://target_address.com`
+- p. 129: `$ python3 /opt/Arjun/arjun.py -u http://target_address.com -o arjun_results.json`
+- p. 129: `$ python3 /opt/Arjun/arjun.py -u http://target_address.com -o arjun_results.json --stable`
+- p. 129: `$ python3 /opt/Arjun/arjun.py -i burp_targets.txt`
+- p. 136: `$ sudo docker run hello-world`
+- p. 138: `$ git clone https://github.com/DevSlop/Pixi.git`
+- p. 138: `$ sudo docker-compose up`
+- p. 139: `$ docker pull bkimminich/juice-shop`
+- p. 139: `$ docker run --rm -p 80:3000 bkimminich/juice-shop`
+- p. 140: `$ sudo docker pull dolevf/dvga`
+- p. 140: `$ sudo docker run -t -p 5000:5000 -e WEB_HOST=0.0.0.0 dolevf/dvga`
+- p. 143: `$ nmap 192.168.195.132`
+- p. 143: `$ nmap -sC -sV 192.168.195.132`
+- p. 164: `$ nmap -sC -sV <target address or network range> -oA nameofoutput`
+- p. 164: `$ nmap -p- <target address> -oA allportscan`
+- p. 176: `$ nmap -p- 192.168.50.35`
+- p. 225: `python3 jwt_tool.py [options here] -5 HS512 -p "crapi"`
+- p. 267: `$ arjun --headers "Content-Type: application/json]" -u http://vulnhost.com/api/register -m JSON`
+- p. 296: `$ nmap -p 80 –script http-waf-detect http://hapihacker.com`
+
+## Code And Script Lines
+- p. 34: `from making any other request for an hour. However, if the user pays this`
+- p. 38: `from the bug bounty provider but legal trouble as well. The bounty pro-`
+- p. 44: `from the web application in a response. Not all headers are required, and`
+- p. 46: `from viewing the page.`
+- p. 50: `from the database, the asterisk is a wildcard character that will select all of`
+- p. 57: `from having to remember the consumer from one request to another.`
+- p. 62: `from the server.`
+- p. 74: `while it adds security to the authorization process, it also expands the poten-`
+- p. 102: `from the browser to Burp Suite. This is done with the use of a web proxy.`
+- p. 104: `from your web browser and Postman. The proxy we set up will send any web`
+- p. 109: `function level authorization, mass assignment, injection, and improper assets`
+- p. 110: `from manually adding headers such as X-Originating-IP, X-Forwarded-For,`
+- p. 112: `from parent.`
+- p. 116: `from https://age-of-empires-2-api.herokuapp.com/apispec.json as follows:`
+- p. 162: `from a target by port or vulnerability scanning, pinging, sending HTTP`
+- p. 162: `from the previous phase: phase one, detection scanning, uses automated`
+- p. 162: `while automated scans are running in the background. Whenever you’ve`
+- p. 196: `from the unique status codes.`
+- p. 202: `from the application (see Figure 7-19). You’ll need to include this Bearer`
+- p. 224: `from the intercepted request. Open a terminal and run JWT_Tool. As a`
+- p. 247: `while all other requests are receiving a 404 Not Found status code. Anomaly!`
+- p. 261: `from discovering the user’s exact location and gaining the ability to track`
+- p. 266: `from an endpoint and then flex your fuzzing skills by submitting requests`
+- p. 321: `from the beginning of the request body and give it a name (for example,`
+- p. 326: `from requesting private pastes. Send the paste request in Figure 14-12 to`
+- p. 339: `function loadBambooHRUsers() {`
+
+## URLs
+- p. 31: https://nostarch.com/bug-bounty-bootcamp
+- p. 32: https://attack.mitre.org
+- p. 32: https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_
+- p. 35: https://developer.twitter.com/en/docs
+- p. 36: https://www
+- p. 38: https://www.bugcrowd.com/resources/webinars/
+- p. 42: https://www.example.com:8443.
+- p. 44: https://developer
+- p. 44: https://twitter.com/
+- p. 46: https://developer.mozilla.org/en-US/docs/Web/HTTP
+- p. 54: https://example.com/api/v3/users/
+- p. 54: https://example.com/api/v3/customers/
+- p. 54: https://example.com/api/updated_on/
+- p. 54: https://example.com/api/state/1/
+- p. 63: http://www.w3.org/2003/05/soap-envelope/
+- p. 63: http://www.w3.org/2003/05/soap-encoding
+- p. 63: http://www.soap-shop.com/inventory
+- p. 65: https://github.com/raml-org/raml-spec
+- p. 67: https://t.co/R9hm2LOKQi
+- p. 68: https://yaml.org.
+- p. 74: https://twitter.com/,
+- p. 80: https://owasp
+- p. 80: https://www.sitename.org/wp-json/wp/v2/users
+- p. 81: https://bestgame.com/api/v3/users?id=5501
+- p. 81: https://www.bestgame.com/user/strife.buster.97
+- p. 81: https://­
+- p. 82: https://www.bestgame.com/user/shinra-number-1
+- p. 91: http://10.10.78.181:5000/api/v1/resources/books?show=/etc/passwd
+- p. 98: https://www.kali.org/downloads.
+- p. 98: https://www.kali.org/docs/installation.
+- p. 98: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+- p. 100: https://developers.google.com/web/tools/chrome-devtools.
+- p. 101: https://portswigger.net/burp/communitydownload.
+- p. 102: http://burpsuite,
+- p. 105: https://twitter.com
+- p. 110: https://portswigger.net/web-security
+- p. 110: https://portswigger.net/burp/documentation.
+- p. 110: https://dl.pstmn.io/download/latest/linux64
+- p. 112: http://example.com/:company/profile,
+- p. 116: https://www.postman.com/explore/collections.
+- p. 116: https://age-of-empires-2-api.herokuapp.com/apispec.json
+- p. 118: https://age-of-empires-2-api.herokuapp.com/api/v1.
+- p. 121: https://learning.postman.com/docs/
+- p. 121: https://learning.postman.com
+- p. 121: https://learning.postman.com/docs/getting-started/introduction.
+- p. 123: https://github.com/OWASP/
+- p. 123: https://raw.githubusercontent.com/OWASP/Amass/master/examples/config.ini
+- p. 123: https://umbrella.cisco.com
+- p. 123: https://urlscan.io
+- p. 123: https://virustotal.com
+- p. 124: https://github.com/OWASP/Amass.
+- p. 124: https://github.com/assetnote/kiterunner
+- p. 124: https://github.com/assetnote/kiterunner.git
+- p. 125: https://wordlists.assetnote.io.
+- p. 125: https://wordlists-cdn.assetnote.io/data/automated/httparchive_apiroutes_2021_06_28.txt
+- p. 125: https://wordlists-cdn.assetnote.io/data/
+- p. 125: https://example.com
+- p. 126: https://cirt.net/
+- p. 126: https://github.com/xmendez/wfuzz.
+- p. 127: http://targetname.com/FUZZ
+- p. 127: http://targetname.com/account?user_id=FUZZ
+- p. 127: http://targetname.com/FUZZ/user_id=FUZZ2
+- p. 128: https://wfuzz.readthedocs.io/en/
+- p. 128: https://github.com/s0med3v/Arjun.git
+- p. 129: http://target_address.com
+- p. 130: https://reqres.in
+- p. 130: http://reqres.in/api/users/1.
+- p. 136: https://www.cybrary.it/blog/0p3n/
+- p. 136: https://www.blackhillsinfosec.com/webcast-how-to-build-a-home-lab
+- p. 136: https://null-byte
+- p. 136: https://www.hackingarticles.in/web-application-pentest-lab-setup-on-aws
+- p. 136: https://docs.docker.com/engine/install/
+- p. 137: https://docs.docker.com/compose/install.
+- p. 138: https://github.com/DevSlop/Pixi.git
+- p. 138: http://localhost:8000
+- p. 139: http://localhost.
+- p. 139: http://192.168.99.100
+- p. 140: http://localhost:5000.
+- p. 140: https://github.com/erev0s/VAmPI
+- p. 140: https://github.com/snoopysecurity/dvws-node
+- p. 140: https://github.com/ne0z/
+- p. 140: https://github.com/layro01/node-api-goat
+- p. 140: https://github.com/CarveSystems/vulnerable
+- p. 140: https://github.com/InsiderPhD/Generic-University
+- p. 140: https://github.com/tkisason/vulnapi
+- p. 141: https://tryhackme.com
+- p. 141: https://www.hackthebox
+- p. 143: http://192.168.195.132:3000.
+- p. 144: http://192.168.195.132:3000
+- p. 153: https://www.programmableweb.com
+- p. 155: https://rapidapi.com
+- p. 155: https://apis.guru/browse-apis.
+- p. 155: https://shodan.io.
+- p. 156: https://www.ewise.com
+- p. 159: https://github.com
+- p. 165: https://www.twitter.com/robots.txt
+- p. 167: http://wordlists.assetnote.io
+- p. 172: http://192.168.195.132:8000
+- p. 172: http://targetaddress/
+- p. 173: http://192.168.195.132:8090
+- p. 173: http://192.168.195.132:8090/trade/queryTransationRecords
+- p. 173: http://192.168.195.132:8090/event
+- p. 173: http://192.168.195.132:8090/api-docs
+- p. 174: http://test3.com
+- p. 174: http://test4.com
+- p. 174: http://test5.com:8888/api
+- p. 174: http://192.168.50.35:8888/api/privatisations/
+- p. 176: http://192.168.50.35:8000
+- p. 176: http://192.168.50.35:8025
+- p. 176: http://192.168.50.35:8080
+- p. 176: http://192.168.50.35:8087
+- p. 176: http://192.168.50.35:8888
+- p. 182: https://example.com/docs
+- p. 182: https://example.com/api/docs
+- p. 182: https://docs.example.com
+- p. 182: https://dev.example.com/docs
+- p. 182: https://developer.example.com/docs
+- p. 182: https://api.example.com/docs
+- p. 182: https://example.com/developers/documentation
+- p. 182: https://github.com/hAPI-hacker/Hacking-APIs
+- p. 183: https://web.archive.org/
+- p. 192: http://192.168.50.35:8090
+- p. 192: http://192.168.50.35:8090/api/user/info
+- p. 192: http://192.168.50.35:8090/api/pictures/
+- p. 192: http://192.168.50.35:8090/api/user/info/
+- p. 192: http://192.168.50.35:8090/api/pictures
+- p. 192: http://127.0.0.1:8080
+- p. 192: http://192.168.50.35:8090/api/
+- p. 198: https://secure.example.com/api/users/
+- p. 199: https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability
+- p. 200: https://github.com/hAPI-hacker/Hacking-APIs/tree/
+- p. 206: https://github.com/sc0tfree/mentalist
+- p. 206: https://github.com/Mebus/cupp
+- p. 207: http://192.168.195.130:8888/api/v2/auth
+- p. 208: http://192.168.195.130:8888/forgot-password
+- p. 208: http://192.168.195.130:8888
+- p. 218: https://jwt.io,
+- p. 220: https://docs.microsoft.com/en-us/dotnet/
+- p. 221: http://target-site.com/
+- p. 224: https://jwt.io
+- p. 230: https://github.com/
+- p. 230: https://github.com/fuzzdb-project/fuzzdb
+- p. 230: https://github.com/xmendez/wfuzz
+- p. 239: http://192.168.195.132:8090/api/user/edit_info
+- p. 241: https://petstore.swagger.io/v2.
+- p. 242: http://testsite.com/api/
+- p. 242: http://testsite.com/api/v2/account
+- p. 259: http://yourIPaddress:8025.
+- p. 267: http://vulnhost.com/api/register
+- p. 272: https://example.com/chickendinner.jpg
+- p. 277: https://github.com/payloadbox/
+- p. 277: https://github.com/xmendez/wfuzz/
+- p. 277: https://netsec.expert/posts/xss-in-2020
+- p. 283: https://github.com/sqlmapproject/sqlmap#readme.
+- p. 286: http://vulnerableAPI
+- p. 296: http://hapihacker.com
+- p. 300: https://wfuzz.readthedocs.io.
+- p. 301: http://hapihacker.com/FUZZ
+- p. 301: http://hapihacker.com/api/v2/FUZZ
+- p. 301: http://192.168.195.130:8888/identity/
+- p. 301: https://github.com/0xInfection/
+- p. 306: https://github.com/danielmiessler/
+- p. 306: https://www.jython.org/
+- p. 310: https://ipchicken.com.
+- p. 313: https://graphql.org/learn
+- p. 313: https://nmap.org
+- p. 317: http://192.168.195.132:5000
+- p. 317: http://192.168.195.132:5000/graphiql
+- p. 317: http://192.168.195.132:5000/graphql
+- p. 321: http://192.168.195.132:5000/graphiql?
+- p. 327: http://www.google.com/\
+- p. 328: http://www.google.com/
+- p. 330: https://test.com/\
+- p. 336: https://www.uspsoig.gov/sites/default/files/document-library
+- p. 339: https://api.bamboohr.co.uk/api/gateway.php/example/v1/employees/directory
+- p. 341: https://samcurry.net,
+- p. 345: https://www.hackingapis.com.
+- p. 349: https://developer.mozilla.org/
+- p. 350: https://www.programmableweb.com/
+- p. 350: https://www.apisec.ai/blog/
+- p. 350: https://www.apisec.ai/blog/why-apis-are-your-biggest-security-risk.
+- p. 350: https://owasp.org/www-project
+- p. 350: https://apisecurity.io/encyclopedia/
+- p. 350: https://lp.traceable.ai/webinars.html?commid=477082.
+- p. 350: https://portswigger.net/web-security.
+- p. 350: https://www.hackingarticles.in/
+- p. 351: https://null-byte.wonderhowto.com/how-to/hack-like-pro
+- p. 351: https://www.blackhillsinfosec.com/
+- p. 351: https://www.programmableweb.com/apis/
+- p. 351: https://nordicapis.com/api-discovery-15-ways-to-find-apis.
+- p. 351: https://rapidapi.com/hub.
+- p. 351: https://nordicapis.com/5-examples-of
+- p. 351: https://salt.security/blog/api3-2019-excessive-data-exposure.
+- p. 351: https://technologyadvice.com/blog/information-technology/
+- p. 351: https://blog.pentesteracademy.com/hacking-jwt-tokens-sqli-in
+- p. 351: https://smartbear.com/blog/
+- p. 351: https://owasp.org/www-community/Fuzzing.
+- p. 351: https://inonst.medium.com.
+- p. 352: https://nullsweep.com/nosql-injection-cheatsheet.
+- p. 352: https://portswigger.net/
+- p. 352: https://doi.org/10.1007/s11432-014-5145-1.
+- p. 352: https://hacken.io/researches-and-investigations/how-to-bypass-waf
+- p. 352: https://nordicapis.com/everything-you
+- p. 352: https://blog.yeswehack.com/
+- p. 352: https://blog.assetnote.io/2021/08/29/exploiting-graphql.
+- p. 352: https://blog.doyensec
+- p. 352: https://apisecurity.io.
+- p. 353: https://nostarch.com/hacking-apis
+
+## Technique Signals
+- p. 2: Hacking APIs (Early Access) © 2022 by Corey Ball
+- p. 2: Welcome to the Early Access edition of the as yet unpublished Hacking APIs
+- p. 4: PART I: THE STATE OF WEB API SECURITY
+- p. 4: Chapter 0: Preparing for API Security Testing
+- p. 4: Chapter 4: Setting Up an API Hacking System
+- p. 4: Chapter 5: Setting Up Vulnerable API Targets
+- p. 4: Chapter 8: Attacking API Authentication
+- p. 4: Chapter 10: Exploiting API Authorization
+- p. 4: Chapter 11: Exploiting Mass Assignment
+- p. 6: management. He currently serves as a head of customer success at APIsec,
+- p. 6: an API security company, where he works with customers to ensure their
+- p. 9: PART I: THE STATE OF WEB API SECURITY 1
+- p. 9: PREPARING FOR API SECURITY TESTING 3
+- p. 10: SETTING UP AN API HACKING SYSTEM 71
+- p. 11: Performing Reconnaissance with OWASP Amass . . . . . . . . . . . . . . . . . . . . . . 97
+- p. 11: SETTING UP VULNERABLE API TARGETS 109
+- p. 12: Lab #4: Building a crAPI Collection and Discovering Excessive Data Exposure . . . . . . . . 174
+- p. 13: Lab #6: Fuzzing for Improper Assets Management Vulnerabilities . . . . . . . . . . . . . . . . . 219
+- p. 13: Automating Mass Assignment Attacks with Arjun and Burp Suite Intruder . . . . . . . . . . . 241
+- p. 14: PART IV: REAL-WORLD API HACKING 265
+- p. 14: Directory Brute-Forcing for the GraphQL Endpoint . . . . . . . . . . . . . . . . . . . . 290
+- p. 14: Reverse Engineering a GraphQL Collection Using Introspection . . . . . . . . . . . 296
+- p. 17: ago. But APIs have changed all that. They are the glue that has enabled col-
+- p. 17: run applications. Indeed, APIs have become so pervasive that an Akamai
+- p. 17: report from October 2018 found that API calls accounted for an astounding
+- p. 17: cybercriminals will take notice. To these criminals, APIs are highly fertile
+- p. 18: Consider the role APIs play in a typical application architecture. When
+- p. 18: you check your bank balance on a mobile app, an API behind the scenes
+- p. 18: for a loan, an API allows the bank to request your credit history. APIs sit in a
+- p. 18: a cybercriminal can compromise the API layer, they could get direct access
+- p. 18: While APIs have reached an unprecedented level of adoption, their
+- p. 18: to learn they use APIs throughout the organization. But, he quickly
+- p. 18: Unfortunately, lax API security practices too often result in unexpected
+- p. 18: API called Informed Visibility that allowed organizations and users to track
+- p. 18: packages. Appropriately, the API required users to validate their identity
+- p. 18: and authenticate in order to access any information via the API. However,
+- p. 18: ment) with APIs. But because one of its APIs required no authentication
+- p. 18: APIs to power its applications and connect to financial institutions. One of
+- p. 18: its APIs served a marketing function by showing recent, anonymized trans-
+- p. 18: mation, the API would return all transaction details when called directly.
+- p. 18: Malicious users harvested some 200 million transactions via this API.
+- p. 18: firm Gartner has predicted that API breaches will become the “most fre-
+- p. 18: cloud breaches are the result of API misconfigurations. The breaches also
+- p. 18: highlight the need for new approaches to securing APIs. The application
+- p. 18: and vulnerabilities. For example, automated scanners search the Common
+- p. 19: The problem is that API vulnerabilities are not common. Not only do
+- p. 19: they vary highly from one API to another, but they also tend to differ from
+- p. 19: Put more succinctly, these unique API logic flaws are effectively zero-
+- p. 19: day vulnerabilities, each of which belongs only to a specific API. Because
+- p. 19: penetration testers and bug bounty hunters interested in keeping APIs
+- p. 19: ment processes, API security is no longer strictly the domain of companies’
+- p. 19: When done properly, API security testing programs are continuous and
+- p. 19: and cover the API’s entire footprint. Finding API vulnerabilities takes new
+- p. 19: skills, new tools, and new approaches. The world needs Hacking APIs now
+- p. 19: Chief Strategy Officer, APIsec.ai Inc.
+- p. 21: Kevin Villanueva for volunteering me to lead the API penetration test-
+- p. 21: port. Also, the rest of the APIsec.ai team for their API security articles,
+- p. 21: webinars, and their awesome API security testing platform.
+- p. 21: providing me with beta access to crAPI. Additional thanks to the rest of the
+- p. 21: OWASP API Security Top 10 project team, Erez Yalon and Paulo Silva.
+- p. 21: content, and diligence to secure all the APIs.
+- p. 21: only providing one of the best API hacking suites out there but also for giv-
+- p. 21: ing me the opportunity to evangelize API security.
+- p. 21: Dolev Farhi for Damn GraphQL, his excellent conference talks, and all
+- p. 21: his help with the GraphQL sections of this book.
+- p. 21: Sean Yeoh and the rest of the great team at Assetnote for their API
+- p. 22: APIsecurity.io for providing the world some of the best API security
+- p. 22: API security content and participate in webinars.
+- p. 22: an API hacking madman and turning them into this book. Bill, thanks for
+- p. 23: tion programming interface (API) calls
+- p. 23: As you’ll see in this book, APIs are an excellent attack vector. After all,
+- p. 23: penetrate the perimeter of a network firewall, bypass an advanced antivirus,
+- p. 23: The goal of this book is to introduce you to web APIs and show you
+- p. 23: ing the security of REST APIs, the most common API format used in web
+- p. 24: applications, but will cover attacking GraphQL APIs as well. You’ll first
+- p. 24: learn tools and techniques for using APIs as intended. Next, you’ll probe
+- p. 24: them for vulnerabilities and learn how to exploit those vulnerabilities. You
+- p. 24: resource is no longer oil, but data.” APIs are digital pipelines that allow a
+- p. 24: Simply put, an API is a technology that enables communication
+- p. 24: very quickly. By relying on APIs, developers can design modular applica-
+- p. 24: APIs. Yet new technologies often get quite a head start before cybersecurity
+- p. 24: has a chance to ask any questions, and APIs have hugely expanded these
+- p. 24: ers can use them as a direct route to their data. In addition, many APIs
+- p. 24: Due to these reasons, Gartner predicted years ago that by 2022, APIs
+- p. 24: catching up to the speed of technological innovation. By attacking APIs,
+- p. 24: Attacking APIs is not as challenging as you may think. Once you under-
+- p. 24: late well to APIs. You can’t, for instance, throw a generic vulnerability scan
+- p. 24: at an API and expect useful results. I’ve often run these scans against vul-
+- p. 24: nerable APIs only to receive false negatives. When APIs are not tested prop-
+- p. 25: Part I: The State of Web API Security First, I will introduce you to
+- p. 25: the basic knowledge you need about web applications and the APIs that
+- p. 25: power them. You’ll learn about REST APIs, the main topic of this book,
+- p. 25: as well as the increasingly popular GraphQL API format. I will also cover
+- p. 25: the most common API-related vulnerabilities you can expect to find.
+- p. 25: Part II: Lab Setup In this section, you’ll build your API hacking sys-
+- p. 25: tem and develop an understanding of the tools in play, including Burp
+- p. 25: Part III: Attacking APIs In Part III, we’ll turn to the API hacking
+- p. 25: against APIs. Here the fun begins: you’ll discover APIs through the use
+- p. 25: such as injections. You’ll learn how to reverse engineer an API, bypass
+- p. 25: its authentication, and fuzz it for a variety of security issues.
+- p. 25: Part IV: Real-World API Hacking The final section of this book is
+- p. 25: dedicated to showing you how API weaknesses have been exploited
+- p. 25: situations. You’ll also walk through a sample attack against a GraphQL
+- p. 25: API, adapting many of the techniques introduced earlier in the book to
+- p. 25: cation is a restaurant. Like an API’s documentation, the menu describes
+- p. 25: and the chef, the waiter is like the API itself; you can make requests to the
+- p. 25: Crucially, an API user does not need to know how the chef prepares a
+- p. 26: As an API hacker, you’ll be probing every part of the metaphorical
+- p. 26: to bypass its “bouncer” or perhaps provide a stolen authentication token.
+- p. 26: Also, you’ll analyze the menu for ways to trick the API into giving you the
+- p. 26: handing you everything they have. You may even convince the API owner
+- p. 26: This book takes a holistic approach toward hacking APIs by guiding
+- p. 26: • Understanding how web applications work and the anatomy of web APIs
+- p. 26: • Mastering the top API vulnerabilities from a hacker’s perspective
+- p. 26: • Learning the most effective API hacking tools
+- p. 26: • Performing passive and active API reconnaissance to discover the exis-
+- p. 26: tence of APIs, find exposed secrets, and analyze API functionality
+- p. 26: • Interacting with APIs and testing them with the power of fuzzing
+- p. 26: • Performing a variety of attacks to exploit API vulnerabilities you
+- p. 26: advantage of the functions and features of any API. The better we emulate
+- p. 26: API provider. Together, I think we might even prevent the next big API data
+- p. 29: API security testing does not quite fit into
+- p. 29: many organizations’ API attack surfaces, API penetra-
+- p. 29: I will discuss the features of APIs that you should include in your test and
+- p. 29: plan to test all features of the target APIs, and help you avoid trouble.
+- p. 29: API penetration testing requires a well-developed scope, or an account
+- p. 29: Scoping an API security testing engagement comes down to a few factors:
+- p. 30: Before you attack APIs, it is supremely important that you receive a signed
+- p. 30: For an API penetration test, this contract can take the form of a signed
+- p. 30: coming to an agreement over which aspects of an API will be tested, deter-
+- p. 30: take into consideration the location where the client is hosting their APIs
+- p. 30: Threat modeling is the process used to map out the threats to an API provider.
+- p. 30: If you model an API penetration test based on a relevant threat, you’ll be
+- p. 30: an API will be those that align with actual threats to the API provider.
+- p. 30: A threat actor is the adversary or attacker of the API. The adversary can
+- p. 30: be anyone, from a member of the public who stumbles upon the API with
+- p. 30: rity of the API, it is ideal to map out the probable adversary as well as their
+- p. 31: given about your target. If the threat actor knows nothing about the API,
+- p. 31: reconnaissance. To address these distinctions, there are three basic pen-
+- p. 31: someone who may have stumbled across the target organization or its API.
+- p. 31: In a truly black box API engagement, the client would not disclose any
+- p. 31: you should have compiled a list of target IP addresses, URLs, and API end-
+- p. 31: time spent on reconnaissance and instead invest it in active testing. When
+- p. 31: well as access to API documentation and perhaps a basic user account. You
+- p. 31: might also be allowed to bypass certain network perimeter security controls.
+- p. 31: reconnaissance in comparison to other techniques. If you are interested in
+- p. 31: Preparing for API Security TesTing 5
+- p. 32: exploits against known vulnerabilities. The testing method that fits the
+- p. 32: One of the main goals of scoping an API security engagement is to discover
+- p. 32: find out how many unique API endpoints, methods, versions, features,
+- p. 32: interviews with the client, a review of the relevant API documentation, and
+- p. 32: access to API collections. Once you have the requested information, you
+- p. 32: unauthenticated users. The client may want to have you test different API
+- p. 33: API weaknesses, many of the detrimental vulnerabilities are discovered
+- p. 33: anism for web applications and APIs. A WAF is a device that controls the
+- p. 33: network traffic that reaches the API. If a WAF has been set up properly, you
+- p. 33: will find out quickly during testing when access to the API is lost after per-
+- p. 33: forming a simple scan. WAFs can be great at limiting unexpected requests
+- p. 33: and stopping an API security test in its tracks. An effective WAF will detect
+- p. 33: could learn the boundaries of the WAF, figure out how to bypass it, or use a
+
+## Extracted Operational Notes
+- p. 2: Hacking APIs (Early Access) © 2022 by Corey Ball
+- p. 2: Welcome to the Early Access edition of the as yet unpublished Hacking APIs
+- p. 3: Compositor: Maureen Forys, Happenstance Type-O-Rama
+- p. 3: marked name, we are using the names only in an editorial fashion and to the benefit of the
+- p. 3: tion storage or retrieval system, without the prior written permission of the copyright owner
+- p. 4: PART I: THE STATE OF WEB API SECURITY
+- p. 4: Chapter 0: Preparing for API Security Testing
+- p. 4: Chapter 4: Setting Up an API Hacking System
+- p. 4: Chapter 5: Setting Up Vulnerable API Targets
+- p. 4: Chapter 8: Attacking API Authentication
+- p. 4: Chapter 10: Exploiting API Authorization
+- p. 4: Chapter 11: Exploiting Mass Assignment
+- p. 6: Corey Ball is a cybersecurity consulting leader at Moss Adams, where he
+- p. 6: working in IT and cybersecurity across several industries, including aero-
+- p. 6: Alex Rifman is a security industry veteran with a background in defense
+- p. 6: management. He currently serves as a head of customer success at APIsec,
+- p. 6: an API security company, where he works with customers to ensure their
+- p. 9: PART I: THE STATE OF WEB API SECURITY 1
+- p. 9: PREPARING FOR API SECURITY TESTING 3
+- p. 10: SETTING UP AN API HACKING SYSTEM 71
+- p. 11: Performing Reconnaissance with OWASP Amass . . . . . . . . . . . . . . . . . . . . . . 97
+- p. 11: SETTING UP VULNERABLE API TARGETS 109
+- p. 12: Lab #4: Building a crAPI Collection and Discovering Excessive Data Exposure . . . . . . . . 174
+- p. 12: Password Reset and Multifactor Authentication Brute-Force Attacks . . . . . . . . . 181
+- p. 12: Including Base64 Authentication in Brute-Force Attacks . . . . . . . . . . . . . . . . . 185
+- p. 13: Lab #6: Fuzzing for Improper Assets Management Vulnerabilities . . . . . . . . . . . . . . . . . 219
+- p. 13: Automating Mass Assignment Attacks with Arjun and Burp Suite Intruder . . . . . . . . . . . 241
+- p. 14: PART IV: REAL-WORLD API HACKING 265
+- p. 14: Directory Brute-Forcing for the GraphQL Endpoint . . . . . . . . . . . . . . . . . . . . 290
+- p. 14: Reverse Engineering a GraphQL Collection Using Introspection . . . . . . . . . . . 296
+- p. 17: monitoring your daily steps, exercise data, and nutri-
+- p. 17: ago. But APIs have changed all that. They are the glue that has enabled col-
+- p. 17: run applications. Indeed, APIs have become so pervasive that an Akamai
+- p. 17: report from October 2018 found that API calls accounted for an astounding
+- p. 17: cybercriminals will take notice. To these criminals, APIs are highly fertile
+- p. 18: Consider the role APIs play in a typical application architecture. When
+- p. 18: you check your bank balance on a mobile app, an API behind the scenes
+- p. 18: for a loan, an API allows the bank to request your credit history. APIs sit in a
+- p. 18: a cybercriminal can compromise the API layer, they could get direct access
+- p. 18: While APIs have reached an unprecedented level of adoption, their
+- p. 18: security continues to lag. I recently spoke with the chief information
+- p. 18: security officer of a 100-year-old energy company and was surprised
+- p. 18: to learn they use APIs throughout the organization. But, he quickly
+- p. 18: to consider the security implications of every change they make, and so
+- p. 18: undiscovered vulnerabilities weasel their way into products.
+- p. 18: Unfortunately, lax API security practices too often result in unexpected
+- p. 18: API called Informed Visibility that allowed organizations and users to track
+- p. 18: packages. Appropriately, the API required users to validate their identity
+- p. 18: and authenticate in order to access any information via the API. However,
+- p. 18: ment) with APIs. But because one of its APIs required no authentication
+- p. 18: APIs to power its applications and connect to financial institutions. One of
+- p. 18: its APIs served a marketing function by showing recent, anonymized trans-
+- p. 18: mation, the API would return all transaction details when called directly.
+- p. 18: Malicious users harvested some 200 million transactions via this API.
+- p. 18: firm Gartner has predicted that API breaches will become the “most fre-
+- p. 18: quent attack vector” by 2022, and IBM has reported that two-thirds of
+- p. 18: cloud breaches are the result of API misconfigurations. The breaches also
+- p. 18: highlight the need for new approaches to securing APIs. The application
+- p. 18: security solutions of the past focus only on the most common attack types
+- p. 18: and vulnerabilities. For example, automated scanners search the Common
+- p. 18: Vulnerabilities and Exposures (CVE) database for flaws in IT systems, and
+- p. 18: web application firewalls monitor traffic in real time to block malicious
+- p. 19: traditional threats, but they fail to address the core security challenges
+- p. 19: The problem is that API vulnerabilities are not common. Not only do
+- p. 19: they vary highly from one API to another, but they also tend to differ from
+- p. 19: Put more succinctly, these unique API logic flaws are effectively zero-
+- p. 19: day vulnerabilities, each of which belongs only to a specific API. Because
+- p. 19: penetration testers and bug bounty hunters interested in keeping APIs
+- p. 19: secure. Additionally, as security shifts “left” to the engineering and develop-
+- p. 19: ment processes, API security is no longer strictly the domain of companies’
+- p. 19: information security departments. This book can be a guide to any modern
+- p. 19: engineering team that conducts security testing alongside functional and
+- p. 19: When done properly, API security testing programs are continuous and
+- p. 19: and cover the API’s entire footprint. Finding API vulnerabilities takes new
+- p. 19: skills, new tools, and new approaches. The world needs Hacking APIs now
+- p. 19: Chief Strategy Officer, APIsec.ai Inc.
+- p. 21: Kevin Villanueva for volunteering me to lead the API penetration test-
+- p. 21: else on the Moss Adams Cybersecurity team for challenging, helping, and
+- p. 21: Gary Lamb, Eric Wilson, and Scott Gnile for being a such great mentors
+- p. 21: port. Also, the rest of the APIsec.ai team for their API security articles,
+- p. 21: webinars, and their awesome API security testing platform.
+- p. 21: providing me with beta access to crAPI. Additional thanks to the rest of the
+- p. 21: OWASP API Security Top 10 project team, Erez Yalon and Paulo Silva.
+- p. 21: content, and diligence to secure all the APIs.
+- p. 21: only providing one of the best API hacking suites out there but also for giv-
+- p. 21: ing me the opportunity to evangelize API security.
+- p. 21: Dolev Farhi for Damn GraphQL, his excellent conference talks, and all
+- p. 21: his help with the GraphQL sections of this book.
+- p. 21: Sean Yeoh and the rest of the great team at Assetnote for their API
+- p. 21: the realities of writing and releasing a cybersecurity book.
+- p. 22: APIsecurity.io for providing the world some of the best API security
+- p. 22: API security content and participate in webinars.
+- p. 22: an API hacking madman and turning them into this book. Bill, thanks for
+- p. 23: tion programming interface (API) calls
+- p. 23: As you’ll see in this book, APIs are an excellent attack vector. After all,
+- p. 23: penetrate the perimeter of a network firewall, bypass an advanced antivirus,
+- p. 23: The goal of this book is to introduce you to web APIs and show you
+- p. 23: ing the security of REST APIs, the most common API format used in web
+- p. 24: applications, but will cover attacking GraphQL APIs as well. You’ll first
+- p. 24: learn tools and techniques for using APIs as intended. Next, you’ll probe
+- p. 24: them for vulnerabilities and learn how to exploit those vulnerabilities. You
+- p. 24: resource is no longer oil, but data.” APIs are digital pipelines that allow a
+- p. 24: Simply put, an API is a technology that enables communication
+- p. 24: between different applications. When, for example, a Python application
+- p. 24: very quickly. By relying on APIs, developers can design modular applica-
+- p. 24: APIs. Yet new technologies often get quite a head start before cybersecurity
+- p. 24: has a chance to ask any questions, and APIs have hugely expanded these
+- p. 24: applications’ attack surfaces. They’ve been so poorly defended that attack-
+- p. 24: ers can use them as a direct route to their data. In addition, many APIs
+- p. 24: lack the security controls that other attack vectors have in place, making
+- p. 24: Due to these reasons, Gartner predicted years ago that by 2022, APIs
+- p. 24: will be the leading attack vector. As hackers, we need to secure them by
+- p. 24: catching up to the speed of technological innovation. By attacking APIs,
+- p. 24: Attacking APIs is not as challenging as you may think. Once you under-
+- p. 24: late well to APIs. You can’t, for instance, throw a generic vulnerability scan
+- p. 24: at an API and expect useful results. I’ve often run these scans against vul-
+- p. 24: nerable APIs only to receive false negatives. When APIs are not tested prop-
+- p. 24: erly, organizations are given a false sense of security that leaves them with a
+- p. 25: Part I: The State of Web API Security First, I will introduce you to
+- p. 25: the basic knowledge you need about web applications and the APIs that

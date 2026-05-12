@@ -1,0 +1,7 @@
+{
+  "info": {"version": "0.4.3"},
+  "results": [
+    {"url": "https://app.example.com/.git/config", "status": 200},
+    {"url": "https://app.example.com/backup.zip", "status": 200}
+  ]
+}

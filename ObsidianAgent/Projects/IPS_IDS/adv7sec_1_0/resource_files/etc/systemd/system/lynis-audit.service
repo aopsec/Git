@@ -1,0 +1,6 @@
+[Unit]
+Description=IPS IDS Lynis audit
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/lynis audit system --quiet --no-colors

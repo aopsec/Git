@@ -1,0 +1,46 @@
+version = 1
+
+[project]
+name = "bbWebScan"
+tag = "bb-web-scan"
+
+[vault]
+root = "vault"
+generated = "vault/Generated"
+
+[render]
+generator_ref = "plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py"
+regenerate_command = 'python3 "${AOPS_OBSIDIAN_AGENT_CLI:-$HOME/plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py}" --sync --repo .'
+stale_message = "Vault output is stale. Regenerate with:"
+summary_fallback = "relative"
+
+[repository_map]
+include = true
+core_documents = ["README", "CHANGELOG"]
+manual_dashboards = []
+
+[related_notes]
+defaults = ["README"]
+
+[related_notes.match]
+stage = ["README"]
+profile = ["README"]
+fixture = ["README"]
+
+[[catalog]]
+label = "Stages"
+folder = "Stages"
+note_prefix = "Stage"
+tag = "bbwebscan-stage"
+source_patterns = ["bbwebscan/stages/*.py"]
+title_mode = "config"
+index_name = "Stage Index"
+
+[[catalog]]
+label = "Profiles"
+folder = "Profiles"
+note_prefix = "Profile"
+tag = "bbwebscan-profile"
+source_patterns = ["profiles/*.yaml"]
+title_mode = "config"
+index_name = "Profile Index"

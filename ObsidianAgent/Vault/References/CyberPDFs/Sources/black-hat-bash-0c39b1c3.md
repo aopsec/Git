@@ -1,0 +1,490 @@
+# Black-Hat-Bash
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 12 strong cyber signals, 22 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Bash.pdf`
+- SHA256: `0c39b1c35d99eec98adb37f0e9fb1a5a402b801f85b95bca47e17fbf1a2d9f0d`
+- Pages: `132`
+- Text characters: `404341`
+- Author: `Frances`
+- Copied PDF: [[PDFs/black-hat-bash-0c39b1c3.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 53: nmap
+- p. 6: kali
+- p. 60: docker
+- p. 5: linux
+- p. 1: bash
+- p. 11: python
+- p. 101: ffuf
+- p. 69: dirsearch
+- p. 121: httpx
+- p. 68: nuclei
+- p. 3: tor
+- p. 52: monit
+
+## Commands
+- p. 7: `$ bash –-version`
+- p. 12: `$ bash -r myscript.sh`
+- p. 14: `$ bash helloworld.sh`
+- p. 14: `bash -n script.sh`
+- p. 14: `bash -x script.sh`
+- p. 53: `nmap -vv -T4 -p- -sV --max-retries 5 localhost`
+- p. 60: `$ curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o`
+- p. 61: `$ docker compose --help`
+- p. 61: `$ sudo systemctl enable docker –-now`
+- p. 61: `$ git clone https://github.com/dolevf/Black-Hat-Bash.git`
+- p. 62: `$ docker ps -–format "{{.Names}}"`
+- p. 66: `$ docker exec -it MACHINE-NAME bash`
+- p. 67: `$ curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -`
+- p. 67: `$ git clone https://github.com/wappalyzer/wappalyzer.git`
+- p. 68: `$ git clone https://github.com/RustScan/RustScan.git`
+- p. 68: `$ cargo build --release`
+- p. 68: `$ nuclei -h`
+- p. 69: `$ dirsearch --help`
+- p. 69: `$ git clone https://github.com/jondonas/linux-exploit-suggester-2.git`
+- p. 69: `$ curl -s`
+- p. 70: `$ wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh`
+- p. 79: `$ nmap -sn 172.16.10.0/24`
+- p. 80: `$ nmap -sn 172.16.10.0/24 | grep "Nmap scan" | awk -F'report for ' '{print $2}'`
+- p. 84: `$ nmap scanme.nmap.org`
+- p. 84: `$ nmap 172.16.10.1`
+- p. 84: `$ nmap localhost scanme.nmap.org`
+- p. 84: `$ nmap -sV -iL 172-16-10-hosts.txt`
+- p. 85: `$ nmap -sV -iL 172-16-10-host.txt | grep open`
+- p. 85: `$ nmap -sV -iL 172-16-10-host.txt --open`
+- p. 88: `$ nmap -iL 172-16-10-hosts.txt --open -oG -`
+- p. 89: `$ nmap -iL 172-160-10-hosts.txt --open -oX -`
+- p. 89: `nmap -sV -p "${port}" "${host}" >> "${LOG_FILE}" 1`
+- p. 90: `$ python3 -m http.server 3337`
+- p. 93: `$ curl –head 172.16.10.10:8081`
+- p. 95: `$ nmap -sV --script=banner.nse -iL 172-16-10-hosts.txt`
+- p. 96: `$ nmap -sV --script=banner.nse -iL 172-16-10-hosts.txt | grep "|_banner\||http-server-header"`
+- p. 96: `$ sudo nmap -O -iL 172-16-10-hosts.txt`
+- p. 98: `$ sudo nmap -O 172.16.10.0/24 -oG -`
+- p. 104: `wget -q -r -np -R "index.html*" "${url}" -P "${OUTPUT_FOLDER}" 4`
+- p. 114: `dirsearch command uses the -u (URL) option to specify a base URL`
+- p. 114: `$ dirsearch -u http://172.16.10.10:8081/`
+- p. 114: `$ dirsearch -u http://172.16.10.11/backup/acme-impact-alliance/`
+- p. 116: `$ git log`
+- p. 116: `$ git log --pretty=format:"%an %ae"`
+- p. 117: `$ git log | grep Author | grep -oP '(?<=Author: ).*' | sort -u | tr -d '<>'`
+- p. 118: `$ curl -I http://172.16.10.10:8081/files`
+- p. 121: `$ curl http://172.16.10.11/backup/acme-hyper-branding/.git/HEAD`
+- p. 121: `$ nuclei -ut`
+- p. 121: `$ nuclei -u 172.16.10.11 -t ~/.local/nuclei-templates/custom/git-finder.yaml`
+- p. 122: `$ nuclei -tags apache,git -u 172.16.10.11`
+- p. 122: `$ nuclei -u 172.16.10.10:8081`
+- p. 122: `$ nuclei -u 172.16.10.11`
+- p. 122: `$ nuclei -u 172.16.10.12`
+- p. 124: `$ curl -s http://172.16.10.12/wp-json/wp/v2/users/ | jq`
+- p. 125: `$ curl -s http://172.16.10.12/wp-json/wp/v2/users/ | jq .[].name`
+- p. 126: `$ nuclei-notifier.sh 172.16.10.10:8081 172.16.10.11 172.16.10.12 172.16.10.13`
+- p. 128: `$ ffuf -c -w files_wordlist.txt -u http://172.16.10.10:8081/files/FUZZ`
+- p. 129: `$ wget http://172.16.10.10:8081/files/acme-hyper-branding-5.csv`
+- p. 130: `$ nmap --script=ssh-auth-methods 172.16.10.13`
+
+## Code And Script Lines
+- p. 11: `#!/bin/bash`
+- p. 11: `#!/usr/bin/env bash`
+- p. 12: `#!/bin/bash -x`
+- p. 12: `#!/bin/bash -r`
+- p. 17: `from within a certain block of code. These variables are called local`
+- p. 18: `print_name(){`
+- p. 18: `function and attempt to access the name variable as part of a`
+- p. 18: `function can access it. So, it will simply return without a value.`
+- p. 35: `if [[ condition ]]; then`
+- p. 35: `if [[ -f "${FILENAME}" ]]; then`
+- p. 36: `if [[ ! -f "${FILENAME}" ]]; then`
+- p. 36: `if [[ "${VARIABLE_ONE}" == "${VARIABLE_TWO}" ]]; then`
+- p. 37: `if [[ "${VARIABLE_ONE}" -gt "${VARIABLE_TWO}" ]]; then`
+- p. 37: `if [[ -f "file.txt" ]] && [[ -s "file.txt" ]]; then`
+- p. 37: `if [[ -f "${DIR_NAME}" ]] || [[ -d "${DIR_NAME}" ]]; then`
+- p. 39: `say_name(){`
+- p. 40: `print_args(){`
+- p. 41: `while some_condition; do`
+- p. 41: `while true; do`
+- p. 42: `while loop 2 checks using a file test operator. The loop won’t exit until the`
+- p. 44: `for variable_name in LIST; do`
+- p. 44: `for index in $(seq 1 10); do`
+- p. 44: `for ip_address in "$@"; do`
+- p. 45: `for file in $(ls .); do`
+- p. 45: `if [[ "${file}" == "example_file1" ]]; then`
+- p. 46: `case EXPRESSION in`
+- p. 47: `case ${IP_ADDRESS} in`
+- p. 54: `import it using the source command. To achieve this, create a ~/.pentest.sh file`
+- p. 54: `import it at the end of the file:`
+- p. 55: `if [[ ! -d ~/sessions ]]; then`
+- p. 71: `from APT:`
+- p. 74: `for ip in $(seq 1 254); do`
+- p. 76: `from the user, then prints a list of fully qualified subdomains using`
+- p. 76: `while read -r subdomain; do`
+- p. 78: `while passing the hosts file. You should see that it picks up a few`
+- p. 87: `while read -r line; do`
+- p. 89: `service_discovery(){`
+- p. 94: `if [[ -z "${ip_address}" ]]; then 3`
+- p. 94: `if [[ -z "${port}" ]]; then 4`
+- p. 104: `if [[ ! -s "${FILE}" ]]; then 1`
+- p. 104: `if [[ -z "${OUTPUT_FOLDER}" ]]; then`
+- p. 104: `if [[ -n "${url}" ]]; then`
+- p. 113: `from robots.txt file, and make an HTTP request to the URL. We then`
+- p. 114: `from which to start crawling.`
+- p. 117: `import os, subprocess`
+- p. 117: `from flask import (`
+- p. 126: `if [[ -n "${result}" ]]; then`
+
+## URLs
+- p. 6: https://learn.microsoft.com/en-us/windows/wsl/install.
+- p. 6: https://www.cygwin.com/install.html
+- p. 7: https://www.sublimetext.com/
+- p. 9: https://www.gnu.org/software/bash/manual/html_node/Bash-
+- p. 11: https://google.github.io/styleguide/shellguide.html
+- p. 18: https://github.com/dolevf/Black-Hat-
+- p. 18: https://tldp.org/LDP/abs/html/ops.html.
+- p. 34: https://ss64.com/bash/test.html.
+- p. 47: https://github.com/dolevf/Black-Hat-Bash/blob/master/ch02/log.txt.
+- p. 52: https://man7.org/linux/man-pages/man1/init.1.html.
+- p. 54: https://nmap.org
+- p. 56: https://github.com/dolevf/Black-Hat-Bash/blob/master/ch02/exercise_solution.sh,
+- p. 58: https://www.kali.org/get-kali.
+- p. 58: https://www.kali.org/docs/installation
+- p. 60: https://github.com/dolevf/Black-Hat-Bash/blob/master/lab/init.sh:
+- p. 60: https://download.docker.com/linux/debian
+- p. 60: https://download.docker.com/linux/debian/gpg
+- p. 61: https://github.com/dolevf/Black-Hat-Bash.
+- p. 61: https://github.com/dolevf/Black-Hat-Bash.git
+- p. 63: https://github.com/dolevf/Black-Hat-Bash/blob/master/lab/lab-network-
+- p. 67: https://deb.nodesource.com/setup_14.x
+- p. 67: https://github.com/wappalyzer/wappalyzer.git
+- p. 68: https://github.com/RustScan/RustScan.git
+- p. 68: http://discord.skerritt.blog
+- p. 68: https://github.com/RustScan/RustScan
+- p. 68: https://github.com/projectdiscovery/nuclei-templates
+- p. 69: https://github.com/jondonas/linux-exploit-suggester-2.git
+- p. 69: https://raw.githubusercontent.com/liamg/gitjacker/master/scripts/install.sh
+- p. 70: https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
+- p. 71: http://pentestmonkey.net/tools/unix-privesc-check
+- p. 71: https://github.com/dolevf/Black-Hat-Bash
+- p. 83: https://postfix.org/documentation.html
+- p. 83: https://github.com/dolevf/Black-
+- p. 83: https://lots-pro-
+- p. 91: https://shodan.io
+- p. 91: https://zoomeye.org
+- p. 91: https://censys.io
+- p. 99: http://172.16.10.10:8081
+- p. 99: http://172.16.10.10:8081/
+- p. 103: http://172.16.10.11/backup
+- p. 105: http://172.16.10.11/backup.
+- p. 105: http://172.16.10.12/wp-json/
+- p. 105: https://api.w.org/
+- p. 105: http://172.16.10.12/wp-json
+- p. 112: http://172.16.10.12/
+- p. 112: http://172.16.10.12/robots.txt
+- p. 113: http://172.16.10.12
+- p. 113: http://172.16.10.12/robots.txt.
+- p. 113: https://curl.se/docs/manpage.html
+- p. 114: http://172.16.10.11/backup/acme-impact-
+- p. 114: http://172.16.10.11/backup/acme-impact-alliance/
+- p. 114: http://172.16.10.11/backup/acme-impact-alliance/js/
+- p. 114: http://172.16.10.11/backup/acme-impact-alliance/.git/
+- p. 116: https://git-scm.com/docs/pretty-formats#_pretty_formats.
+- p. 118: http://172.16.10.10:8081/files
+- p. 119: http://172.16.10.11/
+- p. 120: https://nuclei.projectdiscovery.io/templating-guide,
+- p. 121: http://172.16.10.11/backup/acme-hyper-branding/.git/HEAD
+- p. 121: https://github.com/dolevf/Black-Hat-Bash/blob/master/ch05/git-
+- p. 121: http://172.16.10.11/backup/acme-impact-alliance/.git/HEAD
+- p. 123: http://172.16.10.12/wp-login.php
+- p. 124: http://172.16.10.12/wp-json/wp/v2/users/
+- p. 124: http://172.16.10.12/author/jtorres/
+- p. 127: http://172.16.10.10:8081/files.
+- p. 128: http://172.16.10.10:8081/files/FUZZ
+- p. 129: http://172.16.10.10:8081/files/acme-hyper-branding-5.csv
+
+## Technique Signals
+- p. 4: Chapter 5: Vulnerability Scanning and Fuzzing
+- p. 4: Chapter 11: Network Probing and Lateral Movement
+- p. 4: Chapter 13: Exfiltration and Counter-Forensics
+- p. 11: a team of penetration testers and have an exploit code repository,
+- p. 20: addresses to scan (or a list of emails to send a phishing email to).
+- p. 26: For example, imagine you develop an exploit and send it to a few
+- p. 41: • Iterating through a list of hostnames, for example to run a specific exploit
+- p. 41: example, checking whether a host is online, and if so, performing a brute force
+- p. 41: continuously perform a port scan on a network and pick up any new hosts that join
+- p. 53: For example, imagine that you often use Nmap with special parameters to
+- p. 53: scan for all 65,535 ports on a given IP address:
+- p. 53: nmap -vv -T4 -p- -sV --max-retries 5 localhost
+- p. 53: $ alias quicknmap="nmap -vv -T4 -p- -sV --max-retries 5 localhost"
+- p. 54: Starting Nmap 7.80 ( https://nmap.org ) at 2023-02-21 22:32 EST
+- p. 54: These lines define a few custom variables and save our aliased Nmap command:
+- p. 54: alias quicknmap="nmap -vv -T4 -p- -sV --max-retries 5 example.local"
+- p. 67: Wappalyzer is a website reconnaissance tool used to identify the technology
+- p. 67: RustScan is a lightning-fast port scanner written in the Rust programming
+- p. 67: language by Autumn (Bee) Skerritt (@bee_sec_san). Some claim that RustScan
+- p. 67: can scan all 65,000 ports on a target in seconds!
+- p. 68: Next, clone the RustScan repository to your tools directory:
+- p. 68: Then move into the RustScan directory and build the tool using cargo:
+- p. 68: Once RustScan has been built, run a quick test to ensure that it’s working
+- p. 68: properly. The RustScan binary is located in the target/release directory. Try
+- p. 68: Fast Port Scanner built in Rust. WARNING Do not use this program against
+- p. 68: Nuclei is a vulnerability scanner written in the Go programming language by
+- p. 68: which are extremely popular these days). Nuclei works by sending requests to
+- p. 68: thousands of Nuclei templates supporting several protocols, including TCP, DNS,
+- p. 68: Install Nuclei by running the following installation command:
+- p. 68: To verify that Nuclei is correctly installed, run a help command:
+- p. 68: Nuclei is a fast, template based vulnerability scanner focusing
+- p. 68: -u, -target string[] target URLs/hosts to scan
+- p. 69: The first time you run Nuclei, it will automatically create a nuclei-templates
+- p. 69: Dirsearch is a multi-threaded web directory path-enumeration tool used to
+- p. 69: The Linux Exploit Suggester 2 is a next-generation tool based on the original
+- p. 69: Linux Exploit Suggester. Written in Perl and developed by Jonathan Donas, it
+- p. 69: includes several exploits you can use to potentially compromise a local Linux
+- p. 69: To verify Linux Exploit Suggester 2 is installed correctly, run a help
+- p. 70: # Local Linux Enumeration & Privilege Escalation Script #
+- p. 70: Running with no options = limited scans/no output file
+- p. 71: $ echo "alias rustscan='/home/kali/tools/RustScan/target/release/rustscan'" >> ~/.bashrc
+- p. 71: Wappalyzer, RustScan, and Gitjacker now have aliases.
+- p. 71: these tools to perform reconnaissance and gather information about remote targets.
+- p. 72: reconnaissance on targets by writing bash scripts to run
+- p. 73: When working with tools such as port and vulnerability scanners,
+- p. 73: you’ll often need to run the same type of scan against all hosts in
+- p. 75: look for wordlists on the internet, you could use the following
+- p. 76: snippets (also called gists) containing the word subdomain wordlist.
+- p. 79: Nmap has a special option called -sn that performs a ping
+- p. 79: sweep (and disables port scanning). A ping sweep is a simple
+- p. 79: technique has proved valuable. The ping sweep in Nmap will
+- p. 79: essentially make Nmap send Internet Control Message Protocol
+- p. 80: $ nmap -sn 172.16.10.0/24 | grep "Nmap scan" | awk -F'report for ' '{print $2}'
+- p. 80: Listing 4-8 Parsing Nmap’s ping scan output with grep and awk
+- p. 80: Using Nmap’s built-in ping sweep scan may be more useful than
+- p. 80: drop an Nmap binary on more than one type of operating system,
+- p. 80: section, we’ll highlight the use of arp-scan as a way to find hosts
+- p. 80: The arp-scan utility sends Address Resolution Protocol
+- p. 80: on a local network and can’t be used to perform a remote scan over
+- p. 80: Note that arp-scan requires root privileges to run; this is
+- p. 80: executing the arp-scan command and passing a single IP address
+- p. 81: $ sudo arp-scan 172.16.10.10 -I br_public
+- p. 81: We also need to tell arp-scan which network interface to send
+- p. 81: To scan entire networks, you can pass arp-scan a CIDR
+- p. 81: range, such as /24. For example, the following command scans all IP
+- p. 81: $ sudo arp-scan 172.16.10.0/24 -I br_public
+- p. 81: $ sudo arp-scan -f 172-16-10-hosts.txt -I br_public
+- p. 81: The output generated by arp-scan should look like the
+- p. 81: address. In this scan, the tool identified four hosts on the network
+- p. 81: discovers new assets. Listing 4-9 runs a continuous scan to identify
+- p. 82: echo "Performing an ARP scan against ${NETWORK}..."
+- p. 82: 2 sudo arp-scan -x -I ${INTERFACE} ${NETWORK} | while read -r line; do
+- p. 82: Listing 4-9 Receiving notifications about new arp-scan discoveries using sendmail
+- p. 82: arp-scan using the options -x to display a plain output (so it’s
+- p. 82: the output of arp-scan. We use awk to parse each IP address in
+- p. 82: variable (which represents a host discovered by arp-scan) exists
+- p. 83: carry out activities such as data exfiltration so that their traffic
+- p. 84: scanner to find their open ports and the services they’re running.
+- p. 84: Let’s explore two port scanning tools: Nmap and RustScan.
+- p. 84: Nmap allow us to perform port scanning against single targets or
+- p. 84: multiple targets at once. In the following example, we use Nmap to
+- p. 84: perform a port scan of the domain scanme.nmap.org.
+- p. 84: Nmap also accepts IP addresses, like so:
+- p. 84: to Nmap, it will use the following default settings:
+- p. 84: Nmap will use a SYN scan to discover open ports on a target. Also
+- p. 84: called a half-open scan, a SYN scan involves sending a SYN packet
+- p. 84: and waiting for a response. Nmap won’t complete the full TCP hand-
+- p. 84: Nmap will scan only popular ports known to be frequently in use,
+- p. 84: such as TCP ports 21, 22, 80 and 443. It won’t scan the entire port
+- p. 84: Nmap will scan only TCP ports, not UDP ports.
+- p. 84: Nmap allows you to scan multiple targets by passing them on the
+- p. 84: command line. In the following example, we scan both localhost and
+- p. 84: Listing 4-10 Passing multiple addresses to Nmap
+- p. 84: Nmap can also read targets from a given file using its -iL
+- p. 84: 172-16-10-hosts.txt file with Nmap to scan multiple targets.
+- p. 85: This scan may take some time to complete due to the use of the -
+- p. 85: can see, Nmap returns a few IP addresses and their open ports,
+- p. 85: $ nmap -sV -iL 172-16-10-host.txt | grep open
+- p. 85: Nmap was able to identify services on several open TCP ports,
+- p. 85: Nmap also allows you to pass the --open flag on the command
+- p. 85: $ nmap -sV -iL 172-16-10-host.txt --open
+- p. 85: NOTE Kali’s own interface IP (172.16.10.1) will be captured in this port scan,
+- p. 85: since it is part of the hosts file. You can use Nmap’s --exclude op-
+- p. 85: tion to exclude this specific IP when performing a network-wide scan:
+- p. 86: Use man nmap to find out more about Nmap’s scanning and
+- p. 86: Performing Rapid Scans with RustScan
+- p. 86: RustScan is becoming more popular in the bug bounty and
+- p. 86: following command runs a port scan using the rustscan
+- p. 86: RustScan’s output is fairly easy to parse with bash. Lines starting
+- p. 86: When you run RustScan, you may notice that the initial output
+- p. 86: directly related to the scan results. Use the -g (greppable) option to
+- p. 86: show only the scanning information. The following command uses
+- p. 86: the greppable output mode to scan 172.16.10.0/24 on the first 1024
+- p. 86: $ rustscan -g -a 172.16.10.0/24 -r 0-1024
+- p. 86: $ rustscan -g -a 172.16.10.0/24 -r 0-1024 | awk -F'->' '{print $1,$2}'
+- p. 86: $ rustscan -g -a 172.16.10.0/24 -r 0-1024 | awk -F'->' '{print $1,$2}' | tr -d '[]'
+- p. 87: NOTE Remember that running port scanners in aggressive modes increases the
+- p. 87: (EDR) system. Also, if you scan at a rapid pace, some devices could
+- p. 87: Exercise 4: Organizing Scan Results by Port Number
+- p. 87: It’s often useful to sort your scan results into categories of
+- p. 87: software found. In this exercise, we’ll organize our scan results
+- p. 87: 1. Runs Nmap against hosts in a file.
+- p. 87: 1 NMAP_RESULT=$(nmap -iL ${HOSTS_FILE} --open | grep "Nmap scan report\|tcp open")
+- p. 87: # read the nmap output line by line
+- p. 87: Listing 4-11 Organizing scan results by port using bash
+- p. 88: We assign the output of the nmap command to the variable
+- p. 88: NMAP_RESULTS 1. In this command, we also filter for specific
+- p. 88: lines containing the words Nmap scan report or tcp open.
+- p. 88: These lines are part of Nmap’s standard port scan output and they
+- p. 88: We use a while loop to read NMAP_RESULT line by line,
+- p. 88: Hat-Bash/blob/master/ch04/nmap_to_portfiles.sh. Save it to a file
+- p. 88: named nmap_to_portfiles.sh and run it. Next, run ls -l to see what
+- p. 88: As you’ve seen, Nmap’s standard output format is a little
+- p. 88: Nmap provides additional output format options we can use to parse
+- p. 88: $ nmap -iL 172-16-10-hosts.txt --open -oG -
+- p. 88: Listing 4-12 Nmap's greppable output
+- p. 89: same line. Nmap has additional format output options such as the -
+- p. 89: output of Nmap look like the following:
+- p. 89: $ nmap -iL 172-160-10-hosts.txt --open -oX -
+- p. 89: Once we find an open port, we pass this information to Nmap to
+- p. 89: nmap -sV -p "${port}" "${host}" >> "${LOG_FILE}" 1
+- p. 89: 3 port_scan=$("${RUST_SCAN_BIN}" -a "${IP_ADDRESS}" -g -p "${WATCHED_PORT}")
+- p. 89: echo "Wrote port scan data to ${LOG_FILE}"
+- p. 90: At 2 we start an infinite while loop. The loop runs the RustScan
+- p. 90: binary (which is assigned to the variable RUST_SCAN_BIN),
+- p. 90: receive on the command line 3. We also pass RustScan the -g
+- p. 90: port option (-p) to scan a particular port, which we also receive on
+- p. 90: We check the result of the scan 4. If the result is not empty, we
+- p. 90: 5, which does an Nmap service-version discovery scan (-sV) and
+- p. 90: writes the result to the log file watchdog.log 1. If the port scan fails,
+- p. 90: Wrote port scan data to watchdog.log
+- p. 90: You can view the results of the scan by opening the
+- p. 91: (https://censys.io) perform internet-wide scans to map the internet,
+- p. 93: headers without fetching the entire response payload from the web
+- p. 95: Nmap is more than just a port scanner; we can transform it into a
+- p. 95: full-fledged vulnerability assessment tool. The Nmap Scripting
+- p. 95: language to extend Nmap’s capabilities. Nmap comes pre-installed
+- p. 95: The banner.nse script in the /usr/share/nmap/scripts folder
+- p. 95: $ nmap -sV --script=banner.nse -iL 172-16-10-hosts.txt
+- p. 96: $ nmap -sV --script=banner.nse -iL 172-16-10-hosts.txt | grep "|_banner\||http-server-header"
+
+## Extracted Operational Notes
+- p. 3: marked name, we are using the names only in an editorial fashion and to the benefit of the
+- p. 3: tion storage or retrieval system, without the prior written permission of the copyright owner
+- p. 4: Chapter 5: Vulnerability Scanning and Fuzzing
+- p. 5: Black Hat Bash (Early Access) © 2023 by Dolev Farhi and Nick Aleks
+- p. 5: Bash is a shell scripting language used to interact with
+- p. 5: components of the Linux operating system. As penetration
+- p. 5: testers and security practitioners, we frequently write bash
+- p. 5: your bash development environment, explore useful Linux
+- p. 5: variables, arrays, streams, arguments, and operators.
+- p. 6: Before you begin learning bash, you need both a bash shell
+- p. 6: running in a terminal and a text editor. You can access these on any
+- p. 6: NOTE Beginning in Chapter 4, you’ll run bash commands and complete hack-
+- p. 6: ing labs using Kali Linux. If you’d like to set up Kali now, consult the
+- p. 6: If you’re running Linux or macOS, bash should already be
+- p. 6: available. On Linux, open the Terminal application by entering
+- p. 6: new terminal window, you’ll have to enter exec bash to switch to
+- p. 6: a bash shell before you run commands. If you want to change your
+- p. 6: default shell to bash so you don’t have to manually switch shells,
+- p. 6: you can use the command chsh -s /bin/bash.
+- p. 6: Subsystem for Linux (WSL), which lets you run Linux distributions
+- p. 6: directly on Windows, providing access to a bash environment
+- p. 6: An alternative to WSL is Cygwin, which emulates a Linux
+- p. 6: environment by providing a collection of Linux utilities and system-
+- p. 6: path. To execute your bash scripts, save the scripts in the directory
+- p. 6: able to change the directory to the home directory to run your scripts.
+- p. 7: To start writing bash scripts, you’ll need a text editor, preferably
+- p. 7: choose between terminal-based text editors and graphical user
+- p. 7: interface-based text editors. Terminal-based text editors (such as vi
+- p. 7: If you prefer graphical text editors, Sublime Text
+- p. 7: bash scripts by clicking Plain Text in the bottom-right corner and
+- p. 7: choosing bash from the drop-down list of languages. If you’re using
+- p. 7: a different text editor, reference its official documentation to learn
+- p. 7: Now that you have a functional bash environment, it’s time to
+- p. 7: editor, you’ll also probably find yourself frequently running single
+- p. 7: including it in a script. Let’s get started by running some bash
+- p. 7: When running in a terminal, bash loads a set of environment
+- p. 7: their home directory, their default shell, and more.
+- p. 8: To see the list of environment variables set by bash, run the env
+- p. 8: surrounded by curly braces ({}). This will cause bash to expand the
+- p. 8: Table 1-2 Bash Environment Variables
+- p. 8: BASH_VERSION The bash version running
+- p. 8: BASHPID The process ID of the current bash process
+- p. 9: The bash scripts you’ll write in this book will run common Linux
+- p. 9: can insert it before any Linux command to open a terminal-based
+- p. 9: List information about the FILEs (the current directory by default).
+- p. 9: Mandatory arguments to long options are mandatory for short options too.
+- p. 9: Linux commands can accept many types of input on the
+- p. 9: arguments to see files and directories, or pass it arguments to, for
+- p. 9: directories using a short-form argument syntax:
+- p. 10: hidden files in Linux), but you could also pass the argument --all,
+- p. 10: Let’s execute some simple Linux commands so you can see the
+- p. 10: variation of options each offers. First, create a single directory with
+- p. 10: Now let’s create two directories with mkdir:
+- p. 11: In this section, you’ll learn the building blocks of a bash script,
+- p. 11: to tell Linux to use a specific interpreter to execute the script, and
+- p. 11: Bash doesn’t have an official style guide, but we recommend
+- p. 11: best practices to follow when developing bash code. If you work on
+- p. 11: a team of penetration testers and have an exploit code repository,
+- p. 11: shows an example of a shebang line for a typical bash script.
+- p. 11: The bash interpreter is typically located at /bin/bash. If you
+- p. 11: instead wrote scripts in Python or Ruby, your shebang line would
+- p. 11: include the full path to the Python or Ruby interpreter.
+- p. 11: You’ll sometimes encounter bash scripts that make use of a
+- p. 11: portable than the one in Listing 1-3. Some Linux distributions place
+- p. 11: the bash interpreter in different system locations, and this shebang
+- p. 11: the location of the bash interpreter on the target machine. For
+- p. 12: argument -x to your bash shebang, like so:
+- p. 12: This optional argument will create a restricted bash shell, which
+- p. 12: example, navigate to certain directories, change sensitive
+- p. 12: modifying the script, but you can also pass arguments to the bash
+- p. 12: Listing 1-5 Passing an argument to bash
+- p. 12: Whether you pass arguments to the bash interpreter on the
+- p. 12: Comments are parts of a script that the bash interpreter won’t
+- p. 12: Comments in bash start with a pound sign (#), as shown in
+- p. 12: Listing 1-6 A comment in a bash script
+- p. 13: bash would consider the second one to be a comment.
+- p. 13: Scripts can be as short as two lines: the shebang line and a Linux
+- p. 13: the terminal. Open your text editor and enter the following:
+- p. 13: interpreter of choice, bash. Then, we use the echo command to print
+- p. 13: terminal, and navigate to the directory where the script resides. If
+- p. 13: you saved the file in your home directory, you run the following set
+- p. 13: We use the cd command to change directories. The tilde (~)
+- p. 13: represents the home directory of the current running user. Next, we
+- p. 14: (.) represents the current directory, so we’re essentially telling bash
+- p. 14: to run helloworld.sh from the current working directory.
+- p. 14: You can also run a bash script with the following syntax:
+- p. 14: Because we specified the bash command, the script will run
+- p. 14: using the bash interpreter and won’t require a shebang line. Also, if
+- p. 14: you use the bash command, the script doesn’t have to be set with an
+- p. 14: Errors will inevitably occur when you’re developing bash scripts.
+- p. 15: and debug a script. Now you’ll learn some bash syntax so you can
+- p. 15: The most basic bash scripts are just lists of Linux commands
+- p. 15: # All this script does is create a directory, create a file
+- p. 15: # within the directory, and then list the content of the directory.
+- p. 15: In this example, we use mkdir to create a directory named
+- p. 15: mydirectory. Next, we use the touch command to create a file
+- p. 15: named myfile within the directory. Lastly, we run the ls -l
+- p. 15: command to list the contents of the mydirectory directory.
+- p. 15: ways. First, when a command runs, bash waits until it finishes before
+- p. 16: directories? Or what if we checked whether the directory and file
+- p. 16: execute bash commands and store their output as variable values to
+- p. 16: arrays. In bash, variables are untyped; they’re all considered
+- p. 16: character strings. Even so, you’ll see that bash allows you to create
+- p. 16: The following rules govern the naming of bash variables:
+- p. 16: (=), assign the value black hat bash to it. Now we can use this
+- p. 17: between the two parentheses. You’ll use this syntax often in bash
+- p. 17: named root_directory and then use echo to print the output of
+- p. 17: some metadata about the root directory (/), such as its type and
+- p. 17: variables in bash can also be scoped so that they are only accessible
+- p. 18: value "Black Hat Bash". Then we call the print_name()
+- p. 18: Arithmetic operators allow you to perform mathematical
+- p. 18: operators available. The full list of the available arithmetic operators
+- p. 19: You can perform these arithmetic operations in bash in a few
+- p. 19: Bash allows you to create single-dimension arrays. Arrays are a
+- p. 19: starts from zero. In bash scripts, you might use arrays whenever you
+- p. 20: Here is how to create an array in bash. Save this code to a file
+- p. 20: As you can see, we were able to get bash to print all elements in
+- p. 21: (whether a built-in Linux utility such as ls or mkdir or one that
+- p. 21: bash, there are three standard data streams, as shown in Table 1-4.
+- p. 21: Stream name Description File descriptor number

@@ -1,0 +1,305 @@
+# Command Cheat Index
+
+## [[black-hat-python-python-programming-for-hackers-and-pentesters-be8983b0]]
+- p. 52: `ssh -L 8008:web:80 justin@sshserver Target network`
+- p. 53: `ssh -L 8008:web:80 justin@sshserver`
+- p. 60: `python sniffer.py`
+- p. 63: `python sniffer_ip_header_decode.py`
+- p. 82: `wget http://eclecti.cc/files/2008/03/haarcascade_frontalface_alt.xml`
+- p. 124: `pip install github3.py`
+- p. 124: `$ git init`
+- p. 124: `$ git add .`
+- p. 124: `$ git commit -m "Adding repo structure for trojan."`
+- p. 124: `$ git remote add origin https://github.com/<yourusername>/chapter7.git`
+- p. 124: `$ git push origin master`
+- p. 125: `$ git commit -m "Adding new modules"`
+- p. 126: `$ git commit -m "Adding simple config."`
+- p. 131: `$ python git_trojan.py`
+- p. 131: `$ git pull origin master`
+- p. 174: `$ python vol.py imageinfo -f "memorydump.img"`
+- p. 174: `$ python vol.py plugin --profile="WinXPSP2x86" arguments`
+- p. 175: `$ python vol.py hivelist --profile=WinXPSP2x86 -f "WindowsXPSP2.vmem"`
+- p. 175: `$ python vol.py hashdump -d -d -f "WindowsXPSP2.vmem" ¬`
+- p. 177: `$ python grabhashes.py`
+- p. 183: `$ python code_inject.py`
+
+## [[bug-hunter-diary-85c1b2cc]]
+- p. 27: `$ wget http://samples.mplayerhq.hu/TiVo/test-dtivo-junkskip.ty%2b`
+
+## [[the-hacker-playbook-3-practical-guide-to-penetration-testing-0d16e56a]]
+- p. 21: `ssh -i cert ubuntu@[ip]`
+- p. 21: `git clone https://github.com/trustedsec/ptf /opt/ptf`
+- p. 29: `wget http://security.debian.org/debian-`
+- p. 29: `wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-`
+- p. 31: `git clone https://github.com/iagox86/dnscat2.git`
+- p. 31: `git clone https://github.com/iagox86/dnscat2.git /opt/dnscat2/client`
+- p. 40: `nmap [IP Range]/24 --open -p 80,443 -oX scan.xml`
+- p. 40: `python ./EyeWitness.py -x scan.xml --web`
+- p. 44: `python ./sslScrape.py [IP Address CIDR Range]`
+- p. 46: `git clone https://github.com/leebaird/discover /opt/discover/`
+- p. 47: `python ./knockpy.py cyberspacekittens.com`
+- p. 47: `python sublist3r.py -d cyberspacekittens.com -o cyberspacekittens.com`
+- p. 48: `python truffleHog.py https://github.com/cyberspacekittens/dnscat2`
+- p. 49: `docker run -it abhartiya/tools_gitallsecrets:v3 -`
+- p. 49: `docker ps -a`
+- p. 49: `docker cp <container-id>:/data/results.txt .`
+- p. 50: `wget https://digi.ninja/files/bucket_finder_1.1.tar.bz2 -O`
+- p. 115: `python ./Responder.py -I eth0 -wfFbv`
+- p. 116: `python ./Responder.py -I eth0 -rv`
+- p. 117: `nmap -p88 --script krb5-enum-users --script-args krb5-enum-`
+- p. 123: `python ./windows-exploit-suggester.py -i ./windows.txt -d 2018-03-21-`
+- p. 151: `python tgsrepcrack.py [password wordlist] [kirbi tickets - *.kirbi]`
+- p. 155: `ssh -i key.pem ubuntu@[VPS IP] -L 127.0.0.1:3389:127.0.0.1:3389`
+- p. 157: `ssh -D 127.0.0.1:8888 -p 22 <user>@<Target_IP>`
+- p. 157: `ssh <user>@<Target_IP> -L 127.0.0.1:55555:<Target_to_Pivot_to>:80`
+- p. 159: `wget http://bit.ly/2vdh2Ub -O dirtycow-mem.c`
+- p. 161: `nmap 172.16.50.0/24`
+- p. 162: `python -m SimpleHTTPServer 80`
+- p. 166: `ssh -i ~/.ssh/id_rsa root@172.16.250.30`
+- p. 168: `python3 ./decrypt.py master.key hudson.util.Secret credentials.xml`
+- p. 181: `python embedInHTML.py -k keypasshere -f meterpreter.xll -o index.html -w`
+- p. 181: `python demiguise.py -k hello -c "cmd.exe /c <powershell_command_here>" -p`
+- p. 184: `python3 ./generateJenkinsExploit.py -e badware.exe`
+- p. 185: `python3 ./generateJenkinsExploit.py -p`
+- p. 191: `ssh -i LightsailDefaultPrivateKey-us-west-2.pem ubuntu@[IP]`
+- p. 191: `wget http://swupdate.openvpn.org/as/openvpn-as-2.1.12-`
+- p. 193: `nmap x.x.x.x/24 -p22 -T5 --open`
+- p. 198: `wget bashbunny.com/bb.sh`
+- p. 198: `git clone https://github.com/lgandx/Responder.git /tools/responder`
+- p. 199: `git clone https://github.com/CoreSecurity/impacket.git /tools/impacket`
+- p. 199: `git clone https://github.com/hak5/bashbunny-payloads.git`
+- p. 213: `git clone https://github.com/cheetz/thpDropper.git`
+- p. 217: `git clone https://github.com/cyberspacekittens/metasploit-framework`
+- p. 217: `git clone https://github.com/cyberspacekittens/metasploit-payloads`
+- p. 220: `python SharpShooter.py --interactive`
+- p. 222: `git clone https://github.com/GreatSCT/GreatSCT.git /opt/`
+- p. 222: `python3 ./gr8sct.py`
+- p. 229: `python hidemyps.py invoke_mimikatz.ps1 [filename.ps1]`
+- p. 240: `python ./PACK-0.0.4/statsgen.py hashes.password`
+- p. 240: `python ./PACK-0.0.4/statsgen.py hashes.password --minlength=10 -o`
+- p. 240: `python ./PACK-0.0.4/maskgen.py hashes.masks --optindex -q -o`
+
+## [[real-world-bug-hunting-a-field-guide-to-web-hacking-e112338e]]
+- p. 185: `wget -q -O "%o" "https://example.com";|ls "-la"`
+
+## [[mastering-modern-web-penetration-testing-68fcc418]]
+- p. 125: `wget https://github.com/sqlmapproject/sqlmap/archive/1.0.zip -O sqlmap.`
+- p. 126: `git clone https://github.com/sqlmapproject/sqlmap.git sqlmap-dev`
+
+## [[hacking-apis-early-access-691dcdd7]]
+- p. 98: `$ sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb`
+- p. 110: `$ sudo wget https://dl.pstmn.io/download/latest/linux64 -O postman-linux-x64.tar.gz`
+- p. 123: `$ curl https://raw.githubusercontent.com/OWASP/Amass/master/examples/config.ini >$HOME/.config/`
+- p. 124: `$ git clone https://github.com/assetnote/kiterunner.git`
+- p. 125: `$ curl https://wordlists-cdn.assetnote.io/data/automated/httparchive_apiroutes_2021_06_28.txt >`
+- p. 125: `$ wget -r --no-parent -R "index.html*" https://wordlists-cdn.assetnote.io/data/ -nH`
+- p. 128: `$ sudo git clone https://github.com/s0med3v/Arjun.git`
+- p. 129: `$ python3 /opt/Arjun/arjun.py -u http://target_address.com`
+- p. 129: `$ python3 /opt/Arjun/arjun.py -u http://target_address.com -o arjun_results.json`
+- p. 129: `$ python3 /opt/Arjun/arjun.py -u http://target_address.com -o arjun_results.json --stable`
+- p. 129: `$ python3 /opt/Arjun/arjun.py -i burp_targets.txt`
+- p. 136: `$ sudo docker run hello-world`
+- p. 138: `$ git clone https://github.com/DevSlop/Pixi.git`
+- p. 138: `$ sudo docker-compose up`
+- p. 139: `$ docker pull bkimminich/juice-shop`
+- p. 139: `$ docker run --rm -p 80:3000 bkimminich/juice-shop`
+- p. 140: `$ sudo docker pull dolevf/dvga`
+- p. 140: `$ sudo docker run -t -p 5000:5000 -e WEB_HOST=0.0.0.0 dolevf/dvga`
+- p. 143: `$ nmap 192.168.195.132`
+- p. 143: `$ nmap -sC -sV 192.168.195.132`
+- p. 164: `$ nmap -sC -sV <target address or network range> -oA nameofoutput`
+- p. 164: `$ nmap -p- <target address> -oA allportscan`
+- p. 176: `$ nmap -p- 192.168.50.35`
+- p. 225: `python3 jwt_tool.py [options here] -5 HS512 -p "crapi"`
+- p. 267: `$ arjun --headers "Content-Type: application/json]" -u http://vulnhost.com/api/register -m JSON`
+- p. 296: `$ nmap -p 80 –script http-waf-detect http://hapihacker.com`
+
+## [[blackhat-graphql-1fe9b81c]]
+- p. 36: `# curl http://lab.blackhatgraphql.com/rest/v1/users`
+- p. 37: `# curl http://lab.blackhatgraphql.com/rest/v1/history/1`
+- p. 51: `# curl lab.blackhatgraphql.com`
+- p. 54: `# sudo systemctl enable docker --now`
+- p. 54: `# sudo docker`
+- p. 55: `# git --help`
+- p. 55: `# git clone -b blackhatgraphql https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application.git`
+- p. 55: `# sudo docker build -t dvga .`
+- p. 55: `# sudo docker run -t --rm -d --name dvga -p 5013:5013 -e WEB_HOST=0.0.0.0 dvga`
+- p. 56: `# sudo docker container ps`
+- p. 60: `# git clone https://github.com/nikitastupin/clairvoyance.git`
+- p. 60: `# python3 -m clairvoyance -h`
+- p. 61: `# git clone https://github.com/doyensec/inql.git`
+- p. 61: `# sudo python3 setup.py install`
+- p. 62: `# git clone https://github.com/dolevf/graphw00f.git`
+- p. 62: `# python3 main.py --help`
+- p. 62: `# git clone https://github.com/assetnote/batchql.git`
+- p. 62: `# python3 batch.py -h`
+- p. 63: `# git clone https://github.com/dolevf/nmap-graphql-introspection-nse.git`
+- p. 63: `# nmap --script-help graphql-introspection.nse`
+- p. 64: `# wget "https://gitlab.com/dee-see/graphql-path-enum/-/jobs/artifacts/v1.1/raw`
+- p. 65: `# git clone https://github.com/dolevf/graphql-cop.git`
+- p. 65: `# python3 graphql-cop.py -h`
+- p. 66: `# git clone https://github.com/nicholasaleks/CrackQL.git`
+- p. 66: `# python3 CrackQL.py -h`
+- p. 103: `# curl -X GET http://localhost:5013/graphql`
+- p. 103: `# nmap -p 5013 -sV --script=http-grep`
+- p. 105: `# nmap -p 5013 -sV --script=http-grep --script-args='match="__typename",`
+- p. 105: `# nmap -p 5013 -iL hosts.txt -sV --script=http-grep`
+- p. 105: `# curl -X POST http://localhost:5013/graphql -d '{"query":"{__typename }"}'`
+- p. 106: `curl -X POST "$host" -d '{"query":"{__typename }"}' -H "Content-Type: application/json"`
+- p. 106: `# python3 main.py -d -t http://localhost:5013`
+- p. 107: `# python3 main.py -d -t http://localhost:5013 -w wordlist.txt`
+- p. 117: `# nmap --script=graphql-introspection -iL hosts.txt -sV -p 5013`
+- p. 121: `# curl -I https://apache.org/`
+- p. 123: `# python3 main.py -f -t http://localhost:5013/graphql`
+- p. 142: `# python3 exploit_threaded_field_dup.py http://localhost:5013/graphql`
+- p. 144: `# python3 -c 'for i in range(0, 10): print("q"+str(i)+":"+"systemUpdate")'`
+- p. 146: `# python3 exploit_directive_overloading.py http://localhost:5013/graphql 30000`
+- p. 149: `# curl http://localhost:5013/graphql -H "Content-Type: application/json"`
+- p. 150: `# python3 array_based_batch_query.py`
+- p. 152: `# python3 array_based_circular_queries.py`
+- p. 153: `# python3 batch.py -e http://localhost:5013/graphql`
+- p. 153: `# python3 graphql-cop.py -t http://localhost:5013/graphql`
+- p. 178: `# git clone https://github.com/nicholasaleks/high-frequency-vocabulary`
+- p. 179: `# python3 -m clairvoyance http://localhost:5013/graphql`
+- p. 197: `# curl -X POST http://localhost:5013/graphql -d '{"query":"{ __typename }"}'`
+- p. 202: `# python3 CrackQL.py -t http://localhost:5013/graphql -q sample-queries/login.graphql`
+- p. 210: `# python3 CrackQL.py -t http://localhost:5013/graphql -q sample-queries/users.graphql`
+- p. 232: `wget http://example.com/file.zip -P /data/downloads`
+- p. 254: `# curl -X GET "http://localhost:5013/graphql?query=mutation%20%7B%20__typename%20%7D"`
+- p. 258: `# python3 batch.py -e http://localhost:5013/graphql | grep -i CSRF`
+- p. 258: `# python3 graphql-cop.py -t http://localhost:5013/graphql | grep -i CSRF`
+- p. 265: `# sudo docker exec -it dvga nc -lvp 7773`
+- p. 291: `nuclei-­templates/blob/master/cves/2020/CVE-2020-9483.yaml.`
+
+## [[black-hat-bash-0c39b1c3]]
+- p. 7: `$ bash –-version`
+- p. 12: `$ bash -r myscript.sh`
+- p. 14: `$ bash helloworld.sh`
+- p. 14: `bash -n script.sh`
+- p. 14: `bash -x script.sh`
+- p. 53: `nmap -vv -T4 -p- -sV --max-retries 5 localhost`
+- p. 60: `$ curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o`
+- p. 61: `$ docker compose --help`
+- p. 61: `$ sudo systemctl enable docker –-now`
+- p. 61: `$ git clone https://github.com/dolevf/Black-Hat-Bash.git`
+- p. 62: `$ docker ps -–format "{{.Names}}"`
+- p. 66: `$ docker exec -it MACHINE-NAME bash`
+- p. 67: `$ curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -`
+- p. 67: `$ git clone https://github.com/wappalyzer/wappalyzer.git`
+- p. 68: `$ git clone https://github.com/RustScan/RustScan.git`
+- p. 68: `$ cargo build --release`
+- p. 68: `$ nuclei -h`
+- p. 69: `$ dirsearch --help`
+- p. 69: `$ git clone https://github.com/jondonas/linux-exploit-suggester-2.git`
+- p. 69: `$ curl -s`
+- p. 70: `$ wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh`
+- p. 79: `$ nmap -sn 172.16.10.0/24`
+- p. 80: `$ nmap -sn 172.16.10.0/24 | grep "Nmap scan" | awk -F'report for ' '{print $2}'`
+- p. 84: `$ nmap scanme.nmap.org`
+- p. 84: `$ nmap 172.16.10.1`
+- p. 84: `$ nmap localhost scanme.nmap.org`
+- p. 84: `$ nmap -sV -iL 172-16-10-hosts.txt`
+- p. 85: `$ nmap -sV -iL 172-16-10-host.txt | grep open`
+- p. 85: `$ nmap -sV -iL 172-16-10-host.txt --open`
+- p. 88: `$ nmap -iL 172-16-10-hosts.txt --open -oG -`
+- p. 89: `$ nmap -iL 172-160-10-hosts.txt --open -oX -`
+- p. 89: `nmap -sV -p "${port}" "${host}" >> "${LOG_FILE}" 1`
+- p. 90: `$ python3 -m http.server 3337`
+- p. 93: `$ curl –head 172.16.10.10:8081`
+- p. 95: `$ nmap -sV --script=banner.nse -iL 172-16-10-hosts.txt`
+- p. 96: `$ nmap -sV --script=banner.nse -iL 172-16-10-hosts.txt | grep "|_banner\||http-server-header"`
+- p. 96: `$ sudo nmap -O -iL 172-16-10-hosts.txt`
+- p. 98: `$ sudo nmap -O 172.16.10.0/24 -oG -`
+- p. 104: `wget -q -r -np -R "index.html*" "${url}" -P "${OUTPUT_FOLDER}" 4`
+- p. 114: `dirsearch command uses the -u (URL) option to specify a base URL`
+- p. 114: `$ dirsearch -u http://172.16.10.10:8081/`
+- p. 114: `$ dirsearch -u http://172.16.10.11/backup/acme-impact-alliance/`
+- p. 116: `$ git log`
+- p. 116: `$ git log --pretty=format:"%an %ae"`
+- p. 117: `$ git log | grep Author | grep -oP '(?<=Author: ).*' | sort -u | tr -d '<>'`
+- p. 118: `$ curl -I http://172.16.10.10:8081/files`
+- p. 121: `$ curl http://172.16.10.11/backup/acme-hyper-branding/.git/HEAD`
+- p. 121: `$ nuclei -ut`
+- p. 121: `$ nuclei -u 172.16.10.11 -t ~/.local/nuclei-templates/custom/git-finder.yaml`
+- p. 122: `$ nuclei -tags apache,git -u 172.16.10.11`
+- p. 122: `$ nuclei -u 172.16.10.10:8081`
+- p. 122: `$ nuclei -u 172.16.10.11`
+- p. 122: `$ nuclei -u 172.16.10.12`
+- p. 124: `$ curl -s http://172.16.10.12/wp-json/wp/v2/users/ | jq`
+- p. 125: `$ curl -s http://172.16.10.12/wp-json/wp/v2/users/ | jq .[].name`
+- p. 126: `$ nuclei-notifier.sh 172.16.10.10:8081 172.16.10.11 172.16.10.12 172.16.10.13`
+- p. 128: `$ ffuf -c -w files_wordlist.txt -u http://172.16.10.10:8081/files/FUZZ`
+- p. 129: `$ wget http://172.16.10.10:8081/files/acme-hyper-branding-5.csv`
+- p. 130: `$ nmap --script=ssh-auth-methods 172.16.10.13`
+
+## [[black-hat-go-21619c7f]]
+- p. 48: `$ go version`
+- p. 48: `go version go1.11.5 linux/amd64`
+- p. 55: `$ go build -ldflags "-w -s"`
+- p. 57: `$ go doc fmt.Println`
+- p. 84: `go/bhg/.)`
+- p. 99: `$ go run main.go`
+- p. 109: `$ curl -i -X GET http://joesproxy.com`
+- p. 139: `$ go get gopkg.in/vmihailenco/msgpack.v2`
+- p. 153: `$ go get github.com/PuerkitoBio/goquery`
+- p. 164: `$ go run main.go nytimes.com docx`
+- p. 169: `$ curl -i http://localhost:8000/hello?name=alice`
+- p. 171: `$ curl http://localhost:8000/a`
+- p. 171: `$ curl http://localhost:8000/d`
+- p. 172: `$ go build -o simple_middleware`
+- p. 173: `$ go get github.com/gorilla/mux`
+- p. 175: `$ curl http://localhost:8000/users/bob`
+- p. 175: `$ curl -i http://localhost:8000/users/bob1`
+- p. 176: `$ go get github.com/urfave/negroni`
+- p. 178: `$ go build -s negroni_example`
+- p. 183: `$ curl -i http://localhost:8000/hello`
+- p. 183: `$ curl -i 'http://localhost:8000/hello?username=admin&password=password'`
+- p. 186: `$ go build -o template_example`
+- p. 188: `$ docker run --rm -it -p 127.0.0.180:80 robbertkl/roundcube`
+- p. 192: `$ go build -o credential_harvester`
+- p. 199: `$ go run main.go -listen-addr=127.0.0.1:8080 -ws-addr=127.0.0.1:8080`
+- p. 209: `$ go get github.com/miekg/dns`
+- p. 232: `$ docker version`
+- p. 232: `$ docker pull java`
+- p. 237: `$ docker run --rm❶ -it❷ -p 2020:53❸ -p 50051:50050❹ -v❺ full path to`
+- p. 238: `$ docker run --rm -it -p 2021:53 -p 50052:50050-v full path to cobalt strike`
+- p. 243: `$ go build`
+- p. 252: `go/bhg/blob/master/ch-6/smb/. Although we won’t show you`
+- p. 260: `go/bhg/blob/master/ch-6/smb/smb/encoder/encoder.go. Both`
+- p. 262: `go/bhg/blob/master/ch-6/smb/ntlmssp/ntlmssp.go contains an`
+- p. 274: `$ go get github.com/bhg/ch-6/smb`
+- p. 286: `$ docker run --name some-mongo -p 27017:27017 mongo`
+- p. 287: `$ docker ps`
+- p. 287: `$ docker start some-mongo`
+- p. 287: `$ docker run -it --link some-mongo:mongo --rm mongo sh \`
+- p. 289: `$ docker run --name some-mysql -p 3306:3306 -e`
+- p. 289: `$ docker run --name some-postgres -p 5432:5432 -e`
+- p. 289: `$ docker run -it --link some-mysql:mysql --rm mysql sh -c \`
+- p. 290: `$ docker run -it --rm --link some-postgres:postgres postgres psql -h postgres -`
+- p. 291: `$ docker run --name some-mssql -p 1433:1433 -e 'ACCEPT_EULA=Y' \`
+- p. 291: `$ docker exec -it some-mssql /opt/mssql-tools/bin/sqlcmd -S localhost \`
+- p. 293: `$ go get gopkg.in/mgo.v2`
+- p. 295: `$ go get github.com/go-sql-driver/mysql`
+- p. 304: `$ go run main.go 127.0.0.1`
+- p. 312: `$ go run main.go ./somepath`
+- p. 315: `$ go get github.com/google/gopacket`
+- p. 320: `$ go build -o filter && sudo ./filter`
+- p. 325: `$ go build -o ftp && sudo ./ftp`
+- p. 332: `$ go build -o syn-flood && sudo ./syn-flood enp0s5 10.1.100.100`
+- p. 383: `$ go build -buildmode=plugin`
+- p. 383: `$ go build -buildmode=c-shared`
+- p. 392: `$ go build -buildmode=plugin -o /path/to/plugins/tomcat.so`
+- p. 394: `$ go get github.com/yuin/gopher-lua`
+- p. 410: `$ go get -u golang.org/x/crypto/bcrypt`
+- p. 416: `$ go run main.go someWrongPassword`
+- p. 416: `$ go run main.go someC0mpl3xP@ssw0rd`
+- p. 435: `$ curl -ik -X GET --cert badCrt.pem --key badKey.pem \`
+- p. 436: `$ curl -ik -X GET --cert clientCrt.pem --key clientKey.pem \`
+- p. 441: `$ go get github.com/joeljunstrom/go-luhn`
+- p. 508: `go/bhg/blob/master/ch-13/imgInject/images/battlecat.png;`
+- p. 525: `$ go run main.go -i images/battlecat.png -o newPNGfile --inject -offset \`
+- p. 529: `$ go run main.go -i images/battlecat.png --inject --offset 0x85258 --encode \`
+- p. 531: `$ go run main.go -i encodePNGfile -o decodePNGfile --offset 0x85258 -`
+- p. 555: `$ go run client/client.go 'cat /etc/resolv.conf'`
+- p. 560: `$ go build -ldflags="-s -w" implant/implant.go`
+

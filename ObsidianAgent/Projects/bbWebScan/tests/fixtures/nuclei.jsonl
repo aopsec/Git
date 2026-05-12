@@ -1,0 +1,5 @@
+{"matched-at":"https://app.example.com/wp-admin","info":{"name":"WordPress admin exposure","severity":"medium"}}
+{"matched-at":"https://api.example.com/.env","info":{"name":".env file exposure","severity":"high"}}
+
+{"matched-at":"https://app.example.com/robots.txt"}
+not-json-line

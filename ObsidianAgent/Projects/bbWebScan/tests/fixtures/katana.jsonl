@@ -1,0 +1,6 @@
+{"timestamp":"2026-05-08T19:00:00Z","request":{"method":"GET","endpoint":"https://app.example.com/login"}}
+{"request":{"method":"GET","endpoint":"https://app.example.com/dashboard"}}
+
+{"url":"https://app.example.com/about"}
+{"request":{"method":"GET"}}
+malformed-line-here

@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenBox network tuning (CAKE qdisc + IRQ affinity)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/openbox-tune.sh
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

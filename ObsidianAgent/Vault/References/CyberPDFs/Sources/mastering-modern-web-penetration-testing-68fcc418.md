@@ -1,0 +1,539 @@
+# Mastering Modern Web Penetration Testing
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 17 strong cyber signals, 25 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Mastering Modern Web Penetration Testing.pdf`
+- SHA256: `68fcc4180ed7aae3c4259a63fefac53db6887e3558f3a20590d8db83b83d27b9`
+- Pages: `298`
+- Text characters: `394590`
+- Author: `n/a`
+- Copied PDF: [[PDFs/mastering-modern-web-penetration-testing-68fcc418.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 211: nmap
+- p. 13: burp
+- p. 11: metasploit
+- p. 10: kali
+- p. 10: linux
+- p. 24: bash
+- p. 62: python
+- p. 3: tor
+- p. 136: monit
+
+## Commands
+- p. 125: `wget https://github.com/sqlmapproject/sqlmap/archive/1.0.zip -O sqlmap.`
+- p. 126: `git clone https://github.com/sqlmapproject/sqlmap.git sqlmap-dev`
+
+## Code And Script Lines
+- p. 5: `from India. He has been a successful participant in various bug bounty programs`
+- p. 24: `from performing actions on your behalf on an actual Gmail web page.`
+- p. 109: `while assuming that a form's POST request will not get forged. But in reality this`
+- p. 116: `from the request altogether and the AppCenter app was still getting accepted.`
+- p. 117: `from 1-100, this will effectively make sure that all possible values in the range of`
+- p. 117: `from the Flash file to a JavaScript callback function to perform source parsing. The`
+- p. 118: `function nice(x)`
+- p. 128: `from it; but in case there are multiple parameters to look into, then we can use -p`
+- p. 147: `from the aforementioned file and then specify the vulnerable parameter, which in`
+- p. 162: `while ( disr != null ) {`
+- p. 166: `from the server and we can happily execute commands through this interactive`
+- p. 166: `class XSS {`
+- p. 166: `function XSS() {`
+- p. 188: `while testing. By this, I'm referring to the auxiliary modules to test for DoS`
+- p. 217: `from a quadratic blowup vulnerability, it was discovered by Israeli security`
+- p. 248: `class Packt`
+- p. 248: `function __construct($n){`
+- p. 250: `class LogWriter`
+- p. 250: `function __destruct()`
+
+## URLs
+- p. 6: https://cyberstruggle.org
+- p. 7: https://www.packtpub.com/mapt
+- p. 20: http://evil.example.com/?cookie=’+document.cookie
+- p. 21: http://www.packtpub.com.
+- p. 21: http://www.packtpub.com/support
+- p. 21: https://github.com/
+- p. 21: https://github.com/PacktPublishing/.
+- p. 22: http://www.packtpub.
+- p. 22: https://www.packtpub.com/books/
+- p. 25: http://example.com/
+- p. 25: http://example.com/random/derp.html
+- p. 25: http://example.com/other/meme/derp.html
+- p. 25: http://www.example.com/meme/derp.html
+- p. 25: http://example.com:8081/meme/derp.html
+- p. 25: http://demo.example.com/meme/derp.html
+- p. 25: http://packtpub.com/meme/derp.html
+- p. 25: http://example.com
+- p. 27: http://example.
+- p. 27: http://example.com:8000
+- p. 27: https://www.mozilla.org/en-
+- p. 27: http://sender.com
+- p. 28: http://packtpub.com
+- p. 29: https://www.soasta.com
+- p. 30: http://api.example.com
+- p. 31: http://api.user.com
+- p. 31: http://cdn.prakharprasad.com
+- p. 31: http://cdn.prakharprasad.com,
+- p. 34: http://meyerweb.com/eric/tools/dencoder/
+- p. 34: http://www.example.com/derp/one/more/time.html
+- p. 36: http://example.com/scripts/../../winnt/system32/cmd.exe?/c+dir+c:\
+- p. 36: http://example.com/scripts/%252E%252E%252F%252E%252E%252Fwinnt/
+- p. 36: http://www.example.com/search.
+- p. 36: http://www.example.com/search.php?q=%3Cscript%3Ealert(0
+- p. 36: http://www.example.com/search.php
+- p. 40: http://www.geocachingtoolbox.com/index.
+- p. 50: https://github.com/TheRook/subbrute:
+- p. 51: https://digi.ninja/
+- p. 53: https://www.owasp.org/index.php/Category:OWASP_
+- p. 63: http://www.routerpasswords.com/
+- p. 64: https://dnsdumpster.com/
+- p. 65: http://www.yougetsignal.com/
+- p. 66: https://pentest-tools.com/home
+- p. 72: http://damilarefagbemi.com/
+- p. 75: http://evil.example.com/?cookie=
+- p. 76: https://www.quora.com/facebook/fb_friends?next=/somepage
+- p. 77: https://attacker.com/steal.gif?cookie=
+- p. 78: http://derp.com
+- p. 78: https://api.vineapp.com/users/search/nameoftheuser
+- p. 78: https://api.vineapp.com/users/search/
+- p. 80: https://whitton.io/articles/content-types-and-xss-facebook-studio/
+- p. 83: https://daringfireball.net/
+- p. 83: http://prakharprasad.com
+- p. 84: https://slack.com/
+- p. 88: http://www.oxpedia.org,
+- p. 89: https://slack.com/;
+- p. 91: http://www.garage4hackers.com/clientscript/yui/uploader/assets/
+- p. 97: https://beefproject.com/.
+- p. 97: http://127.0.0.1:3000/ui/authentication.
+- p. 99: http://0.0.0.0:3000/hook.
+- p. 99: http://192.168.50.2:3000/hook.js
+- p. 104: http://html5sec.org
+- p. 104: https://code.google.com/archive/p/domxsswiki/wikis/
+- p. 104: https://www.blueclosure.com/
+- p. 107: https://bank.example.com/transfer/money?username=John&amount=500
+- p. 107: https://bank.example.com/transfer/
+- p. 108: https://code.google.com/p/gsoc2011-csrf-protection/
+- p. 109: https://bank.example.com/transfer/money
+- p. 110: https://bank.example.com/transfer/money?username=John&amount=500&toke
+- p. 112: https://www.paypal.com/webapps/customerprofile/
+- p. 118: https://staging.example.com/sites/
+- p. 119: https://staging.example.com/
+- p. 119: https://staging.example.com/messages/
+- p. 120: https://staging.example.com/jsonp/api?callback=
+- p. 121: https://staging.example.
+- p. 121: https://github.com/mikispag/
+- p. 121: https://miki.it/blog/2014/7/8/abusing-jsonp-with-rosetta-flash/.
+- p. 122: https://attacker.example.com/redirect.php.
+- p. 122: https://hackerone.com/reports/44146
+- p. 125: https://github.com/sqlmapproject/sqlmap/releases
+- p. 125: https://github.com/sqlmapproject/sqlmap/archive/1.0.zip
+- p. 126: https://github.com/sqlmapproject/sqlmap.git
+- p. 126: https://github.com/Audi-1/
+- p. 128: http://192.168.50.2/Less-1/?id=2
+- p. 135: https://prakharprasad.com/books/1/view
+- p. 135: https://prakharprasad.com/books/2/view
+- p. 135: https://prakharprasad.com/books/3/view
+- p. 139: http://192.168.50.2/Less-8/?id=2
+- p. 140: http://tutorials.jenkov.com/
+- p. 141: http://107.170.95.147/Less-1/?id=1
+- p. 146: http://192.168.50.2/Less-11/
+- p. 148: http://admin.example.com
+- p. 148: http://admin.example.com/portal/names?id=1.
+- p. 151: http://www.forkbombers.com/
+- p. 155: http://url:port.
+- p. 155: https://proxy.example.com:8080
+- p. 155: http://vuln.
+- p. 156: http://www.securitytube.net/user/Audi.
+- p. 156: https://github.com/sqlmapproject/sqlmap/wiki/Usage
+- p. 156: https://prakharprasad.com/introduction-to-sql-injection-and-
+- p. 158: http://www.dvwa.co.uk/.
+- p. 163: https://github.com/b374k/b374k.
+- p. 165: http://pentestmonkey.
+- p. 167: http://www.mtasc.org/mtasc.html.
+- p. 168: http://www.w3.org/
+- p. 168: http://www.w3.org/2000/
+- p. 170: https://hackerone.com/reports/400.
+- p. 177: http://www.thexifer.net/,
+- p. 177: http://www.thexifer.net/
+- p. 179: https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-
+- p. 179: http://soroush.secproject.com/downloadable/iis-semicolon-report.pdf
+- p. 191: http://192.168.4.211:8080.
+- p. 192: http://192.168.4.211
+- p. 192: http://192.168.4.211.
+- p. 201: https://www.offensive-security.com/metasploit-unleashed/
+- p. 207: https://www.prakharprasad.com/external.xml
+- p. 211: http://scanme.nmap.org:20/
+- p. 212: http://scanme.nmap.org:21/
+- p. 212: http://scanme.nmap.org:22/
+- p. 212: http://scanme.nmap.org:X/
+- p. 218: http://www.ubercomp.com/
+- p. 225: http://goo.gl/GPDB2H
+- p. 228: http://invoice.example.com/view?id=101
+- p. 229: http://invoice.example.com/view?id=102
+- p. 229: http://invoice.example.com/view?id=103
+- p. 229: http://invoice.example.com/view?id=104
+- p. 229: http://invoice.example.com/view?id=9999
+- p. 230: https://www.flipkart.com/account/addresses
+- p. 231: https://prakharprasad.com/flipkart-com-
+- p. 234: https://hackerone.com/
+- p. 235: https://prakharprasad.com/content/images/2014/12/13841
+- p. 236: http://www.example.com/image.jpg
+- p. 237: https://bounty.github.com/researchers/avlidienbrunn.html#javascript-
+- p. 237: https://sandbox.prakharprasd.com
+- p. 237: https://sandbox.prakharprasad.
+- p. 238: https://sandbox.prakharprasad.com/rpo/index.php
+- p. 238: https://sandbox.prakharprasad.com/rpo/
+- p. 238: https://sandbox.
+- p. 241: https://sandbox.prakharprasad.com/rpo/reflect.php/
+- p. 242: http://www.thespanner.co.uk/2014/03/21/rpo/.
+- p. 245: http://192.168.4.20/resetrouter.html
+- p. 247: https://www.youtube.com/watch?v=Ckh0w7qGp5g.
+- p. 252: http://syssec.rub.de/media/emma/veroeffentlichungen/2014/09/10/
+- p. 252: https://blog.fastmail.com/2015/12/20/sanitising-html-the-dom-
+- p. 252: http://blog.innerht.ml/rpo-gadgets/
+- p. 254: http://www.packt.com
+- p. 259: https://www.example.com/oauth/authorize?response_type=code&client_
+- p. 259: https://www.example.com/oauth/authorize?client_id=2190698099&redirect_
+- p. 260: https://prakharprasad.com/redirect?code=af8SFAdas
+- p. 260: https://www.example.com/
+- p. 260: https://prakharprasad.com/token
+- p. 262: https://www.example.com/oauth/authorize?response_type=token&client_
+- p. 262: https://prakharprasad.com/token#access_token=EAACEdEose0cBAE3vD
+- p. 263: http://exploit.example.com/
+- p. 263: http://trusted.com.
+- p. 263: http://api.trusted.com
+- p. 263: http://exploit.example.com.
+- p. 263: https://api.trusted.com/oauth2/authorization?response_
+- p. 264: http://exploit.example.com/?error=invalid_scope&error_description=The+
+- p. 264: http://example.com/token/callback.
+- p. 265: http://example.com/token/callback/../../our/path
+- p. 265: http://example.com/token/callback/.%0a./.%0d./our/path
+- p. 265: http://example.com/token/callback/%252e%252e/%252e%252e/our/path
+- p. 265: http://example.com/token/callback/
+- p. 265: http://example.com/token/callback/%2e%2e/%2e%2e/our/path
+- p. 265: http://example.com/token/
+- p. 265: https://controlledsubdomain.example.com/token/callback
+- p. 265: https://www1.example.com/token/callback
+- p. 265: https://files.example.com/token/callback
+- p. 266: http://example.com/token/callback
+- p. 266: http://example.com.mx/token/callback
+- p. 266: http://example.org/token/callback
+- p. 266: http://example.org.in/token/callback
+- p. 266: http://example.net/token/callback
+- p. 266: http://example.net.in/token/callback
+- p. 266: https://hackerone.com/reports/2575
+- p. 266: http://www.breaksec.com/?p=6164
+- p. 266: http://www.example.com
+- p. 266: http://www.example.
+- p. 266: http://www.example.com/exit/redirect.php?u=http://www.
+- p. 266: http://www.example.com/exit/redirect.
+- p. 266: http://prakharprasad.com/token/callback
+- p. 266: http://prakharprasad.com/token/callback.
+- p. 267: http://www.bubblecode.net/
+- p. 268: https://techzone.ergon.ch/oauth-307Redirect-idpMixUp
+- p. 268: http://www.oauthsecurity.com/
+- p. 268: http://homakov.blogspot.com/
+- p. 268: http://isciurus.blogspot.com/
+- p. 271: https://api.github.com/users/PacktPublishing.
+- p. 271: https://api.github.com/users/PacktPublishing/repos.
+- p. 271: https://api.github.com/users/
+- p. 271: https://api.github.com/users/PacktPublishing/repos
+- p. 271: https://api.github.com/users/PacktPublishing/
+- p. 271: https://api.github.com/users
+- p. 271: https://api.github.com/users/PacktPublishing
+- p. 276: https://squareup.com/
+- p. 279: https://developers.facebook.com/docs/graph-api/reference/user
+- p. 282: https://developers.facebook.com/docs/facebook-login/permissions
+- p. 283: https://www.facebook.com/
+- p. 283: https://www.facebook.com/help/289207354498410
+- p. 286: https://developers.facebook.com/docs/graph-api/reference/
+- p. 287: https://developers.facebook.com/docs/graph-api/reference/photo.
+- p. 290: http://philippeharewood.com/
+- p. 290: https://pranavhivarekar.in/
+
+## Technique Signals
+- p. 3: companies and products mentioned in this book by the appropriate use of capitals.
+- p. 5: The last chapter of this book on API testing is written entirely by
+- p. 8: Using double encoding to evade XSS filters 13
+- p. 9: Demonstrating reflected XSS vulnerability 52
+- p. 9: Stored XSS through spoofed IP addresses 64
+- p. 9: Flash-based XSS – ExternalInterface.call() 67
+- p. 10: Exploiting POST-request based CSRF 86
+- p. 10: PayPal's CSRF vulnerability to change phone numbers 87
+- p. 10: Exploiting CSRF in JSON requests 90
+- p. 10: Using XSS to steal anti-CSRF tokens 92
+- p. 10: Exploring pseudo anti-CSRF tokens 93
+- p. 10: Defeating XMLHTTPRequest-based CSRF protection 98
+- p. 10: Chapter 5: Exploiting SQL Injection 101
+- p. 11: Netcat accessible reverse shell 142
+- p. 11: Case-sensitive blacklist extension check bypass 147
+- p. 11: MIME content type verification bypass 149
+- p. 11: Bypassing image content verification 153
+- p. 11: Generating Web backdoor payload with Metasploit 171
+- p. 12: Protocol Handlers for SSRF URLs 201
+- p. 12: Case Study – MailChimp port scan SSRF 203
+- p. 12: IDOR in Flipkart to delete saved shipping addresses 207
+- p. 12: IDOR in HackerOne to leak private response template data 208
+- p. 12: Introducing the OAuth 2.0 model 232
+- p. 13: Exploiting OAuth for fun and profit 239
+- p. 13: Hijacking the OAuth flow – fiddling with redirect URI 241
+- p. 13: Chapter 11: API Testing Methodology 247
+- p. 14: Basic methodology to test developer APIs 261
+- p. 16: iCloud service API was breached by hackers and sensitive photos were leaked on the
+- p. 17: attack. Then we have OAuth 2.0, which varies with implementations, and this results
+- p. 17: in flaws, such as account takeovers. Among older techniques, we have XSS, CSRF,
+- p. 17: Chapter 2, Information Gathering, deals with various reconnaissance or enumeration
+- p. 17: Chapter 3, Cross-Site Scripting, is a refresher on one of the most exploited flaws on the
+- p. 17: Web: cross-site scripting. This chapter contains different techniques of XSS, and some
+- p. 17: of them are really nasty, such as performing XSS by spoofing an IP address.
+- p. 18: Chapter 4, Cross-Site Request Forgery, highlights the importance of CSRF as an attack
+- p. 18: vector, teaches newer ways to perform CSRF, for instance, when the request is a
+- p. 18: JSON object. Then, there is a real-life case study on a critical CSRF vulnerability
+- p. 18: Chapter 5, Exploiting SQL Injection, doesn't need any introduction at all. This chapter
+- p. 18: makes use of SQLMap and explores it to detect and exploit SQL injection flaws.
+- p. 18: use different kinds of web shells, some techniques of DoS, and bypasses on certain
+- p. 18: web application security. It covers how to generate a web backdoor payload through
+- p. 18: Chapter 8, XML Attacks, covers attack vectors, which exploit XML parsing
+- p. 18: Chapter 10, OAuth 2.0 Security, discusses various flaws in implementing the OAuth
+- p. 18: 2.0 protocol in web applications. It starts with the relevant basics of OAuth and goes
+- p. 18: Chapter 11, API Testing Methodology, is the last chapter of this book and a guest
+- p. 18: of REST APIs and then goes on to explain fundamental issues and mistakes made by
+- p. 27: are browser bugs which can lead to SOP bypass; one such example is an SOP
+- p. 27: bypass in Firefox abusing the PDF reader – https://www.mozilla.org/en-
+- p. 28: Request Forgery (CSRF) tokens, and then they can be used to mount a CSRF attack.
+- p. 32: misinterpreted because of transport issues. Certain protocols such as OAuth also
+- p. 34: here, 41 is the hexadecimal for 65, which, in turn, is the ASCII code for capital A.
+- p. 34: Inclusion (RFI) scenarios as well, in which we need to encode our path payload.
+- p. 34: This effectively results in bypasses of filters depending on the scenario:
+- p. 36: So the following double-encoded URL will bypass and execute code under the
+- p. 36: Using double encoding to evade XSS filters
+- p. 36: We have covered a directory traversal security check bypass through the double
+- p. 36: encoding technique. In this section, I'll cover how we can evade some XSS filters or
+- p. 36: Assuming that we've an XSS filter that detects <, >, /, or their percent-encoded forms,
+- p. 36: we can apply the double encoding technique to our XSS payload, if our input gets
+- p. 36: Original request with XSS payload (blocked): http://www.example.com/search.
+- p. 37: Before I end this topic, I must say the double encoding technique to bypass
+- p. 40: In the next chapter, we will learn different reconnaissance techniques, which will
+- p. 43: This may include running port scans, enumerating files, and so on. Active techniques
+- p. 43: firewall of the target, and prolonged scans to enumerate information can even slow
+- p. 43: contact the target for harvesting data for our reconnaissance purposes. Websites like
+- p. 43: be extremely beneficial for getting information that can be later used in exploiting the
+- p. 43: hint that we're actually performing any reconnaissance. Since we don't connect to the
+- p. 43: domain enumeration. Finding subdomains of a website can land us in surprising
+- p. 43: performed a subdomain enumeration scan on a Google service, out of the bunch of
+- p. 44: The following websites will be used for passive enumeration:
+- p. 44: The Fierce Perl script applies techniques such as zone transfer and wordlist
+- p. 48: allowed zone transfer to take place. Fierce then used the brute force approach to find
+- p. 48: By default, Fierce uses its own wordlist for subdomain brute forcing. We can use the
+- p. 48: wordlist switch and supply our own wordlist to guess the subdomains using Fierce.
+- p. 48: Let's create a custom wordlist with the following keywords:
+- p. 48: Now we will run Fierce against my personal domain with this custom wordlist.
+- p. 48: wordlist. So it's evident that a good wordlist yields a good set of subdomains.
+- p. 49: theHarvester is an open source reconnaissance tool, it can dig out heaps of
+- p. 49: We may use this email address to perform client side exploitation or phishing, but
+- p. 49: google, googleCSE, bing, bingapi, pgp, linkedin, google-profiles,
+- p. 50: SubBrute is an open source subdomain enumeration tool. It is community
+- p. 50: makes use of open DNS resolvers to bypass rate-limiting restrictions.
+- p. 51: CeWL is a custom wordlist generator made by Robin Hood. It basically spiders
+- p. 51: the target site to a certain depth and then returns a list of words. This wordlist can
+- p. 52: Look at that! It returned us a nice looking wordlist based on the scraped data from
+- p. 52: --help. Instead of displaying the wordlist output on the console, we can save it to a
+- p. 52: You can clearly see the generated wordlist was written to the cewl.txt file.
+- p. 54: It comes with a set of wordlists for different requirements and conditions.
+- p. 55: wfuzz. It is more feature-rich, advanced, and versatile than DirBuster.
+- p. 64: enumeration. I'll demonstrate this by running a search for the packtpub.com website:
+- p. 66: passive one, the target site doesn't know about our reconnaissance. The Google
+- p. 72: related to it. XSS enables us to execute client-side code inside the browser and has
+- p. 74: I believe XSS or cross-site scripting is the most popular web vulnerability, if not the
+- p. 74: most exploitable one. Almost every website had suffered in one or more ways from
+- p. 74: XSS. From social networking websites such as Facebook and MySpace to financial
+- p. 74: has had a run-in with XSS. XSS typically happens to be a user-supplied input (for
+- p. 74: instantaneously, known as reflected XSS or when the user supplied inputs (such as
+- p. 74: XSS, happens when you enter your name, address, and so on, on a social networking
+- p. 74: it results in stored XSS. In both cases when the input is written back to the page, it
+- p. 75: Reflected XSS is one of the most widely exploited web application vulnerabilities. To
+- p. 75: exploit this vulnerability, the application takes one or more parameters as an input,
+- p. 75: sound harmful at the moment but this vulnerability can be exploited to do one of the
+- p. 75: whatever input that is provided inside the GET parameter xss. In the following
+- p. 76: We can naïvely test for reflected (or even stored) XSS by inserting the following
+- p. 76: If these characters are reflected in the output, then we can go ahead and build an XSS
+- p. 76: payload based on the primitives available.
+- p. 76: In this section, I'll try to explain and give insights about an example of reflective XSS
+- p. 76: We can execute the XSS in the anchor tag's href using the javascript: URI
+- p. 76: then we can go ahead and build up the aforementioned payload. As soon as the
+- p. 77: escaping out of the tags - <> " ' but as expected they were filtered, whereas
+- p. 77: replace our payload like this to steal the cookies, seamlessly:
+- p. 78: There can be variations in the JavaScript URL payload, as we saw earlier. We can use
+- p. 78: APIs that websites provide these days. Some of the endpoints often reflect the
+- p. 78: The first part of this will be an example of XSS, which I discovered on Vine.com,
+- p. 78: a service owned by Twitter. Vine had an API endpoint that allowed third- party
+- p. 78: developers to programmatically search users. The API looked like the following:
+- p. 78: able to dig out an XSS vulnerability on www.vine.com:
+- p. 79: You will see the result that is an example of XSS in the following screenshot:
+- p. 79: reflected a value from the GET parameter url into the API's JSON response body. The
+- p. 80: without any sanitization. So any Facebook page with an XSS payload as the page title
+- p. 80: the response as a normal HTML webpage. This scenario quickly escalated to XSS
+- p. 80: our XSS payload through a link and then it is reflected in the response, and the
+- p. 80: second that the response is rendered as a fully-fledged XSS vector.
+- p. 80: The final proof of the concept exploits looks like the example shown as follows:
+- p. 81: Stored or persistent XSS is a sub-type of XSS vulnerability and differs from reflected
+- p. 81: XSS by the fact that it is persistent in nature. It means that the payload, once inserted
+- p. 81: XSS worms. I hope some of you may be aware of the Samy worm which exploited a
+- p. 81: weak XSS filter in MySpace to create a persistent XSS scenario in which thousands of
+- p. 81: the code. Stored XSS vulnerability is pretty common in places where data is saved
+- p. 81: similar places. They are a welcoming location to check for stored XSS issues.
+- p. 81: Before proceeding to a few case studies on stored XSS, I'll go on and demonstrate an
+- p. 81: example of stored XSS on a popular and open-source vulnerability called DVWA.
+- p. 81: The web application has stored XSS, which is in the form of a guestbook, as shown in
+- p. 82: input sanitization. So, if we insert an XSS payload as depicted in the previous image,
+- p. 82: whenever the admin of the guestbook views the submitted entries then the XSS
+- p. 82: payload will execute, as mentioned earlier in the Reflected XSS section. The payload
+- p. 83: Apart from stealing cookies, the client side can be exploited to leverage
+- p. 83: which can be triggered through a malicious piece of JavaScript (XSS) payload.
+- p. 83: Launching such exploits using a stored XSS is stealthy as the victim may not suspect
+- p. 83: the website of executing harmful code and the client-side exploit will silently run in
+- p. 83: I'll look into a vector to discover persistent XSS through the Markdown parser.
+- p. 83: into an XSS by using the following Markdown code:
+- p. 83: vector. I was able to create a link inside the forum post that contained an XSS
+- p. 84: This XSS was reported to Digital Ocean and has been patched as well.
+- p. 84: I'm going to cover an effective technique that may come useful. We can use APIs
+- p. 84: of websites in order to find XSS vulnerabilities, if we try to normally insert an XSS
+- p. 84: payload from webpages and the output generated is sanitized, then we can try to
+- p. 84: use relevant APIs to achieve the same feat instead. As developers, at times we fail to
+- p. 84: implement security filters or do not consider the input coming from APIs as harmful.
+- p. 84: Simply speaking, if we cannot insert an XSS payload directly into a section of the
+- p. 84: website in say posts or comments, then we can try using their APIs to write posts or
+- p. 84: comments with XSS payloads. Sometimes developers simply forget this edge case,
+- p. 84: they take and display whatever data comes from the API. I'll now show you a real
+- p. 86: I tested this interface for naïve XSS by directly inserting an XSS payload into the chat
+- p. 86: alternative courses to achieve the same. It was then that I stumbled upon their API
+- p. 86: for sending messages to different channels. The API method to send messages
+- p. 86: was chat.postMessage. The API allowed me to specify a username as well as the
+- p. 86: messages. The basic structure of the API call parameter was as follows:
+- p. 87: You can see in the previous example that I'm inserting the XSS vector in the username
+- p. 87: field of the API call, which will execute an alert box with document.cookie:
+
+## Extracted Operational Notes
+- p. 2: Master the art of conducting modern pen testing attacks
+- p. 3: All rights reserved. No part of this book may be reproduced, stored in a retrieval
+- p. 3: Publishing, and its dealers and distributors will be held liable for any damages
+- p. 3: companies and products mentioned in this book by the appropriate use of capitals.
+- p. 4: Content Development Editor Production Coordinator
+- p. 5: Prakhar Prasad is a web application security researcher and penetration tester
+- p. 5: from India. He has been a successful participant in various bug bounty programs
+- p. 5: and has discovered security flaws on websites such as Google, Facebook, Twitter,
+- p. 5: the most widely respected certifications in the information security industry. He
+- p. 5: occasionally performs training and security assessment for various government,
+- p. 5: I am thankful from the bottom of my heart to the editors of this
+- p. 5: The last chapter of this book on API testing is written entirely by
+- p. 5: application security, who is a very good friend of mine and a down-
+- p. 6: Kubilay Onur Gungor has been working in the cyber security field for more than
+- p. 6: application security expert and incident management and response expert in Sony
+- p. 6: He believes in multidisciplinary approach on cyber security and defines it as
+- p. 6: management and response, cyber terrorism, criminal profiling, unorthodox methods,
+- p. 6: program is up and running in Istanbul in the name of Cyber Struggle
+- p. 6: Besides security, he holds certificates in foreign policy, brand management, surviving
+- p. 6: in extreme conditions, international cyber conflicts, anti-terrorism accreditation board,
+- p. 8: Chapter 1: Common Security Protocols 1
+- p. 8: IIS 5.0 directory traversal code execution – CVE-2001-0333 12
+- p. 8: Using double encoding to evade XSS filters 13
+- p. 9: Demonstrating reflected XSS vulnerability 52
+- p. 9: Stored XSS through spoofed IP addresses 64
+- p. 9: Flash-based XSS – ExternalInterface.call() 67
+- p. 10: Exploiting POST-request based CSRF 86
+- p. 10: PayPal's CSRF vulnerability to change phone numbers 87
+- p. 10: Exploiting CSRF in JSON requests 90
+- p. 10: Using XSS to steal anti-CSRF tokens 92
+- p. 10: Exploring pseudo anti-CSRF tokens 93
+- p. 10: Defeating XMLHTTPRequest-based CSRF protection 98
+- p. 10: Chapter 5: Exploiting SQL Injection 101
+- p. 10: Installation of SQLMap under Kali Linux 102
+- p. 11: Chapter 6: File Upload Vulnerabilities 135
+- p. 11: Introducing file upload vulnerability 136
+- p. 12: WordPress 3.9 quadratic blowup vulnerability – Case Study 194
+- p. 12: Chapter 9: Emerging Attack Vectors 197
+- p. 12: Protocol Handlers for SSRF URLs 201
+- p. 12: Case Study – MailChimp port scan SSRF 203
+- p. 13: Exploiting OAuth for fun and profit 239
+- p. 13: Chapter 11: API Testing Methodology 247
+- p. 14: Basic methodology to test developer APIs 261
+- p. 16: enough, imagine these services were hacked and all the sensitive data stored in
+- p. 16: iCloud service API was breached by hackers and sensitive photos were leaked on the
+- p. 16: mentioned cases clearly prove the point. However, we can beef up security to an
+- p. 16: can be a hundred per cent secure, but improving security never hurt anybody.
+- p. 17: In a classic penetration test of web applications, different types of attacking
+- p. 17: techniques are used to find vulnerabilities and use them to break into systems.
+- p. 17: techniques, such as XML attack vectors, which include the recently popular XXE
+- p. 17: attack. Then we have OAuth 2.0, which varies with implementations, and this results
+- p. 17: in flaws, such as account takeovers. Among older techniques, we have XSS, CSRF,
+- p. 17: Chapter 1, Common Security Protocols, focuses on different basic concepts of the Web
+- p. 17: and security in general, which you will find beneficial when conducting tests in
+- p. 17: Chapter 2, Information Gathering, deals with various reconnaissance or enumeration
+- p. 17: techniques to discover surfaces that can be attacked. The more someone enumerates
+- p. 17: a particular web target, the better the chances are of finding a vulnerability inside it.
+- p. 17: Chapter 3, Cross-Site Scripting, is a refresher on one of the most exploited flaws on the
+- p. 17: Web: cross-site scripting. This chapter contains different techniques of XSS, and some
+- p. 17: of them are really nasty, such as performing XSS by spoofing an IP address.
+- p. 18: Chapter 4, Cross-Site Request Forgery, highlights the importance of CSRF as an attack
+- p. 18: vector, teaches newer ways to perform CSRF, for instance, when the request is a
+- p. 18: JSON object. Then, there is a real-life case study on a critical CSRF vulnerability
+- p. 18: Chapter 5, Exploiting SQL Injection, doesn't need any introduction at all. This chapter
+- p. 18: makes use of SQLMap and explores it to detect and exploit SQL injection flaws.
+- p. 18: Chapter 6, File Upload Vulnerabilities, deals with security flaws plaguing file upload
+- p. 18: web application security. It covers how to generate a web backdoor payload through
+- p. 18: Chapter 8, XML Attacks, covers attack vectors, which exploit XML parsing
+- p. 18: implementation in a web application; XXE is a vector covered here apart from
+- p. 18: DoS issues, such as the XQB attack.
+- p. 18: Chapter 9, Emerging Attack Vectors, includes some latest or unpopular techniques,
+- p. 18: Chapter 10, OAuth 2.0 Security, discusses various flaws in implementing the OAuth
+- p. 18: Chapter 11, API Testing Methodology, is the last chapter of this book and a guest
+- p. 18: chapter by security researcher and my friend Pranav Hivarekar. It covers the basics
+- p. 18: of REST APIs and then goes on to explain fundamental issues and mistakes made by
+- p. 19: This book targets security professionals and penetration testers who want to
+- p. 19: stored inside localStorage is also governed by this policy, that is, origin-separated."
+- p. 24: This is the first chapter of this book and it will cover some basic security protocols
+- p. 24: prevents web pages from bashing together (in a simple sense). Then we've cross-origin
+- p. 24: Same-origin policy is a security enforcement found in most common browsers that
+- p. 24: concept of security which runs web applications of various kinds.
+- p. 25: Flash, and so on. Data stored inside localStorage is also governed by this policy,
+- p. 27: the same-origin policy; it skips the policy checks if the following situations
+- p. 27: • IE skips the origin check if the origin falls under the Trust Zone, for example,
+- p. 28: URL which is at a different origin is a different story altogether. Let us attempt to
+- p. 28: As soon as this code runs, we get the following security error inside the Google
+- p. 28: domain XMLHTTPRequest() will drop as per security enforcement. Consider an
+- p. 28: Request Forgery (CSRF) tokens, and then they can be used to mount a CSRF attack.
+- p. 29: stored. Most content delivery networks (CDNs) which provide resource-hosting
+- p. 30: dropped and a security error is raised (as seen earlier in the last section),
+- p. 30: are fully compatible (protocol, security, and so on) with each other before the data is
+- p. 34: here, 41 is the hexadecimal for 65, which, in turn, is the ASCII code for capital A.
+- p. 34: It is the same technique that was used in the infamous IIS 5.0 directory traversal
+- p. 34: Typically ../../ or ..\..\ is used to traverse back to the parent directory; some
+- p. 35: IIS 5.0 directory traversal code execution –
+- p. 35: In 2001, a directory traversal vulnerability in Microsoft's popular IIS 5.0 web server
+- p. 35: appeared. The vulnerability was critical because it was a zero authentication code
+- p. 35: execution vulnerability. The vulnerability was due to double decoding of a URL
+- p. 35: Microsoft issued security bulletin MS01-026 to address this flaw and also described
+- p. 35: the vulnerability in their own words. I'll quote the technical advisory published at
+- p. 35: A vulnerability that could enable an attacker to run operating system commands on
+- p. 35: form, then performs security checks on the decoded request. A vulnerability results
+- p. 35: because a second, superfluous decoding pass is performed after the security checks
+- p. 35: are completed. If an attacker submitted a specially constructed request, it could
+- p. 35: be possible for the request to pass the security checks, but then be mapped via the
+- p. 35: the virtual folder structure. These would be executed in the security context of the
+- p. 35: group, would grant the attacker capabilities similar to those of a non-administrative
+- p. 35: This excerpt mentions specifically that a vulnerability results because a second,
+- p. 35: superfluous decoding pass is performed after the security checks are completed.
+- p. 35: outside the root directory then the request would have got blocked as it is a clear
+- p. 35: path traversal outside of the root directory.
+- p. 36: Assuming that the root directory is a Windows folder, if we send the following
+- p. 36: request, it will be blocked as it contains ../../ for directory traversal inside
+- p. 36: Using double encoding to evade XSS filters
+- p. 36: We have covered a directory traversal security check bypass through the double
+- p. 36: encoding technique. In this section, I'll cover how we can evade some XSS filters or
+- p. 36: Assuming that we've an XSS filter that detects <, >, /, or their percent-encoded forms,
+- p. 36: we can apply the double encoding technique to our XSS payload, if our input gets
+- p. 36: Original request with XSS payload (blocked): http://www.example.com/search.
+- p. 37: decoding). It can be applied to other attack techniques such as SQL injections.

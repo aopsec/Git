@@ -1,0 +1,5 @@
+api.example.com
+www.example.com
+admin.example.com
+mail.example.com
+out-of-scope.evil.test

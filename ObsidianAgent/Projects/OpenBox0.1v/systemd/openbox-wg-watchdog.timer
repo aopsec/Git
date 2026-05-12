@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenBox WG watchdog every 60s
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=60s
+AccuracySec=10s
+
+[Install]
+WantedBy=timers.target

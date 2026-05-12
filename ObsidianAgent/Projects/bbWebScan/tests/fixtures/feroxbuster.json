@@ -1,0 +1,5 @@
+{"type":"response","url":"https://app.example.com/admin","status":401,"content_length":4521}
+{"type":"response","url":"https://app.example.com/api","status":200,"content_length":2048}
+
+{"type":"response","status":404}
+malformed

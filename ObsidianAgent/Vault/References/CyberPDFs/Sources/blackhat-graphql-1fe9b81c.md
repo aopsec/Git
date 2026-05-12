@@ -1,0 +1,580 @@
+# Black Hat GraphQL
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 17 strong cyber signals, 28 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/BlackHat GraphQL.pdf`
+- SHA256: `1fe9b81c040464569627ff14f6eba49f9ae587df6ed66b7c8847aa71bb6ec83f`
+- Pages: `314`
+- Text characters: `735491`
+- Author: `Nick Aleks and Dolev Farhi`
+- Copied PDF: [[PDFs/blackhat-graphql-1fe9b81c.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 12: nmap
+- p. 11: burp
+- p. 11: kali
+- p. 11: docker
+- p. 7: linux
+- p. 99: bash
+- p. 56: python
+- p. 291: nuclei
+- p. 1: tor
+- p. 114: monit
+
+## Commands
+- p. 36: `# curl http://lab.blackhatgraphql.com/rest/v1/users`
+- p. 37: `# curl http://lab.blackhatgraphql.com/rest/v1/history/1`
+- p. 51: `# curl lab.blackhatgraphql.com`
+- p. 54: `# sudo systemctl enable docker --now`
+- p. 54: `# sudo docker`
+- p. 55: `# git --help`
+- p. 55: `# git clone -b blackhatgraphql https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application.git`
+- p. 55: `# sudo docker build -t dvga .`
+- p. 55: `# sudo docker run -t --rm -d --name dvga -p 5013:5013 -e WEB_HOST=0.0.0.0 dvga`
+- p. 56: `# sudo docker container ps`
+- p. 60: `# git clone https://github.com/nikitastupin/clairvoyance.git`
+- p. 60: `# python3 -m clairvoyance -h`
+- p. 61: `# git clone https://github.com/doyensec/inql.git`
+- p. 61: `# sudo python3 setup.py install`
+- p. 62: `# git clone https://github.com/dolevf/graphw00f.git`
+- p. 62: `# python3 main.py --help`
+- p. 62: `# git clone https://github.com/assetnote/batchql.git`
+- p. 62: `# python3 batch.py -h`
+- p. 63: `# git clone https://github.com/dolevf/nmap-graphql-introspection-nse.git`
+- p. 63: `# nmap --script-help graphql-introspection.nse`
+- p. 64: `# wget "https://gitlab.com/dee-see/graphql-path-enum/-/jobs/artifacts/v1.1/raw`
+- p. 65: `# git clone https://github.com/dolevf/graphql-cop.git`
+- p. 65: `# python3 graphql-cop.py -h`
+- p. 66: `# git clone https://github.com/nicholasaleks/CrackQL.git`
+- p. 66: `# python3 CrackQL.py -h`
+- p. 103: `# curl -X GET http://localhost:5013/graphql`
+- p. 103: `# nmap -p 5013 -sV --script=http-grep`
+- p. 105: `# nmap -p 5013 -sV --script=http-grep --script-args='match="__typename",`
+- p. 105: `# nmap -p 5013 -iL hosts.txt -sV --script=http-grep`
+- p. 105: `# curl -X POST http://localhost:5013/graphql -d '{"query":"{__typename }"}'`
+- p. 106: `curl -X POST "$host" -d '{"query":"{__typename }"}' -H "Content-Type: application/json"`
+- p. 106: `# python3 main.py -d -t http://localhost:5013`
+- p. 107: `# python3 main.py -d -t http://localhost:5013 -w wordlist.txt`
+- p. 117: `# nmap --script=graphql-introspection -iL hosts.txt -sV -p 5013`
+- p. 121: `# curl -I https://apache.org/`
+- p. 123: `# python3 main.py -f -t http://localhost:5013/graphql`
+- p. 142: `# python3 exploit_threaded_field_dup.py http://localhost:5013/graphql`
+- p. 144: `# python3 -c 'for i in range(0, 10): print("q"+str(i)+":"+"systemUpdate")'`
+- p. 146: `# python3 exploit_directive_overloading.py http://localhost:5013/graphql 30000`
+- p. 149: `# curl http://localhost:5013/graphql -H "Content-Type: application/json"`
+- p. 150: `# python3 array_based_batch_query.py`
+- p. 152: `# python3 array_based_circular_queries.py`
+- p. 153: `# python3 batch.py -e http://localhost:5013/graphql`
+- p. 153: `# python3 graphql-cop.py -t http://localhost:5013/graphql`
+- p. 178: `# git clone https://github.com/nicholasaleks/high-frequency-vocabulary`
+- p. 179: `# python3 -m clairvoyance http://localhost:5013/graphql`
+- p. 197: `# curl -X POST http://localhost:5013/graphql -d '{"query":"{ __typename }"}'`
+- p. 202: `# python3 CrackQL.py -t http://localhost:5013/graphql -q sample-queries/login.graphql`
+- p. 210: `# python3 CrackQL.py -t http://localhost:5013/graphql -q sample-queries/users.graphql`
+- p. 232: `wget http://example.com/file.zip -P /data/downloads`
+- p. 254: `# curl -X GET "http://localhost:5013/graphql?query=mutation%20%7B%20__typename%20%7D"`
+- p. 258: `# python3 batch.py -e http://localhost:5013/graphql | grep -i CSRF`
+- p. 258: `# python3 graphql-cop.py -t http://localhost:5013/graphql | grep -i CSRF`
+- p. 265: `# sudo docker exec -it dvga nc -lvp 7773`
+- p. 291: `nuclei-­templates/blob/master/cves/2020/CVE-2020-9483.yaml.`
+
+## Code And Script Lines
+- p. 34: `function may connect to an external database such as MySQL, and query its`
+- p. 41: `while a /users endpoint might support both GET- and POST-based requests,`
+- p. 68: `from a client’s point of view. Next, we’ll review its type system from a serv-`
+- p. 71: `from HTTP to WebSocket, as indicated by the response code of 101`
+- p. 81: `from the response. When the if condition in the directive’s argument is`
+- p. 84: `from a list of possible values. For example, an application may want to allow`
+- p. 95: `from its API in several ways. In Chapter 6, we’ll teach you how to leverage`
+- p. 96: `from clients. In Chapter 8, you will learn about specific GraphQL injection`
+- p. 106: `def possible_graphql_paths():`
+- p. 125: `from computationally complex queries.`
+- p. 135: `for host in $(cat hosts.txt); do`
+- p. 142: `for _ in range(THREADS):`
+- p. 146: `def start_attack():`
+- p. 146: `while True:`
+- p. 146: `for i in range(300):`
+- p. 147: `for t in threads:`
+- p. 150: `import requests`
+- p. 151: `for _ in range(FIELD_REPEAT):`
+- p. 151: `for _ in range(ARRAY_LENGTH):`
+- p. 157: `from recursive queries, applications can set query depth limits. For example,`
+- p. 157: `class MySchema < GraphQL::Schema`
+- p. 159: `def resolve_pastes(self, info, public=False):`
+- p. 169: `from executing, they often filter out any requests that contain the keyword`
+- p. 180: `from the DVGA interface:`
+- p. 190: `from the GraphQL application.`
+- p. 208: `from the DVGA’s schema, in which three queries access the PasteObject:`
+- p. 215: `from external sources is unsafe. This approach is very common, but design-`
+- p. 218: `from the client and uses that data to create a brand-new paste in the data-`
+- p. 218: `while public is of the scalar type Boolean.`
+- p. 222: `from a database, either from the application’s specific SQL tables or`
+- p. 222: `from other tables in the same database. This information could include`
+- p. 232: `from that URL into its own filesystem. Consider the following function in`
+- p. 232: `def download():`
+- p. 234: `from the GraphQL server, confirming our hypothesis that OS command`
+- p. 234: `from being accepted. These security controls make it difficult to identify`
+- p. 236: `def resolve_system_debug(self, info, arg=None):`
+- p. 245: `from those that impact databases and operating systems to those that affect`
+- p. 248: `from one account to another, disable account security settings such as mul-`
+- p. 255: `function sleep(ms) {`
+- p. 262: `while for a failed attempt, it wouldn’t send an email at all.`
+- p. 264: `from the URL. This type of functionality screams SSRF! Let’s manually`
+- p. 264: `import a paste from. The mutation will force DVGA to import a paste by`
+- p. 270: `from urllib.parse import unquote; print(unquote(sys.stdin.read()));"`
+- p. 274: `from the previous step 10 times, effectively providing a value to the`
+- p. 280: `for _ in range(0, CHAINED_REQUESTS):`
+- p. 292: `class UserObject(SQLAlchemyObjectType):`
+- p. 292: `class Meta:`
+
+## URLs
+- p. 1: https://github.com/dolevf/Black
+- p. 24: https://github.com/dolevf/Black-Hat-GraphQL.
+- p. 28: https://github.com/
+- p. 34: https://www.apollographql.com/docs/react
+- p. 34: https://relay.dev
+- p. 36: http://lab.blackhatgraphql.com/rest/v1/users
+- p. 37: http://lab.blackhatgraphql.com/rest/v1/history/1
+- p. 37: http://lab.blackhatgraphql.com/start.
+- p. 43: http://lab.blackhatgraphql.com/graphiql.
+- p. 47: https://exploit-db.com
+- p. 48: https://www.virtualbox.org/wiki/
+- p. 48: https://www
+- p. 49: https://offensive-security.com
+- p. 49: https://www.kali.org/get-kali.
+- p. 49: https://www.kali.org/docs/installation.
+- p. 51: https://altair.sirmuel.design/#download,
+- p. 52: http://lab.blackhatgraphql.com/graphql.
+- p. 54: https://altair.sirmuel.design/docs/features.
+- p. 54: https://www.docker.com
+- p. 55: https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application.git
+- p. 56: http://localhost:5013
+- p. 56: https://pastebin.com
+- p. 57: http://localhost:5013/graphql
+- p. 60: https://github.com/nikitastupin/clairvoyance.git
+- p. 61: https://github.com/doyensec/inql.git
+- p. 61: https://portswigger
+- p. 62: https://github.com/EnableSecurity/wafw00f
+- p. 62: https://github.com/dolevf/graphw00f.git
+- p. 62: http://example.com
+- p. 62: https://github.com/assetnote/batchql.git
+- p. 62: https://example.com/graphql
+- p. 63: https://github.com/dolevf/nmap-graphql-introspection-nse.git
+- p. 63: https://nmap.org
+- p. 63: https://nmap.org/nsedoc/scripts/graphql-introspection.html
+- p. 63: https://graphql.org/learn/introspection/
+- p. 64: https://gitlab.com/dee-see/graphql-path-enum/-/jobs/artifacts/v1.1/raw
+- p. 65: https://github.com/dolevf/graphql-cop.git
+- p. 65: http://127.0.0.1:8080
+- p. 66: https://github.com/nicholasaleks/CrackQL.git
+- p. 66: https://github.com/dolevf/
+- p. 70: https://portswigger.net/web-security/websockets/
+- p. 71: http://localhost:5013,
+- p. 76: https://github.com/Urigo/graphql-scalars
+- p. 79: https://github.com/graphql/graphql-spec/
+- p. 82: https://github.com/graphql/graphql-wg/blob/
+- p. 84: https://tools.ietf.org/html/rfc4122
+- p. 92: https://github.com/nicholasaleks/graphql-threat
+- p. 94: https://github.com/webonyx/
+- p. 94: https://github
+- p. 100: https://github.com/dolevf/Black-Hat-GraphQL/blob/master/
+- p. 101: http://localhost:5013/
+- p. 103: http://localhost:5013/graphql:
+- p. 105: http://localhost:5013/graphql?query=\{__typename\}:
+- p. 107: http://localhost:5013/app/graphql
+- p. 107: http://localhost:5013/dev/graphql
+- p. 107: http://localhost:5013/v5/graphql
+- p. 108: http://localhost:5013/graphiql
+- p. 110: http://localhost:5013/$i
+- p. 110: http://localhost:5013/api
+- p. 110: http://localhost:5013/apis
+- p. 110: http://localhost:5013/apidocs
+- p. 110: http://localhost:5013/apilist
+- p. 111: http://localhost:5013/graphiql.
+- p. 114: http://localhost:5013/graphql.
+- p. 117: https://github.com/dolevf/Black-Hat-GraphQL/blob/
+- p. 118: https://ivangoncharov.github
+- p. 118: http://lab.blackhatgraphql.com:9000,
+- p. 119: https://github.com/anvilco/spectaql
+- p. 119: http://lab.blackhatgraphql.com:9001
+- p. 121: https://apache.org/
+- p. 123: http://localhost:5013/graphql...
+- p. 124: https://github.com/nicholasaleks
+- p. 124: https://graphene-python.org
+- p. 124: https://github.com/nicholasaleks/graphql-threat-matrix/
+- p. 132: http://lab.blackhatgraphql.com:9000
+- p. 132: https://­
+- p. 136: https://github.com/dolevf/Black-Hat-GraphQL/blob/master/ch05/
+- p. 137: https://spec.graphql.org/October2021/#sec-Schema-Introspection
+- p. 140: http://localhost:
+- p. 141: https://github.com/dolevf/Black-Hat-GraphQL/
+- p. 151: https://github.com/dolevf/Black-Hat-GraphQL/blob/­
+- p. 158: https://github.com/nicholasaleks/
+- p. 169: https://github.com/dolevf/Black-Hat-GraphQL/blob/master/resources/
+- p. 176: https://graphql-rules.com/rules/naming.
+- p. 178: https://github.com/nicholasaleks/high-frequency-vocabulary
+- p. 182: http://sqlalche.me/e/13/gkpj
+- p. 183: https://github.com/nicholasaleks/graphql-threat-matrix
+- p. 184: http://example.com/graphql?debug=1
+- p. 184: https://github.com/dolevf/Black-Hat-GraphQL/blob/master/resources/non-production
+- p. 184: http://locahost:5013
+- p. 186: http://localhost:5013/graphql?query=query($phone:
+- p. 186: http://localhost:5013/graphql?query=query{
+- p. 194: https://jwt.io.
+- p. 194: https://www.iana.org/assignments/
+- p. 195: https://www.the-guild.dev
+- p. 196: https://www.graphql-shield.com/
+- p. 196: https://github.com/graphql-community/
+- p. 205: https://jwt.io,
+- p. 205: https://jwt.io
+- p. 224: http://localhost:5013.
+- p. 232: http://example.com/file.zip,
+- p. 232: http://example.com/file.zip
+- p. 235: http://127.0.0.1:5013/graphql
+- p. 237: https://gtfobins.github.io
+- p. 238: http://example.com/graphql?query=query%20%7B%0A%20%20hello(msg%3A%22hello%22
+- p. 238: http://example.com/graphql?query=query
+- p. 240: https://xsshunter.com
+- p. 240: https://graphql.org/
+- p. 254: http://localhost:5013/graphql?query=mutation%20%7B%20__typename%20%7D
+- p. 254: http://localhost:5013/graphql?query=mutation{someSensitiveAction}
+- p. 255: https://github.com/dolevf/Black-Hat
+- p. 256: http://localhost:5013/graphql?query={deleteAllPastes}
+- p. 256: http://localhost:5013/graphql?query=
+- p. 260: http://lab.blackhatgraphql.com/cat.png
+- p. 261: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/
+- p. 261: https://cloud
+- p. 261: http://lab
+- p. 262: http://10.10.0.254/index.html
+- p. 262: http://172.12.0.254/index.html.
+- p. 263: https://pastebin.com/
+- p. 263: http://localhost:5013/import_paste
+- p. 264: https://pastebin.com:443/
+- p. 264: http://localhost:8080/paste.txt.
+- p. 268: http://localhost:4444/?
+- p. 268: http://localhost:4444
+- p. 270: https://meyerweb
+- p. 274: https://hackerone.com/security.
+- p. 274: https://hackerone
+- p. 276: https://regex101.com
+- p. 276: https://hackerone.com/reports/1000567
+- p. 277: https://regex101.com,
+- p. 279: https://www.wpgraphql.com
+- p. 282: https://hackerone.com/
+- p. 283: https://hackerone.com/reports/980511
+- p. 284: https://hackerone.com/reports/342978
+- p. 286: https://hackerone.com/reports/707433
+- p. 288: https://hackerone.com/reports/862835
+- p. 288: https://github.com/enisdenjo/graphql-ws
+- p. 288: https://hackerone.com/reports/435066
+- p. 290: https://hackerone.com/graphql\?embedded_submission_form_uuid\=
+- p. 291: https://github.com/projectdiscovery/
+- p. 292: http://blackhatgraphql.com/graphql?endpoint=http://
+- p. 293: https://hackerone.com/reports/1122408
+- p. 293: https://gitlab.com/api/graphql/
+- p. 299: https://cheatsheetseries.owasp.org/
+- p. 299: https://book.hacktricks.xyz/network-services
+- p. 299: https://blog.doyensec.com/2018/05/17/graphql-security
+- p. 299: https://blog.yeswehack.com/
+- p. 299: https://0xn3va.gitbook
+- p. 300: https://tryhackme.com
+- p. 300: https://attackdefense.com/challengedetails
+- p. 300: https://github.com/david3107/
+- p. 300: https://github.com/0xbigshaq/hackmegraph
+- p. 300: https://github.com/righettod/poc-graphql
+- p. 300: https://www.youtube.com/watch?v
+- p. 300: https://www.youtube.com/watch?v=OQCgmftU-Og
+- p. 300: https://www.youtube
+- p. 300: https://www.youtube.com/watch?v=aI-wI14D1nw
+- p. 300: https://www.youtube.com/watch?v=EVRf708-zq4
+- p. 300: https://www.youtube.com/watch?v=bCfKqPnt_8Y
+- p. 300: https://www.youtube.com/watch?v=nPB8o0cSnvM
+- p. 311: https://nostarch.com/black-hat-graphql
+
+## Technique Signals
+- p. 1: “A must-read for anyone in API security.”
+- p. 1: Black Hat GraphQL Attacking Next Generation APIs
+- p. 1: —Corey Ball, author of Hacking APIs
+- p. 1: Black Hat GraphQL is for anyone interested in  Uncover injection-based vulnerabilities in
+- p. 1: learning how to break and protect GraphQL servers, databases, and client browsers
+- p. 1: APIs with the aid of offensive security testing.
+- p. 1:  Exploit cross-site and server-side request
+- p. 1: to attack GraphQL APIs, develop hardening site WebSocket hijacking, to force a server
+- p. 1: controls, all with no prior exposure to GraphQL  Dissect vulnerability disclosure reports
+- p. 1: required. and review exploit code to reveal how
+- p. 1: CODE REPOSITORY: The Black Hat GraphQL code companies
+- p. 1: -Hat-GraphQL) includes code samples, exploits, This comprehensive resource provides
+- p. 1: queries, and coverage of newer resources. everything you need to defend GraphQL APIs
+- p. 1: between GraphQL and REST APIs, run your first About the Authors
+- p. 1:  Defend APIs against denial-of-service engineer at Palo Alto Networks and co-founder
+- p. 1: attacks and exploit insecure configurations of DEFCON Toronto. In his spare time he
+- p. 1: in GraphQL servers to gather information researches IoT vulnerabilities, participates in
+- p. 1: on hardened targets CTF challenges, and contributes to Exploit-DB.
+- p. 6: BLACK HAT GRAPHQL. Copyright © 2023 by Nick Aleks and Dolev Farhi.
+- p. 7: challenges, and contributing exploits to Exploit-DB.
+- p. 7: Corey Ball is the author of Hacking APIs (No Starch Press, 2022) and
+- p. 7: is the creator of the APIsec University, a free resource where anyone can
+- p. 7: learn about API security. In addition to a bachelor’s degree in English and
+- p. 11: SETTING UP A GRAPHQL SECURITY LAB 21
+- p. 11: Deploying the Damn Vulnerable GraphQL Application . . . . . . . . . . . . . . . . . . 29
+- p. 12: Scanning for Graphical Interfaces with EyeWitness . . . . . . . . . . . . . . . . . . . . 82
+- p. 13: Visualizing Introspection with GraphQL Voyager . . . . . . . . . . . . . . . . . . . . . . 92
+- p. 14: AUTHENTICATION AND AUTHORIZATION BYPASSES 163
+- p. 15: Automating Testing with BatchQL and GraphQL Cop . . . . . . . . . . . . . . . . . . 232
+- p. 15: DISCLOSED VULNERABILITIES AND EXPLOITS 247
+- p. 15: Array-Based Batching for Field Duplication (WPGraphQL) . . . . . . . . . . . . . . 253
+- p. 17: new query language and interpreter/parser combination (GraphQL being
+- p. 17: disclosure, and authentication/authorization bypasses have persisted in
+- p. 18: foundational approaches to do more than just hack GraphQL. The same
+- p. 18: If you’re reading this book to better understand GraphQL (or skim-
+- p. 18: little gotchas, and GraphQL-specific quirks and subtleties that would other-
+- p. 18: insights into the GraphQL ecosystem should help quickly elevate your work
+- p. 19: studying common technical problems and understanding GraphQL’s eco-
+- p. 21: through advice and guidance, and indirectly, by publishing GraphQL tools,
+- p. 21: he was hacking both GraphQL and Microsoft Word to get this book out
+- p. 21: We thank Corey Ball, author of Hacking APIs and the senior manager of
+- p. 22: GraphQL API for WordPress, who provided us with a tremendous amount
+- p. 22: of insightful information about the GraphQL ecosystem. Through his open
+- p. 22: GraphQL tools for the entire community’s benefit. You are not only great
+- p. 22: engineers, but also effectively trailblazing the GraphQL space and making
+- p. 22: GraphQL APIs safer to use for everyone in the community.
+- p. 23: and APIs. In more recent years, we’ve focused our
+- p. 23: A relatively new technology, the GraphQL query language has shifted
+- p. 23: the API paradigm, appealing to many companies looking to optimize per-
+- p. 23: a vast number of novel insights about GraphQL and its ecosystem. In fact,
+- p. 23: many of the vulnerabilities and exploits referenced in this book have never
+- p. 24: ourselves are the authors and maintainers of many of the GraphQL security
+- p. 24: tools, educational security platforms, and exploits highlighted herein.
+- p. 24: and the GraphQL ecosystem, we aim to improve this increasingly popular
+- p. 24: and educating engineers on how to attack and defend their GraphQL APIs.
+- p. 24: GraphQL APIs through applied offensive security testing. Whether you’re
+- p. 24: a penetration tester who has heard of GraphQL and want to develop your
+- p. 24: of how to defend GraphQL APIs, or a software engineer planning to build
+- p. 24: a GraphQL-backed application, you should gain a lot of useful informa-
+- p. 24: tion from this book. By learning how to attack GraphQL APIs, you can
+- p. 24: This book assumes that you have no prior exposure to GraphQL. If you
+- p. 24: lab, which we’ve curated specifically for GraphQL hacking. We highly rec-
+- p. 24: ters by running the various tools and querying GraphQL APIs. You’ll set up
+- p. 24: located at https://github.com/dolevf/Black-Hat-GraphQL. The repository includes
+- p. 24: artifacts sorted by chapter, such as GraphQL code samples, exploits, queries,
+- p. 24: how to hack and secure GraphQL APIs, new tools and research papers will
+- p. 24: The book lays out fundamental and advanced GraphQL concepts in the
+- p. 24: security professionals need for security testing of GraphQL APIs. By
+- p. 25: Chapter 4, you will have a solid understanding how GraphQL as a tech-
+- p. 25: practicing the art of GraphQL penetration testing, which will allow you to
+- p. 25: confidently test GraphQL APIs in your future security endeavors. At the
+- p. 25: end of this book in Appendix A you can find a GraphQL security testing
+- p. 25: about GraphQL in Appendix B. The following summary provides more
+- p. 25: In Chapter 1: A Primer on GraphQL, you’ll be introduced to the tech-
+- p. 25: nology and learn how it differs from other API protocols. In particular,
+- p. 25: we’ll demonstrate the differences between GraphQL and REST APIs by
+- p. 25: advantages and disadvantages, as well as clarify why GraphQL is slowly gain-
+- p. 25: ing market share in the API space. You’ll also run your first GraphQL query.
+- p. 25: Chapter 2: Setting Up a GraphQL Security Lab gathers some of the
+- p. 25: best GraphQL security tools available for your long-term penetration test-
+- p. 25: If you are new to GraphQL, play close attention to Chapter 3: The
+- p. 25: GraphQL Attack Surface. This chapter has two goals: introducing you to
+- p. 25: the GraphQL language and type system. After learning the type system,
+- p. 25: you’ll understand how GraphQL schemas work under the hood. And after
+- p. 25: ries against GraphQL APIs. We’ll also provide an overview of the common
+- p. 25: weaknesses in GraphQL in preparation for Chapters 4 through 9.
+- p. 25: In Chapter 4: Reconnaissance, we’ll use data collection and target
+- p. 25: will allow you to make educated guesses about a GraphQL target’s infra-
+- p. 25: one of the most prevalent vulnerabilities in GraphQL, and this chapter cov-
+- p. 25: You’ll also learn about how GraphQL APIs can be built with more resiliency
+- p. 25: in mind, using defensive GraphQL security controls.
+- p. 25: Disclosure, certain GraphQL design decisions can lead to information dis-
+- p. 25: GraphQL features to reconstruct the schema on a hardened target. We’ll
+- p. 25: also take advantage of error and debugging mechanisms in GraphQL serv-
+- p. 25: in any application or API that hosts valuable data, yet these aren’t always
+- p. 26: Bypasses will teach you how to test for bypasses in these two important con-
+- p. 26: cover several injection types and how they can be introduced in GraphQL
+- p. 26: GraphQL subscriptions. By using several HTTP methods to send GraphQL
+- p. 26: In Chapter 10: Disclosed Vulnerabilities and Exploits, we’ll explore
+- p. 26: more than a dozen vulnerability-disclosure reports and review exploit
+- p. 26: code that impacts GraphQL APIs. We’ll dissect these artifacts to reinforce
+- p. 26: impacted large companies that run GraphQL APIs in production.
+- p. 26: GraphQL applications. Remember that the content of this book is intended
+- p. 27: of GraphQL, including why it exists and
+- p. 27: explore how it differs from RESTful APIs and send
+- p. 27: GraphQL is an open source data query and manipulation language for
+- p. 27: application programming interfaces (APIs). APIs allow two applications to
+- p. 27: acts as the API client, or consumer. This consumer interacts with an applica-
+- p. 27: tion server, via the application’s API, to read or alter certain information on
+- p. 28: the server. API consumers aren’t always browsers; machines, such as other
+- p. 28: servers on the network, can be GraphQL API consumers too.
+- p. 28: Unlike other API formats, GraphQL allows an API consumer to request
+- p. 28: sary information. Contrast this approach with traditional REST API archi-
+- p. 28: the REST and GraphQL API response structures in “GraphQL APIs vs.
+- p. 28: REST APIs” on page 9 to illustrate the differences between the two.
+- p. 28: From a security perspective, GraphQL’s design provides an advantage.
+- p. 28: Because GraphQL doesn’t return data that the client doesn’t explicitly
+- p. 28: ing under heavy regulatory rules. However, as you’ll soon see, GraphQL
+- p. 28: also has security weaknesses that we, as hackers, can exploit.
+- p. 28: Facebook developed GraphQL in 2012 and used it for a few years in its pro-
+- p. 28: That year, Facebook also developed and released the GraphQL specifica-
+- p. 28: tion and a reference implementation named GraphQL.js (https://github.com/
+- p. 28: GraphQL is now maintained by the GraphQL Foundation (https://
+- p. 28: graphql.org/foundation/), an organization founded by global technology
+- p. 28: GraphQL maintainers, manages policies of the GraphQL trademark,
+- p. 28: Just about any application and device can use GraphQL. Companies
+- p. 28: the same time, which would otherwise require making many REST API
+- p. 28: calls. Using GraphQL could reduce bandwidth usage and improve client
+- p. 28: the data, this wouldn’t be an optimized process. GraphQL allows the fetch-
+- p. 28: and GitLab, use GraphQL, serving hundreds of millions of customers on
+- p. 29: In 2015, Facebook publicly released the GraphQL specification document,
+- p. 29: implementations of GraphQL must adhere. This specification is a reference
+- p. 29: for implementing GraphQL for multiple languages, similar to request for
+- p. 29: As such, we, as hackers, can use it to better understand how GraphQL is
+- p. 29: A typical GraphQL implementation incorporates a few components you
+- p. 29: Figure 1-1: Core GraphQL components
+- p. 29: When a client wants to communicate with a GraphQL server (for
+- p. 29: a GraphQL query. You might already be noticing that this doesn’t follow
+- p. 29: against the application’s GraphQL schema. If the query is deemed valid,
+- p. 30: The GraphQL schema represents the type of data a client can query for.
+- p. 30: Object types are the most basic component of a GraphQL schema; they
+- p. 30: represent a piece of data you can fetch from the service running GraphQL.
+- p. 30: to each other. However, GraphQL allows us to form links between objects in
+- p. 31: In the User and Location example, imagine that clients of our API need the
+- p. 31: take down a system. When two-way link relationships exist, API developers
+- p. 32: Once an API’s schema is defined, clients can fetch information from it by
+- p. 32: using specially crafted queries written in the declarative GraphQL query
+- p. 32: language. In GraphQL, all queries begin with a definition of the opera-
+- p. 32: and GraphQL servers. They allow a GraphQL server to push data to the
+- p. 32: These three operations are the starting point for each GraphQL query
+- p. 33: Listing 1-4 is an example query that a client might send to a GraphQL
+- p. 33: As you can see, GraphQL queries are pretty easy to read: all this
+- p. 33: Now, what happens when a GraphQL server receives a query? Well, it makes
+- p. 34: GraphQL is strongly typed, which means that when clients use the wrong
+- p. 34: teams to rely on the API to perform the type validation. We’ll discuss these
+- p. 34: resolver functions are the GraphQL component responsible for query reso-
+- p. 34: over REST APIs. In fact, GraphQL APIs commonly make REST calls behind
+- p. 34: using REST to GraphQL. Sometimes GraphQL is used as a consolidator
+- p. 34: API layer to multiple backend REST services that remain invisible to the
+- p. 34: In summary, you can think of GraphQL as a query layer that sits
+
+## Extracted Operational Notes
+- p. 1: “A must-read for anyone in API security.”
+- p. 1: Black Hat GraphQL Attacking Next Generation APIs
+- p. 1: —Corey Ball, author of Hacking APIs
+- p. 1: Black Hat GraphQL is for anyone interested in  Uncover injection-based vulnerabilities in
+- p. 1: learning how to break and protect GraphQL servers, databases, and client browsers
+- p. 1: APIs with the aid of offensive security testing.
+- p. 1:  Exploit cross-site and server-side request
+- p. 1: Whether you’re a penetration tester, security
+- p. 1: analyst, or software engineer, you’ll learn how forgery vulnerabilities, as well as cross-
+- p. 1: to attack GraphQL APIs, develop hardening site WebSocket hijacking, to force a server
+- p. 1: procedures, build automated security testing to request sensitive information on your
+- p. 1: controls, all with no prior exposure to GraphQL  Dissect vulnerability disclosure reports
+- p. 1: required. and review exploit code to reveal how
+- p. 1: CODE REPOSITORY: The Black Hat GraphQL code companies
+- p. 1: -Hat-GraphQL) includes code samples, exploits, This comprehensive resource provides
+- p. 1: queries, and coverage of newer resources. everything you need to defend GraphQL APIs
+- p. 1: your umbrella in a lightning storm.
+- p. 1: between GraphQL and REST APIs, run your first About the Authors
+- p. 1: Nick Aleks is the senior director of security at
+- p. 1: You’ll also learn how to: Wealthsimple, a co-founder of DEFCON Toronto,
+- p. 1: Dolev Farhi is a distinguished security
+- p. 1:  Defend APIs against denial-of-service engineer at Palo Alto Networks and co-founder
+- p. 1: attacks and exploit insecure configurations of DEFCON Toronto. In his spare time he
+- p. 1: in GraphQL servers to gather information researches IoT vulnerabilities, participates in
+- p. 1: on hardened targets CTF challenges, and contributes to Exploit-DB.
+- p. 6: BLACK HAT GRAPHQL. Copyright © 2023 by Nick Aleks and Dolev Farhi.
+- p. 6: electronic or mechanical, including photocopying, recording, or by any information storage or retrieval
+- p. 6: Compositor: Maureen Forys, Happenstance Type-O-Rama
+- p. 6: in an editorial fashion and to the benefit of the trademark owner, with no intention of infringement of
+- p. 7: Nick Aleks is a leader in Toronto’s cybersecurity community and a dis-
+- p. 7: tinguished and patented security engineer, speaker, and researcher. He
+- p. 7: is currently the senior director of security at Wealthsimple; leads his
+- p. 7: own security firm, ASEC.IO; and is a senior advisory board member for
+- p. 7: of Cybersecurity and Threat Intelligence program. A founder of DEFCON
+- p. 7: Toronto (DC416), he specializes in offensive security and penetration test-
+- p. 7: Dolev Farhi is a security engineer and author with extensive experience
+- p. 7: leading security engineering teams in the fintech and cybersecurity
+- p. 7: industries. Currently, he is a distinguished security engineer at Palo Alto
+- p. 7: Networks, building defenses for the largest cybersecurity company in the
+- p. 7: world. He has worked for several fintech and security firms and provided
+- p. 7: training for official Linux certification tracks. He is also one of the found-
+- p. 7: ers of DEFCON Toronto (DC416), a popular Toronto-based hacker group.
+- p. 7: In his spare time, he enjoys researching vulnerabilities in IoT devices, build-
+- p. 7: ing open source offensive security tools, participating in and building CTF
+- p. 7: challenges, and contributing exploits to Exploit-DB.
+- p. 7: Corey Ball is the author of Hacking APIs (No Starch Press, 2022) and
+- p. 7: of experience working in IT and cybersecurity across several industries. He
+- p. 7: is the creator of the APIsec University, a free resource where anyone can
+- p. 7: learn about API security. In addition to a bachelor’s degree in English and
+- p. 11: SETTING UP A GRAPHQL SECURITY LAB 21
+- p. 11: Deploying the Damn Vulnerable GraphQL Application . . . . . . . . . . . . . . . . . . 29
+- p. 13: Visualizing Introspection with GraphQL Voyager . . . . . . . . . . . . . . . . . . . . . . 92
+- p. 15: Automating Testing with BatchQL and GraphQL Cop . . . . . . . . . . . . . . . . . . 232
+- p. 15: Searching for Vulnerable Operations, Fields, and Arguments . . . . . . . . . . . . 236
+- p. 15: DISCLOSED VULNERABILITIES AND EXPLOITS 247
+- p. 15: Array-Based Batching for Field Duplication (WPGraphQL) . . . . . . . . . . . . . . 253
+- p. 17: new query language and interpreter/parser combination (GraphQL being
+- p. 17: Vulnerability classes like denial of service (DoS), injection, information
+- p. 17: classes of vulnerabilities hard to solve. It’s an ecosystem problem.
+- p. 17: being exposed to the internet, layering security controls on top of them is
+- p. 17: self-reference as many times as necessary. Yet for an attacker, necessary might
+- p. 18: our lowest-common-denominator internet users can handle it. It should
+- p. 18: bored, or determined attackers. No effective self-correcting and communi-
+- p. 18: interests doesn’t exactly inspire the group to think about security. And as
+- p. 18: privacy and security risks to standards so that companies can continue to
+- p. 18: back to this book. If you’re learning how to attack interpreted query lan-
+- p. 18: foundational approaches to do more than just hack GraphQL. The same
+- p. 18: If you’re reading this book to better understand GraphQL (or skim-
+- p. 18: little gotchas, and GraphQL-specific quirks and subtleties that would other-
+- p. 18: insights into the GraphQL ecosystem should help quickly elevate your work
+- p. 18: beyond finding the vulnerability and allow you to move to an adversarial simu-
+- p. 19: studying common technical problems and understanding GraphQL’s eco-
+- p. 19: system challenges, hopefully you’ll pick up tips on what to avoid and con-
+- p. 21: through advice and guidance, and indirectly, by publishing GraphQL tools,
+- p. 21: he was hacking both GraphQL and Microsoft Word to get this book out
+- p. 21: We thank Corey Ball, author of Hacking APIs and the senior manager of
+- p. 21: this book for technical accuracies, for his excellent security and book-­w riting
+- p. 22: GraphQL API for WordPress, who provided us with a tremendous amount
+- p. 22: of insightful information about the GraphQL ecosystem. Through his open
+- p. 22: GraphQL tools for the entire community’s benefit. You are not only great
+- p. 22: engineers, but also effectively trailblazing the GraphQL space and making
+- p. 22: GraphQL APIs safer to use for everyone in the community.
+- p. 22: tunity to translate our experience into a full-blown security book. We’d
+- p. 22: like to extend our thanks to Frances Saux, our amazing editor, who was an
+- p. 23: fee shop in downtown Toronto, hoping to
+- p. 23: meeting was the genesis of Toronto’s official
+- p. 23: and APIs. In more recent years, we’ve focused our
+- p. 23: A relatively new technology, the GraphQL query language has shifted
+- p. 23: the API paradigm, appealing to many companies looking to optimize per-
+- p. 23: language’s security implications takes time. Our collaboration has unlocked
+- p. 23: a vast number of novel insights about GraphQL and its ecosystem. In fact,
+- p. 23: many of the vulnerabilities and exploits referenced in this book have never
+- p. 24: ourselves are the authors and maintainers of many of the GraphQL security
+- p. 24: tools, educational security platforms, and exploits highlighted herein.
+- p. 24: This book provides a practical resource for offensive security engineers
+- p. 24: and the GraphQL ecosystem, we aim to improve this increasingly popular
+- p. 24: technology, strengthening the security of the many industries that use it
+- p. 24: and educating engineers on how to attack and defend their GraphQL APIs.
+- p. 24: GraphQL APIs through applied offensive security testing. Whether you’re
+- p. 24: a penetration tester who has heard of GraphQL and want to develop your
+- p. 24: hacking expertise, a security analyst looking to improve your knowledge
+- p. 24: of how to defend GraphQL APIs, or a software engineer planning to build
+- p. 24: a GraphQL-backed application, you should gain a lot of useful informa-
+- p. 24: tion from this book. By learning how to attack GraphQL APIs, you can
+- p. 24: develop hardening procedures, build automated security testing into your
+- p. 24: This book assumes that you have no prior exposure to GraphQL. If you
+- p. 24: then delve into the offensive security aspects beginning in Chapter 4.
+- p. 24: You can practice everything covered in this book in its dedicated security
+- p. 24: lab, which we’ve curated specifically for GraphQL hacking. We highly rec-
+- p. 24: ters by running the various tools and querying GraphQL APIs. You’ll set up
+- p. 24: In addition, we encourage you to clone the book’s code repository,
+- p. 24: located at https://github.com/dolevf/Black-Hat-GraphQL. The repository includes
+- p. 24: artifacts sorted by chapter, such as GraphQL code samples, exploits, queries,
+- p. 24: and more. We also acknowledge that, as the security community better learns
+- p. 24: how to hack and secure GraphQL APIs, new tools and research papers will
+- p. 24: emerge. As such, we’ve created a special section of the repository for docu-
+- p. 24: The book lays out fundamental and advanced GraphQL concepts in the
+- p. 24: security professionals need for security testing of GraphQL APIs. By
+- p. 25: Chapter 4, you will have a solid understanding how GraphQL as a tech-
+- p. 25: practicing the art of GraphQL penetration testing, which will allow you to

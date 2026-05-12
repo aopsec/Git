@@ -1,0 +1,446 @@
+# A Bug Hunter's Diary
+
+## Metadata
+- Status: `cyber-active`
+- Reason: 9 strong cyber signals, 17 total signals
+- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/PT_books/Bug Hunter Diary.pdf`
+- SHA256: `85c1b2cc4afde5357f79d29dc0ccbd1cf3d3684f2f5935eb767c48d00854a2ed`
+- Pages: `212`
+- Text characters: `438142`
+- Author: `n/a`
+- Copied PDF: [[PDFs/bug-hunter-diary-85c1b2cc.pdf|Open copied PDF]]
+
+## Duplicate Paths
+- none
+
+## Tools
+- p. 149: nmap
+- p. 209: metasploit
+- p. 11: linux
+- p. 60: bash
+- p. 88: python
+- p. 6: tor
+- p. 134: monit
+
+## Commands
+- p. 27: `$ wget http://samples.mplayerhq.hu/TiVo/test-dtivo-junkskip.ty%2b`
+
+## Code And Script Lines
+- p. 18: `while others seek personal gain in the form of fame, media attention,`
+- p. 18: `while it’s executing. Both techniques have pros and cons, and most bug`
+- p. 29: `from the TiVo file is assigned to the pointer p_peek. Then, in line 1867,`
+- p. 33: `from taking control of EIP and executing arbitrary code from the`
+- p. 42: `while looking for coding errors. After a few hours, I found the`
+- p. 43: `function ip_process_ioctl() is called. In line 26717, the value of ci.ci_`
+- p. 46: `while the first parameter, ci.ci_ipif, is still set to NULL (see line 26717).`
+- p. 55: `from the zero page. Therefore, all values of the ill structure can be`
+- p. 55: `function pointer declared in line 154 (see line 273). This function`
+- p. 62: `from a restricted, non-global Solaris Zone and then gain superuser`
+- p. 68: `from the header data and stores the value in the signed int variable`
+- p. 77: `function that’s called directly after the vulnerability happens (see`
+- p. 77: `function with FFmpeg internal FFmpeg internal`
+- p. 86: `class ClassId`
+- p. 89: `from the webex.com domain. In practice, this requirement can be`
+- p. 90: `while debugging the browser.`
+- p. 90: `function usually performs the actual call. This function is exported by`
+- p. 95: `from cbData as well as the string “Authoring” (9 bytes) and the format`
+- p. 103: `function at address .text:0001064D. The illustrated assembly snippet of`
+- p. 106: `from ntddk.h):`
+- p. 123: `function pointer 41414141 ...`
+- p. 141: `from where to start the search and the pattern to search for. I wanted`
+- p. 144: `function returns with an error (see line 809). So Theo was right—the`
+- p. 154: `while processing one of the test cases. This finding is logged to`
+- p. 189: `from the XNU kernel source code to the include directory of the`
+
+## URLs
+- p. 22: http://docs.google.com/present/view?id=dcc6wpsd_20ghbpjxcr
+- p. 22: http://weis2007.econinfosec.org/papers/29.pdf
+- p. 22: https://labs.idefense.com/
+- p. 22: http://www.zeroday
+- p. 22: http://felinemenace.org/~mercy/slides/
+- p. 22: http://cwe.mitre.org/data/
+- p. 22: http://www.hex-rays.com/idapro/.
+- p. 22: http://www.intel.com/products/processor/manuals/.
+- p. 27: http://samples
+- p. 27: http://samples.mplayerhq.hu/TiVo/test-dtivo-junkskip.ty%2b
+- p. 30: http://download
+- p. 38: http://www.immunityinc
+- p. 38: http://www.nccgroup.com/Libraries/Document_Downloads/
+- p. 38: http://www.trapkit.de/books/bhd/.
+- p. 38: http://www.techzoom.net/
+- p. 38: http://git.videolan.org/.
+- p. 38: http://git.videolan.org/?p=vlc
+- p. 38: http://git.videolan.org/?p=vlc.git;a=commitdiff;h=d859e6b9537af2d7326276f70de2
+- p. 38: http://technet.microsoft.com/en-en/
+- p. 38: http://blogs.technet.com/b/srd/archive/2009/06/12/understanding-dep-as-a-
+- p. 38: http://www.erratasec.com/lookingglass.html.
+- p. 38: http://go.microsoft.com/
+- p. 38: http://msdn.microsoft
+- p. 38: http://www.cygwin.com/.
+- p. 38: http://www.trapkit.de/advisories/TKADV2008-010.txt.
+- p. 38: http://cve.mitre.org/cve/identifiers/index.html.
+- p. 64: http://dlc.sun.com/
+- p. 64: http://en.wikipedia.org/wiki/Ioctl.
+- p. 64: http://download.oracle.com/docs/cd/E19504-01/802-5893/
+- p. 64: http://cvs.opensolaris
+- p. 64: http://cvs.opensolaris.
+- p. 64: http://dlc.sun
+- p. 64: http://www
+- p. 64: http://cvs.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/uts/i86pc/
+- p. 64: http://cvs.opensolaris.org/source/diff/
+- p. 64: http://www.trapkit.de/advisories/TKADV2008-015.txt.
+- p. 65: http://blog
+- p. 70: http://samples.mplayerhq
+- p. 71: http://samples.mplayerhq.hu/game-formats/4xm/
+- p. 73: http://gnu.org/licenses/gpl.html
+- p. 84: http://wiki.multimedia.cx/index.php?title=YouTube.
+- p. 84: http://ffmpeg.org/download.html.
+- p. 84: http://git.videolan
+- p. 84: http://ptgmedia.pearsoncmg.com/images/0321444426/samplechapter/
+- p. 84: http://www.trapkit.de/advisories/TKADV2009-004.txt.
+- p. 89: http://www.webex.com/
+- p. 99: http://labs.idefense.com/software/download/?downloadID=23.
+- p. 99: http://msdn.microsoft.com/en-us/library/aa751977(VS.85
+- p. 99: http://blogs.technet.com/srd/archive/2008/
+- p. 99: https://www.owasp
+- p. 99: http://dvlabs
+- p. 99: http://msdn.microsoft.com/en-us/library/9a16d4e4-a03d-459d-a2ec-
+- p. 99: http://seclists.org/fulldisclosure/2008/Aug/83.
+- p. 99: http://www.trapkit.de/advisories/
+- p. 107: http://msdl.microsoft.com/download/symbols
+- p. 125: http://www.sans.org/top20/2007/.
+- p. 125: http://www.virustotal.com/.
+- p. 125: http://www.avast.com/.
+- p. 125: http://www.vmware.com/.
+- p. 125: http://www.nirsoft.net/utils/driverview.html.
+- p. 125: http://msdn.microsoft.com/en-us/library/ff544113.aspx.
+- p. 125: http://technet.microsoft.com/en-us/sysinternals/
+- p. 125: http://www.microsoft.com/
+- p. 125: http://msdn.microsoft.com/en-us/library/
+- p. 125: http://msdn.microsoft.com/en-us/library/ff550694.aspx.
+- p. 125: http://msdn.microsoft.com/
+- p. 125: http://www.blackhat.com/­
+- p. 125: http://www.trapkit.de/advisories/TKADV2008-002.txt.
+- p. 145: http://www.opensource.apple.com/tarballs/xnu/xnu-792.13.8.tar.gz.
+- p. 145: http://support.apple.com/kb/TS3742.
+- p. 145: http://developer.apple.com/library/
+- p. 145: http://developer.apple
+- p. 145: http://www.trapkit.de/advisories/TKADV2007-001.txt.
+- p. 153: http://$fuzzhost/file$cnt.m4a
+- p. 153: http://$fuzzhost/BUG_FOUND_file$cnt.m4a
+- p. 162: http://en.wikipedia.org/wiki/IOS_jailbreaking.
+- p. 162: http://cydia.saurik.com/.
+- p. 162: http://developer.apple.com/library/ios/#documentation/MusicAudio/Reference/
+- p. 162: http://en.wikipedia.org/wiki/Advanced_Audio_Coding.
+- p. 162: http://ericasadun.com/ftp/EricaUtilities/.
+- p. 162: http://developer
+- p. 162: http://www.trapkit.de/advisories/TKADV2010-002.txt.
+- p. 191: http://dlc.sun.com/osol/docs/content/
+- p. 191: http://www.microsoft.com/whdc/DevTools/Debugging/default.mspx.
+- p. 191: http://www.gnu.org/software/gdb/documentation/.
+- p. 191: http://ftp-stud
+- p. 191: http://mirror.fraunhofer.de/archive.download.redhat.com/redhat/linux/7.3/
+- p. 191: http://mirror.cs.wisc.edu/pub/mirrors/linux/archive.download
+- p. 191: http://www.opensource
+- p. 191: http://ftp.gnu
+- p. 191: http://www.trapkit.de/
+- p. 204: http://dvlabs.tippingpoint.com/
+- p. 204: http://blogs.technet.com/srd/archive/2009/03/16/gs-cookie-protection-effectiveness-
+- p. 204: http://blogs.technet
+- p. 204: http://researchweb.watson.ibm.com/trl/projects/­
+- p. 204: http://people.redhat.com/mingo/exec-shield/.
+- p. 204: http://pax.grsecurity.net/
+- p. 204: http://www.grsecurity.net/.
+- p. 204: http://blogs.technet.com/srd/archive/2009/06/12/understanding-
+- p. 204: http://technet.microsoft.com/en-en/sysinternals/bb896653/.
+- p. 204: http://secunia.com/gfx/pdf/DEP_ASLR_2010_paper.pdf.
+- p. 204: http://www.trapkit.de/tools/checksec.html.
+- p. 204: http://refspecs.freestandards.org/elf/elf.pdf.
+- p. 204: http://code.google.com/p/em386/downloads/detail?name=
+- p. 204: http://download.oracle.com/docs/cd/E19455-01/817-1592/
+- p. 204: http://download.oracle.com/docs/cd/E19082-01/819-2450/z.admin.ov-18/
+- p. 209: http://nostarch.com/bughunter.htm
+
+## Technique Signals
+- p. 1: “Give a man an exploit and you make him a hacker for
+- p. 1: a day; teach a man to exploit bugs and you make him a
+- p. 1: * Exploit vulnerabilities like language by dpunkt.verlag.
+- p. 15: how I found the bug, the steps I took to exploit it, and how the vendor
+- p. 16: get acquainted with the different aspects of hunting, exploiting, and
+- p. 16: the techniques used to find and exploit vulnerabilities is necessary to
+- p. 16: simple port scanners as well as working exploits. Therefore, to comply
+- p. 16: with the law, no full working exploit code is provided in this book.
+- p. 17: tage of such vulnerabilities (known as exploits), get a lot of press cov­
+- p. 17: the process of exploiting these vulnerabilities, and there are perpetual
+- p. 17: terms like software vulnerability or exploit are widely used, many people—
+- p. 18: sis, on the other hand, involves debugging or fuzzing the target software
+- p. 18: through the software, while looking for any potentially exploitable
+- p. 18: dynamic approaches when developing an exploit.
+- p. 19: After I’ve found a bug, I want to prove if it’s actually exploitable,
+- p. 19: so I attempt to build an exploit for it. When I build such an exploit, I
+- p. 19: A completely different approach to bug hunting is known as fuzz-
+- p. 19: ing. Fuzzing is a dynamic-analysis technique that consists of testing
+- p. 19: Though I’m not an expert in fuzzing and fuzzing frameworks—I
+- p. 19: know bug hunters who have developed their own fuzzing frameworks
+- p. 19: and find most of their bugs with their fuzzing tools—I do use this
+- p. 19: You may be wondering how fuzzing can be used to identify where
+- p. 19: Wesley, 2007). If you want more information about fuzzing, see
+- p. 19: Michael Sutton, Adam Greene, and Pedram Amini’s Fuzzing: Brute
+- p. 20: They all lead to exploitable memory errors. Such memory errors occur
+- p. 20: In addition to exploitable memory errors, dozens of other vul-
+- p. 20: book were the result of exploitable memory errors.
+- p. 20: When searching for bugs, or building exploits to test them, I need a
+- p. 21: These debuggers will be used to identify, analyze and exploit the
+- p. 22: many ways to turn it into a fully working, weaponized exploit. For
+- p. 22: more information on the process of exploit development, you can
+- p. 22: refer to Jon Erickson’s Hacking: The Art of Exploitation, 2nd edition
+- p. 22: (No Starch Press, 2008), or you can type exploit writing into Google
+- p. 22: of 0-day Exploit Sales,” 2007, http://weis2007.econinfosec.org/papers/29.pdf ;
+- p. 22: 2. See Daniel Hodson, “Uninitialized Variables: Finding, Exploiting, Auto-
+- p. 22: 3. See Common Weakness Enumeration, CWE List, CWE - Individual Dic-
+- p. 24: heard of this file format, but that didn’t stop me from exploiting it.
+- p. 26: flow (see Section A.1) that can be easily exploited.
+- p. 26: To exploit the vulnerability, I performed the following steps:
+- p. 27: There’s more than one way to exploit a file-format bug. You can
+- p. 28: 1845 int i_payload_size; /* sum of all records' sizes */
+- p. 32: build a working exploit, intended to achieve arbitrary code execution,
+- p. 32: Exploit Methods Between Linux and Windows” by David Litchfield.4
+- p. 32: a full working exploit, but if you’re interested, you can watch a short
+- p. 32: video I recorded that shows the exploit in action.5
+- p. 33: exploit mitigation techniques of Windows Vista were able to stop me
+- p. 34: DEP can be controlled by system policy through special APIs and
+- p. 35: pile time, or you could use the SetProcessDEPPolicy API to allow an
+- p. 35: used by VLC, I scanned the executable files of the media player with
+- p. 35: Figure 2-9: LookingGlass scan result of VLC
+- p. 36: exploit mitigation techniques provided by Windows Vista or later
+- p. 36: exploited today as 20 years ago, when none of these security features
+- p. 36: • Always make use of the exploit mitigation techniques offered by
+- p. 38: hunting and exploit development. It can be found at http://www.immunityinc
+- p. 38: 4. See David Litchfield, “Variations in Exploit Methods Between Linux
+- p. 38: 11. LookingGlass is a handy tool to scan a directory structure or the running
+- p. 38: 13. A good article on the exploit mitigation techniques introduced by Micro-
+- p. 39: tricky to exploit. I recently combed through 10,
+- p. 40: unusual for an exploitable vulnerability (com-
+- p. 49: Exploiting this bug was an exciting challenge. t
+- p. 49: as unexploitable bugs because they can generally section was the def
+- p. 49: cessfully exploited for arbitrary code execution is called Sol ari s 10
+- p. 49: To exploit the vulnerability, I performed the
+- p. 53: exploited by an unprivileged user to crash the system. Because all
+- p. 53: exploited by someone with malicious intent.
+- p. 62: With the right exploit payload, this bug can be used to escape
+- p. 62: provide you with a full working exploit. However, if you are interested,
+- p. 63: will occur again if the API isn’t used with great care. Sun should have
+- p. 63: changed the API to prevent future bugs, but it didn’t.
+- p. 63: a good chance that every security feature can be bypassed or
+- p. 64: Exploit­ing Notes” by twiz & sgrakkyu, which can be found at http://www
+- p. 65: user space NULL pointer dereferences, and it’s possible to exploit this
+- p. 70: To exploit the vulnerability I did the following: ← The vulner
+- p. 70: There are different ways to exploit file format bugs. I could either
+- p. 72: To exploit this vulnerability, I knew that I would need to set the
+- p. 77: or I could use brute force. I chose the easy option and wrote the fol-
+- p. 78: Listing 4-1: Little helper program to use brute force to find the appropriate value for current_track
+- p. 78: The program illustrated in Listing 4-1 uses brute force to find
+- p. 79: tion pointer, I developed an exploit for the vulnerability. I used the
+- p. 79: me to provide a full working exploit, but you can watch a short video I
+- p. 79: recorded that shows the exploit in action on the book’s website.5
+- p. 79: Figure 4-8 summarizes the steps I used to exploit the vulnerability.
+- p. 80: Figure 4-8: Diagram of my exploitation of the FFmpeg bug
+- p. 81: There’s also a generic exploit mitigation technique that would make
+- p. 81: it much harder to exploit the bug. To gain control of the execution
+- p. 81: mitigation ever, other exploitation techniques that are not mitigated by RELRO
+- p. 81: Adjust Listing 4-1 and use brute force to get the value for
+- p. 83: • Full RELRO helps to mitigate the GOT overwrite exploitation
+- p. 85: found in a few seconds if I had fuzzed the control instead of reading
+- p. 86: COMRaider and selected Scan a directory for registered COM servers
+- p. 89: bypassed with the help of a Cross-Site Scripting (XSS) 4 vulnerability in
+- p. 89: the WebEx domain. Since XSS vulnerabilities are quite common in
+- p. 89: need of an XSS vulnerability, I just added the following entry to my
+- p. 96: After I found the vulnerability, exploitation was easy. All I had to do
+- p. 97: bug could be easily exploited for arbitrary code execution using the
+- p. 98: ing exploit, but if you’re interested, you can watch a short video I
+- p. 98: recorded that shows the exploit in action on the book’s website.9
+- p. 98: if I had fuzzed the ActiveX control with COMRaider instead of read-
+- p. 98: ing the assembly. But hey, fuzzing is not as cool as reading assembly,
+- p. 98: • There are still obvious, easily exploitable bugs in widely deployed
+- p. 99: 1. COMRaider from iDefense is a great tool to enumerate and fuzz COM ­object
+- p. 99: exploitable in Internet Explorer” at http://blogs.technet.com/srd/archive/2008/
+- p. 122: The exploitation process, illustrated in Figure 6-7, was as follows:
+- p. 123: Figure 6-7: Diagram of my exploitation of the avast! vulnerability
+- p. 124: After I gained control over EIP, I developed two exploits. One of
+- p. 124: Strict laws prohibit me from providing a full, working exploit, but
+- p. 124: if you’re interested, you can watch a video of the exploit in action at
+- p. 127: nel panic. As usual, I then tried to develop an exploit to see if the bug
+- p. 127: complicated. To develop the exploit code, I needed a way to debug
+- p. 137: 0x001a8733 in lapic_dump () at /SourceCache/xnu/xnu-792.13.8/osfmk/i386/mp.c:332
+- p. 139: ematical problem, or I could brute force the value. I decided to go
+- p. 139: with the easy option and wrote the following program to brute force
+- p. 139: Listing 7-3: Code that I wrote to brute force the TIOCSETD input data value (addr_brute_force.c)
+- p. 143: of 0x65656565. At this point I was able to control EIP, but exploiting the
+- p. 143: ing the kernel with my privilege escalation payload and a reference to
+- p. 143: this payload. I achieved this by exploiting a memory leak in the kernel
+- p. 143: pointed to the payload reference. This value was then copied into EIP
+- p. 143: Providing you with a full working exploit would be against the law,
+- p. 143: shows the exploit in action on the book’s website.4
+- p. 148: • Step 2: Build a simple fuzzer and fuzz the
+- p. 148: Step 2: Build a Simple Fuzzer and Fuzz the Phone
+- p. 148: a bit complicated, so I decided to start by building a simple fuzzer to
+- p. 148: search for obvious bugs. The fuzzer that I built does the following:
+- p. 148: I created the following simple, mutation-based file fuzzer to pre-
+- p. 149: Listing 8-1: The code I wrote to prepare test cases on the Linux host (fuzz.c)
+- p. 149: The fuzzer from Listing 8-1 takes four arguments: the size of the
+- p. 150: I then began fuzzing files of the Advanced Audio Coding5 (AAC ) for-
+- p. 150: The command-line options below instruct the fuzzer to replace
+- p. 150: linux$ ./fuzz 415959 4 255 testcase.m4r
+- p. 150: 21 ./fuzz $filesize $off $val ./file$cnt.m4a
+- p. 151: This script, which is just a wrapper for the fuzzer illustrated in List-
+- p. 151: As the output shows, the fuzzer worked as expected and modi-
+- p. 153: 37 echo [+] Current file: http://$fuzzhost/file$cnt.m4a
+- p. 153: Listing 8-3: Code to automatically open test cases while monitoring mediaserverd for faults (audiofuzzer.sh)
+- p. 153: Fuzzing the iPhone can be tedious, since some components,
+- p. 154: root directory of the web server, and started the audiofuzzer.sh script
+- p. 154: of the web server, adjust line 18 of Listing 8-3, and continue fuzzing.
+- p. 154: Fuzzing the iPhone can be such a pain . . . but it was worth it! In addi-
+- p. 154: 8.2 Crash Analysis and Exploitation
+- p. 154: After the fuzzer had finished processing the test cases, I searched the
+- p. 156: to reference an unmapped memory location. To further analyze the
+- p. 157: Mediaserverd crashed again while trying to access unmapped mem-
+- p. 158: the fuzzer must have changed the size value of that atom. As I men-
+- p. 160: My extremely simple fuzzer had indeed found a classic stack buf-
+- p. 161: • Even dumb mutation-based fuzzers, like the one described in this
+- p. 161: • Fuzzing the iPhone is tedious but worth it.
+- p. 163: ability classes, exploitation techniques, and common issues that can
+- p. 167: of Exploitation, 2nd edition (No Starch Press, 2008), or you can type
+- p. 175: exploitation technique, see Chapter 4.
+- p. 193: Various exploit mitigation techniques and mechanisms available today
+- p. 193: are designed to make exploiting memory corruption vulnerabilities as
+- p. 194: Note There is a continuous race between exploit mitigation techniques and
+- p. 194: ways of bypassing them. Even systems using all of these mechanisms
+- p. 194: may be successfully exploited under certain circumstances.
+- p. 194: heap, the libraries, and others) to prevent an exploit writer from pre-
+- p. 194: to any memory location you like. That gives you a powerful exploit if
+- p. 194: protected by this mitigation technique, exploitation can be tough.2
+- p. 195: Mitigations can be controlled by system policy, by special APIs,
+- p. 195: at compile time, or you could use the SetProcessDEPPolicy API to allow
+- p. 195: If both DEP and ASLR are correctly deployed, exploit develop-
+
+## Extracted Operational Notes
+- p. 1: “Give a man an exploit and you make him a hacker for
+- p. 1: a day; teach a man to exploit bugs and you make him a
+- p. 1: drastic consequences, allowing that verifies the security flaw
+- p. 1: Along the way you’ll learn how to: Tobias Klein is a security researcher
+- p. 1: * Exploit vulnerabilities like language by dpunkt.verlag.
+- p. 6: means, electronic or mechanical, including photocopying, recording, or by any information storage
+- p. 6: For information on book distributors or translations, please contact No Starch Press, Inc. directly:
+- p. 6: A bug hunter's diary : a guided tour through the wilds of software security / by Tobias Klein.
+- p. 6: 1. Debugging in computer science. 2. Computer security. 3. Malware (Computer software) I.
+- p. 6: names only in an editorial fashion and to the benefit of the trademark owner, with no intention of
+- p. 12: Step 1: Install an Ancient Red Hat 7.3 Linux Operating System . . . . . . . . . . . 173
+- p. 12: Security Cookies (/GS), Stack-Smashing Protection (SSP), or
+- p. 15: seven interesting, real-life software security vulnerabilities I found over
+- p. 15: how I found the bug, the steps I took to exploit it, and how the vendor
+- p. 15: security vulnerabilities, how they create proof-of-concept code to test
+- p. 15: the vulnerabilities, and how they can report vulnerabilities to the
+- p. 15: The secondary goal of this book is to tell the story behind each of
+- p. 15: This book is aimed at security researchers, security consultants, C/C++
+- p. 16: If you are new to vulnerability research, this book will help you to
+- p. 16: get acquainted with the different aspects of hunting, exploiting, and
+- p. 16: reporting software vulnerabilities. If you are an already-experienced
+- p. 16: against, and mitigate software security vulnerabilities. Understanding
+- p. 16: the techniques used to find and exploit vulnerabilities is necessary to
+- p. 16: simple port scanners as well as working exploits. Therefore, to comply
+- p. 16: with the law, no full working exploit code is provided in this book.
+- p. 17: describe the process of finding security-critical software bugs. Security-
+- p. 17: critical bugs, also called software security vulnerabilities, allow an
+- p. 17: attacker to remotely compromise systems, escalate local privileges,
+- p. 17: About a decade ago, hunting for software security vulnerabilities
+- p. 17: it’s possible to profit from vulnerabilities.1
+- p. 17: Software security vulnerabilities, and programs that take advan-
+- p. 17: tage of such vulnerabilities (known as exploits), get a lot of press cov­
+- p. 17: the process of exploiting these vulnerabilities, and there are perpetual
+- p. 17: terms like software vulnerability or exploit are widely used, many people—
+- p. 17: even many information security professionals­—don’t know how bug
+- p. 17: hunters find security vulnerabilities in software.
+- p. 17: software for security-related bugs, you will most likely get 10 different
+- p. 18: you can find some interesting security-critical software bugs.
+- p. 18: Some independent bug hunters want to improve software security,
+- p. 18: through the software, while looking for any potentially exploitable
+- p. 18: dynamic approaches when developing an exploit.
+- p. 19: After I’ve found a bug, I want to prove if it’s actually exploitable,
+- p. 19: so I attempt to build an exploit for it. When I build such an exploit, I
+- p. 19: ing potentially vulnerable locations in the code is to look at the code
+- p. 19: extension vulnerabilities. If you find a potentially vulnerable code loca-
+- p. 19: these code fragments expose any vulnerabilities accessible from an
+- p. 19: these crashes are not security relevant (e.g., a division-by-zero bug in a
+- p. 19: finding security vulnerabilities in source code, I recommend Mark
+- p. 19: Dowd, John McDonald, and Justin Schuh’s The Art of Software Security
+- p. 19: Assessment: Identifying and Preventing Software Vulnerabilities (Addison-
+- p. 19: Force Vulnerability Discovery (Addison-Wesley, 2007).
+- p. 20: The vulnerabilities described in this book have one thing in common:
+- p. 20: They all lead to exploitable memory errors. Such memory errors occur
+- p. 20: of the programming errors and vulnerabilities discussed in this book.
+- p. 20: In addition to exploitable memory errors, dozens of other vul-
+- p. 20: vulnerabilities like cross-site scripting, cross-site request forgery, and
+- p. 20: SQL injection, to name just a few. However, these other vulnerability
+- p. 20: book were the result of exploitable memory errors.
+- p. 20: When searching for bugs, or building exploits to test them, I need a
+- p. 20: points or single-stepping. Each operating system typically ships with its
+- p. 21: These debuggers will be used to identify, analyze and exploit the
+- p. 21: vulnerabilities that I discovered. See also Sections B.1, B.2, and B.4 for
+- p. 21: To illustrate the security implications of ← Instruction pointe
+- p. 21: of the vulnerable program by controlling
+- p. 21: the vulnerable process. To demonstrate instruction pointer con-
+- p. 22: many ways to turn it into a fully working, weaponized exploit. For
+- p. 22: more information on the process of exploit development, you can
+- p. 22: refer to Jon Erickson’s Hacking: The Art of Exploitation, 2nd edition
+- p. 22: (No Starch Press, 2008), or you can type exploit writing into Google
+- p. 22: 1. See Pedram Amini, “Mostrame la guita! Adventures in Buying Vulnerabili-
+- p. 22: Miller, “The Legitimate Vulnerability Market: Inside the Secretive World
+- p. 22: of 0-day Exploit Sales,” 2007, http://weis2007.econinfosec.org/papers/29.pdf ;
+- p. 22: iDefense Labs Vulnerability Contribution Program, https://labs.idefense.com/
+- p. 22: 2. See Daniel Hodson, “Uninitialized Variables: Finding, Exploiting, Auto-
+- p. 22: tionary Definition (2.0), CWE-415: Double Free at http://cwe.mitre.org/data/
+- p. 23: the first vulnerability took me only about half a day. It was a ­classic
+- p. 24: heard of this file format, but that didn’t stop me from exploiting it.
+- p. 24: Here is how I found the vulnerability: ← I used VL
+- p. 24: most of them in different C files in the directory vlc-0.9.4\modules\
+- p. 25: 1632 different sizes depending on the bits per entry. We store them
+- p. 26: stores them in the stack buffer mst_buf, declared in line 1626. The
+- p. 26: mst_buf and stores it in the signed int variable i_map_size. In line 1650,
+- p. 26: the stream_Read() function stores user-controlled data from the media
+- p. 26: flow (see Section A.1) that can be easily exploited.
+- p. 26: To exploit the vulnerability, I performed the following steps:
+- p. 26: • Step 2: Find a code path to reach the vulnerable code.
+- p. 27: Figure 2-2: Overview of the vulnerability from input to stack buffer overflow
+- p. 27: There’s more than one way to exploit a file-format bug. You can
+- p. 27: Step 2: Find a Code Path to Reach the Vulnerable Code
+- p. 29: vulnerable function parse_master() gets called (see line 1870).
+- p. 29: To reach the vulnerable function using this code path, the TiVo
+- p. 29: loaded already triggers the vulnerable parse_master() function, so it
+- p. 30: overwrite the return address stored after the buffer on the stack (see
+- p. 32: build a working exploit, intended to achieve arbitrary code execution,
+- p. 32: Exploit Methods Between Linux and Windows” by David Litchfield.4
+- p. 32: a full working exploit, but if you’re interested, you can watch a short
+- p. 32: video I recorded that shows the exploit in action.5
+- p. 32: Now that I’ve discovered a security vulnerability, I could disclose it in
+- p. 32: On the other hand, I could sell my findings to a vulnerability broker
+- p. 32: in the commercial vulnerability market are Verisign’s iDefense Labs,
+- p. 32: with its Vulnerability Contribution Program (VCP), and Tipping Point’s
+- p. 32: release the vulnerability information to the public without notifying
+- p. 32: In the case of the VLC vulnerability described in this chapter, I
+- p. 32: oped the following patch to address the vulnerability:7
+- p. 33: The changes are quite straightforward. The formerly vulnerable
+- p. 33: But wait—is the vulnerability really gone? The variable i_map_size is
+- p. 33: tains another buffer overflow vulnerability. I also reported that bug to
+- p. 33: exploit mitigation techniques of Windows Vista were able to stop me
+- p. 33: stack using the jmp reg technique. The security cookie or /GS feature
+- p. 34: DEP can be controlled by system policy through special APIs and
+- p. 34: compile-time options (see Microsoft’s Security Research and Defense
+- p. 35: pile time, or you could use the SetProcessDEPPolicy API to allow an
+- p. 35: To get an overview of the security-relevant compile-time options
+- p. 35: which analyzes binaries for a wide variety of security protections with
+- p. 35: ties designed to provide the look and feel of Linux within the Windows
+- p. 36: exploit mitigation techniques provided by Windows Vista or later
+- p. 36: exploited today as 20 years ago, when none of these security features
+- p. 36: • Always make use of the exploit mitigation techniques offered by
+- p. 36: Since the vulnerability was fixed and a new version of VLC is now avail-
+- p. 36: able, I released a detailed security advisory on my website (Figure 2-10

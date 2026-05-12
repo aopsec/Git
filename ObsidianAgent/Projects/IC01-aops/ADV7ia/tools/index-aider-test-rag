@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+# [FIX-ADV7IA-TOOLS-03] Index the imported ADV7ia project by default instead of aider-test.
+set -euo pipefail
+shopt -s inherit_errexit
+
+cleanup() {
+  :
+}
+
+main() {
+  local py=""
+  local script_dir=""
+  local rag_root=""
+  local collection=""
+  local lm_base_url=""
+  local lm_api_key=""
+  local embed_model=""
+  local qdrant_url=""
+
+  py="${ADV7IA_RAG_PYTHON:-${HOME}/.local/rag-local/.venv/bin/python}"
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  rag_root="${ADV7IA_RAG_ROOT:-$(cd "${script_dir}/.." && pwd)}"
+  collection="${ADV7IA_RAG_COLLECTION:-adv7ia_repo_rag}"
+  lm_base_url="${ADV7IA_LM_BASE_URL:-http://127.0.0.1:1234/v1}"
+  lm_api_key="${ADV7IA_LM_API_KEY:-local-llm}"
+  embed_model="${ADV7IA_EMBED_MODEL:-text-embedding-nomic-embed-text-v1.5}"
+  qdrant_url="${ADV7IA_QDRANT_URL:-http://127.0.0.1:6333}"
+
+  if [[ ! -x "${py}" ]]; then
+    printf '[ERROR] Python venv not found: %s\n' "${py}" >&2
+    exit 127
+  fi
+
+  RAG_ROOT="${rag_root}" \
+  COLLECTION="${collection}" \
+  LM_BASE_URL="${lm_base_url}" \
+  LM_API_KEY="${lm_api_key}" \
+  EMBED_MODEL="${embed_model}" \
+  QDRANT_URL="${qdrant_url}" \
+  exec "${py}" - <<'PY'
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+from openai import OpenAI
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, PointStruct, VectorParams
+
+ROOT = Path(os.environ["RAG_ROOT"]).expanduser().resolve()
+COLLECTION = os.environ["COLLECTION"]
+LM_BASE_URL = os.environ["LM_BASE_URL"]
+LM_API_KEY = os.environ["LM_API_KEY"]
+EMBED_MODEL = os.environ["EMBED_MODEL"]
+QDRANT_URL = os.environ["QDRANT_URL"]
+
+INCLUDE_SUFFIXES = {
+    ".md", ".py", ".txt", ".json", ".toml", ".yaml", ".yml", ".sh"
+}
+
+EXCLUDE_DIRS = {
+    ".git", ".aider", ".agents_tmp", "node_modules",
+    "__pycache__", ".venv", "venv", "dist", "build"
+}
+
+CHUNK_SIZE = 1200
+CHUNK_OVERLAP = 180
+
+openai_client = OpenAI(base_url=LM_BASE_URL, api_key=LM_API_KEY)
+qdrant = QdrantClient(url=QDRANT_URL)
+
+
+def should_index(path: Path) -> bool:
+    if path.suffix.lower() not in INCLUDE_SUFFIXES:
+        return False
+    if any(part in EXCLUDE_DIRS for part in path.parts):
+        return False
+    if path.stat().st_size > 256_000:
+        return False
+    return True
+
+
+def read_text(path: Path) -> str:
+    return path.read_text(encoding="utf-8", errors="ignore")
+
+
+def chunk_text(text: str):
+    text = text.strip()
+    if not text:
+        return
+    start = 0
+    while start < len(text):
+        end = min(start + CHUNK_SIZE, len(text))
+        chunk = text[start:end].strip()
+        if chunk:
+            yield chunk
+        if end == len(text):
+            break
+        start = max(0, end - CHUNK_OVERLAP)
+
+
+def embed_many(texts: list[str]) -> list[list[float]]:
+    response = openai_client.embeddings.create(
+        model=EMBED_MODEL,
+        input=[t.replace("\n", " ") for t in texts],
+    )
+    return [item.embedding for item in response.data]
+
+
+records = []
+for path in sorted(ROOT.rglob("*")):
+    if not path.is_file():
+        continue
+    if not should_index(path):
+        continue
+
+    rel = str(path.relative_to(ROOT))
+    text = read_text(path)
+
+    for i, chunk in enumerate(chunk_text(text)):
+        records.append({
+            "path": rel,
+            "chunk_index": i,
+            "text": chunk,
+        })
+
+if not records:
+    raise SystemExit("RAG_INDEX_FAIL: no indexable files found")
+
+sample_vec = embed_many([records[0]["text"]])[0]
+
+if qdrant.collection_exists(COLLECTION):
+    qdrant.delete_collection(COLLECTION)
+
+qdrant.create_collection(
+    collection_name=COLLECTION,
+    vectors_config=VectorParams(
+        size=len(sample_vec),
+        distance=Distance.COSINE,
+    ),
+)
+
+points = [
+    PointStruct(
+        id=1,
+        vector=sample_vec,
+        payload=records[0],
+    )
+]
+
+next_id = 2
+batch_size = 16
+
+for offset in range(1, len(records), batch_size):
+    batch = records[offset:offset + batch_size]
+    vectors = embed_many([r["text"] for r in batch])
+
+    for record, vector in zip(batch, vectors):
+        points.append(
+            PointStruct(
+                id=next_id,
+                vector=vector,
+                payload=record,
+            )
+        )
+        next_id += 1
+
+qdrant.upsert(collection_name=COLLECTION, points=points)
+
+print("RAG_INDEX_OK")
+print("root:", ROOT)
+print("collection:", COLLECTION)
+print("files_indexed:", len({r["path"] for r in records}))
+print("chunks_indexed:", len(records))
+print("vector_size:", len(sample_vec))
+PY
+}
+
+trap cleanup EXIT INT
+main "$@"

@@ -1,0 +1,1649 @@
+# Technique Index
+
+## [[python-penetration-testing-essentials-2c0e9938]]
+- p. 3: companies and products mentioned in this book by the appropriate use of capitals.
+- p. 10: The TCP scan concept and its implementation using a Python script 34
+- p. 10: How to create an eficient IP scanner 37
+- p. 11: How to create an eficient port scanner 47
+- p. 12: Chapter 7: Pentesting of SQLI and XSS 135
+- p. 14: such as parameter tampering, DDOS, XSS, and SQL injection.
+- p. 14: Chapter 2, Scanning Pentesting, covers how network scanning is done to gather
+- p. 14: to bypass client-side validation. This chapter covers the implantation of four types of
+- p. 15: Chapter 7, Pentesting of SQLI and XSS, covers two major web attacks, SQL injection
+- p. 15: and XSS. In SQL injection, you will learn how to ind the admin login page using a
+- p. 18: or to exploit vulnerability for personal enmity.
+- p. 19: a proactive exercise to minimize the chance of being exploited
+- p. 20: • Be ready to show how to exploit the vulnerabilities
+- p. 21: ° Scans and identifies the remote system for potential vulnerabilities
+- p. 21: ° Maps the vulnerabilities with proper exploits
+- p. 21: ° Exploits the remote system with proper care to avoid disruption
+- p. 23: scanning and snifing pentesting, you will need a small network of attached devices.
+- p. 38: advantage of this function to scan the ports. Run the connet_ex.py program:
+- p. 38: is a rudimentary port scanner. The program is using the IP address 127.0.0.1; this
+- p. 40: In the next chapter, you will see scanning pentesting, which includes IP address
+- p. 40: scanning to detect the live hosts. To carry out IP scanning, ping sweep and TCP
+- p. 40: scanning are used. You will learn how to detect services running on a remote host
+- p. 42: Network scanning refers to a set of procedures that investigate a live host, the type of
+- p. 42: host, open ports, and the type of services running on the host. Network scanning is a
+- p. 42: • How to create an eficient IP scanner
+- p. 42: • How to create an eficient port scanner
+- p. 43: Ping scan involves sending an ICMP ECHO Request to a host. If a host is live, it will
+- p. 46: print "scanning complete in " , total
+- p. 46: datetime.now() to calculate the total time taken to scan.
+- p. 47: To scan 60 IP addresses, the program has taken 2 minutes 35 seconds.
+- p. 47: The TCP scan concept and its implementation
+- p. 47: packets. In this situation, your ping sweep scanner might not work. In this case, you
+- p. 47: need a TCP scan. I hope you are familiar with the three-way handshake, as shown in
+- p. 48: Now, let's see the following code of a TCP scan:
+- p. 49: use two functions. Firstly, the scan(addr) function uses the socket as discussed
+- p. 49: we used port 135; this scanner works for the Windows system. There are some
+- p. 49: The output of the iptcpscan.py program is as follows:
+- p. 50: How to create an eficient IP scanner
+- p. 50: So far, you have seen the ping sweep scanner and the IP TCP scanner. Imagine that
+- p. 50: very slow. To scan 60 hosts, the ping_sweep.py program took 2 minutes 35 seconds
+- p. 50: for the same range of IP addresses for which the TCP scanner took nearly one
+- p. 52: variable is the total number of IPs to be scanned. The signiicance of the tn =20
+- p. 52: variable is that it states that 20 IPs will be scanned by one thread. The total_thread
+- p. 52: variable contains the total number of threads that need to scan total_ip, which
+- p. 54: Scanning has been completed in 1 minute 11 seconds. As an exercise, change the
+- p. 54: multithreading program with the TCP scan method:
+- p. 56: both the scanners into one scanner.
+- p. 57: Now you are familiar with how to scan the IP address and identify a live host within
+- p. 57: scanning is to check whether any illegitimate service is running on the host machine.
+- p. 57: hacker. In this situation, port scanning helps to identify the unknown services that
+- p. 57: TCP's three-way handshake serves as logic for the port scanner; in the TCP/IP
+- p. 57: scanner, you have seen that the port (137 or 135) is one in which IP addresses are in a
+- p. 57: range. However, in the port scanner, IP is only one port in a range. Take one IP and
+- p. 57: I have written a very simple code for port scanning:
+- p. 57: rmip = raw_input("\t Enter the remote host IP to scan:")
+- p. 57: print "\n Mohit's Scanner is working on ",rmip
+- p. 58: Enter the remote host IP to scan:192.168.0.3
+- p. 58: Mohit's Scanner is working on 192.168.0.3
+- p. 59: The preceding output shows that the port scanner scanned the 1000 ports in 0.7
+- p. 59: seconds; the connectivity was full because the target machine and the scanner
+- p. 59: Enter the remote host IP to scan:10.0.0.1
+- p. 59: Mohit's Scanner is working on 10.0.0.1
+- p. 59: Now, let's analyze the output; to scan 4,000 ports, the scanner took 1:06:43.272751
+- p. 59: hours, scanning took lot of time. The topology is:
+- p. 59: socket.setdefaulttimeout(1), which means the scanner machine will spend a
+- p. 59: nevertheless, it would be still be a long. Nobody will use our scanner. The time taken
+- p. 60: How to create an eficient port scanner
+- p. 60: I have stated some points that should be taken into account for a good port scanner:
+- p. 60: • The port scanner should have the capability to take host names as well as
+- p. 60: • The total time should be taken into account for port scanning
+- p. 60: • To scan ports 0 to 65536, the time taken should be around 3 minutes
+- p. 60: So now, I have written my port scanner, which I usually use for port scanning:
+- p. 61: print " \tWelcome this is the Port scanner of Mohit\n "
+- p. 61: rmserver = raw_input("\t Enter the Domain Name to scan:\t")
+- p. 61: rmip = raw_input("\t Enter the IP Address to scan: ")
+- p. 63: run() function, the scantcp() function is called. Section 3 is the engine of the
+- p. 63: car, which was explained in the Concept of port scanner section. The data.get(port,
+- p. 64: Welcome this is the Port scanner of Mohit
+- p. 64: Enter the IP Address to scan: 10.0.0.1
+- p. 64: Our eficient port scanner has given the same output as the previous simple scanner,
+- p. 64: by a simple scanner was 1:06:43.272751, but the new multithreaded scanner took
+- p. 65: activeCount() method in the simple scanner program, and then check
+- p. 69: I hope you've got a fair idea of the port scanner; in a nutshell, the port scanner
+- p. 69: comprises three iles, the irst ile is the scanner (portsc14.py), the second ile is the
+- p. 69: Network scanning is done to gather information on the networks, hosts, and services
+- p. 69: that are running on the hosts. Network scanning is done by the ping command of
+- p. 69: the OS; ping sweep takes advantage of the ping facility and scans the list of IPs.
+- p. 69: ping sweep scanner might not work. In such scenarios, we have to take advantage
+- p. 69: choose the port number on which we want to carry out the TCP connect scan. Some
+- p. 69: ports. The irst main section is dedicated to network scanning; when you perform
+- p. 69: network scanning, your program should have maximum performance and take
+- p. 69: After the scanning of live hosts, port scanning is used to check the services running
+- p. 69: allows Trojans; port scanning can detect these types of threats. To make an eficient
+- p. 69: port scan, multithreading plays a vital role because port numbers range from 0 to
+- p. 69: 65536. To scan a huge list, multithreading must be used.
+- p. 83: irewall rule sets, port scan, and the behavior of the operating system. Lots of tools
+- p. 89: The half-open scan or stealth scan, as the name suggests, is a special type of
+- p. 89: scanning. Stealth-scanning techniques are used to bypass irewall rules and prevent
+- p. 89: being detected by logging systems. However, it is a special type of scan that is done
+- p. 89: Before writing the code, let's understand the concept of the half-open scan.
+- p. 89: The following steps deine the stealth scan:
+- p. 90: of the stealth scan. For the irst step, the client sends an SYN packet to the server. In
+- p. 93: SYN scans. In an FIN scan attack, a TCP packet is sent to the remote host with only
+- p. 93: The following is the code for the FIN scan:
+- p. 95: The ACK scanning method is used to determine whether the host is protected by
+- p. 95: In this scanning method, the attacker sends an ACK probe packet with a random
+- p. 97: explained. Half open, FIN scan, and ACK lag scan are special types of scanning that
+- p. 116: world, e-commerce is growing rapidly. Due to this, web servers became a prime
+- p. 116: this information, we can build our exploits. Obtaining this information is known as
+- p. 129: chance of exploitation of the web server. The server can at least be secured
+- p. 136: So our challenge here is to bypass validation and submit the form. You may have
+- p. 136: done this earlier using the Burp suite. Now, we will do this using Python.
+- p. 136: values. By using mechanize, we are going to bypass the validation, as shown in the
+- p. 138: Now, you must have got a fair idea of how to bypass the validations. Generally,
+- p. 138: then you are just inviting attackers to exploit your website. In the following topic,
+- p. 147: In this chapter, we learned about client-side validation as well as how to bypass
+- p. 147: (XSS). You will learn how to take advantages of Python to carry out SQL injection
+- p. 147: tests. You'll also learn how to automate an XSS attack by using Python scripts.
+- p. 148: and XSS attacks. In Chapter 5, Foot Printing of a Web Server and a Web Application, you
+- p. 154: I hope you remember the port scanner program in which we used a database ile that
+- p. 154: Tautology-based SQL injection is usually used to bypass user authentication.
+- p. 159: The SQL injection username query exploitation
+- p. 161: In this section, we will discuss the Cross-Site Scripting (XSS) attack. XSS attacks
+- p. 161: exploit vulnerabilities in dynamically-generated web pages, and this happens when
+- p. 161: the URL or in the search ield. In this chapter, we will work on stored XSS.
+- p. 161: Let's now look at the code for the XSS attack. The logic of the code is to send an
+- p. 161: exploit to a website. In the following code, we will attack one ield of a form:
+- p. 162: This small piece of code will give you an idea of how to accomplish the XSS attack.
+- p. 162: statement. In the code, we stored the exploit code in the mohit.xss shelve ile. The
+- p. 162: iled. The br.form[att] = s['xss'][p] statement shows that the selected ield
+- p. 162: will be illed by the XSS exploit string. The ch = raw_input("Do you continue
+- p. 162: press y ") statement asks for user input for the next exploit. If a user enters y or Y,
+- p. 164: y key, the code sends the XSS exploit.
+- p. 164: this ield is not affected by the XSS attack because of the secure coding in PHP. At the
+- p. 165: Now, let's take a look at the code of xss_data_handler.py, from which you can
+- p. 165: print "Total Number ", len(r['xss'])
+- p. 166: The preceding screenshot shows the contents of the mohit.xss ile; the xss.py ile
+- p. 167: name on which you want to send XSS exploits, and list_n contains the ield(s)
+- p. 167: name on which you don't want to send XSS exploits.
+- p. 167: Now, let's look at the program. If you understood the xss.py program, you would
+- p. 167: notice that we made an amendment to xss.py to create xss_list.py:
+- p. 170: been illed by XSS attacks. So far, you have learned how to automate the XSS attack.
+- p. 170: an XSS attack. In the preceding igure, you can see that the comment ield is not
+- p. 170: affected by an XSS attack. The following screenshot shows the coding part of the
+- p. 170: XSS. In SQL injection, you learned how to ind the admin login page using Python
+- p. 170: attack of SQLI, you learned how to make a comment after a valid username. In the
+- p. 170: next XSS, you saw how to apply XSS exploits to the form ield. In the mohit.xss ile,
+- p. 172: ARP request 71 Cross-Site Scripting. See XSS
+- p. 173: about 127 half-open scan (stealth scan)
+- p. 173: Distributed Denial-of-Service. See DDoS IP scanner
+- p. 173: foot printing IP scanner, creating 37
+- p. 174: nonpersistent (relected) XSS 148-157 SQL injection attack 137-147
+- p. 174: used, for implementing TCP scan 34-36
+- p. 174: persistent (stored) XSS 148 website information, gathering by parser
+- p. 175: port scanner, creating 47 nonpersistent (relected) XSS 148-157
+- p. 175: running services 44 persistent (stored) XSS 148
+- p. 177: 2. Explore advanced techniques to bypass
+- p. 177: 3. Discover advanced exploitation methods on
+- p. 178: stealthily exploited, and learn how to identify
+
+## [[black-hat-python-python-programming-for-hackers-and-pentesters-be8983b0]]
+- p. 1: creating stealthy trojans, and more. You’ll and how to write your own exploits.
+- p. 1: Use offensive memory forensics tricks exploits, and coding Python. He is the author
+- p. 9: spends his time bug hunting, reverse engineering, writing exploits, and
+- p. 17: of fuzzers, proxies, and even the occasional exploit.
+- p. 17: Exploit frameworks like CANVAS are written in Python
+- p. 17: Just about every fuzzer or exploit I have written has been in Python.
+- p. 17: engineering and exploitation libraries available for your use. Now if only
+- p. 19: requires rapid Python tool development, with a focus on execution and
+- p. 20: custom tooling in Chapter 5 and then extending the popular Burp Suite
+- p. 31: simple network access, such as scan for hosts, inject
+- p. 31: packets, sniff data, remotely exploit hosts, and much
+- p. 32: to whip up a TCP client to test for services, send garbage data, fuzz, or
+- p. 33: niceties into the quick-and-dirty tools for recon or exploitation work, so
+- p. 37: you plan on sending data interactively, you need to send a ctrl-D to bypass
+- p. 41: we send them in and sends back the output. You’ll notice that it is scanning
+- p. 42: sent to an application, and create test cases for fuzzers. Let’s get to it.
+- p. 45: you can modify the packet contents, perform fuzzing tasks, test for authen-
+- p. 55: can use during penetration tests, post-exploitation, or while bug-hunting.
+- p. 55: then we’ll combine the two to create a pure Python host discovery scanner.
+- p. 57: many practical uses before and after exploitation. In
+- p. 58: on a network so that they can focus their reconnaissance and exploitation
+- p. 58: This is quite a simple scanner to build with most of the work going into
+- p. 58: implement this host scanner for both Windows and Linux to maximize
+- p. 58: We could also build additional logic into our scanner to kick off full
+- p. 58: Nmap port scans on any hosts we discover to determine if they have a viable
+- p. 64: discovery scanner, this is completely acceptable. We will now apply the same
+- p. 64: to be able to decode the ICMP responses that our scanner will elicit from
+- p. 64: For the purpose of our scanner, we are looking for a type value of 3 and
+- p. 65: order to make sure our scanner generated the ICMP response. To do so, we
+- p. 66: entire subnet with our host discovery scan. Save your sniffer_with_icmp.py
+- p. 66: script as scanner.py and add the following code:
+- p. 67: Now let’s take our scanner and run it against the local network. You can use
+- p. 67: address of the local machine I was on was 192.168.0.187, so I set my scanner
+- p. 67: to hit 192.168.0.0/24. If the output is too noisy when you run your scanner,
+- p. 68: Our scanner is going to use a third-party library called netaddr, which will
+- p. 68: allow us to feed in a subnet mask such as 192.168.0.0/24 and have our scan-
+- p. 68: For a quick scan like the one I performed, it only took a few seconds to
+- p. 68: and UDP packets, and build additional tooling around it. This scanner is
+- p. 68: This would allow a deployed trojan to scan the local network looking for
+- p. 72:  print "[*] %s" % packet[TCP].payload
+- p. 72: we check to make sure it has a data payload  and whether the payload
+- p. 77: of Burp or do any number of other nasty things. You might want to hang
+- p. 77: erating fuzzing test cases based on captured network traffic or even some-
+- p. 79: filter out only HTTP traffic, and then concatenate the payload of all of the
+- p. 83: this knowledge to create reconnaissance and brute-force tooling. You’ll
+- p. 83: see how HTML parsing can be useful in creating brute forcers, recon tool-
+- p. 85: scanner that can hunt for all files that are reachable on the remote target.
+- p. 85: our scanner to run very rapidly. Let’s open web_app_mapper.py and enter the
+- p. 87: Burp Suite, to crawl the target website in order to discover as much of the
+- p. 87: We’ll build a simple tool that will accept wordlists from common brute
+- p. 88: wordlist file. Open up a new file, name it content_bruter.py, and enter the fol-
+- p. 88: wordlist_file = "/tmp/all.txt" # from SVNDigger
+- p. 88: print "Resuming wordlist from: %s" % resume
+- p. 88: This helper function is pretty straightforward. We read in a wordlist
+- p. 88: brute forcer tried. When the entire file has been parsed, we return a Queue
+- p. 90: script by setting up our wordlist, creating a list of extensions, and spinning up
+- p. 91: submitted with the request. There are a number of brute forcers that can
+- p. 91: simple “are you human” checks. We’ll create a simple brute forcer that will
+- p. 91: tion that we’ll need to incorporate into our brute forcer. The first is that
+- p. 92: brute forcer in order to be successful against Joomla:
+- p. 93: we are successful or not. Let’s now create the plumbing for our brute forcer;
+- p. 95: To wrap up our Joomla brute forcer, let’s copy-paste the build_wordlist
+- p. 95: # paste the build_wordlist function here
+- p. 95: That’s it! We simply pass in the username and our wordlist to our Bruter
+- p. 96: install it now. My target VM is at 192.168.112.131 and I am using a wordlist
+- p. 96: to the cain.txt wordlist file about 50 entries or so down the file. When run-
+- p. 97: likely have used Burp Suite to perform spidering,
+- p. 97: Recent versions of Burp Suite include the ability to
+- p. 97: add your own tooling, called Extensions, to Burp.
+- p. 97: Using Python, Ruby, or pure Java, you can add panels in the Burp GUI
+- p. 97: and build automation techniques into Burp Suite. We’re going to take
+- p. 97: advantage of this feature and add some handy tooling to Burp for perform-
+- p. 97: ing attacks and extended reconnaissance. The first extension will enable
+- p. 97: us to utilize an intercepted HTTP request from Burp Proxy as a seed for
+- p. 97: creating a mutation fuzzer that can be run in Burp Intruder. The second
+- p. 97: extension will interface with the Microsoft Bing API to show us all virtual
+- p. 98: I’m going to assume that you have played with Burp before and that
+- p. 98: trapped request to Burp Intruder. If you need a tutorial on how to do these
+- p. 98: I have to admit that when I first started exploring the Burp Extender
+- p. 98: API, it took me a few attempts to understand how it worked. I found it a bit
+- p. 98: experience. But I found a number of extensions on the Burp website that
+- p. 98: you how to use the API documentation as a guide for developing your own
+- p. 98: First, download Burp from http://www.portswigger.net/ and get it ready to go.
+- p. 98: Java) standalone JAR file; we’ll point Burp to this. You can find this JAR
+- p. 98: Next, open up a command-line terminal, and run Burp like so:
+- p. 98: #> java -XX:MaxPermSize=1G -jar burpsuite_pro_v1.6.jar
+- p. 98: This will get Burp to fire up and you should see its UI full of wonderful
+- p. 98: Now let’s point Burp at our Jython interpreter. Click the Extender tab,
+- p. 99: Figure 6-1: Burp Suite GUI loaded properly
+- p. 100: Burp to establish a solid baseline of HTTP traffic, including authentication
+- p. 100: cookies, while passing off the body of the request to a custom fuzzer that
+- p. 100: can then manipulate the payload in any way you choose. We are going to
+- p. 100: work on our first Burp extension to create the world’s simplest web applica-
+- p. 100: tion fuzzer, which you can then expand into something more intelligent.
+- p. 100: Burp has a number of tools that you can use when you’re performing
+- p. 100: Burp tool. A common technique I use is to send them to the Repeater tool,
+- p. 100: abilities. A Burp extension can interact in numerous ways with the Burp
+- p. 100: My first natural instinct is to take a look at the Burp API documenta-
+- p. 100: tion to determine what Burp classes I need to extend in order to write
+- p. 100: Extender tab and then the APIs tab. This can look a little daunting because
+- p. 100: of Burp have aptly named each class so that it’s easy to figure out where we
+- p. 100: want to start. In particular, because we’re looking at fuzzing web requests
+- p. 100: during an Intruder attack, I see the IIntruderPayloadGeneratorFactory and
+- p. 100: IIntruderPayloadGenerator classes. Let’s take a look at what the documenta-
+- p. 100: tion says for the IIntruderPayloadGeneratorFactory class:
+- p. 100: * to register a factory for custom Intruder payloads.
+- p. 100: * This method is used by Burp to obtain the name of the payload
+- p. 101: * @return The name of the payload generator.
+- p. 101: * This method is used by Burp when the user starts an Intruder
+- p. 101: * attack that uses this payload generator.
+- p. 101: * about the attack in which the payload generator will be used.
+- p. 101: * IIntruderPayloadGenerator that will be used to generate
+- p. 101: registered cor­rectly with Burp. We’re going to extend the main Burp
+- p. 101: class as well as the IIntruderPayloadGeneratorFactory class. Next we see that
+- p. 101: Burp is expect­ing two functions to be present in our main class. The
+- p. 101: getGeneratorName function  will be called by Burp to retrieve the name of
+- p. 101: function  expects us to return an instance of the IIntruderPayloadGenerator,
+- p. 101: ments, and then we’ll look at how the IIntruderPayloadGenerator class gets
+- p. 101: added. Open a new Python file, name it bhp_fuzzer.py, and punch out the
+- p. 102: IBurpExtender class , which is a requirement for every extension we write.
+- p. 102: payload generator. Next we define our BurpExtender class , which extends
+- p. 102: the IBurpExtender and IIntruderPayloadGeneratorFactory classes. We then use the
+- p. 102: registerIntruderPayloadGeneratorFactory function  to register our class so
+- p. 102: that the Intruder tool is aware that we can generate payloads. Next we imple-
+- p. 102: the attack parameter and returns an instance of the IIntruderPayloadGenerator
+- p. 102: Let’s have a peek at the documentation for the IIntruderPayloadGenerator
+- p. 102: * This interface is used for custom Intruder payload generators.
+- p. 102: * IIntruderPayloadGeneratorFactory must return a new instance of
+- p. 102: * This method is used by Burp to determine whether the payload
+- p. 102: * generator is able to provide any further payloads.
+- p. 102: * false when all the available payloads have been used up,
+- p. 102: * This method is used by Burp to obtain the value of the next payload.
+- p. 102: * @param baseValue The base value of the current payload position.
+- p. 102: * @return The next payload to use in the attack.
+- p. 103: * This method is used by Burp to reset the state of the payload
+- p. 103: * getNextPayload() returns the first payload again. This
+- p. 103: * method will be invoked when an attack uses the same payload
+- p. 103: * generator for more than one payload position, for example in a
+- p. 103: three functions. The first function, hasMorePayloads , is simply there to
+- p. 103: decide whether to continue mutated requests back to Burp Intruder.
+- p. 103: maximum that we set, we’ll return False so that no more fuzzing cases are
+- p. 103: generated. The getNextPayload function  will receive the original payload
+- p. 103: payload areas in the HTTP request, you will only receive the bytes that you
+- p. 103: requested to be fuzzed (more on this later). This function allows us to fuzz
+- p. 103: the original test case and then return it so that Burp sends the new fuzzed
+- p. 103: of fuzzed requests—say five of them—then for each payload position we
+- p. 103: have designated in the Intruder tab, we will iterate through the five fuzzed
+- p. 103: Our fuzzer isn’t so fussy, and will always just keep randomly fuzzing
+- p. 103: Python. Add the following code to the bottom of bhp_fuzzer.py:
+- p. 103:  payload = "".join(chr(x) for x in current_payload)
+- p. 104: # call our simple mutator to fuzz the POST
+- p. 104: # increase the number of fuzzing attempts
+- p. 104: We start by defining our BHPFuzzer class  that extends the class
+- p. 104: IIntruderPayloadGenerator. We define the required class variables as well as
+- p. 104: add max_payloads  and num_iterations variables so that we can keep track
+- p. 104: of when to let Burp know we’re finished fuzzing. You could of course let
+- p. 104: Next we implement the hasMorePayloads function  that simply checks
+- p. 104: whether we have reached the maximum number of fuzzing iterations. You
+- p. 104: The getNextPayload function  is the one that receives the original HTTP
+- p. 104: payload and it is here that we will be fuzzing. The current_payload variable
+
+## [[bug-hunter-diary-85c1b2cc]]
+- p. 1: “Give a man an exploit and you make him a hacker for
+- p. 1: a day; teach a man to exploit bugs and you make him a
+- p. 1: * Exploit vulnerabilities like language by dpunkt.verlag.
+- p. 15: how I found the bug, the steps I took to exploit it, and how the vendor
+- p. 16: get acquainted with the different aspects of hunting, exploiting, and
+- p. 16: the techniques used to find and exploit vulnerabilities is necessary to
+- p. 16: simple port scanners as well as working exploits. Therefore, to comply
+- p. 16: with the law, no full working exploit code is provided in this book.
+- p. 17: tage of such vulnerabilities (known as exploits), get a lot of press cov­
+- p. 17: the process of exploiting these vulnerabilities, and there are perpetual
+- p. 17: terms like software vulnerability or exploit are widely used, many people—
+- p. 18: sis, on the other hand, involves debugging or fuzzing the target software
+- p. 18: through the software, while looking for any potentially exploitable
+- p. 18: dynamic approaches when developing an exploit.
+- p. 19: After I’ve found a bug, I want to prove if it’s actually exploitable,
+- p. 19: so I attempt to build an exploit for it. When I build such an exploit, I
+- p. 19: A completely different approach to bug hunting is known as fuzz-
+- p. 19: ing. Fuzzing is a dynamic-analysis technique that consists of testing
+- p. 19: Though I’m not an expert in fuzzing and fuzzing frameworks—I
+- p. 19: know bug hunters who have developed their own fuzzing frameworks
+- p. 19: and find most of their bugs with their fuzzing tools—I do use this
+- p. 19: You may be wondering how fuzzing can be used to identify where
+- p. 19: Wesley, 2007). If you want more information about fuzzing, see
+- p. 19: Michael Sutton, Adam Greene, and Pedram Amini’s Fuzzing: Brute
+- p. 20: They all lead to exploitable memory errors. Such memory errors occur
+- p. 20: In addition to exploitable memory errors, dozens of other vul-
+- p. 20: book were the result of exploitable memory errors.
+- p. 20: When searching for bugs, or building exploits to test them, I need a
+- p. 21: These debuggers will be used to identify, analyze and exploit the
+- p. 22: many ways to turn it into a fully working, weaponized exploit. For
+- p. 22: more information on the process of exploit development, you can
+- p. 22: refer to Jon Erickson’s Hacking: The Art of Exploitation, 2nd edition
+- p. 22: (No Starch Press, 2008), or you can type exploit writing into Google
+- p. 22: of 0-day Exploit Sales,” 2007, http://weis2007.econinfosec.org/papers/29.pdf ;
+- p. 22: 2. See Daniel Hodson, “Uninitialized Variables: Finding, Exploiting, Auto-
+- p. 22: 3. See Common Weakness Enumeration, CWE List, CWE - Individual Dic-
+- p. 24: heard of this file format, but that didn’t stop me from exploiting it.
+- p. 26: flow (see Section A.1) that can be easily exploited.
+- p. 26: To exploit the vulnerability, I performed the following steps:
+- p. 27: There’s more than one way to exploit a file-format bug. You can
+- p. 28: 1845 int i_payload_size; /* sum of all records' sizes */
+- p. 32: build a working exploit, intended to achieve arbitrary code execution,
+- p. 32: Exploit Methods Between Linux and Windows” by David Litchfield.4
+- p. 32: a full working exploit, but if you’re interested, you can watch a short
+- p. 32: video I recorded that shows the exploit in action.5
+- p. 33: exploit mitigation techniques of Windows Vista were able to stop me
+- p. 34: DEP can be controlled by system policy through special APIs and
+- p. 35: pile time, or you could use the SetProcessDEPPolicy API to allow an
+- p. 35: used by VLC, I scanned the executable files of the media player with
+- p. 35: Figure 2-9: LookingGlass scan result of VLC
+- p. 36: exploit mitigation techniques provided by Windows Vista or later
+- p. 36: exploited today as 20 years ago, when none of these security features
+- p. 36: • Always make use of the exploit mitigation techniques offered by
+- p. 38: hunting and exploit development. It can be found at http://www.immunityinc
+- p. 38: 4. See David Litchfield, “Variations in Exploit Methods Between Linux
+- p. 38: 11. LookingGlass is a handy tool to scan a directory structure or the running
+- p. 38: 13. A good article on the exploit mitigation techniques introduced by Micro-
+- p. 39: tricky to exploit. I recently combed through 10,
+- p. 40: unusual for an exploitable vulnerability (com-
+- p. 49: Exploiting this bug was an exciting challenge. t
+- p. 49: as unexploitable bugs because they can generally section was the def
+- p. 49: cessfully exploited for arbitrary code execution is called Sol ari s 10
+- p. 49: To exploit the vulnerability, I performed the
+- p. 53: exploited by an unprivileged user to crash the system. Because all
+- p. 53: exploited by someone with malicious intent.
+- p. 62: With the right exploit payload, this bug can be used to escape
+- p. 62: provide you with a full working exploit. However, if you are interested,
+- p. 63: will occur again if the API isn’t used with great care. Sun should have
+- p. 63: changed the API to prevent future bugs, but it didn’t.
+- p. 63: a good chance that every security feature can be bypassed or
+- p. 64: Exploit­ing Notes” by twiz & sgrakkyu, which can be found at http://www
+- p. 65: user space NULL pointer dereferences, and it’s possible to exploit this
+- p. 70: To exploit the vulnerability I did the following: ← The vulner
+- p. 70: There are different ways to exploit file format bugs. I could either
+- p. 72: To exploit this vulnerability, I knew that I would need to set the
+- p. 77: or I could use brute force. I chose the easy option and wrote the fol-
+- p. 78: Listing 4-1: Little helper program to use brute force to find the appropriate value for current_track
+- p. 78: The program illustrated in Listing 4-1 uses brute force to find
+- p. 79: tion pointer, I developed an exploit for the vulnerability. I used the
+- p. 79: me to provide a full working exploit, but you can watch a short video I
+- p. 79: recorded that shows the exploit in action on the book’s website.5
+- p. 79: Figure 4-8 summarizes the steps I used to exploit the vulnerability.
+- p. 80: Figure 4-8: Diagram of my exploitation of the FFmpeg bug
+- p. 81: There’s also a generic exploit mitigation technique that would make
+- p. 81: it much harder to exploit the bug. To gain control of the execution
+- p. 81: mitigation ever, other exploitation techniques that are not mitigated by RELRO
+- p. 81: Adjust Listing 4-1 and use brute force to get the value for
+- p. 83: • Full RELRO helps to mitigate the GOT overwrite exploitation
+- p. 85: found in a few seconds if I had fuzzed the control instead of reading
+- p. 86: COMRaider and selected Scan a directory for registered COM servers
+- p. 89: bypassed with the help of a Cross-Site Scripting (XSS) 4 vulnerability in
+- p. 89: the WebEx domain. Since XSS vulnerabilities are quite common in
+- p. 89: need of an XSS vulnerability, I just added the following entry to my
+- p. 96: After I found the vulnerability, exploitation was easy. All I had to do
+- p. 97: bug could be easily exploited for arbitrary code execution using the
+- p. 98: ing exploit, but if you’re interested, you can watch a short video I
+- p. 98: recorded that shows the exploit in action on the book’s website.9
+- p. 98: if I had fuzzed the ActiveX control with COMRaider instead of read-
+- p. 98: ing the assembly. But hey, fuzzing is not as cool as reading assembly,
+- p. 98: • There are still obvious, easily exploitable bugs in widely deployed
+- p. 99: 1. COMRaider from iDefense is a great tool to enumerate and fuzz COM ­object
+- p. 99: exploitable in Internet Explorer” at http://blogs.technet.com/srd/archive/2008/
+- p. 122: The exploitation process, illustrated in Figure 6-7, was as follows:
+- p. 123: Figure 6-7: Diagram of my exploitation of the avast! vulnerability
+- p. 124: After I gained control over EIP, I developed two exploits. One of
+- p. 124: Strict laws prohibit me from providing a full, working exploit, but
+- p. 124: if you’re interested, you can watch a video of the exploit in action at
+- p. 127: nel panic. As usual, I then tried to develop an exploit to see if the bug
+- p. 127: complicated. To develop the exploit code, I needed a way to debug
+- p. 137: 0x001a8733 in lapic_dump () at /SourceCache/xnu/xnu-792.13.8/osfmk/i386/mp.c:332
+- p. 139: ematical problem, or I could brute force the value. I decided to go
+- p. 139: with the easy option and wrote the following program to brute force
+- p. 139: Listing 7-3: Code that I wrote to brute force the TIOCSETD input data value (addr_brute_force.c)
+- p. 143: of 0x65656565. At this point I was able to control EIP, but exploiting the
+- p. 143: ing the kernel with my privilege escalation payload and a reference to
+- p. 143: this payload. I achieved this by exploiting a memory leak in the kernel
+- p. 143: pointed to the payload reference. This value was then copied into EIP
+- p. 143: Providing you with a full working exploit would be against the law,
+- p. 143: shows the exploit in action on the book’s website.4
+- p. 148: • Step 2: Build a simple fuzzer and fuzz the
+- p. 148: Step 2: Build a Simple Fuzzer and Fuzz the Phone
+- p. 148: a bit complicated, so I decided to start by building a simple fuzzer to
+- p. 148: search for obvious bugs. The fuzzer that I built does the following:
+- p. 148: I created the following simple, mutation-based file fuzzer to pre-
+- p. 149: Listing 8-1: The code I wrote to prepare test cases on the Linux host (fuzz.c)
+- p. 149: The fuzzer from Listing 8-1 takes four arguments: the size of the
+- p. 150: I then began fuzzing files of the Advanced Audio Coding5 (AAC ) for-
+- p. 150: The command-line options below instruct the fuzzer to replace
+- p. 150: linux$ ./fuzz 415959 4 255 testcase.m4r
+- p. 150: 21 ./fuzz $filesize $off $val ./file$cnt.m4a
+- p. 151: This script, which is just a wrapper for the fuzzer illustrated in List-
+- p. 151: As the output shows, the fuzzer worked as expected and modi-
+- p. 153: 37 echo [+] Current file: http://$fuzzhost/file$cnt.m4a
+- p. 153: Listing 8-3: Code to automatically open test cases while monitoring mediaserverd for faults (audiofuzzer.sh)
+- p. 153: Fuzzing the iPhone can be tedious, since some components,
+- p. 154: root directory of the web server, and started the audiofuzzer.sh script
+- p. 154: of the web server, adjust line 18 of Listing 8-3, and continue fuzzing.
+- p. 154: Fuzzing the iPhone can be such a pain . . . but it was worth it! In addi-
+- p. 154: 8.2 Crash Analysis and Exploitation
+- p. 154: After the fuzzer had finished processing the test cases, I searched the
+- p. 156: to reference an unmapped memory location. To further analyze the
+- p. 157: Mediaserverd crashed again while trying to access unmapped mem-
+- p. 158: the fuzzer must have changed the size value of that atom. As I men-
+- p. 160: My extremely simple fuzzer had indeed found a classic stack buf-
+- p. 161: • Even dumb mutation-based fuzzers, like the one described in this
+- p. 161: • Fuzzing the iPhone is tedious but worth it.
+- p. 163: ability classes, exploitation techniques, and common issues that can
+- p. 167: of Exploitation, 2nd edition (No Starch Press, 2008), or you can type
+- p. 175: exploitation technique, see Chapter 4.
+- p. 193: Various exploit mitigation techniques and mechanisms available today
+- p. 193: are designed to make exploiting memory corruption vulnerabilities as
+- p. 194: Note There is a continuous race between exploit mitigation techniques and
+- p. 194: ways of bypassing them. Even systems using all of these mechanisms
+- p. 194: may be successfully exploited under certain circumstances.
+- p. 194: heap, the libraries, and others) to prevent an exploit writer from pre-
+- p. 194: to any memory location you like. That gives you a powerful exploit if
+- p. 194: protected by this mitigation technique, exploitation can be tough.2
+- p. 195: Mitigations can be controlled by system policy, by special APIs,
+- p. 195: at compile time, or you could use the SetProcessDEPPolicy API to allow
+- p. 195: If both DEP and ASLR are correctly deployed, exploit develop-
+
+## [[the-hacker-playbook-3-practical-guide-to-penetration-testing-0d16e56a]]
+- p. 4: 3 The Throw - Web Application Exploitation
+- p. 5: Scanning the Network with CrackMapExec (CME)
+- p. 5: Lateral Movement via RDP over the VPS
+- p. 6: Exploiting Internal Jenkins with Social Engineering
+- p. 6: Physical Tools to Bypass Access Points
+- p. 6: Recompiling Metasploit/Meterpreter to Bypass AV and Network Detection
+- p. 6: Creating a Modified Stage 0 Payload:
+- p. 7: 8 Special Teams - Cracking, Exploits, and Tricks
+- p. 8: sections that help provide a way to test a vulnerability or exploit.
+- p. 10: I can't reiterate this enough: Do not go looking for vulnerable servers and exploits on
+- p. 10: Finally, I am not an expert in Windows, coding, exploit dev, Linux, or really anything
+- p. 13: vulnerabilities, use the latest exploits, use chained vulnerabilities, and see if their
+- p. 13: campaign, you are going to need to do a ton of reconnaissance and discovery, look for
+- p. 13: the motions of Scoping, Intel Gathering, Vulnerability Analysis, Exploitation, Post
+- p. 13: Exploitation, and Reporting. In the traditional network test, we usually scan for
+- p. 14: vulnerabilities, find and take advantage of an exploitable system or application, maybe
+- p. 14: do a little post exploitation, find domain admin, and write up a report. These types of
+- p. 14: we follow is that we almost never run a vulnerability scan against the internal
+- p. 14: scans once inside a compromised environment? This is extremely rare. Why?
+- p. 14: Vulnerability scans are very loud on the network and will most likely get caught in
+- p. 19: to get a single custom malware payload to execute on their server. This payload
+- p. 19: should try to connect out in multiple ways, make sure to bypass common AV, and
+- p. 19: allow for additional payloads to be executed from memory. We will have example
+- p. 19: payloads throughout the book. Once the initial payload is executed, this is where all
+- p. 20: After you have fully created an image you like, you can rapidly clone that image to
+- p. 21: quick example of installing all of our exploitation, intel gathering, post exploitation,
+- p. 22: where Empire/Meterpreter/Cobalt Strike payloads can come from, and any phishing
+- p. 23: (https://github.com/rapid7/metasploit-framework/commits/master), which seems to be
+- p. 23: updated daily, has all of the latest public exploits, post exploitation modules, auxiliary
+- p. 23: with the MS17-010 Eternal Blue Exploit (http://bit.ly/2H2PTsI) to get our first shell or
+- p. 23: we might use Metasploit to generate a Meterpreter payload for our social engineering
+- p. 23: payloads and traffic to bypass AV and network sensors.
+- p. 23: might not be able to include a Meterpreter payload binary or have it download one
+- p. 23: msfvenom --payload windows/x64/meterpreter_reverse_http --format psh --out
+- p. 23: Meterpreter payloads, which we will be covered in more detail as we go through the
+- p. 23: get around certain network IDS tools: https://github.com/rapid7/metasploit-
+- p. 24: Strike? It is a tool for post exploitation, lateral movement, staying hidden in the
+- p. 24: network, and exfiltration. Cobalt Strike doesn't really have exploits and isn't used for
+- p. 24: when it is used as part of a phishing campaign payload. Once you can execute a
+- p. 24: Cobalt Strike payload, it creates a Beacon connection back to the Command and
+- p. 27: with your post exploitation: http://bit.ly/2qxIwPE.
+- p. 27: Empire is a post-exploitation framework that includes a pure-PowerShell2.0 Windows
+- p. 27: powershell.exe, rapidly deployable post-exploitation modules ranging from key
+- p. 27: For Red Teamers, PowerShell is one of our best friends. After the initial payload, all
+- p. 27: maintained and updated so that all the latest post-exploitation modules are available
+- p. 29: The payload is the actual malware that will run on the victim's system. These payloads
+- p. 29: Review your payload in another terminal window
+- p. 29: As you can see, the payload that was created was heavily obfuscated. You can now
+- p. 29: Office Macro or a Rubber Ducky payload, but this is just one of many examples.
+- p. 30: C2 and exfiltration over DNS provides a great mechanism to hide your traffic, evade
+- p. 30: does not require root privileges and allows both shell access and exfiltration.
+- p. 31: For the client code, we will need to compile it to make a binary for a Linux payload.
+- p. 32: commands and upload our dnscat payload. To execute our payload:
+- p. 32: like to make sure that my dnscat payload returns. For this, I generally like to start my
+- p. 32: dnscat payload with a quick bash script:
+- p. 32: This will make sure that if the client side payload dies for any reason, it will spawn a
+- p. 32: new instance every hour. Sometimes you only have one chance to get your payloads
+- p. 32: Lastly, if you are going to run this payload on Windows, you could use the dnscat2
+- p. 32: payload or… why not just do it in PowerShell?! Luke Baggett wrote up a PowerShell
+- p. 32: After our payload executes and connects back to our attacker server, we should see a
+- p. 33: if we want to use an exploit from our host system, use a browser to tunnel internal
+- p. 34: detect massive DNS queries and exfiltration. So, what do the request and responses
+- p. 35: Exploitation easier. What we tried was to build an “all in one” Post Exploitation tool
+- p. 35: which we could use to bypass all mitigations solutions (or at least some off), and that
+- p. 35: administration and post-exploitation tool mainly written in python.”
+- p. 35: penetration testers with red teaming, post-exploitation and lateral movement. The tools
+- p. 35: payload types for the Metasploit Framework. PowerShell was chosen as the base
+- p. 35: allows for a lightweight agent. It doesn't support any types of post exploitation
+- p. 35: scripts and payloads which enables usage of PowerShell for offensive security,
+- p. 38: Recon-NG, Discover, Spiderfoot, Gitrob, Masscan, Sparta, HTTP Screenshot,
+- p. 38: Vulnerability Scanners, Burp Suite and more. These were tools that we could use
+- p. 38: either externally or internally to perform reconnaissance or scanning of our victim's
+- p. 38: reconnaissance phase from a Red Team perspective.
+- p. 38: scan the environments, looking for services, cloud misconfigurations, and more.
+- p. 38: Of course, prior to scanning, make sure you have proper authorization to perform
+- p. 38: /usr/bin/nmap -T4 -oX /opt/nmap_diff/scan_$d.xml 10.100.100.0/24 >
+- p. 38: if [ -e /opt/nmap_diff/scan_$y.xml ]; then
+- p. 38: This is a very basic script that runs nmap every day using default ports and then uses
+- p. 39: In the last book, we talked heavily about the benefits of Masscan
+- p. 39: (https://github.com/robertdavidgraham/masscan) and how much faster it is than nmap.
+- p. 39: The developers of Masscan stated that, with a large enough network pipeline, you
+- p. 39: could scan the entire internet in 6 minutes. The one issue we have seen is with
+- p. 39: Masscan's reliability when scanning large ranges. It is great for doing our initial
+- p. 39: reconnaissance, but generally isn't used for diffing.
+- p. 39: Build a better network diff scanner:
+- p. 39: Build a better port list than the default nmap (i.e. nmap default misses ports like
+- p. 39: Other than regularly scanning for open ports/services, it is important for Red Teams to
+- p. 39: powerful is that it uses Masscan to scan large networks quickly and uses phantomjs to
+- p. 40: Edit the networks.txt file to pick the network you want to scan:
+- p. 40: takes an XML file from nmap output and screenshots webpages, RDP servers, and
+- p. 40: nmap [IP Range]/24 --open -p 80,443 -oX scan.xml
+- p. 40: python ./EyeWitness.py -x scan.xml --web
+- p. 41: Since many tenants use dynamic IPs, their servers might not only change rapidly, but
+- p. 42: As you can tell these ranges are huge and scanning them manually would be very hard
+- p. 42: perform reconnaissance on our targets. We can use everything from Google all the
+- p. 42: way to third party scanning services. Using these resources will allow us to dig into a
+- p. 42: Shodan (https://www.shodan.io) is a great service that regularly scans the internet,
+- p. 42: Note, I have noticed that Shodan is a little slow in its scans. It took more than a month
+- p. 42: to get my servers scanned and put into the Shodan database.
+- p. 43: The one issue we have with these scans is that they can sometime be days or weeks
+- p. 43: behind. In this case, it took one day to get scanned for title information. Additionally,
+- p. 43: Below, we ran scans to find info about our target cyberspacekittens.com. By parsing
+- p. 43: The cheap and dirty way to find these cloud servers is by manually scanning SSL
+- p. 43: for our cloud providers and scan all of them regularly to pull down SSL certificates.
+- p. 43: scan below of the cyberspacekittens range, we can see hostnames in certificates with
+- p. 43: To assist in scanning for hostnames in certificates, sslScrape was developed for THP3.
+- p. 43: This tool utilizes Masscan to quickly scan large networks. Once it identifies services
+- p. 45: infrastructure. So you can nmap all day, but if you can’t find the subdomain,
+- p. 45: tools to perform better discovery. Feel free to join in and scan the
+- p. 46: Knock is a great subdomain scan tool that takes a list of subdomains and checks it to
+- p. 46: see if it resolves. So if you have cyberspacekittens.com, Knock will take this wordlist
+- p. 46: good as your word list. Therefore, having a better wordlist increases your chances of
+- p. 47: This uses the basic wordlist from Knock. Try downloading and using a much
+- p. 47: larger wordlist. Try using the http://bit.ly/2qwxrxB list using the -u switch.
+- p. 47: wordlist. Some companies have very unique subdomains that can't be found through a
+- p. 47: common wordlist. The next best resource to go to are search engines. As sites get
+- p. 47: which may limit the results from your scan. To run Sublister:
+- p. 47: with the goal of creating the fastest, and most accurate subdomain enumeration tool.
+- p. 48: tests and Red Team assessments where we were able to get passwords, API keys, old
+- p. 48: Truffle Hog tool scans different commit histories and branches for high entropy keys,
+- p. 49: the code locally, then scan it with Truffle-hog and repo-supervisor. You will first need
+- p. 49: This will clone the repo and start scanning. You can even run through whole
+- p. 50: There are many tools that can perform S3 bucket enumeration for AWS. These tools
+- p. 51: aws s3api get-bucket-acl --bucket cyberspacekittens
+- p. 52: aws s3api get-object-acl --bucket cyberspacekittens --key ignore.txt
+- p. 52: everyone. If we did have write access, we could use the put-object in s3api to modify
+- p. 55: In this chapter we went over all the different reconnaissance tactics and tools of the
+- p. 56: 3 the throw - web application exploitation
+- p. 57: of web, back in the early 2000s, there were tons of SQLi and RFI type exploits.
+- p. 57: Endpoint/Firewall Protection, our focus is shifting back onto application exploitation.
+- p. 57: We have also seen a huge complexity increase in applications, APIs, and languages,
+- p. 57: deeply into all of the different web vulnerabilities or how to manually exploit them.
+- p. 57: repeating examples like SQLMap, IDOR attacks, and CSRF vulnerabilities in the
+- p. 57: Before we start learning how to exploit web applications, let’s talk a little about bug
+- p. 58: scanning, no automated tools, which domains can be attacked, etc.). Sometimes you
+- p. 58: you took to exploit the vulnerability, screenshots, and even a working proof of
+- p. 59: Having run my own programs before, one thing to note about exploiting vulnerabilities
+- p. 59: After finishing reconnaissance and discovery, you review all the different sites you
+- p. 59: found. Looking through your results, you don’t see the standard exploitable
+- p. 59: For all the attacks in the Web Application Exploitation chapter, a custom THP3
+- p. 60: exploit them. This is a great checklist document: http://bit.ly/2qyA9m1.
+- p. 62: You first run through all of your vulnerability scanner and web application scanner
+- p. 62: common vuln scanners and has patched most of its issues. The golden egg findings
+- p. 63: Retire.JS: scan a web app for use of vulnerable JavaScript libraries. The goal of
+- p. 63: Burp Suite (~$350): although this commercial tool is a bit expensive, it is
+- p. 63: base. If you can't afford Burp, OWASP ZAP (which is free) is an excellent
+- p. 63: Before we do any type of scanning, it is important to try to understand the underlying
+- p. 63: In the previous books, we went into more detail on how to use Burp Suite and how to
+- p. 64: We are going to assume, at this point, that you have Burp Suite all set up (free or paid)
+- p. 64: Spidering: In both the free and paid versions, Burp Suite has a great
+- p. 64: Content Discovery: If you are using the paid version of Burp Suite, one
+- p. 64: Active Scan: Runs automated vulnerability scanning on all parameters
+- p. 64: Similar to Burp, but completely open source and free. Has similar
+- p. 64: Your wordlists are very important. One of my favorite wordlists to use is an old one
+- p. 64: exploitable vulnerabilities from vulnerability scanner. But, on our Red Team
+- p. 65: At this point, we have all seen and dealt with Cross-Site Scripting (XSS). Testing
+- p. 65: every variable on a website with the traditional XSS attack: <script>alert(1)</script>,
+- p. 65: So, we all know that XSS attacks are client-side attacks that allow an attacker to craft a
+- p. 65: Cookie Stealing XSS: <script>document.write('<img src="http://<Your
+- p. 65: In today's world, the standard XSS payload still works pretty often, but we do come
+
+## [[the-bug-hunters-methodology-2-cdaa5fd1]]
+- p. 4: ★ useful fuzz strings ★ File Uploads
+- p. 4: ★ bypass or filter evasion techniques ★ CSRF
+- p. 4: ★ new/awesome tooling ★ Privilege, Auth, IDOR
+- p. 8: ❏ Intro to scraping for subdomains ○ brutesubs
+- p. 10: ssltools.com API Google (Recon-ng now handles captcha) Baidu
+- p. 17: ★ Because of the nature of scraping and dns redirects
+- p. 20: ❏ Seclists / RAFT / Digger wordlists
+- p. 21: ★ Can be combined with backslash scanners top 2500 params
+- p. 22: Reverse Whois sublist3r Massdns masscan eyewitness
+- p. 30: ○ WAPPalyzer + BuiltWith + Vulners scanner
+- p. 35: SSRF Common Parameters or Injection
+- p. 35: ❏ Well kinda... SSRF ○ SSRF Bible (black magic)
+- p. 35: (visually) looks very ★ Exploit locale= template=
+- p. 35: similar to LFI / RFI / ○ Burp Collaborator
+- p. 39: SSRF Pivoting from blind SSRF to RCE with HashiCorp http://www.kernelpicnic.net/2017/05/29/Pivoting-from-blind-SSRF
+- p. 39: Exploiting Server Side Request Forgery on a https://sethsec.blogspot.com/2015/12/exploiting-server-side-requ
+- p. 39: How To: Server-Side Request Forgery (SSRF) - https://www.hackerone.com/blog-How-To-Server-Side-Request-F
+- p. 39: Escalating XSS in PhantomJS Image Rendering to http://buer.haus/2017/06/29/escalating-xss-in-phantomjs-image-r
+- p. 39: SSRF/Local-File Read - Brett Buerhaus endering-to-ssrflocal-file-read/
+- p. 39: Burp, Collaborate, and Listen: A Pentester https://www.bishopfox.com/blog/2016/02/burp-collaborate-listen-
+- p. 39: Reviews the Latest Burp Suite Addition - Max pentester-reviews-latest-burp-suite-addition/
+- p. 41: ❏ Params ○ Backslash Powered Scanner
+- p. 56: Albinowax (Top 2500 alexa parsed param names) https://github.com/PortSwigger/backslash-powered-scanner/blob/master/resources/params
+- p. 56: Netflix (SleepyPuppy Blind XSS framework) https://github.com/Netflix/sleepy-puppy
+- p. 56: 0xSobky (XSS polyglot #4) https://github.com/0xsobky/HackVault/wiki/Unleashing-an-Ultimate-XSS-Polyglot
+- p. 56: PortSwigger / Ablinawax (Backslash Powered https://github.com/PortSwigger/backslash-powered-scanner
+
+## [[real-world-bug-hunting-a-field-guide-to-web-hacking-e112338e]]
+- p. 11: HackerOne Unintended HTML Include Fix Bypass
+- p. 13: Attacking Users with SSRF Responses
+- p. 13: ESEA SSRF and Querying AWS Metadata
+- p. 13: Internal Port Scanning Using Webhooks
+- p. 25: Chapter 2: Open Redirect covers attacks that exploit the trust of a
+- p. 25: Chapter 7: Cross-Site Scripting explains how attackers exploit a
+- p. 25: Chapter 8: Template Injection explains how attackers exploit
+- p. 25: Chapter 11: XML External Entity shows how attackers exploit
+- p. 25: exploit a server or application to run their own code.
+- p. 26: exploit an application’s memory management to cause unintended
+- p. 26: Chapter 15: Race Conditions reveals how attackers exploit
+- p. 26: Chapter 17: OAuth Vulnerabilities covers bugs in the
+- p. 26: Vulnerabilities explains how an attacker can exploit a coding logic
+- p. 26: including proxying web trafﬁc, subdomain enumeration,
+- p. 35: access to various browser application programming interfaces (APIs).
+- p. 35: These APIs enable JavaScript to interact with other systems, the most
+- p. 37: (CSRF) vulnerabilities discussed in Chapter 4. Visiting any URL or
+- p. 38: it serves as a CSRF vulnerability protection.
+- p. 40: exploit the trust of a given domain to lure targets to a malicious
+- p. 40: distribute malware from the malicious site or to steal OAuth tokens (a
+- p. 40: you’ll learn how to exploit open redirects and how to identify key
+- p. 42: (DOM). The DOM is an API for HTML and XML documents that
+- p. 43: attacker could exploit the parameter to redirect a target to
+- p. 47: digging to see how the missing interstitial could be exploited.
+- p. 47: the exploit or combine it with another vulnerability to demonstrate
+- p. 49: persistence but can be worth the effort.
+- p. 56: persistence. In August 2015, hacker Mert Tasci noticed an interesting
+- p. 57: Tasci’s efforts demonstrate the importance of persistence and
+- p. 60: might be able to exploit similar behavior.
+- p. 61: A cross-site request forgery (CSRF) attack occurs when an attacker can
+- p. 61: CSRF attack is successful, the attacker is able to modify server-side
+- p. 61: website doesn’t have any CSRF protections, it processes the
+- p. 62: techniques covered here to exploit CSRF vulnerabilities that use basic
+- p. 64: designed to perform a CSRF attack by instructing Bob’s browser to
+- p. 64: The way the malicious site exploits Bob’s banking site depends on
+- p. 64: hidden form technique in the next section, “CSRF with POST Requests.”
+- p. 65: principle, and so they’ll automatically add CSRF protections to POST
+- p. 65: different approach to create a CSRF attack. An attacker couldn’t use an
+- p. 66: ➋ <form method='POST' action='http://bank.com/transfer' target="csrf-frame"
+- p. 67: form ("csrf-form") that we set in the second line ➋ as an argument. As
+- p. 67: a request that is an application/json type will have a CSRF token. This
+- p. 67: custom header with a name like X-CSRF-TOKEN. When a browser sends an
+- p. 67: some CSRF vulnerabilities: the malicious sites won’t be listed as trusted
+- p. 68: tested allows it. In some situations, you can bypass these protections by
+- p. 68: a CSRF request might work. If it doesn’t, look at the Access-Control-
+- p. 68: from its server. This allows for CSRF vulnerabilities but might also
+- p. 68: You can mitigate CSRF vulnerabilities in a number of ways. One of the
+- p. 68: most popular forms of protection against CSRF attacks is the CSRF
+- p. 68: token. Protected sites require the CSRF token when requests are
+- p. 68: but some potential examples of names include X-CSRF-TOKEN, lia-token, rt,
+- p. 69: In this example, the site could get the CSRF token from a cookie, an
+- p. 69: request and wouldn’t be able to carry out a CSRF attack. However, just
+- p. 69: because a site uses CSRF tokens doesn’t mean it’s a dead end when
+- p. 69: you’re searching for vulnerabilities to exploit. Try removing the token,
+- p. 69: access responses. Attackers can sometimes bypass CORS by changing
+- p. 69: misconﬁgurations on the server side. The reason the bypass works is
+- p. 69: Lastly, there are two additional and less common CSRF mitigation
+- p. 69: them remotely (obviously, this excludes exploiting a vulnerability in
+- p. 70: When you’re looking for potential CSRF vulnerabilities, be on the
+- p. 71: a proxy server, such as Burp or OWASP’s ZAP, to monitor the HTTP
+- p. 72: website’s API endpoints as well as its web pages. Instacart is a grocery
+- p. 72: subdomain was vulnerable to CSRF. For example, you could modify a
+- p. 72: HTTP POST request to the /api/v2/zones endpoint ➊. The hacker
+- p. 72: code 10001 ➋ and one to set the API’s override parameter to true ➌ so the
+- p. 72: the exploit by using the techniques described earlier, such as using a
+- p. 73: When you’re looking for exploits, broaden your attack scope and look
+- p. 73: beyond just a website’s pages to include its API endpoints, which offer
+- p. 73: hackers can discover and exploit API endpoints, because they aren’t
+- p. 73: make HTTP requests to API endpoints, which you can monitor with
+- p. 73: Burp or ZAP just as you do websites.
+- p. 73: Although developers often use CSRF tokens to protect against CSRF
+- p. 73: https://www.badoo.com/, you’ll see that it uses CSRF tokens. More
+- p. 73: ﬁnd a way to exploit it. However, the hacker Mahmoud Jamal did.
+- p. 74: page Jamal used to accomplish this exploit:
+- p. 74: ➍ var csrf_code = getCSRFcode(url_stats);
+- p. 75: Next, Jamal created a csrf_code variable ➍ and assigned it the return
+- p. 75: value of a function he deﬁned at ➋ called getCSRFcode. The getCSRFcode
+- p. 75: the rt value, and assigns that to csrf_code.
+- p. 75: Once he had the CSRF token, Jamal created the csrf_url variable,
+- p. 75: hardcoded value. Instead, csrf_code is concatenated to the end of the
+- p. 75: csrf_url , which redirects the visiting user’s browser to the URL at ➎.
+- p. 76: someplace where an attacker could access and exploit it, which in this
+- p. 76: digging. In this case, I thought it was odd that the CSRF token would
+- p. 76: are being called when you visit a site or application. Burp allows you to
+- p. 76: CSRF vulnerabilities represent another attack vector that attackers can
+- p. 76: action. Finding CSRF vulnerabilities can take some ingenuity and a
+- p. 76: example of it, if you see that a site is sending a CSRF token with a POST
+- p. 76: request, you can try changing the CSRF token value or removing it
+- p. 78: caused by sites either escaping any included HTML or HTML tags
+- p. 82: <input type="hidden" name="csrf-token" value= "ab34513cdfe123ad1f">
+- p. 82: be the sensitive cross-site request forgery (CSRF) token from the
+- p. 83: is an API for HTML and XML documents that allows developers to
+- p. 83: injecting HTML directly into the DOM without escaping it.
+- p. 83: Although De Ceukelaire couldn’t exploit the vulnerability, he did
+- p. 83: HackerOne was rendering a CSRF token. So conceptually, if
+- p. 83: could exﬁltrate a target’s CSRF token and perform a CSRF attack.
+- p. 83: has a great explanation about the <meta> refresh exploit at
+- p. 84: <a title="test" ismap="alert xss" yyy="test" ref="http://
+- p. 84: HTML. Although I couldn’t immediately exploit this bug, the
+- p. 90: examples of how to exploit a CRLF injection to achieve HTTP request
+- p. 90: HTTP request smuggling occurs when an attacker exploits a CRLF
+- p. 90: new headers that browsers interpret. An attacker can exploit a split
+- p. 90: characters. This leads to the second method of exploiting response
+- p. 91: website, or cross-site scripting (XSS), an attack we’ll cover in Chapter 7.
+- p. 91: characters %0d%0a (capitalization doesn’t matter to encoding) in the URL
+- p. 91: krankopwnz injected as part of a shop name to test whether this exploit
+- p. 92: include XSS, which we will cover in Chapter 7.
+- p. 92: vulnerability is best exploited when it occurs with little user
+- p. 93: and potentially could allow users to inject malicious payloads to a
+- p. 94: CRLF attacks can be even more dangerous when they allow for XSS
+- p. 94: attacks. While the details of exploiting XSS aren’t important for this
+- p. 94: vulnerability could be exploited to execute malicious JavaScript with
+- p. 95: The payload is decoded to inject the header content-type text/html,
+- p. 95: by altering their headers. Exploiting CRLF vulnerabilities can lead to
+- p. 96: One of the most famous examples of a cross-site scripting (XSS)
+- p. 96: October 2005, Kamkar exploited a vulnerability on Myspace that
+- p. 96: allowed him to store a JavaScript payload on his proﬁle. Whenever a
+- p. 96: logged-in user would visit his Myspace proﬁle, the payload code would
+- p. 96: Kamkar’s worm is an extreme example, but his exploit shows the
+- p. 96: broad impact an XSS vulnerability could have on a website. Similar to
+- p. 96: other vulnerabilities I’ve covered so far, XSS occurs when websites
+- p. 96: malicious JavaScript. Characters that allow an XSS vulnerability to
+- p. 97: When you submit this payload to a website that renders it
+- p. 97: the JavaScript between them. The payload executes the alert function,
+- p. 97: returns the domain name of the site. For example, if the payload
+- p. 97: When you’ve found an XSS vulnerability, conﬁrm its impact because
+- p. 97: not all XSS vulnerabilities are the same. Conﬁrming the impact of a
+- p. 97: For example, an XSS vulnerability on a site that doesn’t use the
+- p. 97: httponly ﬂag on sensitive cookies is different from an XSS vulnerability
+- p. 97: that does. When a site has no httponly ﬂag, your XSS can read cookie
+- p. 98: But the XSS might not be a vulnerability for the site if you don’t
+- p. 98: malicious sites attempting to exploit the website through the user. For
+- p. 99: these two contexts differently. When you ﬁnd an XSS vulnerability,
+- p. 99: conﬁrms the origin where the XSS executes, especially when the URL
+- p. 99: shown in the browser is different from the origin the XSS executes
+- p. 99: tag to achieve XSS, you can’t always submit HTML tags when you ﬁnd
+- p. 99: or double quotes to inject an XSS payload. The XSS could be
+- p. 99: the existing quote and inject a malicious XSS payload into the tag. You
+- p. 100: depending on the browser. When the payload runs, it would alert on
+- p. 100: As you now know, you can execute XSS using several methods. The
+- p. 100: Cure53 maintain, is a great reference for XSS payloads.
+- p. 100: There are two main types of XSS: reﬂected and stored. Reﬂected XSS
+- p. 100: site delivers and executes the XSS payload. Browsers, including
+- p. 101: vulnerability by introducing XSS Auditors (in July 2018, Microsoft
+- p. 101: announced they are retiring the XSS Auditor in the Edge browser due
+- p. 101: to other security mechanisms available to prevent XSS). XSS Auditors
+- p. 101: When an XSS attempt occurs, the browser shows a broken page with a
+- p. 101: Figure 7-1: A page blocked by the XSS Auditor in Google Chrome
+- p. 101: Despite browser developers’ best efforts, attackers frequently bypass
+- p. 101: XSS Auditors because JavaScript can execute in complex ways on a site.
+- p. 101: Because these methods of bypassing XSS Auditors often change, they’re
+- p. 101: x-xss-protection/ and Masato Kinugawa’s ﬁlter bypass cheat sheet at
+- p. 101: In contrast, stored XSS occurs when a site saves a malicious payload
+- p. 101: and renders it unsanitized. Sites might also render the inputted payload
+- p. 101: in various locations. The payload might not execute immediately after
+- p. 101: example, if you create a proﬁle on a website with an XSS payload as
+- p. 101: your name, the XSS might not execute when you view your proﬁle;
+- p. 102: You can also sort XSS attacks into the following three subcategories:
+- p. 102: DOM-based, blind, and self. DOM-based XSS attacks involve
+- p. 102: malicious input. It might be possible to execute XSS.
+
+## [[mastering-modern-web-penetration-testing-68fcc418]]
+- p. 3: companies and products mentioned in this book by the appropriate use of capitals.
+- p. 5: The last chapter of this book on API testing is written entirely by
+- p. 8: Using double encoding to evade XSS filters 13
+- p. 9: Demonstrating reflected XSS vulnerability 52
+- p. 9: Stored XSS through spoofed IP addresses 64
+- p. 9: Flash-based XSS – ExternalInterface.call() 67
+- p. 10: Exploiting POST-request based CSRF 86
+- p. 10: PayPal's CSRF vulnerability to change phone numbers 87
+- p. 10: Exploiting CSRF in JSON requests 90
+- p. 10: Using XSS to steal anti-CSRF tokens 92
+- p. 10: Exploring pseudo anti-CSRF tokens 93
+- p. 10: Defeating XMLHTTPRequest-based CSRF protection 98
+- p. 10: Chapter 5: Exploiting SQL Injection 101
+- p. 11: Netcat accessible reverse shell 142
+- p. 11: Case-sensitive blacklist extension check bypass 147
+- p. 11: MIME content type verification bypass 149
+- p. 11: Bypassing image content verification 153
+- p. 11: Generating Web backdoor payload with Metasploit 171
+- p. 12: Protocol Handlers for SSRF URLs 201
+- p. 12: Case Study – MailChimp port scan SSRF 203
+- p. 12: IDOR in Flipkart to delete saved shipping addresses 207
+- p. 12: IDOR in HackerOne to leak private response template data 208
+- p. 12: Introducing the OAuth 2.0 model 232
+- p. 13: Exploiting OAuth for fun and profit 239
+- p. 13: Hijacking the OAuth flow – fiddling with redirect URI 241
+- p. 13: Chapter 11: API Testing Methodology 247
+- p. 14: Basic methodology to test developer APIs 261
+- p. 16: iCloud service API was breached by hackers and sensitive photos were leaked on the
+- p. 17: attack. Then we have OAuth 2.0, which varies with implementations, and this results
+- p. 17: in flaws, such as account takeovers. Among older techniques, we have XSS, CSRF,
+- p. 17: Chapter 2, Information Gathering, deals with various reconnaissance or enumeration
+- p. 17: Chapter 3, Cross-Site Scripting, is a refresher on one of the most exploited flaws on the
+- p. 17: Web: cross-site scripting. This chapter contains different techniques of XSS, and some
+- p. 17: of them are really nasty, such as performing XSS by spoofing an IP address.
+- p. 18: Chapter 4, Cross-Site Request Forgery, highlights the importance of CSRF as an attack
+- p. 18: vector, teaches newer ways to perform CSRF, for instance, when the request is a
+- p. 18: JSON object. Then, there is a real-life case study on a critical CSRF vulnerability
+- p. 18: Chapter 5, Exploiting SQL Injection, doesn't need any introduction at all. This chapter
+- p. 18: makes use of SQLMap and explores it to detect and exploit SQL injection flaws.
+- p. 18: use different kinds of web shells, some techniques of DoS, and bypasses on certain
+- p. 18: web application security. It covers how to generate a web backdoor payload through
+- p. 18: Chapter 8, XML Attacks, covers attack vectors, which exploit XML parsing
+- p. 18: Chapter 10, OAuth 2.0 Security, discusses various flaws in implementing the OAuth
+- p. 18: 2.0 protocol in web applications. It starts with the relevant basics of OAuth and goes
+- p. 18: Chapter 11, API Testing Methodology, is the last chapter of this book and a guest
+- p. 18: of REST APIs and then goes on to explain fundamental issues and mistakes made by
+- p. 27: are browser bugs which can lead to SOP bypass; one such example is an SOP
+- p. 27: bypass in Firefox abusing the PDF reader – https://www.mozilla.org/en-
+- p. 28: Request Forgery (CSRF) tokens, and then they can be used to mount a CSRF attack.
+- p. 32: misinterpreted because of transport issues. Certain protocols such as OAuth also
+- p. 34: here, 41 is the hexadecimal for 65, which, in turn, is the ASCII code for capital A.
+- p. 34: Inclusion (RFI) scenarios as well, in which we need to encode our path payload.
+- p. 34: This effectively results in bypasses of filters depending on the scenario:
+- p. 36: So the following double-encoded URL will bypass and execute code under the
+- p. 36: Using double encoding to evade XSS filters
+- p. 36: We have covered a directory traversal security check bypass through the double
+- p. 36: encoding technique. In this section, I'll cover how we can evade some XSS filters or
+- p. 36: Assuming that we've an XSS filter that detects <, >, /, or their percent-encoded forms,
+- p. 36: we can apply the double encoding technique to our XSS payload, if our input gets
+- p. 36: Original request with XSS payload (blocked): http://www.example.com/search.
+- p. 37: Before I end this topic, I must say the double encoding technique to bypass
+- p. 40: In the next chapter, we will learn different reconnaissance techniques, which will
+- p. 43: This may include running port scans, enumerating files, and so on. Active techniques
+- p. 43: firewall of the target, and prolonged scans to enumerate information can even slow
+- p. 43: contact the target for harvesting data for our reconnaissance purposes. Websites like
+- p. 43: be extremely beneficial for getting information that can be later used in exploiting the
+- p. 43: hint that we're actually performing any reconnaissance. Since we don't connect to the
+- p. 43: domain enumeration. Finding subdomains of a website can land us in surprising
+- p. 43: performed a subdomain enumeration scan on a Google service, out of the bunch of
+- p. 44: The following websites will be used for passive enumeration:
+- p. 44: The Fierce Perl script applies techniques such as zone transfer and wordlist
+- p. 48: allowed zone transfer to take place. Fierce then used the brute force approach to find
+- p. 48: By default, Fierce uses its own wordlist for subdomain brute forcing. We can use the
+- p. 48: wordlist switch and supply our own wordlist to guess the subdomains using Fierce.
+- p. 48: Let's create a custom wordlist with the following keywords:
+- p. 48: Now we will run Fierce against my personal domain with this custom wordlist.
+- p. 48: wordlist. So it's evident that a good wordlist yields a good set of subdomains.
+- p. 49: theHarvester is an open source reconnaissance tool, it can dig out heaps of
+- p. 49: We may use this email address to perform client side exploitation or phishing, but
+- p. 49: google, googleCSE, bing, bingapi, pgp, linkedin, google-profiles,
+- p. 50: SubBrute is an open source subdomain enumeration tool. It is community
+- p. 50: makes use of open DNS resolvers to bypass rate-limiting restrictions.
+- p. 51: CeWL is a custom wordlist generator made by Robin Hood. It basically spiders
+- p. 51: the target site to a certain depth and then returns a list of words. This wordlist can
+- p. 52: Look at that! It returned us a nice looking wordlist based on the scraped data from
+- p. 52: --help. Instead of displaying the wordlist output on the console, we can save it to a
+- p. 52: You can clearly see the generated wordlist was written to the cewl.txt file.
+- p. 54: It comes with a set of wordlists for different requirements and conditions.
+- p. 55: wfuzz. It is more feature-rich, advanced, and versatile than DirBuster.
+- p. 64: enumeration. I'll demonstrate this by running a search for the packtpub.com website:
+- p. 66: passive one, the target site doesn't know about our reconnaissance. The Google
+- p. 72: related to it. XSS enables us to execute client-side code inside the browser and has
+- p. 74: I believe XSS or cross-site scripting is the most popular web vulnerability, if not the
+- p. 74: most exploitable one. Almost every website had suffered in one or more ways from
+- p. 74: XSS. From social networking websites such as Facebook and MySpace to financial
+- p. 74: has had a run-in with XSS. XSS typically happens to be a user-supplied input (for
+- p. 74: instantaneously, known as reflected XSS or when the user supplied inputs (such as
+- p. 74: XSS, happens when you enter your name, address, and so on, on a social networking
+- p. 74: it results in stored XSS. In both cases when the input is written back to the page, it
+- p. 75: Reflected XSS is one of the most widely exploited web application vulnerabilities. To
+- p. 75: exploit this vulnerability, the application takes one or more parameters as an input,
+- p. 75: sound harmful at the moment but this vulnerability can be exploited to do one of the
+- p. 75: whatever input that is provided inside the GET parameter xss. In the following
+- p. 76: We can naïvely test for reflected (or even stored) XSS by inserting the following
+- p. 76: If these characters are reflected in the output, then we can go ahead and build an XSS
+- p. 76: payload based on the primitives available.
+- p. 76: In this section, I'll try to explain and give insights about an example of reflective XSS
+- p. 76: We can execute the XSS in the anchor tag's href using the javascript: URI
+- p. 76: then we can go ahead and build up the aforementioned payload. As soon as the
+- p. 77: escaping out of the tags - <> " ' but as expected they were filtered, whereas
+- p. 77: replace our payload like this to steal the cookies, seamlessly:
+- p. 78: There can be variations in the JavaScript URL payload, as we saw earlier. We can use
+- p. 78: APIs that websites provide these days. Some of the endpoints often reflect the
+- p. 78: The first part of this will be an example of XSS, which I discovered on Vine.com,
+- p. 78: a service owned by Twitter. Vine had an API endpoint that allowed third- party
+- p. 78: developers to programmatically search users. The API looked like the following:
+- p. 78: able to dig out an XSS vulnerability on www.vine.com:
+- p. 79: You will see the result that is an example of XSS in the following screenshot:
+- p. 79: reflected a value from the GET parameter url into the API's JSON response body. The
+- p. 80: without any sanitization. So any Facebook page with an XSS payload as the page title
+- p. 80: the response as a normal HTML webpage. This scenario quickly escalated to XSS
+- p. 80: our XSS payload through a link and then it is reflected in the response, and the
+- p. 80: second that the response is rendered as a fully-fledged XSS vector.
+- p. 80: The final proof of the concept exploits looks like the example shown as follows:
+- p. 81: Stored or persistent XSS is a sub-type of XSS vulnerability and differs from reflected
+- p. 81: XSS by the fact that it is persistent in nature. It means that the payload, once inserted
+- p. 81: XSS worms. I hope some of you may be aware of the Samy worm which exploited a
+- p. 81: weak XSS filter in MySpace to create a persistent XSS scenario in which thousands of
+- p. 81: the code. Stored XSS vulnerability is pretty common in places where data is saved
+- p. 81: similar places. They are a welcoming location to check for stored XSS issues.
+- p. 81: Before proceeding to a few case studies on stored XSS, I'll go on and demonstrate an
+- p. 81: example of stored XSS on a popular and open-source vulnerability called DVWA.
+- p. 81: The web application has stored XSS, which is in the form of a guestbook, as shown in
+- p. 82: input sanitization. So, if we insert an XSS payload as depicted in the previous image,
+- p. 82: whenever the admin of the guestbook views the submitted entries then the XSS
+- p. 82: payload will execute, as mentioned earlier in the Reflected XSS section. The payload
+- p. 83: Apart from stealing cookies, the client side can be exploited to leverage
+- p. 83: which can be triggered through a malicious piece of JavaScript (XSS) payload.
+- p. 83: Launching such exploits using a stored XSS is stealthy as the victim may not suspect
+- p. 83: the website of executing harmful code and the client-side exploit will silently run in
+- p. 83: I'll look into a vector to discover persistent XSS through the Markdown parser.
+- p. 83: into an XSS by using the following Markdown code:
+- p. 83: vector. I was able to create a link inside the forum post that contained an XSS
+- p. 84: This XSS was reported to Digital Ocean and has been patched as well.
+- p. 84: I'm going to cover an effective technique that may come useful. We can use APIs
+- p. 84: of websites in order to find XSS vulnerabilities, if we try to normally insert an XSS
+- p. 84: payload from webpages and the output generated is sanitized, then we can try to
+- p. 84: use relevant APIs to achieve the same feat instead. As developers, at times we fail to
+- p. 84: implement security filters or do not consider the input coming from APIs as harmful.
+- p. 84: Simply speaking, if we cannot insert an XSS payload directly into a section of the
+- p. 84: website in say posts or comments, then we can try using their APIs to write posts or
+- p. 84: comments with XSS payloads. Sometimes developers simply forget this edge case,
+- p. 84: they take and display whatever data comes from the API. I'll now show you a real
+- p. 86: I tested this interface for naïve XSS by directly inserting an XSS payload into the chat
+- p. 86: alternative courses to achieve the same. It was then that I stumbled upon their API
+- p. 86: for sending messages to different channels. The API method to send messages
+- p. 86: was chat.postMessage. The API allowed me to specify a username as well as the
+- p. 86: messages. The basic structure of the API call parameter was as follows:
+- p. 87: You can see in the previous example that I'm inserting the XSS vector in the username
+- p. 87: field of the API call, which will execute an alert box with document.cookie:
+
+## [[hacking-apis-early-access-691dcdd7]]
+- p. 2: Hacking APIs (Early Access) © 2022 by Corey Ball
+- p. 2: Welcome to the Early Access edition of the as yet unpublished Hacking APIs
+- p. 4: PART I: THE STATE OF WEB API SECURITY
+- p. 4: Chapter 0: Preparing for API Security Testing
+- p. 4: Chapter 4: Setting Up an API Hacking System
+- p. 4: Chapter 5: Setting Up Vulnerable API Targets
+- p. 4: Chapter 8: Attacking API Authentication
+- p. 4: Chapter 10: Exploiting API Authorization
+- p. 4: Chapter 11: Exploiting Mass Assignment
+- p. 6: management. He currently serves as a head of customer success at APIsec,
+- p. 6: an API security company, where he works with customers to ensure their
+- p. 9: PART I: THE STATE OF WEB API SECURITY 1
+- p. 9: PREPARING FOR API SECURITY TESTING 3
+- p. 10: SETTING UP AN API HACKING SYSTEM 71
+- p. 11: Performing Reconnaissance with OWASP Amass . . . . . . . . . . . . . . . . . . . . . . 97
+- p. 11: SETTING UP VULNERABLE API TARGETS 109
+- p. 12: Lab #4: Building a crAPI Collection and Discovering Excessive Data Exposure . . . . . . . . 174
+- p. 13: Lab #6: Fuzzing for Improper Assets Management Vulnerabilities . . . . . . . . . . . . . . . . . 219
+- p. 13: Automating Mass Assignment Attacks with Arjun and Burp Suite Intruder . . . . . . . . . . . 241
+- p. 14: PART IV: REAL-WORLD API HACKING 265
+- p. 14: Directory Brute-Forcing for the GraphQL Endpoint . . . . . . . . . . . . . . . . . . . . 290
+- p. 14: Reverse Engineering a GraphQL Collection Using Introspection . . . . . . . . . . . 296
+- p. 17: ago. But APIs have changed all that. They are the glue that has enabled col-
+- p. 17: run applications. Indeed, APIs have become so pervasive that an Akamai
+- p. 17: report from October 2018 found that API calls accounted for an astounding
+- p. 17: cybercriminals will take notice. To these criminals, APIs are highly fertile
+- p. 18: Consider the role APIs play in a typical application architecture. When
+- p. 18: you check your bank balance on a mobile app, an API behind the scenes
+- p. 18: for a loan, an API allows the bank to request your credit history. APIs sit in a
+- p. 18: a cybercriminal can compromise the API layer, they could get direct access
+- p. 18: While APIs have reached an unprecedented level of adoption, their
+- p. 18: to learn they use APIs throughout the organization. But, he quickly
+- p. 18: Unfortunately, lax API security practices too often result in unexpected
+- p. 18: API called Informed Visibility that allowed organizations and users to track
+- p. 18: packages. Appropriately, the API required users to validate their identity
+- p. 18: and authenticate in order to access any information via the API. However,
+- p. 18: ment) with APIs. But because one of its APIs required no authentication
+- p. 18: APIs to power its applications and connect to financial institutions. One of
+- p. 18: its APIs served a marketing function by showing recent, anonymized trans-
+- p. 18: mation, the API would return all transaction details when called directly.
+- p. 18: Malicious users harvested some 200 million transactions via this API.
+- p. 18: firm Gartner has predicted that API breaches will become the “most fre-
+- p. 18: cloud breaches are the result of API misconfigurations. The breaches also
+- p. 18: highlight the need for new approaches to securing APIs. The application
+- p. 18: and vulnerabilities. For example, automated scanners search the Common
+- p. 19: The problem is that API vulnerabilities are not common. Not only do
+- p. 19: they vary highly from one API to another, but they also tend to differ from
+- p. 19: Put more succinctly, these unique API logic flaws are effectively zero-
+- p. 19: day vulnerabilities, each of which belongs only to a specific API. Because
+- p. 19: penetration testers and bug bounty hunters interested in keeping APIs
+- p. 19: ment processes, API security is no longer strictly the domain of companies’
+- p. 19: When done properly, API security testing programs are continuous and
+- p. 19: and cover the API’s entire footprint. Finding API vulnerabilities takes new
+- p. 19: skills, new tools, and new approaches. The world needs Hacking APIs now
+- p. 19: Chief Strategy Officer, APIsec.ai Inc.
+- p. 21: Kevin Villanueva for volunteering me to lead the API penetration test-
+- p. 21: port. Also, the rest of the APIsec.ai team for their API security articles,
+- p. 21: webinars, and their awesome API security testing platform.
+- p. 21: providing me with beta access to crAPI. Additional thanks to the rest of the
+- p. 21: OWASP API Security Top 10 project team, Erez Yalon and Paulo Silva.
+- p. 21: content, and diligence to secure all the APIs.
+- p. 21: only providing one of the best API hacking suites out there but also for giv-
+- p. 21: ing me the opportunity to evangelize API security.
+- p. 21: Dolev Farhi for Damn GraphQL, his excellent conference talks, and all
+- p. 21: his help with the GraphQL sections of this book.
+- p. 21: Sean Yeoh and the rest of the great team at Assetnote for their API
+- p. 22: APIsecurity.io for providing the world some of the best API security
+- p. 22: API security content and participate in webinars.
+- p. 22: an API hacking madman and turning them into this book. Bill, thanks for
+- p. 23: tion programming interface (API) calls
+- p. 23: As you’ll see in this book, APIs are an excellent attack vector. After all,
+- p. 23: penetrate the perimeter of a network firewall, bypass an advanced antivirus,
+- p. 23: The goal of this book is to introduce you to web APIs and show you
+- p. 23: ing the security of REST APIs, the most common API format used in web
+- p. 24: applications, but will cover attacking GraphQL APIs as well. You’ll first
+- p. 24: learn tools and techniques for using APIs as intended. Next, you’ll probe
+- p. 24: them for vulnerabilities and learn how to exploit those vulnerabilities. You
+- p. 24: resource is no longer oil, but data.” APIs are digital pipelines that allow a
+- p. 24: Simply put, an API is a technology that enables communication
+- p. 24: very quickly. By relying on APIs, developers can design modular applica-
+- p. 24: APIs. Yet new technologies often get quite a head start before cybersecurity
+- p. 24: has a chance to ask any questions, and APIs have hugely expanded these
+- p. 24: ers can use them as a direct route to their data. In addition, many APIs
+- p. 24: Due to these reasons, Gartner predicted years ago that by 2022, APIs
+- p. 24: catching up to the speed of technological innovation. By attacking APIs,
+- p. 24: Attacking APIs is not as challenging as you may think. Once you under-
+- p. 24: late well to APIs. You can’t, for instance, throw a generic vulnerability scan
+- p. 24: at an API and expect useful results. I’ve often run these scans against vul-
+- p. 24: nerable APIs only to receive false negatives. When APIs are not tested prop-
+- p. 25: Part I: The State of Web API Security First, I will introduce you to
+- p. 25: the basic knowledge you need about web applications and the APIs that
+- p. 25: power them. You’ll learn about REST APIs, the main topic of this book,
+- p. 25: as well as the increasingly popular GraphQL API format. I will also cover
+- p. 25: the most common API-related vulnerabilities you can expect to find.
+- p. 25: Part II: Lab Setup In this section, you’ll build your API hacking sys-
+- p. 25: tem and develop an understanding of the tools in play, including Burp
+- p. 25: Part III: Attacking APIs In Part III, we’ll turn to the API hacking
+- p. 25: against APIs. Here the fun begins: you’ll discover APIs through the use
+- p. 25: such as injections. You’ll learn how to reverse engineer an API, bypass
+- p. 25: its authentication, and fuzz it for a variety of security issues.
+- p. 25: Part IV: Real-World API Hacking The final section of this book is
+- p. 25: dedicated to showing you how API weaknesses have been exploited
+- p. 25: situations. You’ll also walk through a sample attack against a GraphQL
+- p. 25: API, adapting many of the techniques introduced earlier in the book to
+- p. 25: cation is a restaurant. Like an API’s documentation, the menu describes
+- p. 25: and the chef, the waiter is like the API itself; you can make requests to the
+- p. 25: Crucially, an API user does not need to know how the chef prepares a
+- p. 26: As an API hacker, you’ll be probing every part of the metaphorical
+- p. 26: to bypass its “bouncer” or perhaps provide a stolen authentication token.
+- p. 26: Also, you’ll analyze the menu for ways to trick the API into giving you the
+- p. 26: handing you everything they have. You may even convince the API owner
+- p. 26: This book takes a holistic approach toward hacking APIs by guiding
+- p. 26: • Understanding how web applications work and the anatomy of web APIs
+- p. 26: • Mastering the top API vulnerabilities from a hacker’s perspective
+- p. 26: • Learning the most effective API hacking tools
+- p. 26: • Performing passive and active API reconnaissance to discover the exis-
+- p. 26: tence of APIs, find exposed secrets, and analyze API functionality
+- p. 26: • Interacting with APIs and testing them with the power of fuzzing
+- p. 26: • Performing a variety of attacks to exploit API vulnerabilities you
+- p. 26: advantage of the functions and features of any API. The better we emulate
+- p. 26: API provider. Together, I think we might even prevent the next big API data
+- p. 29: API security testing does not quite fit into
+- p. 29: many organizations’ API attack surfaces, API penetra-
+- p. 29: I will discuss the features of APIs that you should include in your test and
+- p. 29: plan to test all features of the target APIs, and help you avoid trouble.
+- p. 29: API penetration testing requires a well-developed scope, or an account
+- p. 29: Scoping an API security testing engagement comes down to a few factors:
+- p. 30: Before you attack APIs, it is supremely important that you receive a signed
+- p. 30: For an API penetration test, this contract can take the form of a signed
+- p. 30: coming to an agreement over which aspects of an API will be tested, deter-
+- p. 30: take into consideration the location where the client is hosting their APIs
+- p. 30: Threat modeling is the process used to map out the threats to an API provider.
+- p. 30: If you model an API penetration test based on a relevant threat, you’ll be
+- p. 30: an API will be those that align with actual threats to the API provider.
+- p. 30: A threat actor is the adversary or attacker of the API. The adversary can
+- p. 30: be anyone, from a member of the public who stumbles upon the API with
+- p. 30: rity of the API, it is ideal to map out the probable adversary as well as their
+- p. 31: given about your target. If the threat actor knows nothing about the API,
+- p. 31: reconnaissance. To address these distinctions, there are three basic pen-
+- p. 31: someone who may have stumbled across the target organization or its API.
+- p. 31: In a truly black box API engagement, the client would not disclose any
+- p. 31: you should have compiled a list of target IP addresses, URLs, and API end-
+- p. 31: time spent on reconnaissance and instead invest it in active testing. When
+- p. 31: well as access to API documentation and perhaps a basic user account. You
+- p. 31: might also be allowed to bypass certain network perimeter security controls.
+- p. 31: reconnaissance in comparison to other techniques. If you are interested in
+- p. 31: Preparing for API Security TesTing 5
+- p. 32: exploits against known vulnerabilities. The testing method that fits the
+- p. 32: One of the main goals of scoping an API security engagement is to discover
+- p. 32: find out how many unique API endpoints, methods, versions, features,
+- p. 32: interviews with the client, a review of the relevant API documentation, and
+- p. 32: access to API collections. Once you have the requested information, you
+- p. 32: unauthenticated users. The client may want to have you test different API
+- p. 33: API weaknesses, many of the detrimental vulnerabilities are discovered
+- p. 33: anism for web applications and APIs. A WAF is a device that controls the
+- p. 33: network traffic that reaches the API. If a WAF has been set up properly, you
+- p. 33: will find out quickly during testing when access to the API is lost after per-
+- p. 33: forming a simple scan. WAFs can be great at limiting unexpected requests
+- p. 33: and stopping an API security test in its tracks. An effective WAF will detect
+- p. 33: could learn the boundaries of the WAF, figure out how to bypass it, or use a
+
+## [[blackhat-graphql-1fe9b81c]]
+- p. 1: “A must-read for anyone in API security.”
+- p. 1: Black Hat GraphQL Attacking Next Generation APIs
+- p. 1: —Corey Ball, author of Hacking APIs
+- p. 1: Black Hat GraphQL is for anyone interested in  Uncover injection-based vulnerabilities in
+- p. 1: learning how to break and protect GraphQL servers, databases, and client browsers
+- p. 1: APIs with the aid of offensive security testing.
+- p. 1:  Exploit cross-site and server-side request
+- p. 1: to attack GraphQL APIs, develop hardening site WebSocket hijacking, to force a server
+- p. 1: controls, all with no prior exposure to GraphQL  Dissect vulnerability disclosure reports
+- p. 1: required. and review exploit code to reveal how
+- p. 1: CODE REPOSITORY: The Black Hat GraphQL code companies
+- p. 1: -Hat-GraphQL) includes code samples, exploits, This comprehensive resource provides
+- p. 1: queries, and coverage of newer resources. everything you need to defend GraphQL APIs
+- p. 1: between GraphQL and REST APIs, run your first About the Authors
+- p. 1:  Defend APIs against denial-of-service engineer at Palo Alto Networks and co-founder
+- p. 1: attacks and exploit insecure configurations of DEFCON Toronto. In his spare time he
+- p. 1: in GraphQL servers to gather information researches IoT vulnerabilities, participates in
+- p. 1: on hardened targets CTF challenges, and contributes to Exploit-DB.
+- p. 6: BLACK HAT GRAPHQL. Copyright © 2023 by Nick Aleks and Dolev Farhi.
+- p. 7: challenges, and contributing exploits to Exploit-DB.
+- p. 7: Corey Ball is the author of Hacking APIs (No Starch Press, 2022) and
+- p. 7: is the creator of the APIsec University, a free resource where anyone can
+- p. 7: learn about API security. In addition to a bachelor’s degree in English and
+- p. 11: SETTING UP A GRAPHQL SECURITY LAB 21
+- p. 11: Deploying the Damn Vulnerable GraphQL Application . . . . . . . . . . . . . . . . . . 29
+- p. 12: Scanning for Graphical Interfaces with EyeWitness . . . . . . . . . . . . . . . . . . . . 82
+- p. 13: Visualizing Introspection with GraphQL Voyager . . . . . . . . . . . . . . . . . . . . . . 92
+- p. 14: AUTHENTICATION AND AUTHORIZATION BYPASSES 163
+- p. 15: Automating Testing with BatchQL and GraphQL Cop . . . . . . . . . . . . . . . . . . 232
+- p. 15: DISCLOSED VULNERABILITIES AND EXPLOITS 247
+- p. 15: Array-Based Batching for Field Duplication (WPGraphQL) . . . . . . . . . . . . . . 253
+- p. 17: new query language and interpreter/parser combination (GraphQL being
+- p. 17: disclosure, and authentication/authorization bypasses have persisted in
+- p. 18: foundational approaches to do more than just hack GraphQL. The same
+- p. 18: If you’re reading this book to better understand GraphQL (or skim-
+- p. 18: little gotchas, and GraphQL-specific quirks and subtleties that would other-
+- p. 18: insights into the GraphQL ecosystem should help quickly elevate your work
+- p. 19: studying common technical problems and understanding GraphQL’s eco-
+- p. 21: through advice and guidance, and indirectly, by publishing GraphQL tools,
+- p. 21: he was hacking both GraphQL and Microsoft Word to get this book out
+- p. 21: We thank Corey Ball, author of Hacking APIs and the senior manager of
+- p. 22: GraphQL API for WordPress, who provided us with a tremendous amount
+- p. 22: of insightful information about the GraphQL ecosystem. Through his open
+- p. 22: GraphQL tools for the entire community’s benefit. You are not only great
+- p. 22: engineers, but also effectively trailblazing the GraphQL space and making
+- p. 22: GraphQL APIs safer to use for everyone in the community.
+- p. 23: and APIs. In more recent years, we’ve focused our
+- p. 23: A relatively new technology, the GraphQL query language has shifted
+- p. 23: the API paradigm, appealing to many companies looking to optimize per-
+- p. 23: a vast number of novel insights about GraphQL and its ecosystem. In fact,
+- p. 23: many of the vulnerabilities and exploits referenced in this book have never
+- p. 24: ourselves are the authors and maintainers of many of the GraphQL security
+- p. 24: tools, educational security platforms, and exploits highlighted herein.
+- p. 24: and the GraphQL ecosystem, we aim to improve this increasingly popular
+- p. 24: and educating engineers on how to attack and defend their GraphQL APIs.
+- p. 24: GraphQL APIs through applied offensive security testing. Whether you’re
+- p. 24: a penetration tester who has heard of GraphQL and want to develop your
+- p. 24: of how to defend GraphQL APIs, or a software engineer planning to build
+- p. 24: a GraphQL-backed application, you should gain a lot of useful informa-
+- p. 24: tion from this book. By learning how to attack GraphQL APIs, you can
+- p. 24: This book assumes that you have no prior exposure to GraphQL. If you
+- p. 24: lab, which we’ve curated specifically for GraphQL hacking. We highly rec-
+- p. 24: ters by running the various tools and querying GraphQL APIs. You’ll set up
+- p. 24: located at https://github.com/dolevf/Black-Hat-GraphQL. The repository includes
+- p. 24: artifacts sorted by chapter, such as GraphQL code samples, exploits, queries,
+- p. 24: how to hack and secure GraphQL APIs, new tools and research papers will
+- p. 24: The book lays out fundamental and advanced GraphQL concepts in the
+- p. 24: security professionals need for security testing of GraphQL APIs. By
+- p. 25: Chapter 4, you will have a solid understanding how GraphQL as a tech-
+- p. 25: practicing the art of GraphQL penetration testing, which will allow you to
+- p. 25: confidently test GraphQL APIs in your future security endeavors. At the
+- p. 25: end of this book in Appendix A you can find a GraphQL security testing
+- p. 25: about GraphQL in Appendix B. The following summary provides more
+- p. 25: In Chapter 1: A Primer on GraphQL, you’ll be introduced to the tech-
+- p. 25: nology and learn how it differs from other API protocols. In particular,
+- p. 25: we’ll demonstrate the differences between GraphQL and REST APIs by
+- p. 25: advantages and disadvantages, as well as clarify why GraphQL is slowly gain-
+- p. 25: ing market share in the API space. You’ll also run your first GraphQL query.
+- p. 25: Chapter 2: Setting Up a GraphQL Security Lab gathers some of the
+- p. 25: best GraphQL security tools available for your long-term penetration test-
+- p. 25: If you are new to GraphQL, play close attention to Chapter 3: The
+- p. 25: GraphQL Attack Surface. This chapter has two goals: introducing you to
+- p. 25: the GraphQL language and type system. After learning the type system,
+- p. 25: you’ll understand how GraphQL schemas work under the hood. And after
+- p. 25: ries against GraphQL APIs. We’ll also provide an overview of the common
+- p. 25: weaknesses in GraphQL in preparation for Chapters 4 through 9.
+- p. 25: In Chapter 4: Reconnaissance, we’ll use data collection and target
+- p. 25: will allow you to make educated guesses about a GraphQL target’s infra-
+- p. 25: one of the most prevalent vulnerabilities in GraphQL, and this chapter cov-
+- p. 25: You’ll also learn about how GraphQL APIs can be built with more resiliency
+- p. 25: in mind, using defensive GraphQL security controls.
+- p. 25: Disclosure, certain GraphQL design decisions can lead to information dis-
+- p. 25: GraphQL features to reconstruct the schema on a hardened target. We’ll
+- p. 25: also take advantage of error and debugging mechanisms in GraphQL serv-
+- p. 25: in any application or API that hosts valuable data, yet these aren’t always
+- p. 26: Bypasses will teach you how to test for bypasses in these two important con-
+- p. 26: cover several injection types and how they can be introduced in GraphQL
+- p. 26: GraphQL subscriptions. By using several HTTP methods to send GraphQL
+- p. 26: In Chapter 10: Disclosed Vulnerabilities and Exploits, we’ll explore
+- p. 26: more than a dozen vulnerability-disclosure reports and review exploit
+- p. 26: code that impacts GraphQL APIs. We’ll dissect these artifacts to reinforce
+- p. 26: impacted large companies that run GraphQL APIs in production.
+- p. 26: GraphQL applications. Remember that the content of this book is intended
+- p. 27: of GraphQL, including why it exists and
+- p. 27: explore how it differs from RESTful APIs and send
+- p. 27: GraphQL is an open source data query and manipulation language for
+- p. 27: application programming interfaces (APIs). APIs allow two applications to
+- p. 27: acts as the API client, or consumer. This consumer interacts with an applica-
+- p. 27: tion server, via the application’s API, to read or alter certain information on
+- p. 28: the server. API consumers aren’t always browsers; machines, such as other
+- p. 28: servers on the network, can be GraphQL API consumers too.
+- p. 28: Unlike other API formats, GraphQL allows an API consumer to request
+- p. 28: sary information. Contrast this approach with traditional REST API archi-
+- p. 28: the REST and GraphQL API response structures in “GraphQL APIs vs.
+- p. 28: REST APIs” on page 9 to illustrate the differences between the two.
+- p. 28: From a security perspective, GraphQL’s design provides an advantage.
+- p. 28: Because GraphQL doesn’t return data that the client doesn’t explicitly
+- p. 28: ing under heavy regulatory rules. However, as you’ll soon see, GraphQL
+- p. 28: also has security weaknesses that we, as hackers, can exploit.
+- p. 28: Facebook developed GraphQL in 2012 and used it for a few years in its pro-
+- p. 28: That year, Facebook also developed and released the GraphQL specifica-
+- p. 28: tion and a reference implementation named GraphQL.js (https://github.com/
+- p. 28: GraphQL is now maintained by the GraphQL Foundation (https://
+- p. 28: graphql.org/foundation/), an organization founded by global technology
+- p. 28: GraphQL maintainers, manages policies of the GraphQL trademark,
+- p. 28: Just about any application and device can use GraphQL. Companies
+- p. 28: the same time, which would otherwise require making many REST API
+- p. 28: calls. Using GraphQL could reduce bandwidth usage and improve client
+- p. 28: the data, this wouldn’t be an optimized process. GraphQL allows the fetch-
+- p. 28: and GitLab, use GraphQL, serving hundreds of millions of customers on
+- p. 29: In 2015, Facebook publicly released the GraphQL specification document,
+- p. 29: implementations of GraphQL must adhere. This specification is a reference
+- p. 29: for implementing GraphQL for multiple languages, similar to request for
+- p. 29: As such, we, as hackers, can use it to better understand how GraphQL is
+- p. 29: A typical GraphQL implementation incorporates a few components you
+- p. 29: Figure 1-1: Core GraphQL components
+- p. 29: When a client wants to communicate with a GraphQL server (for
+- p. 29: a GraphQL query. You might already be noticing that this doesn’t follow
+- p. 29: against the application’s GraphQL schema. If the query is deemed valid,
+- p. 30: The GraphQL schema represents the type of data a client can query for.
+- p. 30: Object types are the most basic component of a GraphQL schema; they
+- p. 30: represent a piece of data you can fetch from the service running GraphQL.
+- p. 30: to each other. However, GraphQL allows us to form links between objects in
+- p. 31: In the User and Location example, imagine that clients of our API need the
+- p. 31: take down a system. When two-way link relationships exist, API developers
+- p. 32: Once an API’s schema is defined, clients can fetch information from it by
+- p. 32: using specially crafted queries written in the declarative GraphQL query
+- p. 32: language. In GraphQL, all queries begin with a definition of the opera-
+- p. 32: and GraphQL servers. They allow a GraphQL server to push data to the
+- p. 32: These three operations are the starting point for each GraphQL query
+- p. 33: Listing 1-4 is an example query that a client might send to a GraphQL
+- p. 33: As you can see, GraphQL queries are pretty easy to read: all this
+- p. 33: Now, what happens when a GraphQL server receives a query? Well, it makes
+- p. 34: GraphQL is strongly typed, which means that when clients use the wrong
+- p. 34: teams to rely on the API to perform the type validation. We’ll discuss these
+- p. 34: resolver functions are the GraphQL component responsible for query reso-
+- p. 34: over REST APIs. In fact, GraphQL APIs commonly make REST calls behind
+- p. 34: using REST to GraphQL. Sometimes GraphQL is used as a consolidator
+- p. 34: API layer to multiple backend REST services that remain invisible to the
+- p. 34: In summary, you can think of GraphQL as a query layer that sits
+
+## [[black-hat-bash-0c39b1c3]]
+- p. 4: Chapter 5: Vulnerability Scanning and Fuzzing
+- p. 4: Chapter 11: Network Probing and Lateral Movement
+- p. 4: Chapter 13: Exfiltration and Counter-Forensics
+- p. 11: a team of penetration testers and have an exploit code repository,
+- p. 20: addresses to scan (or a list of emails to send a phishing email to).
+- p. 26: For example, imagine you develop an exploit and send it to a few
+- p. 41: • Iterating through a list of hostnames, for example to run a specific exploit
+- p. 41: example, checking whether a host is online, and if so, performing a brute force
+- p. 41: continuously perform a port scan on a network and pick up any new hosts that join
+- p. 53: For example, imagine that you often use Nmap with special parameters to
+- p. 53: scan for all 65,535 ports on a given IP address:
+- p. 53: nmap -vv -T4 -p- -sV --max-retries 5 localhost
+- p. 53: $ alias quicknmap="nmap -vv -T4 -p- -sV --max-retries 5 localhost"
+- p. 54: Starting Nmap 7.80 ( https://nmap.org ) at 2023-02-21 22:32 EST
+- p. 54: These lines define a few custom variables and save our aliased Nmap command:
+- p. 54: alias quicknmap="nmap -vv -T4 -p- -sV --max-retries 5 example.local"
+- p. 67: Wappalyzer is a website reconnaissance tool used to identify the technology
+- p. 67: RustScan is a lightning-fast port scanner written in the Rust programming
+- p. 67: language by Autumn (Bee) Skerritt (@bee_sec_san). Some claim that RustScan
+- p. 67: can scan all 65,000 ports on a target in seconds!
+- p. 68: Next, clone the RustScan repository to your tools directory:
+- p. 68: Then move into the RustScan directory and build the tool using cargo:
+- p. 68: Once RustScan has been built, run a quick test to ensure that it’s working
+- p. 68: properly. The RustScan binary is located in the target/release directory. Try
+- p. 68: Fast Port Scanner built in Rust. WARNING Do not use this program against
+- p. 68: Nuclei is a vulnerability scanner written in the Go programming language by
+- p. 68: which are extremely popular these days). Nuclei works by sending requests to
+- p. 68: thousands of Nuclei templates supporting several protocols, including TCP, DNS,
+- p. 68: Install Nuclei by running the following installation command:
+- p. 68: To verify that Nuclei is correctly installed, run a help command:
+- p. 68: Nuclei is a fast, template based vulnerability scanner focusing
+- p. 68: -u, -target string[] target URLs/hosts to scan
+- p. 69: The first time you run Nuclei, it will automatically create a nuclei-templates
+- p. 69: Dirsearch is a multi-threaded web directory path-enumeration tool used to
+- p. 69: The Linux Exploit Suggester 2 is a next-generation tool based on the original
+- p. 69: Linux Exploit Suggester. Written in Perl and developed by Jonathan Donas, it
+- p. 69: includes several exploits you can use to potentially compromise a local Linux
+- p. 69: To verify Linux Exploit Suggester 2 is installed correctly, run a help
+- p. 70: # Local Linux Enumeration & Privilege Escalation Script #
+- p. 70: Running with no options = limited scans/no output file
+- p. 71: $ echo "alias rustscan='/home/kali/tools/RustScan/target/release/rustscan'" >> ~/.bashrc
+- p. 71: Wappalyzer, RustScan, and Gitjacker now have aliases.
+- p. 71: these tools to perform reconnaissance and gather information about remote targets.
+- p. 72: reconnaissance on targets by writing bash scripts to run
+- p. 73: When working with tools such as port and vulnerability scanners,
+- p. 73: you’ll often need to run the same type of scan against all hosts in
+- p. 75: look for wordlists on the internet, you could use the following
+- p. 76: snippets (also called gists) containing the word subdomain wordlist.
+- p. 79: Nmap has a special option called -sn that performs a ping
+- p. 79: sweep (and disables port scanning). A ping sweep is a simple
+- p. 79: technique has proved valuable. The ping sweep in Nmap will
+- p. 79: essentially make Nmap send Internet Control Message Protocol
+- p. 80: $ nmap -sn 172.16.10.0/24 | grep "Nmap scan" | awk -F'report for ' '{print $2}'
+- p. 80: Listing 4-8 Parsing Nmap’s ping scan output with grep and awk
+- p. 80: Using Nmap’s built-in ping sweep scan may be more useful than
+- p. 80: drop an Nmap binary on more than one type of operating system,
+- p. 80: section, we’ll highlight the use of arp-scan as a way to find hosts
+- p. 80: The arp-scan utility sends Address Resolution Protocol
+- p. 80: on a local network and can’t be used to perform a remote scan over
+- p. 80: Note that arp-scan requires root privileges to run; this is
+- p. 80: executing the arp-scan command and passing a single IP address
+- p. 81: $ sudo arp-scan 172.16.10.10 -I br_public
+- p. 81: We also need to tell arp-scan which network interface to send
+- p. 81: To scan entire networks, you can pass arp-scan a CIDR
+- p. 81: range, such as /24. For example, the following command scans all IP
+- p. 81: $ sudo arp-scan 172.16.10.0/24 -I br_public
+- p. 81: $ sudo arp-scan -f 172-16-10-hosts.txt -I br_public
+- p. 81: The output generated by arp-scan should look like the
+- p. 81: address. In this scan, the tool identified four hosts on the network
+- p. 81: discovers new assets. Listing 4-9 runs a continuous scan to identify
+- p. 82: echo "Performing an ARP scan against ${NETWORK}..."
+- p. 82: 2 sudo arp-scan -x -I ${INTERFACE} ${NETWORK} | while read -r line; do
+- p. 82: Listing 4-9 Receiving notifications about new arp-scan discoveries using sendmail
+- p. 82: arp-scan using the options -x to display a plain output (so it’s
+- p. 82: the output of arp-scan. We use awk to parse each IP address in
+- p. 82: variable (which represents a host discovered by arp-scan) exists
+- p. 83: carry out activities such as data exfiltration so that their traffic
+- p. 84: scanner to find their open ports and the services they’re running.
+- p. 84: Let’s explore two port scanning tools: Nmap and RustScan.
+- p. 84: Nmap allow us to perform port scanning against single targets or
+- p. 84: multiple targets at once. In the following example, we use Nmap to
+- p. 84: perform a port scan of the domain scanme.nmap.org.
+- p. 84: Nmap also accepts IP addresses, like so:
+- p. 84: to Nmap, it will use the following default settings:
+- p. 84: Nmap will use a SYN scan to discover open ports on a target. Also
+- p. 84: called a half-open scan, a SYN scan involves sending a SYN packet
+- p. 84: and waiting for a response. Nmap won’t complete the full TCP hand-
+- p. 84: Nmap will scan only popular ports known to be frequently in use,
+- p. 84: such as TCP ports 21, 22, 80 and 443. It won’t scan the entire port
+- p. 84: Nmap will scan only TCP ports, not UDP ports.
+- p. 84: Nmap allows you to scan multiple targets by passing them on the
+- p. 84: command line. In the following example, we scan both localhost and
+- p. 84: Listing 4-10 Passing multiple addresses to Nmap
+- p. 84: Nmap can also read targets from a given file using its -iL
+- p. 84: 172-16-10-hosts.txt file with Nmap to scan multiple targets.
+- p. 85: This scan may take some time to complete due to the use of the -
+- p. 85: can see, Nmap returns a few IP addresses and their open ports,
+- p. 85: $ nmap -sV -iL 172-16-10-host.txt | grep open
+- p. 85: Nmap was able to identify services on several open TCP ports,
+- p. 85: Nmap also allows you to pass the --open flag on the command
+- p. 85: $ nmap -sV -iL 172-16-10-host.txt --open
+- p. 85: NOTE Kali’s own interface IP (172.16.10.1) will be captured in this port scan,
+- p. 85: since it is part of the hosts file. You can use Nmap’s --exclude op-
+- p. 85: tion to exclude this specific IP when performing a network-wide scan:
+- p. 86: Use man nmap to find out more about Nmap’s scanning and
+- p. 86: Performing Rapid Scans with RustScan
+- p. 86: RustScan is becoming more popular in the bug bounty and
+- p. 86: following command runs a port scan using the rustscan
+- p. 86: RustScan’s output is fairly easy to parse with bash. Lines starting
+- p. 86: When you run RustScan, you may notice that the initial output
+- p. 86: directly related to the scan results. Use the -g (greppable) option to
+- p. 86: show only the scanning information. The following command uses
+- p. 86: the greppable output mode to scan 172.16.10.0/24 on the first 1024
+- p. 86: $ rustscan -g -a 172.16.10.0/24 -r 0-1024
+- p. 86: $ rustscan -g -a 172.16.10.0/24 -r 0-1024 | awk -F'->' '{print $1,$2}'
+- p. 86: $ rustscan -g -a 172.16.10.0/24 -r 0-1024 | awk -F'->' '{print $1,$2}' | tr -d '[]'
+- p. 87: NOTE Remember that running port scanners in aggressive modes increases the
+- p. 87: (EDR) system. Also, if you scan at a rapid pace, some devices could
+- p. 87: Exercise 4: Organizing Scan Results by Port Number
+- p. 87: It’s often useful to sort your scan results into categories of
+- p. 87: software found. In this exercise, we’ll organize our scan results
+- p. 87: 1. Runs Nmap against hosts in a file.
+- p. 87: 1 NMAP_RESULT=$(nmap -iL ${HOSTS_FILE} --open | grep "Nmap scan report\|tcp open")
+- p. 87: # read the nmap output line by line
+- p. 87: Listing 4-11 Organizing scan results by port using bash
+- p. 88: We assign the output of the nmap command to the variable
+- p. 88: NMAP_RESULTS 1. In this command, we also filter for specific
+- p. 88: lines containing the words Nmap scan report or tcp open.
+- p. 88: These lines are part of Nmap’s standard port scan output and they
+- p. 88: We use a while loop to read NMAP_RESULT line by line,
+- p. 88: Hat-Bash/blob/master/ch04/nmap_to_portfiles.sh. Save it to a file
+- p. 88: named nmap_to_portfiles.sh and run it. Next, run ls -l to see what
+- p. 88: As you’ve seen, Nmap’s standard output format is a little
+- p. 88: Nmap provides additional output format options we can use to parse
+- p. 88: $ nmap -iL 172-16-10-hosts.txt --open -oG -
+- p. 88: Listing 4-12 Nmap's greppable output
+- p. 89: same line. Nmap has additional format output options such as the -
+- p. 89: output of Nmap look like the following:
+- p. 89: $ nmap -iL 172-160-10-hosts.txt --open -oX -
+- p. 89: Once we find an open port, we pass this information to Nmap to
+- p. 89: nmap -sV -p "${port}" "${host}" >> "${LOG_FILE}" 1
+- p. 89: 3 port_scan=$("${RUST_SCAN_BIN}" -a "${IP_ADDRESS}" -g -p "${WATCHED_PORT}")
+- p. 89: echo "Wrote port scan data to ${LOG_FILE}"
+- p. 90: At 2 we start an infinite while loop. The loop runs the RustScan
+- p. 90: binary (which is assigned to the variable RUST_SCAN_BIN),
+- p. 90: receive on the command line 3. We also pass RustScan the -g
+- p. 90: port option (-p) to scan a particular port, which we also receive on
+- p. 90: We check the result of the scan 4. If the result is not empty, we
+- p. 90: 5, which does an Nmap service-version discovery scan (-sV) and
+- p. 90: writes the result to the log file watchdog.log 1. If the port scan fails,
+- p. 90: Wrote port scan data to watchdog.log
+- p. 90: You can view the results of the scan by opening the
+- p. 91: (https://censys.io) perform internet-wide scans to map the internet,
+- p. 93: headers without fetching the entire response payload from the web
+- p. 95: Nmap is more than just a port scanner; we can transform it into a
+- p. 95: full-fledged vulnerability assessment tool. The Nmap Scripting
+- p. 95: language to extend Nmap’s capabilities. Nmap comes pre-installed
+- p. 95: The banner.nse script in the /usr/share/nmap/scripts folder
+- p. 95: $ nmap -sV --script=banner.nse -iL 172-16-10-hosts.txt
+- p. 96: $ nmap -sV --script=banner.nse -iL 172-16-10-hosts.txt | grep "|_banner\||http-server-header"
+
+## [[black-hat-go-21619c7f]]
+- p. 2: 2. Bypassing Firewalls with Port Forwarding
+- p. 2: 4. Parsing Document Metadata with Bing Scraping
+- p. 3: 3. Keylogging with the WebSocket API
+- p. 3: 5. Port Scanning Through SYN-flood Protections
+- p. 3: 18. 9 WRITING AND PORTING EXPLOIT CODE
+- p. 4: 1. The Windows API’s OpenProcess() Function
+- p. 4: 3. Writing Image Byte Data to Implant a Payload
+- p. 4: 2. Defining and Building the gRPC API
+- p. 20: Chapter 2: TCP, Scanners, and Proxies
+- p. 20: Chapter 9: Writing and Porting Exploit Code
+- p. 21: Bypassing Firewalls with Port Forwarding
+- p. 22: Reviewing the Steps for Building an API Client
+- p. 22: Parsing Document Metadata with Bing Scraping
+- p. 24: Port Scanning Through SYN-flood Protections
+- p. 26: The Windows API’s OpenProcess() Function
+- p. 26: Obtaining a Process Token with the OpenProcess Windows API
+- p. 26: Manipulating Memory with the VirtualAllocEx Windows API
+- p. 26: Writing to Memory with the WriteProcessMemory Windows API
+- p. 26: Finding LoadLibraryA with the GetProcessAddress Windows API
+- p. 26: Verifying Injection with the WaitforSingleObject Windows API
+- p. 26: Cleaning Up with the VirtualFreeEx Windows API
+- p. 26: Creating a Message Box Using C and the Windows API
+- p. 27: Writing Image Byte Data to Implant a Payload
+- p. 27: Installing Protocol Buffers for Defining a gRPC API
+- p. 28: range of multilingual modules, extensions, and payloads.
+- p. 29: write a ridiculous fast network scanner, evil HTTP proxy, or
+- p. 29: goals include bypassing security controls and evading
+- p. 35: filesystems and databases, port exploits from other languages
+- p. 35: libraries, interact with the Windows API, and much, much
+- p. 39: data pilfering, packet sniffing, and exploit development.
+- p. 40: you through creating a simple TCP port scanner that scans a
+- p. 40: improve the efficiency and speed of this port scanner by
+- p. 40: solution. Lastly, we’ll re-create Netcat’s “gaping security
+- p. 42: common technique used during post-exploitation. We’ll also
+- p. 42: process those packets. We will then develop a port scanner
+- p. 42: that can scan reliably through various protection mechanisms,
+- p. 42: scans to show excessive false positives.
+- p. 42: This chapter focuses almost solely on creating exploits. It
+- p. 42: begins with creating a fuzzer to discover different types of
+- p. 42: to port existing exploits to Go from other languages. This
+- p. 42: discussion includes a port of a Java deserialization exploit and
+- p. 42: the Dirty COW privilege escalation exploit. We conclude the
+- p. 43: methods of interacting with the Windows native API, explore
+- p. 44: information, creating obfuscated C2 messages, and bypassing
+- p. 64: capitalization to determine scope: types and fields that begin
+- p. 64: with a capital letter are exported and accessible outside the
+- p. 78: and bypass egress restrictions through port forwarding. In this
+- p. 78: concurrent, properly throttled port scanner; create a TCP proxy
+- p. 82: You can use port forwarding to exploit several restrictive
+- p. 82: ports is by implementing a port scanner. By writing one, you’ll
+- p. 83: Once you’ve written a basic scanner, you’ll write one that’s
+- p. 83: faster. A port scanner may scan several ports by using a single
+- p. 83: consuming when your goal is to scan all 65,535 ports. You’ll
+- p. 83: scanner more suitable for larger port-scanning tasks.
+- p. 83: The first step in creating the port scanner is understanding how
+- p. 83: this example, you’ll be connecting to and scanning
+- p. 83: scanme.nmap.org, a service run by the Nmap project.1 To do
+- p. 83: scanme.nmap.org on TCP port 80, you would supply
+- p. 84: scanner, albeit an impolite one. Listing 2-1 shows how to put it
+- p. 84: _, err := net.Dial("tcp", "scanme.nmap.org:80")
+- p. 84: Listing 2-1: A basic port scanner that scans only one port (/ch-2/dial/main.go)
+- p. 84: Scanning a single port at a time isn’t useful, and it certainly
+- p. 84: testing, let’s scan ports 1 to 1024. To do this, you can use a for
+- p. 85: Listing 2-2: Scanning 1024 ports of scanme.nmap.org (/ch-2/tcp-scanner-
+- p. 86: Listing 2-3: The completed port scanner (/ch-2/tcp-scanner-slow/main.go)
+- p. 86: Compile and execute this code to conduct a light scan
+- p. 86: The previous scanner scanned multiple ports in a single go
+- p. 86: (pun intended). But your goal now is to scan multiple ports
+- p. 86: concurrently, which will make your port scanner faster. To do
+- p. 87: The most naive way to create a port scanner that runs
+- p. 87: consequences, create a new file called scan-too-fast.go with
+- p. 87: Listing 2-4: A scanner that works too fast (/ch-2/tcp-scanner-too-fast/main.go)
+- p. 87: ./tcp-scanner-too-fast 0.00s user 0.00s system 90% cpu 0.004 total
+- p. 88: Listing 2-5 shows the same port-scanning program with a
+- p. 89: Listing 2-5: A synchronized scanner that uses WaitGroup (/ch-2/tcp-scanner-wg-too-
+- p. 89: goroutine to scan a port ❷, and a deferred call to wg.Done()
+- p. 89: see inconsistent results. Scanning an excessive number of
+- p. 91: Listing 2-7: A basic worker pool (/ch-2/tcp-sync-scanner/main.go)
+- p. 92: To complete the port scanner, you could plug in your code
+- p. 92: scanner wouldn’t check them in order. To solve this problem,
+- p. 92: scan back to your main thread to order the ports before
+- p. 92: scan 1024 ports, you’re sending on the worker channel 1024
+- p. 94: Listing 2-8: Port scanning with multiple channels (/ch-2/tcp-scanner-final/main.go)
+- p. 94: There you have it: a highly efficient port scanner. Take
+- p. 95: scanned, and this isn’t necessary. The alternative requires code
+- p. 95: Second, you might want your scanner to be able to parse port-
+- p. 95: passed to Nmap. If you want to see an implementation of this,
+- p. 95: 2/scanner-port-format/. We’ll leave this as an exercise for you
+- p. 96: “gaping security hole” for remote command execution.
+- p. 100: port scanner. Based on Go’s documentation for the data type,
+- p. 106: leverage a system to bypass network segmentation.
+- p. 109: interesting functionality—specifically, its gaping security hole.
+- p. 109: this is referred to as a gaping security hole. Netcat allows you
+- p. 114: gaping security hole from the perspective of a TCP listener
+- p. 115: consume the APIs of Shodan, Bing, and Metasploit and will
+- p. 116: the data. But the endpoint can serve arbitrary data types. APIs
+- p. 119: these verbs mostly to interact with RESTful APIs, which
+- p. 122: example, imagine you’re interacting with an API that
+- p. 124: assist you in building tools to interact with third-party APIs for
+- p. 124: reconnaissance. Typically, this starts with passive techniques
+- p. 125: facilitates passive reconnaissance by maintaining a searchable
+- p. 125: Think of Shodan as a repository of scan data, even if it does
+- p. 125: interacts with the Shodan API, parsing the results and
+- p. 125: API key, which you get after you register on Shodan’s
+- p. 125: Now, get your API key from the site and set it as an
+- p. 125: only if you save your API key as the variable SHODAN_API_KEY.
+- p. 126: the demonstrated code to implement other API calls as you
+- p. 126: The client you build will implement two API calls: one to
+- p. 126: Luckily, the Shodan API is straightforward, producing
+- p. 126: starting point for learning API interaction. Here is a high-level
+- p. 126: 1. Review the service’s API documentation.
+- p. 126: 5. Build the client that interacts with the API consumer functions and types.
+- p. 126: Start by quickly reviewing the API documentation on
+- p. 126: When building an API client, you should structure it so that
+- p. 127: a consumer of the API you’ll build; in this case, you use it
+- p. 127: The files in the shodan directory—api.go, host.go, and
+- p. 127: When you perused the Shodan API documentation, you may
+- p. 127: your API key. Although you certainly can pass that value
+- p. 127: hardcoding or handling the base URL (https://api.shodan.io/).
+- p. 127: For example, defining your API functions, as in the following
+- p. 128: func APIInfo(token, url string) { --snip-- }
+- p. 128: ❶ const BaseURL = "https://api.shodan.io"
+- p. 128: ❸ func New(apiKey string) *Client {
+- p. 128: its API, you’ll have to make the change at only this one
+- p. 128: define a Client struct, used for maintaining your API token
+- p. 128: function, taking the API token as input and creating and
+- p. 128: creating your API code as arbitrary functions, you create them
+- p. 129: function parameters. You can change your API function calls,
+- p. 129: func (s *Client) APIInfo() { --snip-- }
+- p. 129: the API key through s.apiKey and retrieve the URL through
+- p. 129: API documentation, the call to query your subscription plan
+- p. 129: First, in api.go, you’ll need to define a type that can be
+- p. 130: body. In this example, name the type APIInfo:
+- p. 130: the response into your APIInfo struct:
+- p. 130: func (s *Client) APIInfo() (*APIInfo, error) {
+- p. 130: res, err := http.Get(fmt.Sprintf("%s/api-info?key=%s", BaseURL, s.apiKey))❶
+- p. 131: HTTP GET request to the /api-info resource ❶. The full URL is
+- p. 131: built using the BaseURL global constant and s.apiKey. You then
+- p. 131: decode the response into your APIInfo struct ❷ and return it to
+- p. 131: out a second, more useful API call—the host search—which
+- p. 131: the API documentation, is as follows:
+- p. 132: Compared to the initial API call you implemented, this one
+- p. 134: function in Listing 3-10, which is similar to the APIInfo()
+- p. 134: The flow and logic is exactly like the APIInfo() method,
+- p. 134: implementation for each API service you want to interact with.
+- p. 135: APIInfo() and HostSearch() methods, as in Listing 3-11.
+- p. 135: "Query Credits: %d\nScan Credits: %d\n\n",
+- p. 135: Start by reading your API key from the SHODAN_API_KEY
+- p. 135: new Client struct ❷, s, subsequently using it to call your APIInfo()
+- p. 136: $ SHODAN_API_KEY=YOUR-KEY go run main.go tomcat
+- p. 136: displaying Shodan data with your new API. You now have a
+- p. 136: adversarial techniques, including reconnaissance, exploitation,
+- p. 136: command and control, persistence, lateral network movement,
+- p. 136: payload creation and delivery, privilege escalation, and more.
+- p. 137: call (RPC) API to allow remote interaction with its
+- p. 137: did for the Shodan API key used to interact with Shodan in
+- p. 138: Because the details on exploitation and Metasploit use are
+- p. 138: Meterpreter payload for advanced post-exploitation activities.
+- p. 138: review the Metasploit API, lay out the project in library
+- p. 138: format, define data types, implement client API functions, and,
+

@@ -1,0 +1,18 @@
+# [FIX-ADV7IA-VM-02] Persistent reverse tunnel from the vmtst GNOME Boxes guest to the host loopback SSH entrypoint.
+[Unit]
+Description=Maintain the ADV7ia vmtst reverse SSH tunnel to the host
+After=network-online.target sshd.service
+Wants=network-online.target
+ConditionPathExists=/home/vmtst/.ssh/vmtst_tunnel_ed25519
+
+[Service]
+Type=simple
+User=vmtst
+Group=vmtst
+Environment=HOME=/home/vmtst
+ExecStart=/usr/bin/ssh -NT -i /home/vmtst/.ssh/vmtst_tunnel_ed25519 -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/home/vmtst/.ssh/known_hosts -R 127.0.0.1:2222:127.0.0.1:22 aops@10.0.2.2
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
