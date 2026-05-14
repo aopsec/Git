@@ -4,6 +4,46 @@ All notable changes to bbWebScan are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [SemVer](https://semver.org/).
 
+## [0.5.5] — 2026-05-14
+
+### Added
+- `jwt_tool` stage for JWT analysis (`bbwebscan/stages/jwt_tool_stage.py`).
+  Opt-in via `--jwt-analysis`. Consumes Bearer tokens from `config.auth.headers`
+  and (when Scrapy ran) JWT-shaped candidates harvested from response bodies
+  and `Set-Cookie`. Emits `kind="jwt-issue"` findings (alg=none → high,
+  weak-secret cracked → critical, kid injection → high).
+- `sqlmap` stage with two modes (`bbwebscan/stages/sqlmap_stage.py`):
+  `--sqlmap-mode {off,smooth,aggressive}` (default `off`). `smooth` uses
+  `--batch --random-agent --level=1 --risk=1` with per-URL timeout cap;
+  `aggressive` uses `--level=5 --risk=3 --tamper=between,space2comment`
+  and requires `--ack-authorized` (mirrors amass active/intel gate).
+  Consumes parameterized URLs surfaced by the `arjun`/params stage.
+  Emits `kind="sql-injection"` findings.
+- `--sqlmap-timeout` CLI flag (default `600`).
+
+### Changed
+- **Scrapy stage cyberref attestation promoted from `PENDING` → certified.**
+  Marker at `bbwebscan/stages/scrapy_stage.py` updated; CyberPDF vault now
+  contains the Scrapy citation.
+- Vendored secrets-patterns ruleset (`bbwebscan/data/secrets_patterns.yml`)
+  refreshed from upstream `mazen160/secrets-patterns-db`. AGPL- /
+  trufflehog-derived rules continue to be excluded. See `NOTICE` for the
+  pinned upstream commit.
+- `bbwebscan/pipeline.py` refactored: per-stage helpers `_run_amass`,
+  `_run_httpx`, `_run_katana`, `_run_scrapy`, `_run_discovery`,
+  `_run_kiterunner`, `_run_arjun`, `_run_jwt_tool`, `_run_sqlmap`,
+  `_run_nuclei`. `execute_scan` is now a flat sequence of gated helper
+  calls instead of a single 240-line if-chain. No registry abstraction —
+  ordering remains explicit and grep-able.
+
+### Notes
+- 0.5.4 deliberately skipped (no shipped 0.5.4 release exists). Version
+  jumps from 0.5.3 → 0.5.5.
+- Pipeline stage order is now: amass → httpx → katana → scrapy →
+  discovery → kiterunner → arjun → jwt_tool → sqlmap → nuclei.
+- Scrapy community plugin/recon-tool review captured in this release
+  notes only; no plugins vendored in 0.5.5.
+
 ## [0.5.3] — 2026-05-14
 
 ### Fixed
