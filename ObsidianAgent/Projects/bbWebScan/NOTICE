@@ -1,0 +1,78 @@
+bbWebScan — Third-Party Attributions
+=====================================
+
+This project distributes and links code/data from the following third-party
+sources. Each is reproduced under its respective license; obligations are
+discharged here per the requirements of each license.
+
+
+1. secrets-patterns-db
+----------------------
+File:       bbwebscan/data/secrets_patterns.yml
+Upstream:   https://github.com/mazen160/secrets-patterns-db
+Author:     Mazin Ahmed
+License:    Creative Commons Attribution 4.0 International (CC-BY-4.0)
+            https://creativecommons.org/licenses/by/4.0/
+Snapshot:   2026-05-14 (curated subset)
+
+The shipped YAML is a *curated subset* of the upstream `db/rules-stable.yml`,
+adapted to the bbWebScan rule schema. AGPL-licensed rules derived from
+TruffleHog have been excluded to avoid copyleft contamination of bbWebScan's
+license. Each rule retains semantic equivalence to its upstream form.
+
+Per CC-BY-4.0 §3(a), this attribution is provided. No endorsement by the
+upstream author is implied.
+
+
+2. scrapy-playwright (optional [js] extra)
+------------------------------------------
+Pulled when:  pip install bbwebscan[js]
+Upstream:     https://github.com/scrapy-plugins/scrapy-playwright
+License:      BSD 3-Clause "New" or "Revised" License
+
+Copyright (c) Scrapinghub Ltd. and contributors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in the
+     documentation and/or other materials provided with the distribution.
+  3. Neither the name of Scrapinghub nor the names of its contributors may
+     be used to endorse or promote products derived from this software
+     without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+3. scrapy-scraper (prior art / design inspiration only)
+-------------------------------------------------------
+Upstream:  https://github.com/ivan-sincek/scrapy-scraper
+License:   MIT
+
+Acknowledged as design inspiration for the JavaScript file beautification
+and link-extraction patterns referenced in
+`bbwebscan/stages/scrapy/bbspider.py`. No code from scrapy-scraper is
+re-used in bbWebScan; the relevant logic was independently re-implemented.
+
+This acknowledgement is courtesy attribution, not required by the MIT
+license.
+
+
+4. Scrapy (runtime dependency)
+------------------------------
+Pulled when:  pip install bbwebscan  (required runtime dep)
+Upstream:     https://github.com/scrapy/scrapy
+License:      BSD 3-Clause
+
+Full license text: https://github.com/scrapy/scrapy/blob/master/LICENSE

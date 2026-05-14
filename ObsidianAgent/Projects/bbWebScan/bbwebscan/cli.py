@@ -73,6 +73,26 @@ def _add_scan_args(parser: argparse.ArgumentParser) -> None:
         "--api-discovery", dest="api_discovery", action="store_true",
         help="Run kiterunner alongside ffuf in the discovery stage for API-shaped targets",
     )
+    parser.add_argument(
+        "--scrapy-deep", dest="scrapy_deep", action="store_true",
+        help=(
+            "Enable Scrapy sensitive-data extractors (secrets/credentials via "
+            "vendored ruleset). Default off; emits findings only at evidence "
+            "prefixes (SHA-256), never raw values."
+        ),
+    )
+    parser.add_argument(
+        "--scrapy-max-depth", dest="scrapy_max_depth",
+        type=int, choices=range(1, 6), default=2,
+        help="Scrapy max crawl depth (1-5, default 2)",
+    )
+    parser.add_argument(
+        "--scrapy-js-render", dest="scrapy_js_render", action="store_true",
+        help=(
+            "Render JavaScript in the Scrapy stage via scrapy-playwright. "
+            "Requires the [js] extra and a Chromium install."
+        ),
+    )
     parser.set_defaults(run_label=datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ"))
 
 

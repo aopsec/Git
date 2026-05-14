@@ -40,6 +40,9 @@ def _ns(**overrides: object) -> Namespace:
         "enumerate_subdomains": False,
         "api_discovery": False,
         "amass_mode": "passive",
+        "scrapy_deep": False,
+        "scrapy_max_depth": 2,
+        "scrapy_js_render": False,
     }
     base.update(overrides)
     return Namespace(**base)
@@ -58,7 +61,28 @@ def test_build_run_config_aggressive_with_ack_passes() -> None:
 
 def test_resolve_selected_tools_safe_default() -> None:
     tools = resolve_selected_tools("safe", [], [], [])
-    assert tools == ["httpx", "katana"]
+    # [v0.5.3] scrapy joined SAFE_DEFAULT_TOOLS for information-disclosure recon.
+    assert tools == ["httpx", "katana", "scrapy"]
+
+
+def test_resolve_selected_tools_safe_disable_scrapy() -> None:
+    tools = resolve_selected_tools("safe", [], [], ["scrapy"])
+    assert "scrapy" not in tools
+
+
+def test_build_run_config_scrapy_flags_round_trip() -> None:
+    config = build_run_config(
+        _ns(scrapy_deep=True, scrapy_max_depth=4, scrapy_js_render=True),
+    )
+    assert config.scrapy_deep is True
+    assert config.scrapy_max_depth == 4
+    assert config.scrapy_js_render is True
+    assert "scrapy" in config.enabled_tools
+
+
+def test_build_run_config_rejects_scrapy_max_depth_out_of_range() -> None:
+    with pytest.raises(ValueError):
+        build_run_config(_ns(scrapy_max_depth=10))
 
 
 def test_resolve_selected_tools_disable_overrides_enable() -> None:

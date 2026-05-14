@@ -18,6 +18,9 @@ INSTALL_HINTS: dict[str, str] = {
     # kiterunner package layout: github.com/assetnote/kiterunner (cmd/kiterunner).
     "amass": "go install -v github.com/owasp-amass/amass/v4/...@master",
     "kiterunner": "go install github.com/assetnote/kiterunner/cmd/kiterunner@latest",
+    # [v0.5.3] Scrapy ships as a Python package; the `scrapy` console script
+    # is installed by pip/pipx. The optional [js] extra adds scrapy-playwright.
+    "scrapy": "pipx install scrapy  # or pip install -e '.[js]' for JS rendering",
 }
 
 _NAME_WIDTH = 12

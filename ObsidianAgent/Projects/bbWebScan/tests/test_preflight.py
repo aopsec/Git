@@ -288,6 +288,22 @@ def test_kiterunner_fingerprint_rejects_fake_binary(
     assert detect_identity("kiterunner", Path("/usr/local/bin/kiterunner")) == "suspect"
 
 
+def test_scrapy_fingerprint_matches_observed_version_banner(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """[v0.5.3] `scrapy version` prints 'Scrapy 2.11.0' — anchor on banner + version."""
+    _patch_probe(monkeypatch, [(0, "Scrapy 2.11.0\n")])
+    assert detect_identity("scrapy", Path("/home/aops/.local/bin/scrapy")) == "verified"
+
+
+def test_scrapy_fingerprint_rejects_bare_name(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A fake binary just printing 'scrapy' (no version) must NOT pass."""
+    _patch_probe(monkeypatch, [(0, "scrapy\n"), (0, "scrapy: usage\n")])
+    assert detect_identity("scrapy", Path("/usr/local/bin/scrapy")) == "suspect"
+
+
 def test_resolve_tool_path_detects_on_disk_when_not_on_path(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
 ) -> None:

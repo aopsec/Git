@@ -41,6 +41,9 @@ class ScanSettings:
     enumerate_subdomains: bool = False
     amass_mode: Literal["passive", "active", "intel"] = "passive"
     api_discovery: bool = False
+    scrapy_deep: bool = False
+    scrapy_max_depth: int = 2
+    scrapy_js_render: bool = False
     dry_run: bool = True
     quiet: bool = False
     strict_identity: bool = False

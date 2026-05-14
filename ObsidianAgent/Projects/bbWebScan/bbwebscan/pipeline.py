@@ -23,6 +23,7 @@ from bbwebscan.stages import (
     kiterunner_stage,
     nuclei_stage,
     params_stage,
+    scrapy_stage,
 )
 from bbwebscan.targets import (
     collect_targets,
@@ -134,6 +135,44 @@ def execute_scan(config: RunConfig) -> int:  # noqa: PLR0912, PLR0915 - orchestr
                 scoped_decision_values,
                 allowed_url_cache,
             )
+
+        # [v0.5.3] Scrapy runs alongside katana — both feed discovered_urls.
+        # Order is intentional: katana first so scrapy can also crawl the URLs
+        # katana surfaced. cyberref: PENDING attestation.
+        if "scrapy" in config.enabled_tools:
+            scrapy_input = live_urls or active_urls
+            if scrapy_input:
+                results.extend(
+                    _run_stage_plans(
+                        scrapy_stage.build_plan(config, artifacts, scrapy_input),
+                        config,
+                        artifacts,
+                    )
+                )
+                scrapy_findings, scrapy_urls = scrapy_stage.parse_results(
+                    artifacts.artifacts / "scrapy.jsonl"
+                )
+                findings.extend(scrapy_findings)
+                discovered_urls = list(dict.fromkeys(discovered_urls + scrapy_urls))
+                active_urls = _scope_active_urls(
+                    discovered_urls,
+                    allowed_hosts,
+                    config.denied_hosts,
+                    scope_decisions,
+                    scoped_decision_values,
+                    allowed_url_cache,
+                )
+                # [v0.5.3] Auto-suggest: if Scrapy ran without deep mode and found
+                # no high/medium signals, hint that --scrapy-deep may surface
+                # secrets/credentials.
+                if not config.scrapy_deep and not any(
+                    f.stage == "scrapy" and f.severity in {"high", "medium"}
+                    for f in scrapy_findings
+                ):
+                    dns_notes.append(
+                        "Hint: re-run with --scrapy-deep to enable credential/secret "
+                        "extraction (vendored ruleset; never echoes raw values)."
+                    )
 
         if any(tool in config.enabled_tools for tool in discovery_stage.DISCOVERY_TOOLS):
             plans = discovery_stage.build_plans(config, artifacts, live_urls or active_urls)

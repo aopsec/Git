@@ -88,9 +88,12 @@ def test_scan_action_invalid_and_save_error(tmp_path: Path) -> None:
 
 
 def test_scan_wizard_collects_active_amass_ack() -> None:
+    # [v0.5.3] 3 new scrapy prompts inserted between api_discovery and dry_run.
     settings = collect_scan_settings(input_func=_input([
         "", "example.com", "", "", "", "", "", "y", "active", "AUTHORIZED",
-        "n", "n", "", "", "", "", "", "", "", "", "", "", "n", "n", "y", "n", "n",
+        "n", "n", "", "", "", "", "", "", "", "", "", "", "n", "n",
+        "n", "", "n",  # scrapy_deep, scrapy_max_depth, scrapy_js_render
+        "y", "n", "n",
     ]))
     assert settings.enumerate_subdomains is True
     assert settings.amass_mode == "active"

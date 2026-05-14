@@ -73,7 +73,10 @@ def test_doctor_exit_code_two_when_any_missing() -> None:
 def test_install_hints_cover_supported_tools() -> None:
     """Every tool that bbWebScan can drive should have an install hint, so doctor's
     advice is never blank."""
-    expected = {"httpx", "katana", "nuclei", "ffuf", "feroxbuster", "arjun", "dirsearch"}
+    expected = {
+        "httpx", "katana", "scrapy", "nuclei", "ffuf",
+        "feroxbuster", "arjun", "dirsearch",
+    }
     assert expected.issubset(INSTALL_HINTS.keys())
 
 

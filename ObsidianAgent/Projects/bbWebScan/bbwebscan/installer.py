@@ -1,7 +1,9 @@
 import argparse
 import os
 import re
+import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 DEFAULT_INSTALLER_PATH: Path = Path("~/bbScan_Installer.sh").expanduser()
@@ -50,6 +52,10 @@ def run_installer(args: argparse.Namespace) -> int:
             f"installer not found: {installer}. Provide --installer PATH or place the "
             "script at ~/bbScan_Installer.sh."
         )
+    # [v0.5.3] Scrapy is a Python framework, not handled by the bash installer.
+    # Install (or report installed) before we hand off so doctor reports a
+    # consistent state after `bbwebscan install`.
+    scrapy_rc = _ensure_scrapy(dry_run=args.dry_run)
     cmd = build_install_command(
         installer,
         dry_run=args.dry_run,
@@ -58,7 +64,32 @@ def run_installer(args: argparse.Namespace) -> int:
     )
     print(f"[bbwebscan install] {' '.join(cmd)}", flush=True)
     if getattr(args, "quiet", False):
-        return _stream_filtered(cmd)
+        bash_rc = _stream_filtered(cmd)
+    else:
+        completed = subprocess.run(cmd, check=False)
+        bash_rc = completed.returncode
+    return bash_rc or scrapy_rc
+
+
+def _ensure_scrapy(*, dry_run: bool) -> int:
+    """Install Scrapy via pipx (preferred) or pip --user when missing.
+
+    [v0.5.3] Scrapy joined SAFE_DEFAULT_TOOLS, so the orchestrator expects the
+    `scrapy` console script to be reachable. The upstream bash installer only
+    handles Go/Rust/system-package tools and has no Python-package knowledge.
+    """
+    if shutil.which("scrapy") is not None:
+        print("[bbwebscan install] scrapy: already installed", flush=True)
+        return 0
+    pipx = shutil.which("pipx")
+    if pipx is not None:
+        cmd = [pipx, "install", "scrapy"]
+    else:
+        cmd = [sys.executable, "-m", "pip", "install", "--user", "scrapy"]
+    if dry_run:
+        print(f"[bbwebscan install] [dry-run] would run: {' '.join(cmd)}", flush=True)
+        return 0
+    print(f"[bbwebscan install] {' '.join(cmd)}", flush=True)
     completed = subprocess.run(cmd, check=False)
     return completed.returncode
 

@@ -11,10 +11,11 @@ from bbwebscan.auth import merge_auth
 from bbwebscan.models import ProgramProfile, RetryPolicy, RunConfig
 from bbwebscan.targets import normalize_target
 
-SAFE_DEFAULT_TOOLS: tuple[str, ...] = ("httpx", "katana")
+SAFE_DEFAULT_TOOLS: tuple[str, ...] = ("httpx", "katana", "scrapy")
 AGGRESSIVE_DEFAULT_TOOLS: tuple[str, ...] = (
     "httpx",
     "katana",
+    "scrapy",
     "ffuf",
     "feroxbuster",
     "arjun",
@@ -107,6 +108,9 @@ def build_run_config(args: Namespace) -> RunConfig:
         )
     enumerate_subdomains = getattr(args, "enumerate_subdomains", False)
     api_discovery = getattr(args, "api_discovery", False)
+    scrapy_deep = getattr(args, "scrapy_deep", False)
+    scrapy_max_depth = getattr(args, "scrapy_max_depth", 2)
+    scrapy_js_render = getattr(args, "scrapy_js_render", False)
     selected_tools = resolve_selected_tools(
         mode=mode,
         profile_tools=profile.enabled_tools,
@@ -155,6 +159,9 @@ def build_run_config(args: Namespace) -> RunConfig:
         enumerate_subdomains=enumerate_subdomains,
         api_discovery=api_discovery,
         amass_mode=amass_mode_arg,
+        scrapy_deep=scrapy_deep,
+        scrapy_max_depth=scrapy_max_depth,
+        scrapy_js_render=scrapy_js_render,
         discovery_status_filter=list(profile.discovery_status_filter),
         nuclei_max_targets=profile.nuclei_max_targets,
     )

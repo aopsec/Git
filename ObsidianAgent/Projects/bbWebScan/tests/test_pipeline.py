@@ -19,6 +19,7 @@ from bbwebscan.stages import (
     katana_stage,
     kiterunner_stage,
     params_stage,
+    scrapy_stage,
 )
 
 
@@ -453,3 +454,94 @@ def test_kiterunner_skipped_when_api_flag_off(
     config = _scan_config(tmp_path)  # api_discovery=False default
     pipeline.execute_scan(config)
     assert not any(label.startswith("kiterunner_") for label in captured_labels)
+
+
+def test_scrapy_runs_when_in_enabled_tools(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.3] Scrapy block executes when 'scrapy' is in enabled_tools."""
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    monkeypatch.setattr(pipeline, "collect_tool_inventory", lambda _c: [])
+    monkeypatch.setattr(pipeline, "validate_environment", lambda _c, _s: [])
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(
+        httpx_stage, "parse_results",
+        lambda _p: ([], ["https://app.example.com"]),
+    )
+    monkeypatch.setattr(katana_stage, "parse_results", lambda _p: ([], []))
+    scraped_urls = ["https://app.example.com/leak.html"]
+    monkeypatch.setattr(
+        scrapy_stage, "parse_results", lambda _p: ([], scraped_urls),
+    )
+
+    config = _scan_config(tmp_path).model_copy(
+        update={"enabled_tools": ["httpx", "scrapy"]},
+    )
+    pipeline.execute_scan(config)
+    assert "scrapy" in captured_stages
+
+
+def test_scrapy_skipped_when_not_in_enabled_tools(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    monkeypatch.setattr(pipeline, "collect_tool_inventory", lambda _c: [])
+    monkeypatch.setattr(pipeline, "validate_environment", lambda _c, _s: [])
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(
+        httpx_stage, "parse_results",
+        lambda _p: ([], ["https://app.example.com"]),
+    )
+    monkeypatch.setattr(katana_stage, "parse_results", lambda _p: ([], []))
+
+    config = _scan_config(tmp_path).model_copy(update={"enabled_tools": ["httpx"]})
+    pipeline.execute_scan(config)
+    assert "scrapy" not in captured_stages
+
+
+def test_scrapy_auto_suggest_hint_when_no_signals(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.3] When scrapy runs without deep mode and finds nothing, hint --scrapy-deep."""
+    monkeypatch.setattr(pipeline, "collect_tool_inventory", lambda _c: [])
+    monkeypatch.setattr(pipeline, "validate_environment", lambda _c, _s: [])
+    monkeypatch.setattr(
+        pipeline, "run_plan",
+        lambda plan, _c, _a: ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        ),
+    )
+    monkeypatch.setattr(
+        httpx_stage, "parse_results",
+        lambda _p: ([], ["https://app.example.com"]),
+    )
+    monkeypatch.setattr(katana_stage, "parse_results", lambda _p: ([], []))
+    monkeypatch.setattr(scrapy_stage, "parse_results", lambda _p: ([], []))
+
+    config = _scan_config(tmp_path).model_copy(
+        update={"enabled_tools": ["httpx", "scrapy"], "scrapy_deep": False},
+    )
+    pipeline.execute_scan(config)
+    summary_md = (config.output_dir / "summary.md").read_text(encoding="utf-8")
+    assert "--scrapy-deep" in summary_md

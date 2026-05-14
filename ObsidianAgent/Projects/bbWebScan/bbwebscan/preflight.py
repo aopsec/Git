@@ -19,6 +19,9 @@ VERSION_ARGS: dict[str, list[str]] = {
     # banner instead.
     "amass": ["-version"],
     "kiterunner": ["help"],
+    # [v0.5.3] Scrapy ships a `scrapy` console script via pip. `scrapy version`
+    # prints "Scrapy 2.11.x". Identity regex anchors on the banner.
+    "scrapy": ["version"],
 }
 # [FIX-BBW-08] Positive fingerprints for binaries commonly shadowed by Python shims
 # or unrelated tools that share a name. Tools omitted here always report identity=None.
@@ -39,6 +42,9 @@ TOOL_IDENTITY: dict[str, re.Pattern[str]] = {
     # so a fake binary just printing "kiterunner" wouldn't pass.
     "amass": re.compile(r"OWASP|owaspamass", re.IGNORECASE),
     "kiterunner": re.compile(r"kitebuilder|assetnote", re.IGNORECASE),
+    # [v0.5.3] `scrapy version` prints "Scrapy 2.11.0"; anchor on the banner
+    # word plus a version number so a fake shim just printing "scrapy" fails.
+    "scrapy": re.compile(r"scrapy\s+\d+\.\d+", re.IGNORECASE),
 }
 WORDLIST_TOOLS: set[str] = {"ffuf", "feroxbuster", "dirsearch"}
 VERSION_PROBE_TIMEOUT_S: int = 10

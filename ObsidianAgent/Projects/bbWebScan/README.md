@@ -5,6 +5,22 @@ parsing, split timeout semantics, per-stage retry/backoff, and a stricter scope 
 
 ## Status
 
+`v0.5.3` — `[FIX-BBW-10]` release-engineering patch + new **Scrapy crawler
+stage** (cyberref: PENDING attestation). Opt-in flags `--enumerate-subdomains`
+and `--api-discovery` now thread through inventory/preflight via
+`add_opt_in_tools`; per-stage gates in `pipeline.py` match the effective
+tool set; runtime stage failures (timeout/non-zero exit) are now fatal
+(exit 2) even when parsers emit no findings. Header-value redaction in
+`runner.redact_command_for_log` now masks any `-H` / `--header` /
+`--header=Name: value` payload, not just Authorization/Cookie — catches
+`X-API-Key`, `X-Auth-Token`, and custom auth header names. New Scrapy stage
+runs alongside katana in safe mode, harvests information-disclosure
+signals (documents, emails, exposed paths, and — when `--scrapy-deep`
+is set — credential/secret patterns from a vendored ruleset). Optional
+`[js]` extra adds `scrapy-playwright` for JS rendering when
+`--scrapy-js-render` is set. See `CHANGELOG.md` and `NOTICE` for
+attribution.
+
 `v0.5.2` — menu hardening patch. Main-menu handlers now catch user-facing
 errors (`FileNotFoundError`, `FileExistsError`, `ValueError`, `OSError`),
 print `[bbwebscan menu] <error>`, and return to the menu instead of crashing.

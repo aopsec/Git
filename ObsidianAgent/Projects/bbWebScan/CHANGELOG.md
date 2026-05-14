@@ -4,6 +4,60 @@ All notable changes to bbWebScan are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [SemVer](https://semver.org/).
 
+## [0.5.3] — 2026-05-14
+
+### Fixed
+- `[FIX-BBW-10]` Opt-in tools `--enumerate-subdomains` and `--api-discovery`
+  now flow through `add_opt_in_tools()` in `bbwebscan/config.py`, so they
+  appear in the same effective tool set used by inventory and preflight.
+  Conflict with `--disable-tool {amass,kiterunner}` is now an explicit
+  `ValueError` instead of a silent no-op.
+- `[FIX-BBW-10]` Pipeline stages now gate on `"<tool>" in config.enabled_tools`,
+  matching the contract `add_opt_in_tools` produces. Disabling httpx/katana via
+  `--disable-tool` no longer leaves dangling references downstream.
+- `[FIX-BBW-10]` Runtime stage failures (non-zero exit, timeout) are now
+  promoted to fatal in `bbwebscan/pipeline.py::_execution_errors`. Previously
+  a timed-out scan with no parser-emitted findings could exit `0`; it now
+  exits `2`.
+
+### Security
+- `[FIX-BBW-10]` Broader header-value redaction in
+  `bbwebscan.runner.redact_command_for_log`. Any value following `-H`,
+  `--header`, or `--headers` is masked, plus inline `--header=Name: value`
+  forms. Catches `X-API-Key`, `X-Auth-Token`, and custom auth header names
+  that the previous Authorization/Cookie-only regex missed.
+
+### Added
+- **Scrapy crawler stage** (cyberref: PENDING attestation). New
+  `bbwebscan/stages/scrapy_stage.py` and bundled spider
+  `bbwebscan/stages/scrapy/bbspider.py`. Runs alongside katana in safe
+  mode and harvests information-disclosure signals: documents (PDF/DOC/
+  XLS/backup archives), emails, exposed paths (`.git`, `.env`,
+  `wp-admin`), and — when `--scrapy-deep` is set — credential/secret
+  patterns via a vendored ruleset.
+- CLI flags `--scrapy-deep` (off by default) and `--scrapy-max-depth`
+  (1–5, default 2). Scan Wizard menu now prompts for both.
+- Vendored secret-pattern ruleset at
+  `bbwebscan/data/secrets_patterns.yml` (curated subset of
+  [mazen160/secrets-patterns-db](https://github.com/mazen160/secrets-patterns-db),
+  CC-BY-4.0; AGPL/trufflehog-derived rules excluded). See `NOTICE`.
+- Optional `[js]` extra pulls
+  [`scrapy-playwright`](https://github.com/scrapy-plugins/scrapy-playwright)
+  (1.4k★, BSD-3-Clause) for JS rendering when `--scrapy-js-render` is set.
+  Off by default — `pip install bbwebscan[js]` + `playwright install chromium`
+  required.
+- Auto-suggest hint in `summary.md`: if Scrapy ran without deep mode and
+  surfaced no high/medium findings, the summary recommends re-running with
+  `--scrapy-deep`.
+- `scripts/verify.sh` aggregated gate (`ruff` → `mypy` → `pytest --cov`).
+
+### Notes
+- **cyberref: PENDING attestation** — Scrapy itself is not yet attested in the
+  CyberPDF vault. This stage ships with that explicit marker; promote to
+  "certified" once vault citation lands. Tracked in meta-vault `CLAUDE.md`.
+- Secret findings record only a SHA-256 prefix (16 chars) + rule name +
+  source URL as evidence. The matched string is never persisted.
+
 ## [0.5.2] — 2026-05-11
 
 ### Fixed

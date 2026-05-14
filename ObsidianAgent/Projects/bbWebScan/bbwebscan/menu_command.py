@@ -7,6 +7,8 @@ from datetime import UTC, datetime
 from bbwebscan.menu_prompts import append_optional, append_repeatable, str_or_none
 from bbwebscan.menu_types import ScanSettings
 
+_DEFAULT_SCRAPY_MAX_DEPTH: int = 2
+
 
 def scan_settings_to_args(
     settings: ScanSettings,
@@ -43,6 +45,9 @@ def scan_settings_to_args(
         enumerate_subdomains=settings.enumerate_subdomains,
         amass_mode=settings.amass_mode,
         api_discovery=settings.api_discovery,
+        scrapy_deep=settings.scrapy_deep,
+        scrapy_max_depth=settings.scrapy_max_depth,
+        scrapy_js_render=settings.scrapy_js_render,
         run_label=label,
     )
 
@@ -57,7 +62,7 @@ def build_scan_command(
     return shlex.join(args)
 
 
-def scan_command_args(
+def scan_command_args(  # noqa: PLR0912 - flag-to-argv mapping is naturally wide
     settings: ScanSettings,
     *,
     dry_run_override: bool | None,
@@ -88,6 +93,12 @@ def scan_command_args(
         args.extend(["--amass-mode", settings.amass_mode])
     if settings.api_discovery:
         args.append("--api-discovery")
+    if settings.scrapy_deep:
+        args.append("--scrapy-deep")
+    if settings.scrapy_max_depth != _DEFAULT_SCRAPY_MAX_DEPTH:
+        args.extend(["--scrapy-max-depth", str(settings.scrapy_max_depth)])
+    if settings.scrapy_js_render:
+        args.append("--scrapy-js-render")
     if settings.dry_run if dry_run_override is None else dry_run_override:
         args.append("--dry-run")
     if settings.quiet:

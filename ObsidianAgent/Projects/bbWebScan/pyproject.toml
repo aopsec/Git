@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bbwebscan"
-version = "0.5.2"
+version = "0.5.3"
 description = "Scope-aware bug bounty web recon orchestrator"
 requires-python = ">=3.12"
 dependencies = [
@@ -12,6 +12,7 @@ dependencies = [
   "publicsuffix2>=2.20191221",
   "PyYAML>=6.0",
   "rich>=13",
+  "scrapy>=2.11",
 ]
 
 [project.optional-dependencies]
@@ -23,6 +24,9 @@ dev = [
 ]
 cov = [
   "pytest-cov>=5.0",
+]
+js = [
+  "scrapy-playwright>=0.0.46",
 ]
 
 [tool.coverage.run]
@@ -55,8 +59,27 @@ python_version = "3.12"
 strict = true
 packages = ["bbwebscan", "tests"]
 
+# [v0.5.3] Scrapy lacks type stubs; the spider isolates the untyped surface so
+# the rest of the package stays strict-clean.
+[[tool.mypy.overrides]]
+module = ["scrapy", "scrapy.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["bbwebscan.stages.scrapy.bbspider"]
+disallow_untyped_calls = false
+disallow_any_decorated = false
+# Scrapy's Spider declares `custom_settings` as an Optional instance attribute,
+# which conflicts with our ClassVar + per-instance override pattern. Suppress
+# the resulting misc errors at the module level rather than littering the
+# implementation with ignores.
+disable_error_code = ["misc", "no-any-return"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
 [tool.setuptools]
-packages = ["bbwebscan", "bbwebscan.stages"]
+packages = ["bbwebscan", "bbwebscan.stages", "bbwebscan.stages.scrapy", "bbwebscan.data"]
+
+[tool.setuptools.package-data]
+"bbwebscan.data" = ["*.yml", "*.yaml"]

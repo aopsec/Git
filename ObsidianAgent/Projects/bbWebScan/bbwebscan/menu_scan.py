@@ -68,6 +68,14 @@ def collect_scan_settings(
         api_discovery=prompt_bool(
             "Run API discovery with kiterunner", base.api_discovery, input_func,
         ),
+        scrapy_deep=prompt_bool(
+            "Scrapy deep mode (extract secrets/credentials)", base.scrapy_deep, input_func,
+        ),
+        scrapy_max_depth=_collect_scrapy_depth(base, input_func),
+        scrapy_js_render=prompt_bool(
+            "Scrapy JS rendering via scrapy-playwright (requires [js] extra)",
+            base.scrapy_js_render, input_func,
+        ),
         dry_run=prompt_bool("Default to dry-run", base.dry_run, input_func),
         quiet=prompt_bool("Quiet progress output", base.quiet, input_func),
         strict_identity=prompt_bool("Strict tool identity", base.strict_identity, input_func),
@@ -156,6 +164,16 @@ def _collect_authorization_ack(
         return prompt_bool("Authorization acknowledgement", existing_ack, input_func)
     response = input_func("Type AUTHORIZED to acknowledge aggressive authorization: ").strip()
     return response == "AUTHORIZED"
+
+
+def _collect_scrapy_depth(
+    base: ScanSettings,
+    input_func: InputFunc,
+) -> int:
+    depth = prompt_int("Scrapy max crawl depth (1-5)", base.scrapy_max_depth, input_func)
+    if depth is None:
+        return base.scrapy_max_depth
+    return max(1, min(5, depth))
 
 
 def _collect_amass_mode(
