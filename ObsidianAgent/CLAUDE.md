@@ -33,7 +33,11 @@ Bootstrap recomendado para a sessão (evita repetir o path em cada comando):
 ```bash
 export AOPS_OBSIDIAN_AGENT_CLI="${AOPS_OBSIDIAN_AGENT_CLI:-$HOME/plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py}"
 export LC_ALL=C.UTF-8 LANG=C.UTF-8   # ordenação determinística de globs no --sync
+test -x "$AOPS_OBSIDIAN_AGENT_CLI" || echo "MISSING: external CLI not reachable"
 ```
+
+Se o smoke-test acima reportar MISSING, **não** rode `--check`/`--sync` — corrija o
+path primeiro (`$AOPS_OBSIDIAN_AGENT_CLI` ou clone do repo `aops-agent`).
 
 ```bash
 # Verificar notas stale (somente leitura)
@@ -44,6 +48,13 @@ python3 "${AOPS_OBSIDIAN_AGENT_CLI:-$HOME/plugins/aops-agent/obsidian-agent/obsi
 
 # Saúde geral do stack (Codex+Claude+Obsidian) — não destrutivo
 bash tests/validate-collab-stack.sh
+
+# Regenerar o vault de referência CyberPDF (cyber-only, copyright-bounded)
+python3 tools/extract_cyber_pdf_reference.py \
+  --pdf-list tools/cyber_pdf_ref/b00ks_sources.txt --repo . --copy-pdfs --replace
+
+# Teste Python do extractor CyberPDF
+pytest -q tests/test_cyber_pdf_ref.py
 
 # Testes da fixture OpenBox
 bash Projects/OpenBox0.1v/tests/phase-b-vault-tool.sh    # prova vault repo-neutral
@@ -59,6 +70,8 @@ gerador ou source não rastreado.
 Rodando um teste isolado: cada `.sh` em `Projects/OpenBox0.1v/tests/` é executável
 diretamente via `bash <path>`. Não há runner agregador além de `validate-stack.sh`
 (que só acumula PASS/FAIL — ver Gotchas) e `tests/validate-collab-stack.sh` na raiz.
+Os testes Python da raiz (`tests/test_*.py`) cobrem o pipeline CyberPDF e rodam
+via `pytest -q tests/`.
 
 ## Skills esperados
 
@@ -98,9 +111,12 @@ ObsidianAgent/
 │   │                        #   Overviews. ADV7ia, OpenBox0.1v e bbWebScan têm ambos →
 │   │                        #   dupla entrada. IPS_IDS só tem README → só Overviews.
 │   ├── ADV7ia/               # Python project. Tem .aops-vault.toml + README.md → manifest E overview.
-│   ├── bbWebScan/            # Python project ativo (v0.4.3, 167 testes, CHANGELOG.md,
-│   │                         #   coverage gate 85%). Orquestrador de recon de bug bounty.
-│   │                         #   Tem .aops-vault.toml + README.md → dupla entrada nos catálogos.
+│   ├── bbWebScan/            # Python project ativo (v0.5.3, CHANGELOG.md, coverage gate
+│   │                         #   85%). Orquestrador de recon de bug bounty. Tem
+│   │                         #   .aops-vault.toml + README.md + CLAUDE.md próprio → dupla
+│   │                         #   entrada nos catálogos. Cyberref debt: Scrapy stage shipped
+│   │                         #   com `cyberref: PENDING` marker (promover quando vault
+│   │                         #   citation existir).
 │   ├── IC01-aops/            # Umbrella com sub-projetos (ADV7ia, AVAL01-IC, IPS_IDS, OpenB0X,
 │   │                         #   OpenBox0.1v). Sem TOML/README na raiz → fora dos catálogos do
 │   │                         #   meta-vault. Possui CLAUDE.md aninhados (ver seção abaixo).
@@ -130,8 +146,15 @@ ObsidianAgent/
 │                              #   Projects/*/README.md). Manter em mente ao auditar drift.
 ├── SessionLogs/              # Logs de sessão (saída do skill /compress)
 │   └── <project>/            # Criado pelo /compress; dir 700, arquivos 600
+├── tools/
+│   ├── extract_cyber_pdf_reference.py   # Builder do vault CyberPDF
+│   └── cyber_pdf_ref/        # Módulos do extractor (cli, extractor, render,
+│                             #   patterns, sections, source_note, ...)
+├── Vault/References/CyberPDFs/  # Vault de referência cyber-only (copyright-bounded,
+│                                #   gerado por tools/extract_cyber_pdf_reference.py)
 └── tests/
-    └── validate-collab-stack.sh  # Health check do stack completo
+    ├── validate-collab-stack.sh   # Health check do stack completo
+    └── test_cyber_pdf_ref.py      # Testes pytest do extractor CyberPDF
 ```
 
 ## CLAUDE.md aninhados
@@ -149,26 +172,36 @@ Escopos complementares, não sobrepostos ao contrato de vault do meta-repo.
 
 ## Projects/bbWebScan (Python, ativo)
 
-Projeto Python sem CLAUDE.md próprio (toda a contratação está no `README.md` +
-`CHANGELOG.md` do projeto). É o projeto Python mais desenvolvido do meta-repo
-e o que mais se modifica entre releases.
+Projeto Python com `CLAUDE.md` próprio em `Projects/bbWebScan/CLAUDE.md`
+(escopo de engenharia). Contratação de produto continua em `README.md` +
+`CHANGELOG.md`. É o projeto Python mais desenvolvido do meta-repo e o que
+mais se modifica entre releases.
+
+Como é offensive-security tooling, trabalho de referência externo deve passar
+pelo skill `cyberref` (vault-bounded). Não colar prosa upstream em fonte sem
+citação no vault — review blocker.
 
 | Camada | Detalhe |
 |---|---|
-| Stack | Python 3.12+, Pydantic v2, PyYAML, opcional `publicsuffix2` |
-| Gates obrigatórios | `ruff check .`, `mypy --strict`, `pytest -q`, coverage ≥ 85% |
+| Stack | Python 3.12+, Pydantic v2, PyYAML, Scrapy (safe-default), opcional `publicsuffix2`, opcional `scrapy-playwright` via extra `[js]` |
+| Gates obrigatórios | `ruff check .`, `mypy --strict`, `pytest -q`, coverage ≥ 85% (rodar via `bash scripts/verify.sh`) |
 | CLI | `bbwebscan {scan,install,doctor,init,history,show,compare}`; smart-default `bbwebscan example.com` |
-| Layout | `bbwebscan/` package · `bbwebscan/stages/` (httpx/katana/discovery/params/nuclei) · `tests/fixtures/` JSONL · `runs/<UTC>/` artefatos |
+| Layout | `bbwebscan/` package · `bbwebscan/stages/` (httpx/katana/scrapy/discovery/params/nuclei/amass/kiterunner) · `bbwebscan/data/` (vendored secrets ruleset) · `tests/fixtures/` JSONL · `runs/<UTC>/` artefatos |
 | Versionamento | `pyproject.toml` é única fonte de verdade; `__version__` lê via `importlib.metadata`; `tests/test_changelog.py` falha se um bump de versão esquecer de atualizar o CHANGELOG. |
+
+**Cyberref debt (registrado em 2026-05-14):** Scrapy stage shipped com
+`cyberref: PENDING attestation` marker. Promover a "certified" quando vault
+citation existir para Scrapy. Atualizar quarterly o `bbwebscan/data/secrets_patterns.yml`
+(vendored de mazen160/secrets-patterns-db, CC-BY-4.0).
 
 Comandos típicos dentro de `Projects/bbWebScan/`:
 
 ```bash
 source .venv/bin/activate
-pip install -e '.[dev,cov]'              # ',psl' opcional para publicsuffix2 completo
-ruff check . && mypy && pytest -q --cov  # gate 85% enforce via fail_under
-bbwebscan --version                       # bbwebscan 0.4.3
-bbwebscan doctor                          # readiness do toolchain (httpx/katana/...)
+pip install -e '.[dev,cov]'              # ',psl' opcional · ',js' para scrapy-playwright
+bash scripts/verify.sh                    # ruff + mypy + pytest --cov (gate único)
+bbwebscan --version                       # bbwebscan 0.5.3
+bbwebscan doctor                          # readiness do toolchain (httpx/katana/scrapy/...)
 bbwebscan history --limit 10              # últimos runs
 ```
 
@@ -217,6 +250,8 @@ Valores de `title_mode` em uso: `standard`, `project-parent`, `session-log`, `da
   todos os comandos sync/check falharão.
 - `validate-collab-stack.sh` exige que os skills Claude (`preserve`, `compress`,
   `resume`, `collab`) estejam em `~/.claude/commands/`. Skills ausentes → FAIL.
+  O script também espera o checkout canônico em `$HOME/ObsidianAgent`; rodando
+  fora dele alguns checks de path absoluto podem falhar.
 - O `.aops-vault.toml` raiz e o do OpenBox são contratos separados.
   `--repo .` na raiz processa apenas o meta-vault.
 - `Projects/OpenBox0.1v/tests/validate-stack.sh` usa `set -uo pipefail` (falta `-e`,
