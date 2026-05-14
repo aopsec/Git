@@ -214,6 +214,68 @@ def test_exit_code_0_when_no_findings_meet_threshold(
     assert pipeline.execute_scan(config) == 0
 
 
+@pytest.mark.parametrize(
+    ("status", "exit_code"),
+    [("failed", 1), ("timeout", 124), ("missing-binary", None)],
+)
+def test_runtime_stage_failure_returns_exit_2(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    status: str,
+    exit_code: int | None,
+) -> None:
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        return ExecutionResult(
+            stage=plan.stage,
+            label=plan.label,
+            command=plan.command,
+            status=status,
+            exit_code=exit_code,
+            error=f"{status} during test",
+            artifacts=plan.artifacts,
+        )
+
+    monkeypatch.setattr(pipeline, "collect_tool_inventory", lambda _config: [])
+    monkeypatch.setattr(pipeline, "validate_environment", lambda _config, _statuses: [])
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(httpx_stage, "parse_results", lambda _path: ([], []))
+
+    config = _scan_config(tmp_path).model_copy(update={"dry_run": False})
+
+    assert pipeline.execute_scan(config) == 2
+    summary = (config.output_dir / "summary.md").read_text(encoding="utf-8")
+    assert f"Execution failed: httpx/httpx status={status}" in summary
+
+
+def test_disabled_core_stages_are_not_run(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage,
+            label=plan.label,
+            command=plan.command,
+            status="dry-run",
+            artifacts=plan.artifacts,
+        )
+
+    monkeypatch.setattr(pipeline, "collect_tool_inventory", lambda _config: [])
+    monkeypatch.setattr(pipeline, "validate_environment", lambda _config, _statuses: [])
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+
+    config = _scan_config(tmp_path).model_copy(update={"enabled_tools": []})
+
+    assert pipeline.execute_scan(config) == 0
+    assert captured_stages == []
+
+
 def test_closing_summary_includes_severity_breakdown(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
@@ -277,7 +339,9 @@ def test_amass_runs_before_httpx_when_enabled(
     monkeypatch.setattr(httpx_stage, "parse_results", lambda _p: ([], []))
     monkeypatch.setattr(katana_stage, "parse_results", lambda _p: ([], []))
 
-    config = _scan_config(tmp_path).model_copy(update={"enumerate_subdomains": True})
+    config = _scan_config(tmp_path).model_copy(
+        update={"enumerate_subdomains": True, "enabled_tools": ["httpx", "amass"]}
+    )
     pipeline.execute_scan(config)
     # First stage seen must be amass; httpx must follow.
     assert captured_stages[0] == "amass"
@@ -317,7 +381,9 @@ def test_amass_subdomains_filtered_by_scope_gate(
     monkeypatch.setattr(httpx_stage, "parse_results", lambda _p: ([], []))
     monkeypatch.setattr(katana_stage, "parse_results", lambda _p: ([], []))
 
-    config = _scan_config(tmp_path).model_copy(update={"enumerate_subdomains": True})
+    config = _scan_config(tmp_path).model_copy(
+        update={"enumerate_subdomains": True, "enabled_tools": ["httpx", "amass"]}
+    )
     pipeline.execute_scan(config)
     # In-scope target reaches httpx; out-of-scope is filtered.
     assert "api.example.com" in httpx_targets
@@ -356,7 +422,9 @@ def test_kiterunner_runs_in_discovery_when_api_flag_set(
     monkeypatch.setattr(katana_stage, "parse_results", lambda _p: ([], []))
     monkeypatch.setattr(kiterunner_stage, "parse_results", lambda _p: ([], []))
 
-    config = _scan_config(tmp_path).model_copy(update={"api_discovery": True})
+    config = _scan_config(tmp_path).model_copy(
+        update={"api_discovery": True, "enabled_tools": ["httpx", "kiterunner"]}
+    )
     pipeline.execute_scan(config)
     assert any(label.startswith("kiterunner_") for label in captured_labels)
 

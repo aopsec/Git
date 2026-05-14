@@ -1,5 +1,4 @@
 import json
-import re
 import shlex
 import subprocess
 from pathlib import Path
@@ -8,40 +7,61 @@ from typing import Any
 from bbwebscan.models import CommandPlan, ExecutionResult, RunArtifacts, RunConfig
 from bbwebscan.retry import with_retry
 
-# [v0.4.4] Match argv elements that carry header values: the leading "<name>: "
-# is preserved so the audit trail records WHICH header was set; the value is
-# replaced with the redacted placeholder.
-_REDACT_HEADER_RE: re.Pattern[str] = re.compile(
-    r"^(authorization|cookie):\s*", re.IGNORECASE,
-)
+_HEADER_VALUE_FLAGS: set[str] = {"-H", "--header", "--headers"}
 REDACT_PLACEHOLDER: str = "<redacted>"
 
 
 def redact_command_for_log(command: list[str]) -> list[str]:
-    """[v0.4.4] Mask Authorization/Cookie header VALUES before logging argv.
+    """[v0.4.4] Mask header VALUES before logging argv.
 
-    Two argv shapes are handled:
+    [FIX-BBW-10] Any header flag may carry credentials under arbitrary names
+    such as X-API-Key, so redact every header value once a header flag is seen.
+    Three argv shapes are handled:
 
     1. ``["-H", "Authorization: Bearer secret"]`` — typical for httpx, katana,
        nuclei, ffuf, feroxbuster, dirsearch.
-    2. arjun's single-arg form: ``["--headers", "Accept: x\\nAuthorization: y\\n..."]``
+    2. ``["--header=X-API-Key: secret"]`` — inline flag assignment form.
+    3. arjun's single-arg form: ``["--headers", "Accept: x\\nX-API-Key: y\\n..."]``
        — a multi-line string passed as one element. Each line redacted in place.
     """
-    return [_redact_argv_element(arg) for arg in command]
+    redacted: list[str] = []
+    redact_next = False
+    for arg in command:
+        if redact_next:
+            redacted.append(_redact_header_blob(arg))
+            redact_next = False
+            continue
+        if arg in _HEADER_VALUE_FLAGS:
+            redacted.append(arg)
+            redact_next = True
+            continue
+        inline = _redact_inline_header_arg(arg)
+        redacted.append(inline if inline is not None else arg)
+    return redacted
 
 
-def _redact_argv_element(arg: str) -> str:
-    if "\n" in arg:
-        # arjun-style multi-header argv element
-        return "\n".join(_redact_header_line(line) for line in arg.split("\n"))
-    return _redact_header_line(arg)
+def _redact_inline_header_arg(arg: str) -> str | None:
+    for flag in _HEADER_VALUE_FLAGS:
+        prefix = f"{flag}="
+        if arg.startswith(prefix):
+            return f"{prefix}{_redact_header_blob(arg.removeprefix(prefix))}"
+    return None
+
+
+def _redact_header_blob(value: str) -> str:
+    if "\n" in value:
+        return "\n".join(_redact_header_line(line) for line in value.split("\n"))
+    return _redact_header_line(value)
 
 
 def _redact_header_line(line: str) -> str:
-    match = _REDACT_HEADER_RE.match(line)
-    if match is None:
+    if ":" not in line:
         return line
-    return f"{match.group(0).rstrip()} {REDACT_PLACEHOLDER}"
+    name, _value = line.split(":", 1)
+    name_clean = name.strip()
+    if not name_clean:
+        return line
+    return f"{name_clean}: {REDACT_PLACEHOLDER}"
 
 
 def prepare_run_artifacts(output_dir: Path) -> RunArtifacts:

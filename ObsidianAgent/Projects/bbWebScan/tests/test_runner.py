@@ -111,8 +111,22 @@ def test_redact_command_for_log_handles_h_flag_form() -> None:
     assert redacted[0] == "httpx"
     assert redacted[1] == "-H"
     assert redacted[2] == f"Authorization: {REDACT_PLACEHOLDER}"
-    # Non-credential header stays verbatim:
-    assert redacted[4] == "X-Trace: 1"
+    # [FIX-BBW-10] All header values are redacted because arbitrary names can carry secrets.
+    assert redacted[4] == f"X-Trace: {REDACT_PLACEHOLDER}"
+
+
+def test_redact_command_for_log_handles_arbitrary_secret_header() -> None:
+    cmd = ["httpx", "-H", "X-API-Key: SECRET-KEY"]
+    redacted = redact_command_for_log(cmd)
+    assert redacted[2] == f"X-API-Key: {REDACT_PLACEHOLDER}"
+    assert "SECRET-KEY" not in " ".join(redacted)
+
+
+def test_redact_command_for_log_handles_inline_header_flag() -> None:
+    cmd = ["scanner", "--header=X-API-Key: SECRET-KEY"]
+    redacted = redact_command_for_log(cmd)
+    assert redacted[1] == f"--header=X-API-Key: {REDACT_PLACEHOLDER}"
+    assert "SECRET-KEY" not in " ".join(redacted)
 
 
 def test_redact_command_for_log_handles_cookie_header() -> None:
@@ -128,15 +142,16 @@ def test_redact_command_for_log_handles_arjun_newline_form() -> None:
     cmd = ["arjun", "-u", "https://x", "--headers", blob]
     redacted = redact_command_for_log(cmd)
     masked = redacted[4]
-    assert "Accept: application/json" in masked
+    assert f"Accept: {REDACT_PLACEHOLDER}" in masked
     assert f"Authorization: {REDACT_PLACEHOLDER}" in masked
     assert f"Cookie: {REDACT_PLACEHOLDER}" in masked
+    assert "application/json" not in masked
     assert "arjun-secret" not in masked
     assert "sid=zzz" not in masked
 
 
 def test_redact_command_for_log_passthrough_when_no_credentials() -> None:
-    cmd = ["httpx", "-l", "/tmp/in", "-o", "/tmp/out", "-silent"]
+    cmd = ["httpx", "-l", "/tmp/in", "-o", "/tmp/out", "-silent", "https://x.test/a:b"]
     assert redact_command_for_log(cmd) == cmd
 
 

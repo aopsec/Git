@@ -105,10 +105,18 @@ def build_run_config(args: Namespace) -> RunConfig:
             "[bbwebscan] note: --ack-authorized has no effect in safe mode",
             file=sys.stderr,
         )
+    enumerate_subdomains = getattr(args, "enumerate_subdomains", False)
+    api_discovery = getattr(args, "api_discovery", False)
     selected_tools = resolve_selected_tools(
         mode=mode,
         profile_tools=profile.enabled_tools,
         enable_tools=args.enable_tool,
+        disable_tools=args.disable_tool,
+    )
+    selected_tools = add_opt_in_tools(
+        selected_tools,
+        enumerate_subdomains=enumerate_subdomains,
+        api_discovery=api_discovery,
         disable_tools=args.disable_tool,
     )
     target_inputs = list(profile.seed_urls)
@@ -144,8 +152,8 @@ def build_run_config(args: Namespace) -> RunConfig:
         profile_tool_identity=dict(profile.tool_identity),
         min_severity=getattr(args, "severity", None) or "info",
         preflight_dns=getattr(args, "check_dns", False),
-        enumerate_subdomains=getattr(args, "enumerate_subdomains", False),
-        api_discovery=getattr(args, "api_discovery", False),
+        enumerate_subdomains=enumerate_subdomains,
+        api_discovery=api_discovery,
         amass_mode=amass_mode_arg,
         discovery_status_filter=list(profile.discovery_status_filter),
         nuclei_max_targets=profile.nuclei_max_targets,
@@ -166,6 +174,30 @@ def resolve_selected_tools(
     unsupported = sorted(tool for tool in selected if tool not in SUPPORTED_TOOLS)
     if unsupported:
         raise ValueError(f"Unsupported tools selected: {', '.join(unsupported)}")
+    return [tool for tool in SUPPORTED_TOOLS if tool in selected]
+
+
+def add_opt_in_tools(
+    selected_tools: list[str],
+    *,
+    enumerate_subdomains: bool,
+    api_discovery: bool,
+    disable_tools: list[str],
+) -> list[str]:
+    # [FIX-BBW-10] Flag-driven stages are real execution stages, so they must
+    # appear in the same effective tool set used by inventory and preflight.
+    selected = set(selected_tools)
+    disabled = set(disable_tools)
+    if enumerate_subdomains:
+        if "amass" in disabled:
+            raise ValueError("--enumerate-subdomains requires amass; remove --disable-tool amass")
+        selected.add("amass")
+    if api_discovery:
+        if "kiterunner" in disabled:
+            raise ValueError(
+                "--api-discovery requires kiterunner; remove --disable-tool kiterunner"
+            )
+        selected.add("kiterunner")
     return [tool for tool in SUPPORTED_TOOLS if tool in selected]
 
 

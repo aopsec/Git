@@ -70,7 +70,7 @@ def execute_scan(config: RunConfig) -> int:  # noqa: PLR0912, PLR0915 - orchestr
     if not errors and not config.check_tools:
         # [v0.5.0] amass before httpx — discover subdomains, scope-filter,
         # extend the targets list with FQDNs that pass enforce_scope_gate.
-        if config.enumerate_subdomains:
+        if config.enumerate_subdomains and "amass" in config.enabled_tools:
             amass_plans = amass_stage.build_plan(config, artifacts, targets)
             results.extend(_run_stage_plans(amass_plans, config, artifacts))
             for plan in amass_plans:
@@ -89,45 +89,51 @@ def execute_scan(config: RunConfig) -> int:  # noqa: PLR0912, PLR0915 - orchestr
                 scope_decisions, scoped_decision_values, allowed_url_cache,
             )
 
-        results.extend(
-            _run_stage_plans(httpx_stage.build_plan(config, artifacts, targets), config, artifacts)
-        )
-        new_findings, live_urls = httpx_stage.parse_results(artifacts.artifacts / "httpx.jsonl")
-        findings.extend(new_findings)
-        live_urls = _scope_active_urls(
-            live_urls, allowed_hosts, config.denied_hosts,
-            scope_decisions, scoped_decision_values, allowed_url_cache,
-        )
-        discovered_urls = list(dict.fromkeys(discovered_urls + live_urls))
-        active_urls = _scope_active_urls(
-            discovered_urls,
-            allowed_hosts,
-            config.denied_hosts,
-            scope_decisions,
-            scoped_decision_values,
-            allowed_url_cache,
-        )
-
-        results.extend(
-            _run_stage_plans(
-                katana_stage.build_plan(config, artifacts, live_urls or active_urls),
-                config,
-                artifacts,
+        if "httpx" in config.enabled_tools:
+            results.extend(
+                _run_stage_plans(
+                    httpx_stage.build_plan(config, artifacts, targets), config, artifacts,
+                )
             )
-        )
-        crawl_findings, crawled_urls = katana_stage.parse_results(
-            artifacts.artifacts / "katana.jsonl"
-        )
-        findings.extend(crawl_findings)
-        discovered_urls = list(dict.fromkeys(discovered_urls + crawled_urls))
-        active_urls = _scope_active_urls(
-            discovered_urls,
-            allowed_hosts,
-            config.denied_hosts,
-            scope_decisions,
-            scoped_decision_values,
-            allowed_url_cache,
-        )
+            new_findings, live_urls = httpx_stage.parse_results(
+                artifacts.artifacts / "httpx.jsonl"
+            )
+            findings.extend(new_findings)
+            live_urls = _scope_active_urls(
+                live_urls, allowed_hosts, config.denied_hosts,
+                scope_decisions, scoped_decision_values, allowed_url_cache,
+            )
+            discovered_urls = list(dict.fromkeys(discovered_urls + live_urls))
+            active_urls = _scope_active_urls(
+                discovered_urls,
+                allowed_hosts,
+                config.denied_hosts,
+                scope_decisions,
+                scoped_decision_values,
+                allowed_url_cache,
+            )
+
+        if "katana" in config.enabled_tools:
+            results.extend(
+                _run_stage_plans(
+                    katana_stage.build_plan(config, artifacts, live_urls or active_urls),
+                    config,
+                    artifacts,
+                )
+            )
+            crawl_findings, crawled_urls = katana_stage.parse_results(
+                artifacts.artifacts / "katana.jsonl"
+            )
+            findings.extend(crawl_findings)
+            discovered_urls = list(dict.fromkeys(discovered_urls + crawled_urls))
+            active_urls = _scope_active_urls(
+                discovered_urls,
+                allowed_hosts,
+                config.denied_hosts,
+                scope_decisions,
+                scoped_decision_values,
+                allowed_url_cache,
+            )
 
         if any(tool in config.enabled_tools for tool in discovery_stage.DISCOVERY_TOOLS):
             plans = discovery_stage.build_plans(config, artifacts, live_urls or active_urls)
@@ -148,7 +154,7 @@ def execute_scan(config: RunConfig) -> int:  # noqa: PLR0912, PLR0915 - orchestr
 
         # [v0.5.0] kiterunner runs alongside discovery when --api-discovery is set.
         # Findings stay separate (kind='api-route') so reports distinguish them.
-        if config.api_discovery:
+        if config.api_discovery and "kiterunner" in config.enabled_tools:
             kr_plans = kiterunner_stage.build_plans(
                 config, artifacts, live_urls or active_urls,
             )
@@ -187,6 +193,9 @@ def execute_scan(config: RunConfig) -> int:  # noqa: PLR0912, PLR0915 - orchestr
         if f.severity in SEVERITY_ORDER
         and SEVERITY_ORDER.index(f.severity) >= threshold_idx
     ]
+    # [FIX-BBW-10] Incomplete runtime stages are fatal even when parsers produce
+    # no findings; otherwise CI can mark a timed-out scan as successful.
+    fatal_errors = errors + _execution_errors(results)
     write_json(
         artifacts.root / "scope_decisions.json",
         [item.model_dump(mode="json") for item in scope_decisions],
@@ -199,7 +208,7 @@ def execute_scan(config: RunConfig) -> int:  # noqa: PLR0912, PLR0915 - orchestr
         artifacts.root / "summary.md",
         build_summary_markdown(
             config, findings, statuses, results, scope_decisions,
-            errors + dns_notes,
+            fatal_errors + dns_notes,
         ),
     )
     if config.verbose:
@@ -220,7 +229,7 @@ def execute_scan(config: RunConfig) -> int:  # noqa: PLR0912, PLR0915 - orchestr
             flush=True,
         )
         print(f"[bbwebscan] artifacts: {artifacts.root}", flush=True)
-    if errors:
+    if fatal_errors:
         return 2
     if findings:
         # [v0.4.3 Item 5] Findings at or above min_severity → exit 3 for CI gating.
@@ -236,6 +245,25 @@ def _run_stage_plans(
 
 def _artifact_paths(plans: list[CommandPlan]) -> list[Path]:
     return [artifact for plan in plans for artifact in plan.artifacts]
+
+
+def _execution_errors(results: list[ExecutionResult]) -> list[str]:
+    errors: list[str] = []
+    for result in results:
+        if result.status in {"ok", "dry-run"}:
+            continue
+        message = (
+            f"Execution failed: {result.stage}/{result.label} "
+            f"status={result.status}"
+        )
+        if result.exit_code is not None:
+            message = f"{message} exit={result.exit_code}"
+        if result.error:
+            message = f"{message} error={result.error}"
+        elif result.stderr_log is not None:
+            message = f"{message} stderr={result.stderr_log}"
+        errors.append(message)
+    return errors
 
 
 def _scope_active_urls(  # noqa: PLR0913 - threading scope state through the pipeline

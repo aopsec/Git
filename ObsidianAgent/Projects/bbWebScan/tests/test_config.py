@@ -71,6 +71,28 @@ def test_resolve_selected_tools_rejects_unsupported() -> None:
         resolve_selected_tools("safe", [], ["wfuzz"], [])
 
 
+def test_build_run_config_adds_amass_for_subdomain_enumeration() -> None:
+    config = build_run_config(_ns(enumerate_subdomains=True))
+
+    assert "amass" in config.enabled_tools
+
+
+def test_build_run_config_adds_kiterunner_for_api_discovery() -> None:
+    config = build_run_config(_ns(api_discovery=True))
+
+    assert "kiterunner" in config.enabled_tools
+
+
+def test_build_run_config_rejects_disabling_amass_when_enumerating() -> None:
+    with pytest.raises(ValueError, match="requires amass"):
+        build_run_config(_ns(enumerate_subdomains=True, disable_tool=["amass"]))
+
+
+def test_build_run_config_rejects_disabling_kiterunner_for_api_discovery() -> None:
+    with pytest.raises(ValueError, match="requires kiterunner"):
+        build_run_config(_ns(api_discovery=True, disable_tool=["kiterunner"]))
+
+
 def test_load_profile_roundtrip(tmp_path: Path) -> None:
     profile_path = tmp_path / "p.yaml"
     profile_path.write_text(

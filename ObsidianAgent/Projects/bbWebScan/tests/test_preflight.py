@@ -224,6 +224,26 @@ def test_inventory_tools_accepts_explicit_list() -> None:
     assert {s.name for s in statuses} == {"httpx", "katana"}
 
 
+def test_collect_tool_inventory_uses_effective_enabled_tools(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    captured: list[str] = []
+
+    def fake_inventory(
+        tool_names: list[str] | tuple[str, ...], **_kwargs: object,
+    ) -> list[ToolStatus]:
+        captured.extend(tool_names)
+        return []
+
+    monkeypatch.setattr(preflight_module, "inventory_tools", fake_inventory)
+    config = _config(tmp_path, dry_run=True).model_copy(
+        update={"enabled_tools": ["httpx", "amass", "kiterunner"]}
+    )
+
+    assert collect_tool_inventory(config) == []
+    assert captured == ["httpx", "amass", "kiterunner"]
+
+
 def test_amass_fingerprint_matches_observed_v420_banner(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
