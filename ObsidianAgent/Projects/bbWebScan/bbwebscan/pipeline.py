@@ -19,11 +19,13 @@ from bbwebscan.stages import (
     amass_stage,
     discovery_stage,
     httpx_stage,
+    jwt_tool_stage,
     katana_stage,
     kiterunner_stage,
     nuclei_stage,
     params_stage,
     scrapy_stage,
+    sqlmap_stage,
 )
 from bbwebscan.targets import (
     collect_targets,

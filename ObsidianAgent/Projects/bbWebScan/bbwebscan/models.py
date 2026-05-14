@@ -94,6 +94,9 @@ class RunConfig(BaseModel):
     discovery_status_filter: list[str] = Field(
         default_factory=lambda: ["200", "301", "302", "307", "308"]
     )
+    jwt_analysis: bool = False
+    sqlmap_mode: Literal["off", "smooth", "aggressive"] = "off"
+    sqlmap_timeout: int = 600
     nuclei_max_targets: int = 1000
 
 

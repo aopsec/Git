@@ -1,0 +1,10 @@
+{
+  "target": "https://example.com/search?q=test",
+  "vulnerability": [
+    {
+      "type": "error-based",
+      "description": "MySQL error-based SQL injection detected",
+      "severity": "critical"
+    }
+  ]
+}

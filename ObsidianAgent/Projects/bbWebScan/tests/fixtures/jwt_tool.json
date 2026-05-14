@@ -1,0 +1,15 @@
+{
+  "token": "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.",
+  "issues": [
+    {
+      "type": "alg_none",
+      "description": "Algorithm is set to none, allowing token forgery",
+      "severity": "critical"
+    },
+    {
+      "type": "weak_secret",
+      "description": "Secret key is too weak (dictionary word detected)",
+      "severity": "critical"
+    }
+  ]
+}

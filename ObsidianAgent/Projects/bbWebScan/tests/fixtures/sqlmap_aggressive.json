@@ -1,0 +1,15 @@
+{
+  "target": "https://example.com/api/user?id=123&name=test",
+  "vulnerability": [
+    {
+      "type": "union",
+      "description": "UNION query-based SQL injection detected",
+      "severity": "critical"
+    },
+    {
+      "type": "time-based-blind",
+      "description": "Time-based blind SQL injection detected",
+      "severity": "high"
+    }
+  ]
+}

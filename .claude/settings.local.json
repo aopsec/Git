@@ -52,7 +52,22 @@
       "Bash(chmod +x /home/aops/hyprland-reset.sh /home/aops/hyprland-nvidia-optimize.sh)",
       "Bash(git lfs *)",
       "Bash(git push *)",
-      "Bash(gh auth *)"
+      "Bash(gh auth *)",
+      "Read(//usr/bin/**)",
+      "Bash(.venv/bin/python --version)",
+      "Bash(.venv/bin/python -m pip show bbwebscan)",
+      "Bash(.venv/bin/python -m ruff --version)",
+      "Bash(.venv/bin/python -m mypy --version)",
+      "Bash(.venv/bin/python -m pytest --version)",
+      "Bash(bash scripts/verify.sh)",
+      "Bash(.venv/bin/python -m bbwebscan --version)",
+      "Bash(.venv/bin/bbwebscan --version)",
+      "Bash(.venv/bin/python -m pytest -q tests/test_changelog.py)",
+      "Bash(git commit -m ' *)",
+      "Bash(git tag *)",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(.venv/bin/python -m pip install -e . --quiet)",
+      "Bash(.venv/bin/python -c \"from bbwebscan import __version__; print\\(__version__\\)\")"
     ]
   }
 }
