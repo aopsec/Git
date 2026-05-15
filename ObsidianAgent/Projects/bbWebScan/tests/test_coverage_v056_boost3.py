@@ -55,7 +55,7 @@ def _make_run_config(tmp_path: Path, **overrides: Any) -> RunConfig:
     base = RunConfig(
         program_name="t", seed_urls=[], allowed_hosts=["example.com"],
         denied_hosts=[], auth=AuthConfig(), mode="safe", enabled_tools=[],
-        wordlist=Path("/tmp/w"), threads=1, rate=1, tool_timeout_s=1,
+        wordlist=tmp_path / "wordlist.txt", threads=1, rate=1, tool_timeout_s=1,
         command_wall_clock_s=1, retry=RetryPolicy(),
         output_dir=tmp_path / "run",
         target_inputs=["https://example.com"],
