@@ -1,0 +1,7 @@
+{"host":"app.example.com","ip":"93.184.216.34","port":80,"protocol":"tcp","tls":false}
+{"host":"app.example.com","ip":"93.184.216.34","port":443,"protocol":"tcp","tls":true}
+{"host":"app.example.com","ip":"93.184.216.34","port":8080,"protocol":"tcp","tls":false}
+{"host":"api.example.com","ip":"93.184.216.35","port":8443,"protocol":"tcp","tls":true}
+{"host":"api.example.com","ip":"93.184.216.35","port":443,"protocol":"tcp","tls":true}
+not-json-line-should-be-skipped
+{"host":"api.example.com","port":"not-an-int"}

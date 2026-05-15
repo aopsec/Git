@@ -5,6 +5,31 @@ parsing, split timeout semantics, per-stage retry/backoff, and a stricter scope 
 
 ## Status
 
+`v0.5.6` — new **`naabu` port-discovery stage** (vault citation:
+hacking-apis, ProjectDiscovery appendix). Runs between `amass` and `httpx`,
+so the pipeline stops implicitly assuming `:80`/`:443`. Opt-in via
+`--port-scan`; mode via `--port-scan-mode {top-100,top-1000,full}`
+(default `top-100`); rate via `--port-scan-rate` (default `1000`).
+`full` sweeps all 65535 ports and requires `--ack-authorized` — same gate
+as `--amass-mode active/intel` and `--sqlmap-mode aggressive`. Discovered
+`host:port` pairs are scope-gated via `host_in_scope` before becoming
+additional httpx seed URLs (port 80 → `http://host`, port 443 reuses the
+base `https://host` target, other ports → `https://host:port`). Findings
+carry `kind="open-port"`, severity `info`. See `CHANGELOG.md` for the
+0.5.7+ deferrals (Scrapy→jwt_tool harvest, sqlmap argv redaction,
+`cyberref` promotions).
+
+`v0.5.5` — new **`jwt_tool` JWT analysis stage** (opt-in via
+`--jwt-analysis`, consumes Bearer tokens from `--header Authorization`) +
+**`sqlmap` SQL injection stage** (`--sqlmap-mode {off,smooth,aggressive}`,
+`aggressive` requires `--ack-authorized`; per-URL budget via
+`--sqlmap-timeout`). Security fix: dry-run argv echo now masks the
+`jwt_tool -t <token>` slot via the new `CommandPlan.redact_indices`
+field — previously the JWT leaked verbatim to stdout and
+`runs/<UTC>/logs/jwt_tool.stdout.log`. Pipeline refactored into per-stage
+helpers threading a single `_PipelineState` dataclass; ordering remains
+explicit. Vendored secrets-patterns ruleset refreshed from upstream.
+
 `v0.5.3` — `[FIX-BBW-10]` release-engineering patch + new **Scrapy crawler
 stage** (cyberref: PENDING attestation). Opt-in flags `--enumerate-subdomains`
 and `--api-discovery` now thread through inventory/preflight via
@@ -176,11 +201,21 @@ Profile `denied_hosts` always wins over `allowed_hosts`.
 
 ## Stages
 
-`httpx` → `katana` → `discovery` (ffuf, feroxbuster, dirsearch) → `params` (arjun) →
-`nuclei`. Each stage builds `CommandPlan`s; `runner.run_plan` streams stdout/stderr to
+Pipeline order (each stage is gated on its enabling flag and on membership in
+`config.enabled_tools`; stages with no input are skipped without erroring):
+
+`amass` (opt-in `--enumerate-subdomains`) → `naabu` (opt-in `--port-scan`) →
+`httpx` → `katana` → `scrapy` (safe-default) → `discovery` (ffuf, feroxbuster,
+dirsearch) → `kiterunner` (opt-in `--api-discovery`) → `params` (arjun) →
+`jwt_tool` (opt-in `--jwt-analysis`) → `sqlmap` (opt-in `--sqlmap-mode`) →
+`nuclei`.
+
+Each stage builds `CommandPlan`s; `runner.run_plan` streams stdout/stderr to
 log files, applies wall-clock timeout, retries on transient exit codes per
-`RetryPolicy`. Parsers are JSONL-tolerant: malformed/empty lines are skipped, never
-fatal.
+`RetryPolicy`. Parsers are JSONL-tolerant: malformed/empty lines are skipped,
+never fatal. Stages that pass a secret via a non-header argv slot (e.g.
+`jwt_tool -t <token>`) set `CommandPlan.redact_indices` so the runner masks
+the slot before the dry-run echo and any log write.
 
 ## Layout
 

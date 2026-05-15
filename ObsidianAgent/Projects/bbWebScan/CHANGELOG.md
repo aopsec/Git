@@ -4,6 +4,54 @@ All notable changes to bbWebScan are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [SemVer](https://semver.org/).
 
+## [0.5.6] — 2026-05-15
+
+### Added
+- **`naabu` port-discovery stage** (vault citation: hacking-apis,
+  ProjectDiscovery appendix). New `bbwebscan/stages/naabu_stage.py` runs
+  between `amass` and `httpx` so the pipeline stops implicitly assuming
+  `:80`/`:443`. Discovered `host:port` pairs are scope-gated via
+  `enforce_scope_gate`-equivalent host check, then become additional httpx
+  seed URLs: port 80 → `http://host`, port 443 → reuses base
+  `https://host` target, other ports → `https://host:port`. Findings carry
+  `kind="open-port"`, severity `info`.
+- CLI flags on `bbwebscan scan`: `--port-scan`,
+  `--port-scan-mode {top-100,top-1000,full}` (default `top-100`),
+  `--port-scan-rate` (default `1000`). `full` requires `--ack-authorized`
+  — mirrors the `--amass-mode active/intel` and `--sqlmap-mode aggressive`
+  gates.
+- `RunConfig.port_scan`, `RunConfig.port_scan_mode` (Pydantic Literal),
+  `RunConfig.port_scan_rate`.
+- `naabu` registered in `OPTIONAL_TOOLS`, `INSTALL_HINTS`, and surfaced
+  by `bbwebscan doctor`.
+- Menu prompts for `port-scan`, `port-scan-mode`, and `port-scan-rate`
+  in `menu_scan.py`. Selecting `full` re-prompts for the authorisation
+  acknowledgement, matching the amass/sqlmap precedent.
+- `_PipelineState.open_ports: list[str]` field that downstream stages can
+  read in a future release if they want raw port awareness (today only
+  used internally to extend `state.targets`).
+
+### Changed
+- Pipeline stage order is now: amass → **naabu** → httpx → katana →
+  scrapy → discovery → kiterunner → arjun → jwt_tool → sqlmap → nuclei.
+- `bbwebscan/pipeline.py::_run_naabu` introduces the scope-gate
+  short-circuit for `host:port` pairs (`_filter_open_ports_in_scope`)
+  and the URL synthesis helper (`_extend_targets_with_open_ports`).
+  No registry abstraction — call order remains explicit.
+
+### Notes
+- Pipeline order test renamed `test_pipeline_stage_order_v055` →
+  `test_pipeline_stage_order_v056`.
+- `naabu -scan-type s` (SYN, root-required) is NOT injected silently;
+  default remains TCP-CONNECT. Operators wanting SYN may opt in via a
+  profile-supplied arg in a future release.
+- Deferred from 0.5.6 (tracked for 0.5.7+):
+  Scrapy-harvested JWT candidate handoff to jwt_tool (response bodies
+  + Set-Cookie); `sqlmap --auth-cred` / `--cookie` argv redaction via
+  `CommandPlan.redact_indices`; promotion of `cyberref: PENDING`
+  markers on `scrapy_stage` and `jwt_tool_stage` (gated on vault
+  citations, not on shipping).
+
 ## [0.5.5] — 2026-05-14
 
 ### Security

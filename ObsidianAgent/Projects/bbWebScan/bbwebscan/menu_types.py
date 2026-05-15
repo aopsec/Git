@@ -47,6 +47,9 @@ class ScanSettings:
     jwt_analysis: bool = False
     sqlmap_mode: Literal["off", "smooth", "aggressive"] = "off"
     sqlmap_timeout: int = 600
+    port_scan: bool = False
+    port_scan_mode: Literal["top-100", "top-1000", "full"] = "top-100"
+    port_scan_rate: int = 1000
     dry_run: bool = True
     quiet: bool = False
     strict_identity: bool = False

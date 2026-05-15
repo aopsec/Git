@@ -9,6 +9,7 @@ from bbwebscan.menu_types import ScanSettings
 
 _DEFAULT_SCRAPY_MAX_DEPTH: int = 2
 _DEFAULT_SQLMAP_TIMEOUT: int = 600
+_DEFAULT_PORT_SCAN_RATE: int = 1000
 
 
 def scan_settings_to_args(
@@ -52,6 +53,9 @@ def scan_settings_to_args(
         jwt_analysis=settings.jwt_analysis,
         sqlmap_mode=settings.sqlmap_mode,
         sqlmap_timeout=settings.sqlmap_timeout,
+        port_scan=settings.port_scan,
+        port_scan_mode=settings.port_scan_mode,
+        port_scan_rate=settings.port_scan_rate,
         run_label=label,
     )
 
@@ -109,6 +113,12 @@ def scan_command_args(  # noqa: PLR0912 - flag-to-argv mapping is naturally wide
         args.extend(["--sqlmap-mode", settings.sqlmap_mode])
     if settings.sqlmap_timeout != _DEFAULT_SQLMAP_TIMEOUT:
         args.extend(["--sqlmap-timeout", str(settings.sqlmap_timeout)])
+    if settings.port_scan:
+        args.append("--port-scan")
+    if settings.port_scan_mode != "top-100":
+        args.extend(["--port-scan-mode", settings.port_scan_mode])
+    if settings.port_scan_rate != _DEFAULT_PORT_SCAN_RATE:
+        args.extend(["--port-scan-rate", str(settings.port_scan_rate)])
     if settings.dry_run if dry_run_override is None else dry_run_override:
         args.append("--dry-run")
     if settings.quiet:

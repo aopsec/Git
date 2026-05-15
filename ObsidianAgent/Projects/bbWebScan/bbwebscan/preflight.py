@@ -22,6 +22,9 @@ VERSION_ARGS: dict[str, list[str]] = {
     # [v0.5.3] Scrapy ships a `scrapy` console script via pip. `scrapy version`
     # prints "Scrapy 2.11.x". Identity regex anchors on the banner.
     "scrapy": ["version"],
+    # [v0.5.6] naabu v2.6.x: `naabu -version` prints the version; the banner
+    # printed without args contains "projectdiscovery" branding.
+    "naabu": ["-version"],
 }
 # [FIX-BBW-08] Positive fingerprints for binaries commonly shadowed by Python shims
 # or unrelated tools that share a name. Tools omitted here always report identity=None.
@@ -45,6 +48,11 @@ TOOL_IDENTITY: dict[str, re.Pattern[str]] = {
     # [v0.5.3] `scrapy version` prints "Scrapy 2.11.0"; anchor on the banner
     # word plus a version number so a fake shim just printing "scrapy" fails.
     "scrapy": re.compile(r"scrapy\s+\d+\.\d+", re.IGNORECASE),
+    # [v0.5.6] naabu banner is the PD ASCII logo + "projectdiscovery.io" footer;
+    # `-h` prints a description line "Naabu is a port scanning tool". Anchor on
+    # the org string or the description tagline so a fake binary just printing
+    # "naabu" doesn't pass.
+    "naabu": re.compile(r"projectdiscovery|port scanning tool", re.IGNORECASE),
 }
 WORDLIST_TOOLS: set[str] = {"ffuf", "feroxbuster", "dirsearch"}
 VERSION_PROBE_TIMEOUT_S: int = 10

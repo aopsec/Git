@@ -25,7 +25,9 @@ AGGRESSIVE_DEFAULT_TOOLS: tuple[str, ...] = (
 # --enable-tool), so they're SUPPORTED but not part of the default toolsets.
 # [v0.5.5] jwt_tool (--jwt-analysis) and sqlmap (--sqlmap-mode) follow the
 # same opt-in pattern: SUPPORTED but never auto-enabled.
-OPTIONAL_TOOLS: tuple[str, ...] = ("dirsearch", "amass", "kiterunner", "jwt_tool", "sqlmap")
+OPTIONAL_TOOLS: tuple[str, ...] = (
+    "dirsearch", "amass", "kiterunner", "jwt_tool", "sqlmap", "naabu",
+)
 SUPPORTED_TOOLS: tuple[str, ...] = (
     SAFE_DEFAULT_TOOLS
     + tuple(tool for tool in AGGRESSIVE_DEFAULT_TOOLS if tool not in SAFE_DEFAULT_TOOLS)
@@ -121,6 +123,17 @@ def build_run_config(args: Namespace) -> RunConfig:
     if sqlmap_mode_arg == "aggressive" and not args.ack_authorized:
         raise ValueError("--sqlmap-mode aggressive requires --ack-authorized (high target load)")
     sqlmap_timeout = getattr(args, "sqlmap_timeout", 600) or 600
+    # [v0.5.6] naabu port-discovery: full sweep is detectable, gate behind ack.
+    port_scan = getattr(args, "port_scan", False)
+    port_scan_mode_raw = getattr(args, "port_scan_mode", "top-100") or "top-100"
+    if port_scan_mode_raw not in ("top-100", "top-1000", "full"):
+        raise ValueError(f"Unsupported --port-scan-mode: {port_scan_mode_raw}")
+    port_scan_mode_arg = cast(Literal["top-100", "top-1000", "full"], port_scan_mode_raw)
+    if port_scan and port_scan_mode_arg == "full" and not args.ack_authorized:
+        raise ValueError(
+            "--port-scan-mode full requires --ack-authorized (65k-port sweep is detectable)"
+        )
+    port_scan_rate = getattr(args, "port_scan_rate", 1000) or 1000
     selected_tools = resolve_selected_tools(
         mode=mode,
         profile_tools=profile.enabled_tools,
@@ -133,6 +146,7 @@ def build_run_config(args: Namespace) -> RunConfig:
         api_discovery=api_discovery,
         jwt_analysis=jwt_analysis,
         sqlmap_mode=sqlmap_mode_arg,
+        port_scan=port_scan,
         disable_tools=args.disable_tool,
     )
     target_inputs = list(profile.seed_urls)
@@ -177,6 +191,9 @@ def build_run_config(args: Namespace) -> RunConfig:
         jwt_analysis=jwt_analysis,
         sqlmap_mode=sqlmap_mode_arg,
         sqlmap_timeout=sqlmap_timeout,
+        port_scan=port_scan,
+        port_scan_mode=port_scan_mode_arg,
+        port_scan_rate=port_scan_rate,
         discovery_status_filter=list(profile.discovery_status_filter),
         nuclei_max_targets=profile.nuclei_max_targets,
     )
@@ -206,6 +223,7 @@ def add_opt_in_tools(  # noqa: PLR0913 - opt-in flags accumulate naturally; bind
     api_discovery: bool,
     jwt_analysis: bool,
     sqlmap_mode: str,
+    port_scan: bool,
     disable_tools: list[str],
 ) -> list[str]:
     # [FIX-BBW-10] Flag-driven stages are real execution stages, so they must
@@ -233,6 +251,10 @@ def add_opt_in_tools(  # noqa: PLR0913 - opt-in flags accumulate naturally; bind
                 "remove --disable-tool sqlmap"
             )
         selected.add("sqlmap")
+    if port_scan:
+        if "naabu" in disabled:
+            raise ValueError("--port-scan requires naabu; remove --disable-tool naabu")
+        selected.add("naabu")
     return [tool for tool in SUPPORTED_TOOLS if tool in selected]
 
 

@@ -116,6 +116,25 @@ def _add_scan_args(parser: argparse.ArgumentParser) -> None:
             "Per-request --timeout is derived as budget/10 (smooth) or budget/5 (aggressive)."
         ),
     )
+    parser.add_argument(
+        "--port-scan", dest="port_scan", action="store_true",
+        help=(
+            "Run naabu between amass and httpx to discover open TCP ports per host. "
+            "Discovered host:port pairs become additional httpx targets."
+        ),
+    )
+    parser.add_argument(
+        "--port-scan-mode", dest="port_scan_mode",
+        choices=["top-100", "top-1000", "full"], default="top-100",
+        help=(
+            "naabu sweep size (default: top-100). full sweeps all 65535 ports "
+            "and requires --ack-authorized (detectable scan profile)."
+        ),
+    )
+    parser.add_argument(
+        "--port-scan-rate", dest="port_scan_rate", type=int, default=1000,
+        help="naabu packets-per-second rate (default 1000)",
+    )
     parser.set_defaults(run_label=datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ"))
 
 

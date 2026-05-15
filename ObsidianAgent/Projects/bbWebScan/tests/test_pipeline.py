@@ -19,6 +19,7 @@ from bbwebscan.stages import (
     jwt_tool_stage,
     katana_stage,
     kiterunner_stage,
+    naabu_stage,
     params_stage,
     scrapy_stage,
     sqlmap_stage,
@@ -707,11 +708,11 @@ def test_jwt_tool_dry_run_does_not_leak_bearer_token(
     assert "<redacted>" in log_text
 
 
-def test_pipeline_stage_order_v055(
+def test_pipeline_stage_order_v056(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
 ) -> None:
-    """[v0.5.5] Documented stage order:
-    amass → httpx → katana → scrapy → discovery → kiterunner → arjun →
+    """[v0.5.6] Documented stage order:
+    amass → naabu → httpx → katana → scrapy → discovery → kiterunner → arjun →
     jwt_tool → sqlmap → nuclei. Verifies that helpers run in this order
     when their gates are open."""
     seen: list[str] = []
@@ -728,6 +729,7 @@ def test_pipeline_stage_order_v055(
     _patch_pipeline_skeleton(monkeypatch)
     monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
     monkeypatch.setattr(amass_stage, "parse_results", lambda _p: ([], []))
+    monkeypatch.setattr(naabu_stage, "parse_results", lambda _p: ([], []))
     monkeypatch.setattr(
         httpx_stage, "parse_results", lambda _p: ([], ["https://example.com/?q=x"]),
     )
@@ -739,17 +741,19 @@ def test_pipeline_stage_order_v055(
 
     config = _scan_config(tmp_path).model_copy(update={
         "enabled_tools": [
-            "amass", "httpx", "katana", "scrapy", "arjun",
+            "amass", "naabu", "httpx", "katana", "scrapy", "arjun",
             "jwt_tool", "sqlmap", "nuclei",
         ],
         "enumerate_subdomains": True,
+        "port_scan": True,
         "jwt_analysis": True,
         "sqlmap_mode": "smooth",
         "auth": AuthConfig(headers={"Authorization": "Bearer t.t.t"}),
     })
     pipeline.execute_scan(config)
     expected_order = [
-        "amass", "httpx", "katana", "scrapy", "params", "jwt-analysis", "sqlmap", "nuclei",
+        "amass", "naabu", "httpx", "katana", "scrapy",
+        "params", "jwt-analysis", "sqlmap", "nuclei",
     ]
     # arjun/sqlmap fan out per-URL — collapse repeats to first occurrence so we
     # assert ordering, not multiplicity.
@@ -760,3 +764,138 @@ def test_pipeline_stage_order_v055(
     assert seen_unique == expected_order, (
         f"stage order drifted: expected {expected_order}, saw {seen_unique}"
     )
+
+
+# ---- v0.5.6 naabu pipeline integration ----
+
+def test_naabu_runs_between_amass_and_httpx(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.6] naabu builds between amass and httpx when --port-scan is set."""
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(naabu_stage, "parse_results", lambda _p: ([], []))
+
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": ["httpx", "naabu"],
+        "port_scan": True,
+    })
+    pipeline.execute_scan(config)
+    assert "naabu" in captured_stages
+    assert "httpx" in captured_stages
+    assert captured_stages.index("naabu") < captured_stages.index("httpx")
+
+
+def test_naabu_skipped_when_port_scan_off(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+
+    config = _scan_config(tmp_path)  # port_scan=False default
+    pipeline.execute_scan(config)
+    assert "naabu" not in captured_stages
+
+
+def test_naabu_open_ports_extend_httpx_targets(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.6] naabu host:port pairs become additional httpx seed URLs."""
+    httpx_seed_urls: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    def fake_httpx_build_plan(_config, _arts, targets):  # type: ignore[no-untyped-def]
+        httpx_seed_urls.extend(target.seed_url for target in targets)
+        return []
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(
+        naabu_stage, "parse_results",
+        lambda _p: ([], ["app.example.com:8080", "app.example.com:443"]),
+    )
+    monkeypatch.setattr(httpx_stage, "build_plan", fake_httpx_build_plan)
+
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": ["httpx", "naabu"],
+        "port_scan": True,
+    })
+    pipeline.execute_scan(config)
+    # :8080 → https://app.example.com:8080; :443 is already covered, so dropped.
+    assert "https://app.example.com:8080" in httpx_seed_urls
+    assert "https://app.example.com:443" not in httpx_seed_urls
+    # Base target still present
+    assert "https://example.com" in httpx_seed_urls or "https://app.example.com" in httpx_seed_urls
+
+
+def test_naabu_out_of_scope_host_filtered(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.6] naabu-emitted hosts must pass enforce_scope_gate; out-of-scope
+    hosts get rejected scope decisions and never reach httpx."""
+    httpx_seed_urls: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    def fake_httpx_build_plan(_config, _arts, targets):  # type: ignore[no-untyped-def]
+        httpx_seed_urls.extend(target.seed_url for target in targets)
+        return []
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(
+        naabu_stage, "parse_results",
+        lambda _p: (
+            [],
+            ["app.example.com:8080", "evil.attacker.test:9000"],
+        ),
+    )
+    monkeypatch.setattr(httpx_stage, "build_plan", fake_httpx_build_plan)
+
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": ["httpx", "naabu"],
+        "port_scan": True,
+    })
+    pipeline.execute_scan(config)
+    assert "https://app.example.com:8080" in httpx_seed_urls
+    assert not any("evil.attacker.test" in url for url in httpx_seed_urls)
+    decisions = json.loads(
+        (config.output_dir / "scope_decisions.json").read_text(encoding="utf-8"),
+    )
+    rejected_values = {d["value"] for d in decisions if not d["allowed"]}
+    assert "evil.attacker.test:9000" in rejected_values

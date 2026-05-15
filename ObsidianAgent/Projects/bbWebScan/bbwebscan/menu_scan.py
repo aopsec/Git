@@ -43,6 +43,9 @@ def collect_scan_settings(
     )
     amass_mode, ack = _collect_amass_mode(base, enumerate_subdomains, ack, input_func)
     sqlmap_mode, ack = _collect_sqlmap_mode(base, ack, input_func)
+    port_scan = prompt_bool("Port-scan with naabu", base.port_scan, input_func)
+    port_scan_mode, ack = _collect_port_scan_mode(base, port_scan, ack, input_func)
+    port_scan_rate = _collect_port_scan_rate(base, port_scan, input_func)
     return ScanSettings(
         profile=profile,
         targets=targets,
@@ -83,6 +86,9 @@ def collect_scan_settings(
         ),
         sqlmap_mode=sqlmap_mode,
         sqlmap_timeout=_collect_sqlmap_timeout(base, input_func),
+        port_scan=port_scan,
+        port_scan_mode=port_scan_mode,
+        port_scan_rate=port_scan_rate,
         dry_run=prompt_bool("Default to dry-run", base.dry_run, input_func),
         quiet=prompt_bool("Quiet progress output", base.quiet, input_func),
         strict_identity=prompt_bool("Strict tool identity", base.strict_identity, input_func),
@@ -222,6 +228,38 @@ def _collect_sqlmap_timeout(
     if timeout is None or timeout < 1:
         return base.sqlmap_timeout
     return timeout
+
+
+def _collect_port_scan_mode(
+    base: ScanSettings,
+    port_scan: bool,
+    ack: bool,
+    input_func: InputFunc,
+) -> tuple[Literal["top-100", "top-1000", "full"], bool]:
+    if not port_scan:
+        return (base.port_scan_mode, ack)
+    mode = cast(
+        Literal["top-100", "top-1000", "full"],
+        choice(
+            "naabu mode", ("top-100", "top-1000", "full"), base.port_scan_mode, input_func,
+        ),
+    )
+    if mode == "full" and not ack:
+        ack = _collect_authorization_ack("aggressive", False, input_func)
+    return (mode, ack)
+
+
+def _collect_port_scan_rate(
+    base: ScanSettings,
+    port_scan: bool,
+    input_func: InputFunc,
+) -> int:
+    if not port_scan:
+        return base.port_scan_rate
+    rate = prompt_int("naabu rate (packets/sec)", base.port_scan_rate, input_func)
+    if rate is None or rate < 1:
+        return base.port_scan_rate
+    return rate
 
 
 def _action_menu_body() -> str:

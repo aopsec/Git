@@ -25,6 +25,8 @@ INSTALL_HINTS: dict[str, str] = {
     # ships via OS package managers (or pipx) and as a self-contained git checkout.
     "jwt_tool": "pipx install jwt_tool  # or git clone https://github.com/ticarpi/jwt_tool",
     "sqlmap": "pipx install sqlmap  # or pacman/apt install sqlmap",
+    # [v0.5.6] naabu is a Go binary in the ProjectDiscovery ecosystem.
+    "naabu": "go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest",
 }
 
 _NAME_WIDTH = 12

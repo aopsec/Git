@@ -73,7 +73,11 @@
       "Bash(git commit *)",
       "Bash(git *)",
       "Bash(grep *)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(.venv/bin/python -c \"import ruff, mypy, pytest, pytest_cov\")",
+      "Bash(.venv/bin/python -m pytest -q tests/test_menu.py::test_scan_wizard_builds_run_config)",
+      "Bash(.venv/bin/bbwebscan scan *)",
+      "Bash(.venv/bin/bbwebscan doctor *)"
     ]
   }
 }

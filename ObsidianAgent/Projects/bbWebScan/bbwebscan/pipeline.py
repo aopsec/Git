@@ -24,6 +24,7 @@ from bbwebscan.stages import (
     jwt_tool_stage,
     katana_stage,
     kiterunner_stage,
+    naabu_stage,
     nuclei_stage,
     params_stage,
     scrapy_stage,
@@ -58,6 +59,8 @@ class _PipelineState:
     discovered_urls: list[str] = field(default_factory=list)
     active_urls: list[str] = field(default_factory=list)
     dns_notes: list[str] = field(default_factory=list)
+    # [v0.5.6] naabu-discovered "host:port" pairs that survived the scope gate.
+    open_ports: list[str] = field(default_factory=list)
 
 
 def execute_scan(config: RunConfig) -> int:
@@ -90,9 +93,10 @@ def execute_scan(config: RunConfig) -> int:
                 state.dns_notes.append(f"Note: {target.host} did not resolve via DNS")
 
     if not errors and not config.check_tools:
-        # [v0.5.5] Pipeline order is amass → httpx → katana → scrapy →
+        # [v0.5.6] Pipeline order is amass → naabu → httpx → katana → scrapy →
         # discovery → kiterunner → arjun → jwt_tool → sqlmap → nuclei.
         _run_amass(state)
+        _run_naabu(state)
         _run_httpx(state)
         _run_katana(state)
         _run_scrapy(state)
@@ -182,6 +186,28 @@ def _run_amass(state: _PipelineState) -> None:
                 state.scope_decisions, state.scoped_decision_values,
             )
     # Refresh the URL caches with the newly-added targets.
+    state.live_urls = [t.seed_url for t in state.targets]
+    state.discovered_urls = list(dict.fromkeys(state.discovered_urls + state.live_urls))
+    state.active_urls = _scope_active_urls(state, state.discovered_urls)
+
+
+def _run_naabu(state: _PipelineState) -> None:
+    config = state.config
+    # [v0.5.6] naabu between amass and httpx — discover open ports per host.
+    # Scope-gate every host:port pair before letting httpx probe it; out-of-scope
+    # hosts surface as Rejected scope decisions, never as additional targets.
+    if not (config.port_scan and "naabu" in config.enabled_tools):
+        return
+    plans = naabu_stage.build_plan(config, state.artifacts, state.targets)
+    state.results.extend(_run_stage_plans(plans, config, state.artifacts))
+    for plan in plans:
+        for artifact_path in plan.artifacts:
+            naabu_findings, host_ports = naabu_stage.parse_results(artifact_path)
+            state.findings.extend(naabu_findings)
+            state.open_ports.extend(_filter_open_ports_in_scope(state, host_ports))
+    state.targets = _extend_targets_with_open_ports(
+        state.targets, state.open_ports,
+    )
     state.live_urls = [t.seed_url for t in state.targets]
     state.discovered_urls = list(dict.fromkeys(state.discovered_urls + state.live_urls))
     state.active_urls = _scope_active_urls(state, state.discovered_urls)
@@ -400,6 +426,77 @@ def _scope_active_urls(state: _PipelineState, urls: list[str]) -> list[str]:
         if decision.allowed:
             state.allowed_url_cache.add(decision.value)
     return [url for url in urls if url in state.allowed_url_cache]
+
+
+def _filter_open_ports_in_scope(
+    state: _PipelineState, host_ports: list[str],
+) -> list[str]:
+    """[v0.5.6] Drop host:port pairs whose host is out of scope.
+
+    Records a scope decision per unique host the first time it's seen so
+    rejected hosts surface in the closing summary, mirroring how amass FQDNs
+    are gated.
+    """
+    kept: list[str] = []
+    config = state.config
+    for host_port in host_ports:
+        host = host_port.split(":", 1)[0]
+        if host_port in state.scoped_decision_values:
+            if host_port in state.allowed_url_cache or host in {
+                t.host for t in state.targets
+            }:
+                kept.append(host_port)
+            continue
+        decision = host_in_scope(host, state.allowed_hosts, config.denied_hosts)
+        port_decision = ScopeDecision(
+            value=host_port, allowed=decision.allowed, reason=decision.reason,
+        )
+        state.scope_decisions.append(port_decision)
+        state.scoped_decision_values.add(host_port)
+        if not decision.allowed:
+            continue
+        state.allowed_url_cache.add(host_port)
+        kept.append(host_port)
+    return kept
+
+
+_HTTP_DEFAULT_PORT: int = 80
+_HTTPS_DEFAULT_PORT: int = 443
+
+
+def _extend_targets_with_open_ports(
+    targets: list[NormalizedTarget], open_ports: list[str],
+) -> list[NormalizedTarget]:
+    """[v0.5.6] Turn discovered host:port pairs into additional seed targets.
+
+    Contract: ``open_ports`` MUST have been scope-gated by
+    ``_filter_open_ports_in_scope`` first — this function trusts every host
+    in its input and interpolates it into a URL without re-validating.
+    Bypassing the gate would mint out-of-scope seed URLs for httpx.
+
+    Port 443 is skipped (already covered by the base https://host target);
+    port 80 emits http://host; everything else emits https://host:port.
+    httpx probes the URL as given.
+    """
+    known = {target.seed_url for target in targets}
+    extended = list(targets)
+    for host_port in open_ports:
+        host, _, port_str = host_port.partition(":")
+        if not port_str.isdigit():
+            continue
+        port = int(port_str)
+        if port == _HTTPS_DEFAULT_PORT:
+            continue
+        seed_url = (
+            f"http://{host}" if port == _HTTP_DEFAULT_PORT else f"https://{host}:{port}"
+        )
+        if seed_url in known:
+            continue
+        extended.append(
+            NormalizedTarget(raw=host_port, host=host, seed_url=seed_url)
+        )
+        known.add(seed_url)
+    return extended
 
 
 def _extend_targets_with_fqdns(  # noqa: PLR0913 - threading scope state through helper

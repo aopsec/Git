@@ -52,9 +52,12 @@ def test_scan_wizard_builds_run_config() -> None:
     # between api_discovery and dry_run. Defaults preserved via empty strings.
     # [v0.5.5] sqlmap_mode prompted after enumerate_subdomains; jwt_analysis +
     # sqlmap_timeout prompted between scrapy_js_render and dry_run.
+    # [v0.5.6] port_scan prompted between sqlmap_timeout and dry_run; mode/rate
+    # prompts only fire if port_scan is "y".
     settings = collect_scan_settings(input_func=_input([
         "", "example.com", "", "", "", "", "", "n",
         "",                              # sqlmap_mode (default "off")
+        "n",                             # port_scan (v0.5.6, default "n")
         "n", "n", "", "", "",
         "5", "10", "", "", "", "", "medium", "y", "n",
         "n", "", "n",                    # scrapy_deep, scrapy_max_depth, scrapy_js_render
