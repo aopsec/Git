@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bbwebscan"
-version = "0.5.7"
+version = "0.5.8"
 description = "Scope-aware bug bounty web recon orchestrator"
 requires-python = ">=3.12"
 dependencies = [

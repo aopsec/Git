@@ -116,6 +116,20 @@ _BASE_SETTINGS: dict[str, Any] = {
     "DEPTH_PRIORITY": 1,
     "TELNETCONSOLE_ENABLED": False,
     "COOKIES_ENABLED": False,
+    # [FIX-V2] Explicit RETRY_EXCEPTIONS list prevents Scrapy from importing
+    # the broken SSL retry handler on Twisted 26.4.0 (removed
+    # _setAcceptableProtocols). Only well-known stdlib/Twisted exceptions are
+    # listed so no broken import can sneak in through the default set.
+    "RETRY_EXCEPTIONS": [
+        "builtins.OSError",
+        "builtins.ConnectionRefusedError",
+        "builtins.ConnectionResetError",
+        "builtins.TimeoutError",
+        "twisted.internet.error.ConnectError",
+        "twisted.internet.error.ConnectionLost",
+        "twisted.internet.defer.TimeoutError",
+        "twisted.internet.error.TimeoutError",
+    ],
 }
 
 

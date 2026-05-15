@@ -16,6 +16,7 @@ cyberref: PENDING attestation.
 """
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -36,8 +37,11 @@ def build_plan(config: RunConfig, artifacts: RunArtifacts, urls: list[str]) -> l
     log_file = artifacts.logs / "scrapy.log"
     write_lines(targets_file, urls)
     spider_path = Path(__file__).resolve().parent / "scrapy" / "bbspider.py"
+    # [FIX-V2] Use venv-relative scrapy binary to avoid system Twisted 26.4.0
+    # incompatibility (_setAcceptableProtocols removal breaks system scrapy).
+    scrapy_bin = str(Path(sys.executable).parent / "scrapy")
     command = [
-        "scrapy",
+        scrapy_bin,
         "runspider",
         str(spider_path),
         "-O", str(output_file),

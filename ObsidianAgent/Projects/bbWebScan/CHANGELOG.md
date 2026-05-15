@@ -4,6 +4,18 @@ All notable changes to bbWebScan are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [SemVer](https://semver.org/).
 
+## [0.5.8] — 2026-05-15
+
+### Added
+- Professional security report generator (`reporting_professional.py`) — CWE/CVE/OWASP referenced `.md` report written to every run directory
+- Scrapy stage now uses venv-relative binary to fix Twisted 26.4.0 incompatibility
+
+### Fixed
+- Scrapy 0 findings caused by system Python's Twisted 26.4.0 removing `_setAcceptableProtocols`; pipeline now resolves scrapy binary from the active venv
+
+### Changed
+- bbspider.py: defensive RETRY_EXCEPTIONS override to prevent SSL handler import errors
+
 ## [0.5.7] — 2026-05-15
 
 ### Changed

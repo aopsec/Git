@@ -16,6 +16,7 @@ from bbwebscan.models import (
 )
 from bbwebscan.preflight import collect_tool_inventory, validate_environment
 from bbwebscan.reporting import build_summary_markdown, write_summary
+from bbwebscan.reporting_professional import generate_professional_report
 from bbwebscan.runner import prepare_run_artifacts, run_plan, write_json, write_lines
 from bbwebscan.stages import (
     amass_stage,
@@ -146,6 +147,9 @@ def _finalize_run(
             config, state.findings, statuses, state.results, state.scope_decisions,
             fatal_errors + state.dns_notes,
         ),
+    )
+    generate_professional_report(
+        artifacts.root, config, state.findings, statuses, state.results, state.scope_decisions,
     )
     if config.verbose:
         # [FIX-BBW-G] Close the loop so operators don't have to `cd runs/` to find output.

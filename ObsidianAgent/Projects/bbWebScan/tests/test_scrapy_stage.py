@@ -53,7 +53,8 @@ def test_build_plan_emits_scrapy_runspider_invocation(tmp_path: Path) -> None:
     plan = plans[0]
     assert plan.stage == "scrapy"
     assert plan.label == "scrapy"
-    assert plan.command[0] == "scrapy"
+    # [FIX-V2] command[0] is now the venv-relative scrapy binary path, not "scrapy"
+    assert plan.command[0].endswith("scrapy")
     assert plan.command[1] == "runspider"
     # spider file path passed positionally
     assert plan.command[2].endswith("bbspider.py")
