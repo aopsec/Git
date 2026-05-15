@@ -44,7 +44,7 @@ def _input(values: Iterable[str]) -> InputFunc:
 
 def test_main_menu_exits_cleanly() -> None:
     io = FakeIO()
-    assert run_menu(input_func=_input(["8"]), io=io) == 0
+    assert run_menu(input_func=_input(["6"]), io=io) == 0
     assert io.panels[0][0] == f"bbWebScan v{__version__}"
 
 

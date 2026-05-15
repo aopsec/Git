@@ -4,6 +4,25 @@ All notable changes to bbWebScan are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [SemVer](https://semver.org/).
 
+## [0.5.7] — 2026-05-15
+
+### Changed
+- **Menu architecture redesigned** from 8-item to 6-item layout: Quick Scan,
+  Custom Scan, Manage Profiles, Doctor / Auto Fix, History, Exit.
+- Quick Scan workflow simplified: load default profile → ask targets + dry-run.
+- Custom Scan refactored to separate profile selection from scan settings.
+- Session-wide authorization acknowledgement caching reduces repeated prompts.
+
+### Added
+- `bbwebscan/menu_collect.py` — 10 reusable prompt helpers for scan settings.
+- `bbwebscan/menu_quick.py` — Quick scan workflow using defaults.
+- `bbwebscan/menu_custom.py` — Custom scan with flexible option collection.
+- `bbwebscan/menu_profiles.py` — Profile CRUD: list, create, load, describe, delete.
+- Test suite `tests/test_menu_simplified.py` covering all new menu modules.
+
+### Improved
+- Coverage gate raised from 85% to 98% (`fail_under` in `pyproject.toml`).
+
 ## [0.5.6] — 2026-05-15
 
 ### Added

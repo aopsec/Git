@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bbwebscan"
-version = "0.5.6"
+version = "0.5.7"
 description = "Scope-aware bug bounty web recon orchestrator"
 requires-python = ">=3.12"
 dependencies = [
@@ -34,7 +34,7 @@ branch = true
 source = ["bbwebscan"]
 
 [tool.coverage.report]
-fail_under = 85
+fail_under = 98
 exclude_lines = [
   "pragma: no cover",
   "raise NotImplementedError",

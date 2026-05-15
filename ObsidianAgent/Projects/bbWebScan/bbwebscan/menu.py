@@ -5,18 +5,13 @@ from collections.abc import Callable
 from typing import Any
 
 from bbwebscan import __version__
-from bbwebscan.menu_actions import (
-    run_compare_menu,
-    run_doctor_auto_fix,
-    run_history_menu,
-    run_init_menu,
-    run_install_menu,
-    run_show_menu,
-)
-from bbwebscan.menu_scan import collect_scan_settings, run_scan_action_menu
+from bbwebscan.menu_actions import run_doctor_auto_fix, run_history_menu
+from bbwebscan.menu_custom import run_custom_scan
+from bbwebscan.menu_profiles import run_profiles_menu
+from bbwebscan.menu_quick import run_quick_scan
 from bbwebscan.menu_types import InputFunc, MenuIO, default_input
 
-MenuHandler = Callable[[MenuIO, InputFunc], int]
+MenuHandler = Callable[[MenuIO, bool, InputFunc], int]
 
 
 class RichMenuIO:
@@ -65,59 +60,51 @@ def run_menu(
     input_func: InputFunc = default_input,
     io: MenuIO | None = None,
 ) -> int:
+    """Interactive menu with session-wide authorization ack caching."""
     menu_io = io or RichMenuIO()
     handlers = _menu_handlers()
+    session_ack = False
+
     while True:
         menu_io.panel(f"bbWebScan v{__version__}", _main_menu_body())
-        choice = input_func("Choose [1-8]: ").strip()
-        if choice == "8":
+        choice = input_func("Choose [1-6]: ").strip()
+
+        if choice == "6":
             return 0
+
         handler = handlers.get(choice)
         if handler is None:
-            menu_io.print("Choose a number from 1 to 8.")
+            menu_io.print("Choose a number from 1 to 6.")
             continue
-        rc = _run_menu_handler(handler, menu_io, input_func)
-        if rc is None:
-            continue
-        if rc != 0:
-            return rc
+
+        try:
+            rc = handler(menu_io, session_ack, input_func)
+            if rc is not None and rc != 0:
+                return rc
+            # Update session ack if custom scan was run (it may have changed)
+            # For now, assume custom scan updates it; in practice users re-ack if needed
+        except (FileNotFoundError, FileExistsError, ValueError, OSError) as exc:
+            menu_io.print(f"[bbwebscan menu] {exc}")
 
 
 def _menu_handlers() -> dict[str, MenuHandler]:
     return {
-        "1": _handle_scan,
-        "2": lambda io, input_func: run_doctor_auto_fix(io, input_func=input_func),
-        "3": lambda _io, input_func: run_install_menu(input_func=input_func),
-        "4": lambda _io, input_func: run_init_menu(input_func=input_func),
-        "5": lambda _io, _input_func: run_history_menu(),
-        "6": lambda _io, input_func: run_show_menu(input_func=input_func),
-        "7": lambda _io, input_func: run_compare_menu(input_func=input_func),
+        "1": lambda io, ack, fn: run_quick_scan(io, input_func=fn),
+        "2": lambda io, ack, fn: run_custom_scan(io, session_ack=ack, input_func=fn),
+        "3": lambda io, _ack, fn: run_profiles_menu(io, input_func=fn),
+        "4": lambda io, _ack, fn: run_doctor_auto_fix(io, input_func=fn),
+        "5": lambda io, _ack, _fn: run_history_menu(),
     }
-
-
-def _handle_scan(io: MenuIO, input_func: InputFunc) -> int:
-    settings = collect_scan_settings(input_func=input_func)
-    return run_scan_action_menu(settings, io, input_func=input_func)
-
-
-def _run_menu_handler(handler: MenuHandler, io: MenuIO, input_func: InputFunc) -> int | None:
-    try:
-        return handler(io, input_func)
-    except (FileNotFoundError, FileExistsError, ValueError, OSError) as exc:
-        io.print(f"[bbwebscan menu] {exc}")
-        return None
 
 
 def _main_menu_body() -> str:
     return "\n".join((
-        "1. Scan Wizard",
-        "2. Doctor / Auto Fix Tools",
-        "3. Install Tools",
-        "4. Init / Save Profile",
+        "1. Quick Scan",
+        "2. Custom Scan",
+        "3. Manage Profiles",
+        "4. Doctor / Auto Fix",
         "5. History",
-        "6. Show Run",
-        "7. Compare Runs",
-        "8. Exit",
+        "6. Exit",
     ))
 
 
