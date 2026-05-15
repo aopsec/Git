@@ -37,6 +37,8 @@ from bbwebscan.targets import (
     normalize_target,
     resolve_host,
 )
+from bbwebscan.wordlist_builder import build_supplement, extract_path_words
+from bbwebscan.wordlist_suggest import suggest_wordlist
 
 
 # [v0.5.5] Per-stage helpers operate on a single mutable state to avoid the
@@ -100,6 +102,8 @@ def execute_scan(config: RunConfig) -> int:
         _run_httpx(state)
         _run_katana(state)
         _run_scrapy(state)
+        _suggest_wordlist(state)
+        _build_wordlist_supplement(state)
         _run_discovery(state)
         _run_kiterunner(state)
         _run_arjun(state)
@@ -286,6 +290,53 @@ def _run_scrapy(state: _PipelineState) -> None:
             "Hint: re-run with --scrapy-deep to enable credential/secret "
             "extraction (vendored ruleset; never echoes raw values)."
         )
+
+
+def _suggest_wordlist(state: _PipelineState) -> None:
+    """[v0.5.7] Auto-suggest wordlist based on detected tech stack from httpx output."""
+    config = state.config
+    if not config.wordlist:
+        return
+
+    # Only process if httpx ran (has output logs)
+    httpx_log = state.artifacts.root / "logs" / "httpx.stdout.log"
+    if not httpx_log.is_file():
+        return
+
+    suggested = suggest_wordlist(state.artifacts.root, Path(config.wordlist))
+    if suggested != Path(config.wordlist):
+        # Update the config with the suggested wordlist
+        state.config = config.model_copy(update={"wordlist": suggested})
+
+
+def _build_wordlist_supplement(state: _PipelineState) -> None:
+    """[v0.5.7] Build supplemental wordlist from discovered URLs."""
+    config = state.config
+    wordlist_tools = {"ffuf", "feroxbuster", "dirsearch"}
+
+    # Skip if no wordlist-using tools are enabled
+    if not any(tool in config.enabled_tools for tool in wordlist_tools):
+        return
+
+    # Skip if no discovered URLs
+    if not state.discovered_urls:
+        return
+
+    # Extract words from discovered URLs
+    words = extract_path_words(state.discovered_urls)
+    if not words:
+        return
+
+    # Build supplemental wordlist
+    base_wordlist = Path(config.wordlist)
+    effective_path = state.artifacts.root / "wordlist_effective.txt"
+
+    try:
+        build_supplement(words, base_wordlist, effective_path)
+        state.config = config.model_copy(update={"wordlist": effective_path})
+    except (OSError, ValueError):
+        # If building fails, keep the original wordlist
+        pass
 
 
 def _run_discovery(state: _PipelineState) -> None:

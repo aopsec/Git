@@ -77,13 +77,12 @@ def test_collect_wordlist_returns_path_when_provided() -> None:
     assert wl == "/tmp/words.txt"
 
 
-def test_collect_extra_tools_returns_defaults_on_invalid() -> None:
-    inputs = iter(["invalid-tool", ""])  # invalid tool → catches ValueError
-    enable, disable = menu_collect_mod.collect_extra_tools(
+def test_collect_disable_tools_returns_defaults_on_invalid() -> None:
+    inputs = iter(["invalid-tool"])  # invalid tool → catches ValueError
+    disable = menu_collect_mod.collect_disable_tools(
         ScanSettings(), lambda _: next(inputs),
     )
     # Falls back to ScanSettings defaults on error
-    assert enable == ScanSettings().enable_tool
     assert disable == ScanSettings().disable_tool
 
 
@@ -156,12 +155,12 @@ def test_run_custom_scan_preview_command() -> None:
     """Choice 1 previews the command."""
     io = _StubIO()
     inputs = iter([
+        "4",  # template: manual
         "example.com",  # targets
         "safe",  # mode
         "y",  # ack_authorized
         "",  # output_dir
         "",  # wordlist
-        "",  # enable_tool
         "",  # disable_tool
         "info",  # severity
         "",  # threads
@@ -180,12 +179,12 @@ def test_run_custom_scan_back() -> None:
     """Choice 5 returns to main menu."""
     io = _StubIO()
     inputs = iter([
+        "4",  # template: manual
         "example.com",  # targets
         "safe",  # mode
         "y",  # ack_authorized
         "",  # output_dir
         "",  # wordlist
-        "",  # enable_tool
         "",  # disable_tool
         "info",  # severity
         "",  # threads
@@ -197,12 +196,6 @@ def test_run_custom_scan_back() -> None:
         io, session_ack=False, input_func=lambda _: next(inputs),
     )
     assert rc == 0
-
-
-def test_select_profile_no_profiles_dir() -> None:
-    """_select_profile returns default ScanSettings when no profiles dir."""
-    settings = menu_custom_mod._select_profile(lambda _: "default")
-    assert isinstance(settings, ScanSettings)
 
 
 def test_action_menu_body_has_menu_items() -> None:
@@ -349,12 +342,12 @@ def test_run_custom_scan_action_run() -> None:
         return 0
 
     inputs = iter([
+        "4",  # template: manual
         "example.com",  # targets
         "safe",  # mode
         "y",  # ack
         "",  # output_dir
         "",  # wordlist
-        "",  # enable_tool
         "",  # disable_tool
         "info",  # severity
         "",  # threads
@@ -380,12 +373,12 @@ def test_run_custom_scan_action_dry_run() -> None:
         return 0
 
     inputs = iter([
+        "4",  # template: manual
         "example.com",  # targets
         "safe",  # mode
         "y",  # ack
         "",  # output_dir
         "",  # wordlist
-        "",  # enable_tool
         "",  # disable_tool
         "info",  # severity
         "",  # threads
@@ -405,12 +398,12 @@ def test_run_custom_scan_action_save_no() -> None:
     """Choice 4 with 'no' to save returns to menu."""
     io = _StubIO()
     inputs = iter([
+        "4",  # template: manual
         "example.com",  # targets
         "safe",  # mode
         "y",  # ack
         "",  # output_dir
         "",  # wordlist
-        "",  # enable_tool
         "",  # disable_tool
         "info",  # severity
         "",  # threads
@@ -441,12 +434,12 @@ def test_run_custom_scan_run_fails_on_config_error() -> None:
     """run_configured_scan returns 2 on config error."""
     io = _StubIO()
     inputs = iter([
+        "4",  # template: manual
         "example.com",  # targets
         "safe",  # mode
         "y",  # ack
         "",  # output_dir
         "",  # wordlist
-        "",  # enable_tool
         "",  # disable_tool
         "info",  # severity
         "",  # threads
@@ -523,12 +516,13 @@ def test_run_menu_custom_scan() -> None:
     """Menu choice 2 triggers custom scan."""
     io = _StubIO()
     inputs = iter([
+        "2",  # main menu: custom scan
+        "4",  # template: manual
         "example.com",  # targets
         "safe",  # mode
         "y",  # ack
         "",  # output_dir
         "",  # wordlist
-        "",  # enable_tool
         "",  # disable_tool
         "info",  # severity
         "",  # threads
@@ -667,12 +661,12 @@ def test_run_custom_scan_invalid_choice() -> None:
     """Custom scan action menu with invalid choice."""
     io = _StubIO()
     inputs = iter([
+        "4",  # template: manual
         "example.com",  # targets
         "safe",  # mode
         "y",  # ack
         "",  # output_dir
         "",  # wordlist
-        "",  # enable_tool
         "",  # disable_tool
         "info",  # severity
         "",  # threads

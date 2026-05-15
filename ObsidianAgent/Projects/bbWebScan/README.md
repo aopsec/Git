@@ -1,226 +1,355 @@
 # bbWebScan
 
-Scope-aware bug bounty web recon orchestrator. Successor to `~/bbscan/` with hardened
-parsing, split timeout semantics, per-stage retry/backoff, and a stricter scope gate.
+Scope-aware bug bounty web recon orchestrator. Runs a pipeline of specialized tools (httpx, katana, scrapy, discovery, nuclei, and optionally amass, naabu, jwt_tool, sqlmap) with strict scope enforcement and built-in security hardening.
 
-## Status
+## Introduction
 
-`v0.5.6` — new **`naabu` port-discovery stage** (vault citation:
-hacking-apis, ProjectDiscovery appendix). Runs between `amass` and `httpx`,
-so the pipeline stops implicitly assuming `:80`/`:443`. Opt-in via
-(default `top-100`); rate via `--port-scan-rate` (default `1000`).
-`full` sweeps all 65535 ports and requires `--ack-authorized` — same gate
-as `--amass-mode active/intel` and `--sqlmap-mode aggressive`. Discovered
-`host:port` pairs are scope-gated via `host_in_scope` before becoming
-additional httpx seed URLs (port 80 → `http://host`, port 443 reuses the
-base `https://host` target, other ports → `https://host:port`). Findings
-carry `kind="open-port"`, severity `info`. See `CHANGELOG.md` for the
-0.5.7+ deferrals (Scrapy→jwt_tool harvest, sqlmap argv redaction,
-`cyberref` promotions).
+bbWebScan orchestrates web reconnaissance for authorized bug bounty programs and penetration tests. It:
 
-`v0.5.5` — new **`jwt_tool` JWT analysis stage** (opt-in via
-`--jwt-analysis`, consumes Bearer tokens from `--header Authorization`) +
-**`sqlmap` SQL injection stage** (`--sqlmap-mode {off,smooth,aggressive}`,
-`aggressive` requires `--ack-authorized`; per-URL budget via
-`--sqlmap-timeout`). Security fix: dry-run argv echo now masks the
-`jwt_tool -t <token>` slot via the new `CommandPlan.redact_indices`
-field — previously the JWT leaked verbatim to stdout and
-`runs/<UTC>/logs/jwt_tool.stdout.log`. Pipeline refactored into per-stage
-helpers threading a single `_PipelineState` dataclass; ordering remains
-explicit. Vendored secrets-patterns ruleset refreshed from upstream.
+- **Enforces scope** — refuses to run outside declared target scope via `allowed_hosts` and `denied_hosts` gates
+- **Pipelines tools** — chains subdomain discovery → port scan → live host detection → crawling → fuzzing → injection testing → template matching
+- **Hardens security** — masks secrets in logs/reports, supports env-var-only credentials in profiles, redacts command arguments before dry-run echo
+- **Detects tech** — auto-suggests wordlists based on detected server stack (PHP, Node.js, ASP.NET, etc.)
+- **Extracts wordlists** — builds personalized wordlists from discovered paths for more effective fuzzing
+- **Gathers findings** — JSON + Markdown reports with severity filtering and run history
 
-`v0.5.3` — `[FIX-BBW-10]` release-engineering patch + new **Scrapy crawler
-stage** (cyberref: PENDING attestation). Opt-in flags `--enumerate-subdomains`
-and `--api-discovery` now thread through inventory/preflight via
-`add_opt_in_tools`; per-stage gates in `pipeline.py` match the effective
-tool set; runtime stage failures (timeout/non-zero exit) are now fatal
-(exit 2) even when parsers emit no findings. Header-value redaction in
-`runner.redact_command_for_log` now masks any `-H` / `--header` /
-`--header=Name: value` payload, not just Authorization/Cookie — catches
-`X-API-Key`, `X-Auth-Token`, and custom auth header names. New Scrapy stage
-runs alongside katana in safe mode, harvests information-disclosure
-signals (documents, emails, exposed paths, and — when `--scrapy-deep`
-is set — credential/secret patterns from a vendored ruleset). Optional
-`[js]` extra adds `scrapy-playwright` for JS rendering when
-`--scrapy-js-render` is set. See `CHANGELOG.md` and `NOTICE` for
-attribution.
+Designed for operational efficiency: one-off CLI scans, saved profiles, CI/CD integration, and an interactive Rich-backed menu for guided setup.
 
-`v0.5.2` — menu hardening patch. Main-menu handlers now catch user-facing
-errors (`FileNotFoundError`, `FileExistsError`, `ValueError`, `OSError`),
-`--port-scan`; mode via `--port-scan-mode {top-100,top-1000,full}`
-print `[bbwebscan menu] <error>`, and return to the menu instead of crashing.
-Save Profile no longer persists raw-request file paths; those remain one-off
-run inputs only. `bbwebscan` with no args and
-`bbwebscan menu` now open a Rich-backed numbered menu for scan setup,
-doctor/auto-fix, install, profile init/save, history, show, and compare.
-Existing direct CLI commands remain valid. The Scan Wizard previews the
-equivalent command, can dry-run before execution, and preserves the existing
-`--ack-authorized` gates for aggressive scans and active/intel amass modes.
-Saved profile auth uses env-var references only; one-off header/cookie/raw
-request inputs are not written as plaintext profile secrets.
+---
 
-`v0.5.0` — vault-attested web tools added under cyberref discipline:
-**`amass`** subdomain enumeration runs before httpx when
-`--enumerate-subdomains` is set (modes: passive default; active/intel
-require `--ack-authorized`). **`kiterunner`** API route discovery runs
-alongside `ffuf` in the discovery stage when `--api-discovery` is set.
-Each amass FQDN passes through `enforce_scope_gate` before reaching
-downstream stages, so wide-net subdomain enumeration stays inside the
-operator-declared scope. Vault citations recorded per tool in CHANGELOG.
+## Information
 
-`v0.4.4` — security fixes from the v0.4.3 `/cyberref` review: `runs/<UTC>/run_config.json`
-no longer persists resolved `auth.headers` / `auth.cookies` values (keys preserved,
-values become `<redacted>`); dry-run argv echo masks `Authorization:` / `Cookie:`
-header values before print + write. Both fixes ship without backward-incompatible
-changes; existing tests still pass.
+### Architecture
 
-`v0.4.3` — engineering polish + operator QoL: `bbwebscan --version`;
-`CHANGELOG.md` (Keep-a-Changelog format, backfilled to 0.0.1); new
-subcommands `bbwebscan history` (list past runs), `bbwebscan show <run>`
-(reprint a past summary.md), `bbwebscan compare <A> <B>` (diff findings
-between runs); `bbwebscan scan --severity {info,low,medium,high,critical}`
-filters findings + introduces exit code `3` for CI gating, with severity
-breakdown in the closing summary; `bbwebscan scan --check-dns` non-fatally
-notes unresolvable hosts; profile YAMLs support `${ENV_VAR}` interpolation
-in `auth.headers` / `auth.cookies` only (missing var → actionable error);
-new `[cov]` extra plus an 85% coverage gate enforced via
-`[tool.coverage.report] fail_under`. Aggressive mode still requires
-`--ack-authorized`. Run only on in-scope targets you are authorized to test.
+**Pipeline order** (each stage is optional, gated on tool availability and enabling flags):
 
-## Quick start
+1. **amass** — Subdomain enumeration (opt-in, passive/active/intel modes)
+2. **naabu** — Port discovery (opt-in, top-100/top-1000/full modes)
+3. **httpx** — Live host + title + status detection
+4. **katana** — Web crawling
+5. **scrapy** — Deep crawling + secret/credential pattern extraction (safe-default)
+6. **discovery** — Directory/file fuzzing (ffuf, feroxbuster, dirsearch)
+7. **kiterunner** — API route discovery (opt-in)
+8. **params** — Parameter discovery (arjun)
+9. **jwt_tool** — JWT token analysis (opt-in)
+10. **sqlmap** — SQL injection testing (opt-in, smooth/aggressive modes)
+11. **nuclei** — Vulnerability scanning (community + custom templates)
+
+### Tool Set
+
+**Safe mode defaults** (no authorization needed):
+- httpx, katana, scrapy
+
+**Aggressive mode defaults** (requires `--ack-authorized`):
+- safe defaults + ffuf, feroxbuster, arjun, nuclei
+
+**Optional tools** (require explicit flags):
+- `--enumerate-subdomains` → amass
+- `--port-scan` → naabu
+- `--api-discovery` → kiterunner
+- `--jwt-analysis` → jwt_tool
+- `--sqlmap-mode smooth|aggressive` → sqlmap
+
+### Scope Gate
+
+bbWebScan refuses to run when:
+
+- Mode is aggressive without `--ack-authorized`
+- Targets span multiple hosts but `allowed_hosts` is empty
+- Any target normalizes to a public suffix (e.g., `com`, `co.uk`)
+
+The `denied_hosts` list always wins over `allowed_hosts`.
+
+### File Layout
+
+```
+bbwebscan/                 Main package
+├── cli.py               Entry point + subcommand dispatch
+├── menu*.py             Interactive Rich menu system
+├── config.py            Config building, tool resolution
+├── pipeline.py          Stage orchestration
+├── stages/              Per-tool executors (httpx, katana, nuclei, ...)
+├── wordlist_*.py        [v0.5.7] Auto-suggest + supplement wordlist building
+├── auth.py              Header/cookie/raw-request handling
+├── targets.py           URL normalization + scope filtering
+├── models.py            Pydantic dataclasses (RunConfig, Finding, etc.)
+└── ...
+profiles/                Saved YAML program profiles
+runs/                    Per-run artifacts (UTC-named subdirs)
+tests/                   pytest suite + fixtures
+```
+
+---
+
+## Correct Usage
+
+### Quick Start
 
 ```bash
 cd Projects/bbWebScan
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e '.[dev,cov]'               # installs rich menu + dev/test tooling
-pytest -q --cov                            # ≥ 85% line coverage required (gate enforced)
-bbwebscan                                 # interactive menu console
-bbwebscan menu                            # same menu, explicit subcommand
-bbwebscan doctor                          # what's missing? exit 2 if anything is
-bbwebscan install --dry-run               # preview installer commands
-bbwebscan install                         # actually install (uses ~/bbScan_Installer.sh)
-bbwebscan example.com --dry-run           # smart-default scan against one host
-bbwebscan init bbp-acme --target app.acme.com  # scaffold profiles/bbp-acme.yaml
-bbwebscan scan --profile profiles/bbp-acme.yaml
+pip install -e '.[dev,cov]'           # Install + dev/test tooling
+
+# Interactive menu
+bbwebscan                             # Open Rich menu (no args)
+bbwebscan menu                        # Explicit subcommand
+
+# Smart-default scan (one host, safe mode, dry-run first)
+bbwebscan example.com
+
+# Full-featured scan
+bbwebscan scan --target app.example.com --mode aggressive --ack-authorized \
+  --tool-timeout 30 --rate 100 --output-dir ./my-run
 ```
 
-### Install for system-wide use (optional)
+### Subcommands
+
+```text
+bbwebscan {menu,scan,install,doctor,init,history,show,compare}
+
+  menu       Open interactive menu (also the no-args default)
+  scan       Run a recon scan
+  install    Install missing tools via ~/bbScan_Installer.sh
+  doctor     Inspect toolchain readiness
+  init       Scaffold a program profile YAML
+  history    List past runs newest-first
+  show       Print a past run's summary.md
+  compare    Diff findings between two runs
+```
+
+### Scan Flags
+
+```text
+Targets & Scope:
+  --target HOST           One or more hosts (repeatable)
+  --input FILE            Newline-delimited file of targets
+  --profile FILE          YAML program profile (defines scope, auth)
+
+Mode & Authorization:
+  --mode {safe,aggressive}        Default: safe
+  --ack-authorized                Required for aggressive, active amass, full port-scan, sqlmap aggressive
+
+Auth:
+  --header "Name: Value"          One-off HTTP header (repeatable)
+  --cookie "name=value"           One-off cookie (repeatable)
+  --raw-request FILE              Raw HTTP request body for ffuf/dirsearch
+
+Discovery & Crawling:
+  --enumerate-subdomains          Enable amass (passive by default)
+  --amass-mode {passive,active,intel}
+  --port-scan                     Enable naabu
+  --port-scan-mode {top-100,top-1000,full}
+  --port-scan-rate N              Packets/sec (default 1000)
+  --api-discovery                 Enable kiterunner
+  --scrapy-deep                   Extract secrets from crawled content
+  --scrapy-js-render              JS rendering via scrapy-playwright
+
+Fuzzing & Injection:
+  --wordlist PATH                 Fuzzer wordlist (auto-suggested if omitted)
+  --enable-tool TOOL              No longer used in menu; CLI still accepts it
+  --disable-tool TOOL             Exclude specific tools
+  --sqlmap-mode {off,smooth,aggressive}  SQL injection testing
+  --sqlmap-timeout SECONDS        Per-URL timeout (default 600)
+  --jwt-analysis                  Enable jwt_tool
+
+Tuning:
+  --threads N                     Thread pool size (default: tool-dependent)
+  --rate N                        Requests/sec (default: tool-dependent)
+  --tool-timeout SECONDS          Per-tool timeout (default 15)
+  --cmd-timeout SECONDS           Wall-clock subprocess timeout (default 900)
+  --max-attempts N                Retry attempts on transient failure (default 1)
+  --backoff-s SECONDS             Retry backoff base (default 2.0)
+
+Output & Filtering:
+  --output-dir DIR                Artifacts directory (default: runs/<UTC>)
+  --min-severity {info,low,medium,high,critical}  Filter findings (default: info)
+  --dry-run                       Preview commands, skip execution
+  --quiet, -q                     Suppress per-stage progress
+
+Validation:
+  --check-dns                     Validate target DNS resolution (non-fatal)
+  --check-tools                   Inventory tools only, no scan
+  --strict-identity               Fail if any tool fingerprint is suspect
+```
+
+### Installation for System-Wide Use
 
 ```bash
 pipx install -e .
+# Then: bbwebscan (works from anywhere)
+# Update: pipx upgrade bbwebscan
 ```
 
-`pipx` puts a `bbwebscan` shim in `~/.local/bin/` (already on `$PATH` after
-`bbwebscan install`) so the command works from any shell without activating
-the venv. Update with `pipx upgrade bbwebscan`. Without pipx, `bbwebscan` is
-only available inside the activated `.venv` — that's expected.
+Without pipx, `bbwebscan` is only available inside the activated venv.
 
-## Subcommands
+### Running for CI/CD
 
-```text
-bbwebscan {menu,scan,install,doctor,init,history,show,compare} [...]
-   menu      Open the Python terminal menu (also the no-args default)
-   scan      Run a recon scan
-   install   Install missing recon tools via ~/bbScan_Installer.sh
-   doctor    Inspect toolchain readiness, print install hints
-   init      Scaffold a program profile YAML
-   history   List past runs newest-first
-   show      Print a past run's summary.md
-   compare   Diff findings between two past runs
+```bash
+# Check tool readiness
+bbwebscan doctor                    # Exit 2 if any tool is missing
+
+# Scan with severity gating
+bbwebscan scan --target app.example.com --mode safe --output-dir ./results
+echo $?                             # 0=ok, 2=preflight error, 3=findings found
+
+# Severity threshold for CI failure
+bbwebscan scan ... --min-severity high   # Only high/critical block the gate
 ```
 
-`bbwebscan scan` flags:
+Exit codes:
+- `0` — No errors, no findings (or all below threshold)
+- `2` — Preflight error (missing tool, wordlist, or invalid scope)
+- `3` — Findings found at or above `--min-severity` threshold
 
-```text
---profile FILE              YAML program profile
---target HOST               Repeatable; appended to profile.seed_urls
---input FILE                Newline-delimited target file
---mode {safe,aggressive}    Aggressive needs --ack-authorized
---ack-authorized            Required for aggressive mode
---header H, --cookie C      Auth: -H/--cookie, repeatable
---raw-request FILE          ffuf/dirsearch raw request body
---output-dir DIR            Default: runs/<UTC>
---enable-tool, --disable-tool   Toggle individual stages
---threads N, --rate N
---tool-timeout SECONDS      Per-tool flag (httpx -timeout, etc). Default 15.
---cmd-timeout SECONDS       Wall-clock subprocess timeout. Default 900.
---max-attempts N            Retry attempts on transient failure. Default 1.
---backoff-s SECONDS         Backoff base for retry. Default 2.0.
---check-tools               Inventory only, no scans
---dry-run                   Print commands; write logs but skip exec
---quiet, -q                 Suppress per-stage progress output
---strict-identity           Fail validate_environment if any tool fingerprint is suspect
-```
+---
 
-## Auth credentials in profiles
+## Tips & Cheats
 
-Profile YAMLs sometimes live in dotfiles or shared repos. Keep secrets out of
-the file by referencing environment variables in `auth.headers` and
-`auth.cookies`:
+### Auth in Profiles
+
+Keep credentials out of version control by using environment variables:
 
 ```yaml
+# profiles/acme.yaml
+program_name: acme
+seed_urls:
+  - https://app.acme.com
+allowed_hosts:
+  - app.acme.com
+  - api.acme.com
+
 auth:
   headers:
-    Authorization: "Bearer ${BBP_TOKEN}"
+    Authorization: "Bearer ${ACME_TOKEN}"
   cookies:
-    session: "${BBP_SESSION}"
+    session: "${ACME_SESSION}"
 ```
 
-Export the env vars before running: `export BBP_TOKEN=... BBP_SESSION=...`.
-Missing vars raise an actionable error naming the variable; bbwebscan never
-silently substitutes empty. Interpolation is scoped to `auth.headers` and
-`auth.cookies` only — `${HOME}`-style references in path fields like
-`wordlist:` pass through verbatim.
+Before running:
+```bash
+export ACME_TOKEN=... ACME_SESSION=...
+bbwebscan scan --profile profiles/acme.yaml
+```
 
-The menu follows the same rule. Temporary wizard headers/cookies/raw requests
-can be used for one-off runs, but the Save Profile action writes only auth
-values that contain env-var references such as `${BBW_TOKEN}`.
+Missing env vars raise an actionable error; bbwebscan never silently substitutes empty strings.
 
-## Menu console
+Interpolation is scoped to `auth.headers` and `auth.cookies` only — paths like `wordlist:` pass through verbatim, so `${HOME}/wordlists/...` works.
 
-`bbwebscan` and `bbwebscan menu` open the v0.5.2 menu:
+### Wordlist Auto-Suggestion
 
-- Scan Wizard: prompts for targets/input file, profile, mode, authorization,
-  tool toggles, amass/API discovery, one-off auth, wordlist, tuning, severity,
-  DNS precheck, output directory, and dry-run preference.
-- Scan Action Menu: preview equivalent command, dry-run, run scan, save
-  profile, edit settings, or return to the main menu.
-- Doctor / Auto Fix Tools: inventories tools first, shows a table, then asks
-  once before calling existing `doctor --fix-path` and `install` helpers.
-- History, Show Run, and Compare Runs call the existing run-inspection code.
+**[v0.5.7]** When you don't specify `--wordlist` or leave it blank in the menu:
+1. httpx results are parsed for Server / X-Powered-By / Set-Cookie headers
+2. Tech stack is detected (PHP, Node.js, ASP.NET, etc.)
+3. A matching wordlist is auto-suggested from available options
+4. Fallback: the default wordlist if no tech is detected
 
-## Scope gate
+### Personalized Wordlist Building
 
-`bbwebscan` refuses to run when:
+**[v0.5.7]** After crawling, unique path segments from discovered URLs are extracted and merged with the base wordlist:
+1. katana + scrapy crawl discovers paths
+2. Words are extracted (e.g., `/api/users` → `api`, `users`)
+3. Supplement written to `runs/<UTC>/wordlist_supplement.txt`
+4. Merged with base → `runs/<UTC>/wordlist_effective.txt`
+5. This effective list is used for fuzzing
 
-- `mode=aggressive` without `--ack-authorized`
-- `allowed_hosts` is empty AND target inputs span more than one host
-- a target normalises to a bare public-suffix TLD (e.g. `com`, `co.uk`)
+### Scan Templates (Interactive Menu)
 
-Profile `denied_hosts` always wins over `allowed_hosts`.
+**[v0.5.7]** When you run `bbwebscan` or `bbwebscan menu` and select "Custom Scan", you are offered 4 templates:
 
-## Stages
+1. **Passive Recon** — safe mode, httpx+katana+scrapy only, dry-run by default
+2. **Full Web Scan** — aggressive mode, all default tools, run immediately
+3. **API Recon** — aggressive with kiterunner focus, ffuf/feroxbuster disabled
+4. **Manual (Custom)** — blank slate, customize every field
 
-Pipeline order (each stage is gated on its enabling flag and on membership in
-`config.enabled_tools`; stages with no input are skipped without erroring):
+Pick one to pre-fill your settings, then override any field as needed.
 
-`amass` (opt-in `--enumerate-subdomains`) → `naabu` (opt-in `--port-scan`) →
-`httpx` → `katana` → `scrapy` (safe-default) → `discovery` (ffuf, feroxbuster,
-dirsearch) → `kiterunner` (opt-in `--api-discovery`) → `params` (arjun) →
-`jwt_tool` (opt-in `--jwt-analysis`) → `sqlmap` (opt-in `--sqlmap-mode`) →
-`nuclei`.
+### Manual Scanning
 
-Each stage builds `CommandPlan`s; `runner.run_plan` streams stdout/stderr to
-log files, applies wall-clock timeout, retries on transient exit codes per
-`RetryPolicy`. Parsers are JSONL-tolerant: malformed/empty lines are skipped,
-never fatal. Stages that pass a secret via a non-header argv slot (e.g.
-`jwt_tool -t <token>`) set `CommandPlan.redact_indices` so the runner masks
-the slot before the dry-run echo and any log write.
+For one-off scans, use the CLI directly:
 
-## Layout
+```bash
+bbwebscan scan example.com                                    # Quick scan
+bbwebscan scan example.com --mode aggressive --ack-authorized # Full scan
+bbwebscan scan example.com --dry-run                          # Preview only
+```
 
-- `bbwebscan/` — package modules.
-- `bbwebscan/stages/` — one file per recon tool group.
-- `profiles/example.yaml` — template program profile.
-- `tests/fixtures/` — realistic JSONL/JSON outputs used by parser tests.
-- `vault/` — Obsidian generated catalog (managed by `obsidian_agent_cli.py`).
+### Saved Profiles
+
+Create and reuse profiles:
+
+```bash
+bbwebscan init my-program --target app.example.com
+# Scaffolds profiles/my-program.yaml
+
+# Edit and add auth/denied hosts as needed
+nano profiles/my-program.yaml
+
+# Run against saved profile
+bbwebscan scan --profile profiles/my-program.yaml --mode aggressive --ack-authorized
+```
+
+### Run History
+
+List past runs:
+```bash
+bbwebscan history --limit 20           # 20 most recent runs
+
+bbwebscan show 20260515T140000Z        # Print summary of run (UTC dir name)
+
+bbwebscan compare run-A run-B          # Diff findings between two runs
+```
+
+### Dry-Run Before Execution
+
+Always preview commands first:
+
+```bash
+bbwebscan scan example.com --dry-run   # Print commands, skip execution
+# Review the logs in runs/<UTC>/logs/
+
+bbwebscan menu                         # Custom scan → "Preview command" option
+```
+
+### Troubleshooting
+
+```bash
+# Check all tools are installed
+bbwebscan doctor                       # Lists installed vs missing
+
+# If a tool is missing
+bbwebscan install                      # Runs the installer script
+
+# Verbose output (per-stage progress)
+bbwebscan scan ... --verbose
+
+# Retry settings (adjust for flaky networks)
+bbwebscan scan ... --max-attempts 3 --backoff-s 3.0
+
+# Tool-specific timeouts (for slow targets)
+bbwebscan scan ... --tool-timeout 60 --cmd-timeout 1800
+```
+
+### CI/CD Integration
+
+```yaml
+# Example GitHub Actions
+- name: Run bbWebScan
+  run: |
+    bbwebscan doctor || exit 2
+    bbwebscan scan --target ${{ env.TARGET }} \
+      --mode safe \
+      --output-dir ./results
+    # Exit 3 if high/critical findings; 0 otherwise
+```
+
+---
+
+## Release Notes
+
+See `CHANGELOG.md` for the full release history and migration notes.
+
+---
+
+## License
+
+See `NOTICE` for attribution and licensing.

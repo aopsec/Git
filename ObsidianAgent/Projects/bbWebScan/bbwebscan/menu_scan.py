@@ -32,11 +32,8 @@ def collect_scan_settings(
     input_file = blank_to_none(prompt("Input file", base.input_file, input_func))
     mode = _collect_mode(base, input_func)
     ack = _collect_authorization_ack(mode, base.ack_authorized, input_func)
-    enable_tool = validate_tools(split_csv(prompt(
-        "Enable extra tools", ",".join(base.enable_tool), input_func,
-    )))
     disable_tool = validate_tools(split_csv(prompt(
-        "Disable tools", ",".join(base.disable_tool), input_func,
+        "Disable tools (blank=none)", ",".join(base.disable_tool), input_func,
     )))
     enumerate_subdomains = prompt_bool(
         "Enumerate subdomains with amass", base.enumerate_subdomains, input_func,
@@ -57,7 +54,6 @@ def collect_scan_settings(
         raw_request=blank_to_none(prompt("Raw request file", base.raw_request, input_func)),
         output_dir=blank_to_none(prompt("Output directory", base.output_dir, input_func)),
         wordlist=blank_to_none(prompt("Wordlist", base.wordlist, input_func)),
-        enable_tool=enable_tool,
         disable_tool=disable_tool,
         threads=prompt_int("Threads", base.threads, input_func),
         rate=prompt_int("Rate", base.rate, input_func),

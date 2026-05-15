@@ -6,8 +6,8 @@ from typing import Literal, cast
 from bbwebscan.config import build_run_config
 from bbwebscan.menu_collect import (
     collect_authorization_ack,
+    collect_disable_tools,
     collect_dry_run,
-    collect_extra_tools,
     collect_output_dir,
     collect_rate,
     collect_severity,
@@ -18,6 +18,7 @@ from bbwebscan.menu_collect import (
 from bbwebscan.menu_command import scan_settings_to_args
 from bbwebscan.menu_profile import save_profile_interactive
 from bbwebscan.menu_prompts import choice, prompt_bool
+from bbwebscan.menu_templates import select_template
 from bbwebscan.menu_types import (
     InputFunc,
     MenuIO,
@@ -35,11 +36,11 @@ def run_custom_scan(
     input_func: InputFunc = default_input,
     scan_executor: ScanExecutor = execute_scan,
 ) -> int:
-    """Custom scan: select profile → collect 8-12 settings → action menu.
+    """Custom scan: select template → collect settings → action menu.
 
     Returns 0 on back/success, 2 on error.
     """
-    settings = _select_profile(input_func)
+    settings = select_template(input_func)
     ack = session_ack
 
     targets = collect_targets(settings, input_func)
@@ -50,7 +51,7 @@ def run_custom_scan(
     ack = collect_authorization_ack(mode, ack, input_func)
     output_dir = collect_output_dir(settings, input_func)
     wordlist = collect_wordlist(settings, input_func)
-    enable_tool, disable_tool = collect_extra_tools(settings, input_func)
+    disable_tool = collect_disable_tools(settings, input_func)
     severity = collect_severity(settings, input_func)
     threads = collect_threads(settings, input_func)
     rate = collect_rate(settings, input_func)
@@ -63,7 +64,6 @@ def run_custom_scan(
         ack_authorized=ack,
         output_dir=output_dir,
         wordlist=wordlist,
-        enable_tool=enable_tool,
         disable_tool=disable_tool,
         severity=severity,
         threads=threads,
@@ -73,7 +73,7 @@ def run_custom_scan(
 
     while True:
         io.panel("Scan Action", _action_menu_body())
-        choice_val = input_func("Choose [1-4]: ").strip()
+        choice_val = input_func("Choose [1-5]: ").strip()
 
         if choice_val == "1":
             args = scan_settings_to_args(settings, dry_run_override=dry_run)
@@ -110,11 +110,6 @@ def _run_configured_scan(
     except (FileNotFoundError, ValueError) as exc:
         io.print(f"[bbwebscan menu] {exc}")
         return 2
-
-
-def _select_profile(input_func: InputFunc) -> ScanSettings:
-    """Select a profile from profiles/ or return default ScanSettings."""
-    return ScanSettings()
 
 
 def _action_menu_body() -> str:

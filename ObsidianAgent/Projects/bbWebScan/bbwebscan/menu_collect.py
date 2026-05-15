@@ -39,26 +39,20 @@ def collect_output_dir(settings: ScanSettings, input_func: InputFunc) -> str | N
 
 
 def collect_wordlist(settings: ScanSettings, input_func: InputFunc) -> str | None:
-    """Collect wordlist path (optional)."""
-    return blank_to_none(prompt("Wordlist path", settings.wordlist or "", input_func))
+    """Collect wordlist path (auto-suggested by tech-stack if not set)."""
+    label = "Wordlist path (blank=auto-suggest)"
+    return blank_to_none(prompt(label, settings.wordlist or "", input_func))
 
 
-def collect_extra_tools(
-    settings: ScanSettings, input_func: InputFunc
-) -> tuple[list[str], list[str]]:
-    """Collect tools to enable and disable."""
-    enable_raw = split_csv(
-        prompt("Enable extra tools", ",".join(settings.enable_tool), input_func)
-    )
+def collect_disable_tools(settings: ScanSettings, input_func: InputFunc) -> list[str]:
+    """Collect tools to disable. All tools are enabled by default via mode selection."""
     disable_raw = split_csv(
-        prompt("Disable tools", ",".join(settings.disable_tool), input_func)
+        prompt("Disable tools (blank=none)", ",".join(settings.disable_tool), input_func)
     )
     try:
-        enable = validate_tools(enable_raw)
-        disable = validate_tools(disable_raw)
-        return (enable, disable)
+        return validate_tools(disable_raw)
     except ValueError:
-        return (settings.enable_tool, settings.disable_tool)
+        return settings.disable_tool
 
 
 def collect_severity(

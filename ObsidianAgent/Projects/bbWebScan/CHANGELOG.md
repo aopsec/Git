@@ -12,16 +12,41 @@ adheres to [SemVer](https://semver.org/).
 - Quick Scan workflow simplified: load default profile → ask targets + dry-run.
 - Custom Scan refactored to separate profile selection from scan settings.
 - Session-wide authorization acknowledgement caching reduces repeated prompts.
+- **"Enable extra tools" prompt removed** from Custom Scan wizard. All tools
+  are auto-enabled by scan mode (safe vs. aggressive). Operators can still
+  disable specific tools via "Disable tools" prompt or CLI `--disable-tool`.
 
 ### Added
 - `bbwebscan/menu_collect.py` — 10 reusable prompt helpers for scan settings.
 - `bbwebscan/menu_quick.py` — Quick scan workflow using defaults.
 - `bbwebscan/menu_custom.py` — Custom scan with flexible option collection.
 - `bbwebscan/menu_profiles.py` — Profile CRUD: list, create, load, describe, delete.
+- **Scan templates** (`bbwebscan/menu_templates.py`): 4 interactive presets
+  (Passive Recon, Full Web, API Recon, Manual) that pre-fill scan settings
+  before entering the Custom Scan wizard.
+- **Tech-stack wordlist auto-suggestion** (`bbwebscan/wordlist_suggest.py`).
+  After httpx runs, Server / X-Powered-By / Set-Cookie headers are parsed
+  to detect tech stack (PHP, Node.js, ASP.NET, Java, Python). Matching
+  wordlist is auto-suggested; fallback to user config if no match.
+- **Target-derived supplemental wordlist** (`bbwebscan/wordlist_builder.py`).
+  After katana + scrapy crawl, unique path segments are extracted from
+  discovered URLs and merged with the base wordlist to build a personalized
+  fuzzing dictionary (`wordlist_effective.txt`).
+- Pipeline integration: `_suggest_wordlist()` runs post-httpx (before scrapy);
+  `_build_wordlist_supplement()` runs post-scrapy (before discovery).
 - Test suite `tests/test_menu_simplified.py` covering all new menu modules.
+- Tests for wordlist suggestion and supplement building.
 
 ### Improved
 - Coverage gate raised from 85% to 98% (`fail_under` in `pyproject.toml`).
+- **README.md completely rewritten** with 4-section structure: Introduction,
+  Information, Correct Usage, Tips & Cheats. Includes examples of auth in
+  profiles, wordlist auto-suggestion, scan templates, CI/CD integration.
+
+### Deferred from 0.5.7
+- Scrapy-harvested JWT candidates (response bodies) → jwt_tool handoff
+- sqlmap credential redaction via `CommandPlan.redact_indices`
+- Cyberref promotion markers for scrapy and jwt_tool stages
 
 ## [0.5.6] — 2026-05-15
 
