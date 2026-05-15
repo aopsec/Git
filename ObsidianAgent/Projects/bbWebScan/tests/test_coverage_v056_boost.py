@@ -325,7 +325,7 @@ def test_ensure_naabu_runs_go_install(
     assert "naabu@latest" in captured["cmd"][2]
 
 
-def test_run_installer_chains_scrapy_then_naabu_then_bash(
+def test_run_installer_chains_helpers_then_bash(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
 ) -> None:
     installer_path = tmp_path / "fake_installer.sh"
@@ -341,12 +341,17 @@ def test_run_installer_chains_scrapy_then_naabu_then_bash(
         call_order.append("naabu")
         return 0
 
+    def fake_ensure_jwt_tool(*, dry_run: bool) -> int:
+        call_order.append("jwt_tool")
+        return 0
+
     def fake_run(cmd: list[str], check: bool = False) -> Any:
         call_order.append("bash")
         return argparse.Namespace(returncode=0)
 
     monkeypatch.setattr(installer_mod, "_ensure_scrapy", fake_ensure_scrapy)
     monkeypatch.setattr(installer_mod, "_ensure_naabu", fake_ensure_naabu)
+    monkeypatch.setattr(installer_mod, "_ensure_jwt_tool", fake_ensure_jwt_tool)
     monkeypatch.setattr("bbwebscan.installer.subprocess.run", fake_run)
     args = argparse.Namespace(
         installer=str(installer_path),
@@ -356,7 +361,7 @@ def test_run_installer_chains_scrapy_then_naabu_then_bash(
     )
     rc = installer_mod.run_installer(args)
     assert rc == 0
-    assert call_order == ["scrapy", "naabu", "bash"]
+    assert call_order == ["scrapy", "naabu", "jwt_tool", "bash"]
 
 
 def test_resolve_rc_path_bash(monkeypatch: pytest.MonkeyPatch) -> None:

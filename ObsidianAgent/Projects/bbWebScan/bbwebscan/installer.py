@@ -59,6 +59,9 @@ def run_installer(args: argparse.Namespace) -> int:
     # [v0.5.6] naabu landed after the bash installer was written; install it
     # via `go install` if missing so doctor reports a consistent state.
     naabu_rc = _ensure_naabu(dry_run=args.dry_run)
+    # [v0.5.6] jwt_tool is a Python script in the active-analyser opt-in set;
+    # install via pipx (or pip --user fallback) like _ensure_scrapy.
+    jwt_tool_rc = _ensure_jwt_tool(dry_run=args.dry_run)
     cmd = build_install_command(
         installer,
         dry_run=args.dry_run,
@@ -71,7 +74,7 @@ def run_installer(args: argparse.Namespace) -> int:
     else:
         completed = subprocess.run(cmd, check=False)
         bash_rc = completed.returncode
-    return bash_rc or scrapy_rc or naabu_rc
+    return bash_rc or scrapy_rc or naabu_rc or jwt_tool_rc
 
 
 def _ensure_scrapy(*, dry_run: bool) -> int:
@@ -118,6 +121,31 @@ def _ensure_naabu(*, dry_run: bool) -> int:
         )
         return 0
     cmd = ["go", "install", "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest"]
+    if dry_run:
+        print(f"[bbwebscan install] [dry-run] would run: {' '.join(cmd)}", flush=True)
+        return 0
+    print(f"[bbwebscan install] {' '.join(cmd)}", flush=True)
+    completed = subprocess.run(cmd, check=False)
+    return completed.returncode
+
+
+def _ensure_jwt_tool(*, dry_run: bool) -> int:
+    """[v0.5.6] Install jwt_tool via pipx (preferred) or pip --user when missing.
+
+    jwt_tool is a Python script in the active-analyser opt-in set documented in
+    ``doctor.py`` (``pipx install jwt_tool``). The upstream bash installer
+    handles only Go/Rust/system packages, so mirror ``_ensure_scrapy`` here to
+    keep ``bbwebscan install`` self-contained when an operator opts into
+    ``--jwt-analysis``.
+    """
+    if shutil.which("jwt_tool") is not None:
+        print("[bbwebscan install] jwt_tool: already installed", flush=True)
+        return 0
+    pipx = shutil.which("pipx")
+    if pipx is not None:
+        cmd = [pipx, "install", "jwt_tool"]
+    else:
+        cmd = [sys.executable, "-m", "pip", "install", "--user", "jwt_tool"]
     if dry_run:
         print(f"[bbwebscan install] [dry-run] would run: {' '.join(cmd)}", flush=True)
         return 0

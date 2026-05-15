@@ -312,6 +312,71 @@ def test_ensure_scrapy_actually_runs(
     assert captured["cmd"][:3] == ["/usr/bin/pipx", "install", "scrapy"]
 
 
+def test_ensure_jwt_tool_already_installed(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    """[v0.5.6] _ensure_jwt_tool short-circuits when the script is already on PATH."""
+    monkeypatch.setattr(
+        "bbwebscan.installer.shutil.which",
+        lambda n: "/usr/bin/jwt_tool" if n == "jwt_tool" else None,
+    )
+    rc = installer_mod._ensure_jwt_tool(dry_run=False)
+    assert rc == 0
+    assert "already installed" in capsys.readouterr().out
+
+
+def test_ensure_jwt_tool_dry_run_when_pipx_present(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    """[v0.5.6] _ensure_jwt_tool prefers pipx when available and dry-run echoes cmd."""
+    def which(name: str) -> str | None:
+        if name == "jwt_tool":
+            return None
+        if name == "pipx":
+            return "/usr/bin/pipx"
+        return None
+
+    monkeypatch.setattr("bbwebscan.installer.shutil.which", which)
+    rc = installer_mod._ensure_jwt_tool(dry_run=True)
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "[dry-run]" in out
+    assert "pipx" in out
+    assert "jwt_tool" in out
+
+
+def test_ensure_jwt_tool_dry_run_pip_fallback_when_pipx_missing(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    """[v0.5.6] _ensure_jwt_tool falls back to pip --user when pipx is unavailable."""
+    monkeypatch.setattr("bbwebscan.installer.shutil.which", lambda n: None)
+    rc = installer_mod._ensure_jwt_tool(dry_run=True)
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "pip" in out
+    assert "jwt_tool" in out
+
+
+def test_ensure_jwt_tool_actually_runs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """[v0.5.6] _ensure_jwt_tool invokes pipx install jwt_tool when not dry-run."""
+    monkeypatch.setattr(
+        "bbwebscan.installer.shutil.which",
+        lambda n: "/usr/bin/pipx" if n == "pipx" else None,
+    )
+    captured: dict[str, Any] = {}
+
+    def fake_run(cmd: list[str], check: bool = False) -> Any:
+        captured["cmd"] = cmd
+        return argparse.Namespace(returncode=0)
+
+    monkeypatch.setattr("bbwebscan.installer.subprocess.run", fake_run)
+    rc = installer_mod._ensure_jwt_tool(dry_run=False)
+    assert rc == 0
+    assert captured["cmd"][:3] == ["/usr/bin/pipx", "install", "jwt_tool"]
+
+
 def test_persist_path_no_marker_no_change_when_target_missing(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
 ) -> None:
