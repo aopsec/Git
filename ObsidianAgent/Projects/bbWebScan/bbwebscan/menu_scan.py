@@ -42,6 +42,7 @@ def collect_scan_settings(
         "Enumerate subdomains with amass", base.enumerate_subdomains, input_func,
     )
     amass_mode, ack = _collect_amass_mode(base, enumerate_subdomains, ack, input_func)
+    sqlmap_mode, ack = _collect_sqlmap_mode(base, ack, input_func)
     return ScanSettings(
         profile=profile,
         targets=targets,
@@ -76,6 +77,12 @@ def collect_scan_settings(
             "Scrapy JS rendering via scrapy-playwright (requires [js] extra)",
             base.scrapy_js_render, input_func,
         ),
+        jwt_analysis=prompt_bool(
+            "Run jwt_tool against Bearer tokens in Authorization header",
+            base.jwt_analysis, input_func,
+        ),
+        sqlmap_mode=sqlmap_mode,
+        sqlmap_timeout=_collect_sqlmap_timeout(base, input_func),
         dry_run=prompt_bool("Default to dry-run", base.dry_run, input_func),
         quiet=prompt_bool("Quiet progress output", base.quiet, input_func),
         strict_identity=prompt_bool("Strict tool identity", base.strict_identity, input_func),
@@ -191,6 +198,30 @@ def _collect_amass_mode(
     if mode != "passive" and not ack:
         ack = _collect_authorization_ack("aggressive", False, input_func)
     return (mode, ack)
+
+
+def _collect_sqlmap_mode(
+    base: ScanSettings,
+    ack: bool,
+    input_func: InputFunc,
+) -> tuple[Literal["off", "smooth", "aggressive"], bool]:
+    mode = cast(
+        Literal["off", "smooth", "aggressive"],
+        choice("sqlmap mode", ("off", "smooth", "aggressive"), base.sqlmap_mode, input_func),
+    )
+    if mode == "aggressive" and not ack:
+        ack = _collect_authorization_ack("aggressive", False, input_func)
+    return (mode, ack)
+
+
+def _collect_sqlmap_timeout(
+    base: ScanSettings,
+    input_func: InputFunc,
+) -> int:
+    timeout = prompt_int("sqlmap per-URL timeout seconds", base.sqlmap_timeout, input_func)
+    if timeout is None or timeout < 1:
+        return base.sqlmap_timeout
+    return timeout
 
 
 def _action_menu_body() -> str:

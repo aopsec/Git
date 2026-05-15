@@ -258,6 +258,51 @@ def test_amass_active_passes_with_ack() -> None:
     assert config.amass_mode == "active"
 
 
+# ---- v0.5.5 jwt_tool + sqlmap gates ----
+
+def test_build_run_config_adds_jwt_tool_when_jwt_analysis_set() -> None:
+    config = build_run_config(_ns(jwt_analysis=True))
+    assert "jwt_tool" in config.enabled_tools
+    assert config.jwt_analysis is True
+
+
+def test_build_run_config_rejects_disabling_jwt_tool_when_analysis_set() -> None:
+    with pytest.raises(ValueError, match="requires jwt_tool"):
+        build_run_config(_ns(jwt_analysis=True, disable_tool=["jwt_tool"]))
+
+
+def test_build_run_config_adds_sqlmap_when_smooth_mode_set() -> None:
+    config = build_run_config(_ns(sqlmap_mode="smooth"))
+    assert "sqlmap" in config.enabled_tools
+    assert config.sqlmap_mode == "smooth"
+
+
+def test_build_run_config_aggressive_sqlmap_requires_ack() -> None:
+    with pytest.raises(ValueError, match=r"sqlmap-mode aggressive requires"):
+        build_run_config(_ns(sqlmap_mode="aggressive"))
+
+
+def test_build_run_config_aggressive_sqlmap_with_ack_passes() -> None:
+    config = build_run_config(_ns(sqlmap_mode="aggressive", ack_authorized=True))
+    assert config.sqlmap_mode == "aggressive"
+    assert "sqlmap" in config.enabled_tools
+
+
+def test_build_run_config_rejects_disabling_sqlmap_when_mode_set() -> None:
+    with pytest.raises(ValueError, match="requires sqlmap"):
+        build_run_config(_ns(sqlmap_mode="smooth", disable_tool=["sqlmap"]))
+
+
+def test_build_run_config_rejects_unsupported_sqlmap_mode() -> None:
+    with pytest.raises(ValueError, match="Unsupported --sqlmap-mode"):
+        build_run_config(_ns(sqlmap_mode="apocalyptic"))
+
+
+def test_sqlmap_timeout_round_trip() -> None:
+    config = build_run_config(_ns(sqlmap_mode="smooth", sqlmap_timeout=42))
+    assert config.sqlmap_timeout == 42
+
+
 def test_amass_passive_default_no_ack_needed() -> None:
     config = build_run_config(_ns(amass_mode="passive"))
     assert config.amass_mode == "passive"

@@ -8,23 +8,28 @@ adheres to [SemVer](https://semver.org/).
 
 ### Added
 - `jwt_tool` stage for JWT analysis (`bbwebscan/stages/jwt_tool_stage.py`).
-  Opt-in via `--jwt-analysis`. Consumes Bearer tokens from `config.auth.headers`
-  and (when Scrapy ran) JWT-shaped candidates harvested from response bodies
-  and `Set-Cookie`. Emits `kind="jwt-issue"` findings (alg=none → high,
-  weak-secret cracked → critical, kid injection → high).
+  Opt-in via `--jwt-analysis`. Consumes Bearer tokens from
+  `config.auth.headers["Authorization"]`. Emits `kind="jwt-issue"` findings
+  (alg=none → high, weak-secret cracked → critical, kid/header injection →
+  high). Scrapy-harvested JWT candidates from response bodies / `Set-Cookie`
+  are deferred to a later release.
 - `sqlmap` stage with two modes (`bbwebscan/stages/sqlmap_stage.py`):
   `--sqlmap-mode {off,smooth,aggressive}` (default `off`). `smooth` uses
   `--batch --random-agent --level=1 --risk=1` with per-URL timeout cap;
   `aggressive` uses `--level=5 --risk=3 --tamper=between,space2comment`
   and requires `--ack-authorized` (mirrors amass active/intel gate).
-  Consumes parameterized URLs surfaced by the `arjun`/params stage.
-  Emits `kind="sql-injection"` findings.
-- `--sqlmap-timeout` CLI flag (default `600`).
+  Consumes parameterised URLs (any `state.active_url` containing `?`)
+  surfaced by upstream crawl/discovery stages. Emits `kind="sql-injection"`
+  findings.
+- `--sqlmap-timeout` CLI flag (default `600`). Per-request `--timeout` is
+  derived as `budget/10` (smooth) or `budget/5` (aggressive).
+- `jwt_tool` and `sqlmap` registered in `OPTIONAL_TOOLS`, `INSTALL_HINTS`,
+  and surfaced by `bbwebscan doctor`.
+- Menu prompts for `jwt-analysis`, `sqlmap-mode`, and `sqlmap-timeout` in
+  `menu_scan.py`. Selecting `aggressive` re-prompts for the authorisation
+  acknowledgement, matching the amass active/intel flow.
 
 ### Changed
-- **Scrapy stage cyberref attestation promoted from `PENDING` → certified.**
-  Marker at `bbwebscan/stages/scrapy_stage.py` updated; CyberPDF vault now
-  contains the Scrapy citation.
 - Vendored secrets-patterns ruleset (`bbwebscan/data/secrets_patterns.yml`)
   refreshed from upstream `mazen160/secrets-patterns-db`. AGPL- /
   trufflehog-derived rules continue to be excluded. See `NOTICE` for the
@@ -32,15 +37,22 @@ adheres to [SemVer](https://semver.org/).
 - `bbwebscan/pipeline.py` refactored: per-stage helpers `_run_amass`,
   `_run_httpx`, `_run_katana`, `_run_scrapy`, `_run_discovery`,
   `_run_kiterunner`, `_run_arjun`, `_run_jwt_tool`, `_run_sqlmap`,
-  `_run_nuclei`. `execute_scan` is now a flat sequence of gated helper
-  calls instead of a single 240-line if-chain. No registry abstraction —
-  ordering remains explicit and grep-able.
+  `_run_nuclei`, threading a single `_PipelineState` dataclass.
+  `execute_scan` is now a flat sequence of gated helper calls instead of a
+  single 240-line if-chain. No registry abstraction — ordering remains
+  explicit and grep-able.
 
 ### Notes
 - 0.5.4 deliberately skipped (no shipped 0.5.4 release exists). Version
   jumps from 0.5.3 → 0.5.5.
 - Pipeline stage order is now: amass → httpx → katana → scrapy →
   discovery → kiterunner → arjun → jwt_tool → sqlmap → nuclei.
+- Scrapy stage cyberref attestation **remains `PENDING`**: the CyberPDF
+  vault has no Scrapy reference yet. Promotion to "certified" is gated on
+  vault citation, not on shipping the stage. Marker is intentionally
+  preserved at `bbwebscan/stages/scrapy_stage.py` and `pipeline.py::_run_scrapy`.
+- jwt_tool stage carries the same `cyberref: PENDING` marker for the same
+  reason; promote when JWT/RFC 7519 reference lands in the CyberPDF vault.
 - Scrapy community plugin/recon-tool review captured in this release
   notes only; no plugins vendored in 0.5.5.
 

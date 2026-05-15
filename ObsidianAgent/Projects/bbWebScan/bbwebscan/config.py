@@ -23,7 +23,9 @@ AGGRESSIVE_DEFAULT_TOOLS: tuple[str, ...] = (
 )
 # [v0.5.0] amass and kiterunner are opt-in via dedicated flags (not via
 # --enable-tool), so they're SUPPORTED but not part of the default toolsets.
-OPTIONAL_TOOLS: tuple[str, ...] = ("dirsearch", "amass", "kiterunner")
+# [v0.5.5] jwt_tool (--jwt-analysis) and sqlmap (--sqlmap-mode) follow the
+# same opt-in pattern: SUPPORTED but never auto-enabled.
+OPTIONAL_TOOLS: tuple[str, ...] = ("dirsearch", "amass", "kiterunner", "jwt_tool", "sqlmap")
 SUPPORTED_TOOLS: tuple[str, ...] = (
     SAFE_DEFAULT_TOOLS
     + tuple(tool for tool in AGGRESSIVE_DEFAULT_TOOLS if tool not in SAFE_DEFAULT_TOOLS)
@@ -111,6 +113,14 @@ def build_run_config(args: Namespace) -> RunConfig:
     scrapy_deep = getattr(args, "scrapy_deep", False)
     scrapy_max_depth = getattr(args, "scrapy_max_depth", 2)
     scrapy_js_render = getattr(args, "scrapy_js_render", False)
+    jwt_analysis = getattr(args, "jwt_analysis", False)
+    sqlmap_mode_raw = getattr(args, "sqlmap_mode", "off") or "off"
+    if sqlmap_mode_raw not in ("off", "smooth", "aggressive"):
+        raise ValueError(f"Unsupported --sqlmap-mode: {sqlmap_mode_raw}")
+    sqlmap_mode_arg = cast(Literal["off", "smooth", "aggressive"], sqlmap_mode_raw)
+    if sqlmap_mode_arg == "aggressive" and not args.ack_authorized:
+        raise ValueError("--sqlmap-mode aggressive requires --ack-authorized (high target load)")
+    sqlmap_timeout = getattr(args, "sqlmap_timeout", 600) or 600
     selected_tools = resolve_selected_tools(
         mode=mode,
         profile_tools=profile.enabled_tools,
@@ -121,6 +131,8 @@ def build_run_config(args: Namespace) -> RunConfig:
         selected_tools,
         enumerate_subdomains=enumerate_subdomains,
         api_discovery=api_discovery,
+        jwt_analysis=jwt_analysis,
+        sqlmap_mode=sqlmap_mode_arg,
         disable_tools=args.disable_tool,
     )
     target_inputs = list(profile.seed_urls)
@@ -162,6 +174,9 @@ def build_run_config(args: Namespace) -> RunConfig:
         scrapy_deep=scrapy_deep,
         scrapy_max_depth=scrapy_max_depth,
         scrapy_js_render=scrapy_js_render,
+        jwt_analysis=jwt_analysis,
+        sqlmap_mode=sqlmap_mode_arg,
+        sqlmap_timeout=sqlmap_timeout,
         discovery_status_filter=list(profile.discovery_status_filter),
         nuclei_max_targets=profile.nuclei_max_targets,
     )
@@ -184,11 +199,13 @@ def resolve_selected_tools(
     return [tool for tool in SUPPORTED_TOOLS if tool in selected]
 
 
-def add_opt_in_tools(
+def add_opt_in_tools(  # noqa: PLR0913 - opt-in flags accumulate naturally; binding into a struct adds noise.
     selected_tools: list[str],
     *,
     enumerate_subdomains: bool,
     api_discovery: bool,
+    jwt_analysis: bool,
+    sqlmap_mode: str,
     disable_tools: list[str],
 ) -> list[str]:
     # [FIX-BBW-10] Flag-driven stages are real execution stages, so they must
@@ -205,6 +222,17 @@ def add_opt_in_tools(
                 "--api-discovery requires kiterunner; remove --disable-tool kiterunner"
             )
         selected.add("kiterunner")
+    if jwt_analysis:
+        if "jwt_tool" in disabled:
+            raise ValueError("--jwt-analysis requires jwt_tool; remove --disable-tool jwt_tool")
+        selected.add("jwt_tool")
+    if sqlmap_mode != "off":
+        if "sqlmap" in disabled:
+            raise ValueError(
+                f"--sqlmap-mode {sqlmap_mode} requires sqlmap; "
+                "remove --disable-tool sqlmap"
+            )
+        selected.add("sqlmap")
     return [tool for tool in SUPPORTED_TOOLS if tool in selected]
 
 

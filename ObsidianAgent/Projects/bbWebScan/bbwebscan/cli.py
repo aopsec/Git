@@ -93,6 +93,29 @@ def _add_scan_args(parser: argparse.ArgumentParser) -> None:
             "Requires the [js] extra and a Chromium install."
         ),
     )
+    parser.add_argument(
+        "--jwt-analysis", dest="jwt_analysis", action="store_true",
+        help=(
+            "Run jwt_tool against Bearer tokens in --header Authorization. "
+            "Emits jwt-issue findings (alg=none → high, weak secret → critical)."
+        ),
+    )
+    parser.add_argument(
+        "--sqlmap-mode", dest="sqlmap_mode",
+        choices=["off", "smooth", "aggressive"], default="off",
+        help=(
+            "sqlmap intensity (default: off). smooth uses --level=1 --risk=1; "
+            "aggressive uses --level=5 --risk=3 + tamper scripts and requires "
+            "--ack-authorized (high target load)."
+        ),
+    )
+    parser.add_argument(
+        "--sqlmap-timeout", dest="sqlmap_timeout", type=int, default=600,
+        help=(
+            "Per-URL sqlmap wall-clock budget in seconds (default 600). "
+            "Per-request --timeout is derived as budget/10 (smooth) or budget/5 (aggressive)."
+        ),
+    )
     parser.set_defaults(run_label=datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ"))
 
 

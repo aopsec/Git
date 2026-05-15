@@ -8,6 +8,7 @@ from bbwebscan.menu_prompts import append_optional, append_repeatable, str_or_no
 from bbwebscan.menu_types import ScanSettings
 
 _DEFAULT_SCRAPY_MAX_DEPTH: int = 2
+_DEFAULT_SQLMAP_TIMEOUT: int = 600
 
 
 def scan_settings_to_args(
@@ -48,6 +49,9 @@ def scan_settings_to_args(
         scrapy_deep=settings.scrapy_deep,
         scrapy_max_depth=settings.scrapy_max_depth,
         scrapy_js_render=settings.scrapy_js_render,
+        jwt_analysis=settings.jwt_analysis,
+        sqlmap_mode=settings.sqlmap_mode,
+        sqlmap_timeout=settings.sqlmap_timeout,
         run_label=label,
     )
 
@@ -99,6 +103,12 @@ def scan_command_args(  # noqa: PLR0912 - flag-to-argv mapping is naturally wide
         args.extend(["--scrapy-max-depth", str(settings.scrapy_max_depth)])
     if settings.scrapy_js_render:
         args.append("--scrapy-js-render")
+    if settings.jwt_analysis:
+        args.append("--jwt-analysis")
+    if settings.sqlmap_mode != "off":
+        args.extend(["--sqlmap-mode", settings.sqlmap_mode])
+    if settings.sqlmap_timeout != _DEFAULT_SQLMAP_TIMEOUT:
+        args.extend(["--sqlmap-timeout", str(settings.sqlmap_timeout)])
     if settings.dry_run if dry_run_override is None else dry_run_override:
         args.append("--dry-run")
     if settings.quiet:

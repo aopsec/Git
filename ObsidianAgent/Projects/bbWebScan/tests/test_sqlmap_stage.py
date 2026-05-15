@@ -1,12 +1,18 @@
 """Tests for sqlmap_stage module."""
 
 from pathlib import Path
+from typing import Literal
 
 from bbwebscan.models import AuthConfig, RetryPolicy, RunArtifacts, RunConfig
 from bbwebscan.stages import sqlmap_stage
 
 
-def _config(tmp_path: Path, *, mode: str = "smooth", timeout: int = 600) -> RunConfig:
+def _config(
+    tmp_path: Path,
+    *,
+    mode: Literal["off", "smooth", "aggressive"] = "smooth",
+    timeout: int = 600,
+) -> RunConfig:
     return RunConfig(
         program_name="test",
         seed_urls=[],

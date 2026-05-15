@@ -50,10 +50,15 @@ def test_main_menu_exits_cleanly() -> None:
 def test_scan_wizard_builds_run_config() -> None:
     # [v0.5.3] Wizard now prompts for scrapy_deep / scrapy_max_depth / scrapy_js_render
     # between api_discovery and dry_run. Defaults preserved via empty strings.
+    # [v0.5.5] sqlmap_mode prompted after enumerate_subdomains; jwt_analysis +
+    # sqlmap_timeout prompted between scrapy_js_render and dry_run.
     settings = collect_scan_settings(input_func=_input([
-        "", "example.com", "", "", "", "", "", "n", "n", "n", "", "", "",
+        "", "example.com", "", "", "", "", "", "n",
+        "",                              # sqlmap_mode (default "off")
+        "n", "n", "", "", "",
         "5", "10", "", "", "", "", "medium", "y", "n",
-        "n", "", "n",  # scrapy_deep, scrapy_max_depth, scrapy_js_render
+        "n", "", "n",                    # scrapy_deep, scrapy_max_depth, scrapy_js_render
+        "n", "",                         # jwt_analysis, sqlmap_timeout
         "y", "n", "n",
     ]))
     config = build_run_config(scan_settings_to_args(settings, run_label="test"))

@@ -16,10 +16,12 @@ from bbwebscan.models import (
 from bbwebscan.stages import (
     amass_stage,
     httpx_stage,
+    jwt_tool_stage,
     katana_stage,
     kiterunner_stage,
     params_stage,
     scrapy_stage,
+    sqlmap_stage,
 )
 
 
@@ -545,3 +547,189 @@ def test_scrapy_auto_suggest_hint_when_no_signals(
     pipeline.execute_scan(config)
     summary_md = (config.output_dir / "summary.md").read_text(encoding="utf-8")
     assert "--scrapy-deep" in summary_md
+
+
+# ---- v0.5.5 jwt_tool + sqlmap pipeline integration ----
+
+def _patch_pipeline_skeleton(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(pipeline, "collect_tool_inventory", lambda _c: [])
+    monkeypatch.setattr(pipeline, "validate_environment", lambda _c, _s: [])
+    monkeypatch.setattr(httpx_stage, "parse_results", lambda _p: ([], []))
+    monkeypatch.setattr(katana_stage, "parse_results", lambda _p: ([], []))
+
+
+def test_jwt_tool_runs_when_enabled_and_token_present(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.5] jwt_tool stage executes when --jwt-analysis is set AND a Bearer
+    token is present in auth.headers Authorization."""
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(jwt_tool_stage, "parse_results", lambda _p: [])
+
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": ["httpx", "jwt_tool"],
+        "jwt_analysis": True,
+        "auth": AuthConfig(headers={"Authorization": "Bearer test.jwt.token"}),
+    })
+    pipeline.execute_scan(config)
+    assert "jwt-analysis" in captured_stages
+
+
+def test_jwt_tool_skipped_when_no_bearer_token(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.5] jwt_tool stage does NOT run when --jwt-analysis is set but no
+    Authorization header is present; a note is appended instead of an error."""
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": ["httpx", "jwt_tool"],
+        "jwt_analysis": True,
+    })
+    pipeline.execute_scan(config)
+    assert "jwt-analysis" not in captured_stages
+    summary_md = (config.output_dir / "summary.md").read_text(encoding="utf-8")
+    assert "no Bearer token" in summary_md
+
+
+def test_sqlmap_runs_for_parameterised_urls(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.5] sqlmap stage runs against active URLs containing a query string."""
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(
+        katana_stage, "parse_results",
+        lambda _p: ([], ["https://example.com/search?q=test"]),
+    )
+    monkeypatch.setattr(sqlmap_stage, "parse_results", lambda _p: ([], []))
+
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": ["httpx", "katana", "sqlmap"],
+        "sqlmap_mode": "smooth",
+    })
+    pipeline.execute_scan(config)
+    assert "sqlmap" in captured_stages
+
+
+def test_sqlmap_skipped_when_no_parameterised_urls(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.5] sqlmap stage records a note and skips execution when no
+    URL with a query string was surfaced upstream."""
+    captured_stages: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        captured_stages.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(
+        katana_stage, "parse_results",
+        lambda _p: ([], ["https://example.com/static/index.html"]),
+    )
+
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": ["httpx", "katana", "sqlmap"],
+        "sqlmap_mode": "smooth",
+    })
+    pipeline.execute_scan(config)
+    assert "sqlmap" not in captured_stages
+    summary_md = (config.output_dir / "summary.md").read_text(encoding="utf-8")
+    assert "no parameterised" in summary_md
+
+
+def test_pipeline_stage_order_v055(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """[v0.5.5] Documented stage order:
+    amass → httpx → katana → scrapy → discovery → kiterunner → arjun →
+    jwt_tool → sqlmap → nuclei. Verifies that helpers run in this order
+    when their gates are open."""
+    seen: list[str] = []
+
+    def fake_run_plan(
+        plan: CommandPlan, _config: RunConfig, _arts: RunArtifacts,
+    ) -> ExecutionResult:
+        seen.append(plan.stage)
+        return ExecutionResult(
+            stage=plan.stage, label=plan.label, command=plan.command,
+            status="dry-run", artifacts=plan.artifacts,
+        )
+
+    _patch_pipeline_skeleton(monkeypatch)
+    monkeypatch.setattr(pipeline, "run_plan", fake_run_plan)
+    monkeypatch.setattr(amass_stage, "parse_results", lambda _p: ([], []))
+    monkeypatch.setattr(
+        httpx_stage, "parse_results", lambda _p: ([], ["https://example.com/?q=x"]),
+    )
+    monkeypatch.setattr(katana_stage, "parse_results", lambda _p: ([], []))
+    monkeypatch.setattr(scrapy_stage, "parse_results", lambda _p: ([], []))
+    monkeypatch.setattr(params_stage, "parse_results", lambda _p: ([], []))
+    monkeypatch.setattr(jwt_tool_stage, "parse_results", lambda _p: [])
+    monkeypatch.setattr(sqlmap_stage, "parse_results", lambda _p: ([], []))
+
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": [
+            "amass", "httpx", "katana", "scrapy", "arjun",
+            "jwt_tool", "sqlmap", "nuclei",
+        ],
+        "enumerate_subdomains": True,
+        "jwt_analysis": True,
+        "sqlmap_mode": "smooth",
+        "auth": AuthConfig(headers={"Authorization": "Bearer t.t.t"}),
+    })
+    pipeline.execute_scan(config)
+    expected_order = [
+        "amass", "httpx", "katana", "scrapy", "params", "jwt-analysis", "sqlmap", "nuclei",
+    ]
+    # arjun/sqlmap fan out per-URL — collapse repeats to first occurrence so we
+    # assert ordering, not multiplicity.
+    seen_unique: list[str] = []
+    for stage in seen:
+        if stage in expected_order and stage not in seen_unique:
+            seen_unique.append(stage)
+    assert seen_unique == expected_order, (
+        f"stage order drifted: expected {expected_order}, saw {seen_unique}"
+    )

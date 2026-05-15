@@ -21,6 +21,10 @@ INSTALL_HINTS: dict[str, str] = {
     # [v0.5.3] Scrapy ships as a Python package; the `scrapy` console script
     # is installed by pip/pipx. The optional [js] extra adds scrapy-playwright.
     "scrapy": "pipx install scrapy  # or pip install -e '.[js]' for JS rendering",
+    # [v0.5.5] Opt-in active analysers. jwt_tool is a Python script; sqlmap
+    # ships via OS package managers (or pipx) and as a self-contained git checkout.
+    "jwt_tool": "pipx install jwt_tool  # or git clone https://github.com/ticarpi/jwt_tool",
+    "sqlmap": "pipx install sqlmap  # or pacman/apt install sqlmap",
 }
 
 _NAME_WIDTH = 12
