@@ -143,3 +143,69 @@ def test_parse_results_returns_empty_urls(tmp_path: Path, fixtures_dir: Path) ->
     """Test that parse_results returns empty URL list."""
     findings, urls = sqlmap_stage.parse_results([fixtures_dir / "sqlmap_smooth.json"])
     assert urls == []
+
+
+def test_parse_results_with_directory_structure(tmp_path: Path) -> None:
+    """Test parsing sqlmap directory structure with XML files."""
+    sqlmap_dir = tmp_path / "sqlmap_output"
+    sqlmap_dir.mkdir()
+
+    # Create XML file with SQL injection indicator
+    xml_file = sqlmap_dir / "target.xml"
+    xml_file.write_text('<?xml><report><target>SQL injection found in param</target></report>')
+
+    findings, _ = sqlmap_stage.parse_results([sqlmap_dir])
+    assert len(findings) == 1
+    assert findings[0].kind == "sql-injection"
+    assert findings[0].severity == "high"
+
+
+def test_parse_results_with_directory_no_injection(tmp_path: Path) -> None:
+    """Test parsing directory without SQL injection indicators."""
+    sqlmap_dir = tmp_path / "sqlmap_output"
+    sqlmap_dir.mkdir()
+
+    xml_file = sqlmap_dir / "target.xml"
+    xml_file.write_text('<?xml><report><status>No issues found</status></report>')
+
+    findings, _ = sqlmap_stage.parse_results([sqlmap_dir])
+    assert findings == []
+
+
+def test_parse_results_with_text_file(tmp_path: Path) -> None:
+    """Test parsing plain text report file."""
+    txt_file = tmp_path / "sqlmap_output.txt"
+    txt_file.write_text(
+        "sqlmap identified injectable parameter 'id' "
+        "vulnerable to boolean-based blind SQL injection attacks"
+    )
+
+    findings, _ = sqlmap_stage.parse_results([txt_file])
+    assert len(findings) == 1
+    assert findings[0].kind == "sql-injection"
+    assert findings[0].severity == "high"
+
+
+def test_parse_results_with_text_file_no_injection(tmp_path: Path) -> None:
+    """Test parsing text file without SQL injection indicators."""
+    text_file = tmp_path / "clean_output.txt"
+    text_file.write_text("Target URL scanned successfully. No vulnerabilities detected.")
+
+    findings, _ = sqlmap_stage.parse_results([text_file])
+    assert findings == []
+
+
+def test_map_injection_type_union(tmp_path: Path) -> None:
+    """Test that UNION-based injection maps to critical severity."""
+    assert sqlmap_stage._map_injection_type_to_severity("union-based") == "critical"
+
+
+def test_map_injection_type_boolean(tmp_path: Path) -> None:
+    """Test that boolean-based injection maps to high severity."""
+    assert sqlmap_stage._map_injection_type_to_severity("boolean-based blind") == "high"
+
+
+def test_map_injection_type_unknown(tmp_path: Path) -> None:
+    """Test that unknown injection types map to medium severity."""
+    assert sqlmap_stage._map_injection_type_to_severity("unknown-type") == "medium"
+    assert sqlmap_stage._map_injection_type_to_severity("") == "medium"

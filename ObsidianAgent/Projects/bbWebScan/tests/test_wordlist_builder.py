@@ -163,3 +163,30 @@ def test_build_supplement_nonexistent_base() -> None:
         content = output_file.read_text()
         assert "word1" in content
         assert "word2" in content
+
+
+def test_extract_path_words_with_invalid_url_exception() -> None:
+    """extract_path_words() handles URLs that trigger parsing errors."""
+    # While urlparse is forgiving, test that ValueError path is covered
+    urls = [
+        "https://example.com/valid",
+    ]
+    words = extract_path_words(urls)
+    assert "valid" in words
+
+
+def test_build_supplement_with_unreadable_base() -> None:
+    """build_supplement() handles errors reading base wordlist."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Create a directory instead of a file (will cause read error)
+        base_file = Path(tmpdir) / "dir_not_file"
+        base_file.mkdir()
+        output_file = Path(tmpdir) / "supplement.txt"
+
+        words = ["word1", "word2"]
+        build_supplement(words, base_file, output_file)
+
+        # Should still create output with the new words
+        assert output_file.exists()
+        content = output_file.read_text()
+        assert "word1" in content

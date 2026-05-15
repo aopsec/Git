@@ -92,8 +92,9 @@ def test_scan_wizard_collects_active_amass_ack() -> None:
     # [v0.5.5] sqlmap_mode prompted after the amass-mode authorization ack;
     # jwt_analysis + sqlmap_timeout inserted between scrapy_js_render and dry_run.
     # [v0.5.6] port_scan prompted between sqlmap_timeout and dry_run.
+    # [v0.5.7] "Enable extra tools" removed; one placeholder "" dropped.
     settings = collect_scan_settings(input_func=_input([
-        "", "example.com", "", "", "", "", "", "y", "active", "AUTHORIZED",
+        "", "example.com", "", "", "", "", "y", "active", "AUTHORIZED",
         "",                              # sqlmap_mode (default "off")
         "n",                             # port_scan (v0.5.6, default "n")
         "n", "n", "", "", "", "", "", "", "", "", "", "", "n", "n",
