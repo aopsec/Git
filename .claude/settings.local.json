@@ -67,7 +67,10 @@
       "Bash(git tag *)",
       "Bash(.venv/bin/pip install *)",
       "Bash(.venv/bin/python -m pip install -e . --quiet)",
-      "Bash(.venv/bin/python -c \"from bbwebscan import __version__; print\\(__version__\\)\")"
+      "Bash(.venv/bin/python -c \"from bbwebscan import __version__; print\\(__version__\\)\")",
+      "Bash(codex resume *)",
+      "Bash(grep -n \"def choice\\\\|def prompt_bool\\\\|def prompt_int\\\\|def prompt$\\\\|def prompt\\(\" bbwebscan/menu_prompts.py)",
+      "Bash(git commit *)"
     ]
   }
 }

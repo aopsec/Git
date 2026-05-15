@@ -1,0 +1,206 @@
+{
+  "main": {
+    "id": "e79e7a73f61a7dff",
+    "type": "split",
+    "children": [
+      {
+        "id": "fdc9c2ec824f5739",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "14798aaad51fb4fc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Stage - Stages - params_stage.py"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "82108c60ab1525b8",
+    "type": "split",
+    "children": [
+      {
+        "id": "641276c14cd0065b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1034e73014033e7b",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "6ed555d84528e11d",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "d916d63f3931fe85",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "c3a381d64eaf68b7",
+    "type": "split",
+    "children": [
+      {
+        "id": "d0938033277fe119",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "78f187e96a358ace",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Stage - Stages - params_stage.py"
+            }
+          },
+          {
+            "id": "b3fab9c3797753ab",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Stage - Stages - params_stage.py"
+            }
+          },
+          {
+            "id": "371857345a748b07",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "509393fef45a065f",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "aa9d78198d1c9cdc",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Stage - Stages - params_stage.py"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "14798aaad51fb4fc",
+  "lastOpenFiles": [
+    "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_pipeline.cpython-314-pytest-9.0.3.pyc.859392",
+    "ObsidianAgent/Projects/bbWebScan/tests/test_pipeline.py.tmp.750254.2bc172a1decc",
+    "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_pipeline.cpython-314-pytest-9.0.3.pyc.856951",
+    "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_config.cpython-314-pytest-9.0.3.pyc.856951",
+    "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_cli_v055.cpython-314-pytest-9.0.3.pyc",
+    "ObsidianAgent/Projects/bbWebScan/tests/test_cli_v055.py",
+    "ObsidianAgent/Projects/bbWebScan/tests/test_cli_v055.py.tmp.750254.38831cde39ce",
+    "ObsidianAgent/Projects/bbWebScan/tests/test_config.py.tmp.750254.e573921a3b4f",
+    "ObsidianAgent/Projects/bbWebScan/tests/test_pipeline.py.tmp.750254.cc00ef1109c6",
+    "ObsidianAgent/Projects/bbWebScan/tests/test_pipeline.py.tmp.750254.e4f30869cdc4",
+    "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_menu.cpython-314-pytest-9.0.3.pyc.848062",
+    "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - nuclei_stage.py.md",
+    "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
+    "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - amass_stage.py.md",
+    "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - _jsonl.py.md",
+    "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - __init__.py.md",
+    "ObsidianAgent/Projects/IC01-aops/IPS_IDS/docs/MALWARE_SCANNING.md"
+  ]
+}
