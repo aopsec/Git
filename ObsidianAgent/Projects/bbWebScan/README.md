@@ -8,7 +8,6 @@ parsing, split timeout semantics, per-stage retry/backoff, and a stricter scope 
 `v0.5.6` — new **`naabu` port-discovery stage** (vault citation:
 hacking-apis, ProjectDiscovery appendix). Runs between `amass` and `httpx`,
 so the pipeline stops implicitly assuming `:80`/`:443`. Opt-in via
-`--port-scan`; mode via `--port-scan-mode {top-100,top-1000,full}`
 (default `top-100`); rate via `--port-scan-rate` (default `1000`).
 `full` sweeps all 65535 ports and requires `--ack-authorized` — same gate
 as `--amass-mode active/intel` and `--sqlmap-mode aggressive`. Discovered
@@ -48,6 +47,7 @@ attribution.
 
 `v0.5.2` — menu hardening patch. Main-menu handlers now catch user-facing
 errors (`FileNotFoundError`, `FileExistsError`, `ValueError`, `OSError`),
+`--port-scan`; mode via `--port-scan-mode {top-100,top-1000,full}`
 print `[bbwebscan menu] <error>`, and return to the menu instead of crashing.
 Save Profile no longer persists raw-request file paths; those remain one-off
 run inputs only. `bbwebscan` with no args and

@@ -92,7 +92,12 @@
       "Bash(.venv/bin/python -m pytest tests/test_coverage_v056_boost3.py::test_kiterunner_parse_skips_malformed_lines tests/test_coverage_v056_boost3.py::test_params_build_plans_with_raw_request_uses_raw_flag -x)",
       "Bash(.venv/bin/python -m ruff check --fix tests/test_coverage_v056_boost3.py)",
       "Bash(.venv/bin/python -m ruff check tests/test_coverage_v056_boost3.py)",
-      "Bash(awk '$3>=2 {print}')"
+      "Bash(awk '$3>=2 {print}')",
+      "Bash(.venv/bin/python -m pytest --cov=bbwebscan.installer --cov-report=term-missing -q tests/test_coverage_v056_boost.py tests/test_coverage_v056_boost2.py)"
     ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
   }
 }
