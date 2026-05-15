@@ -33,6 +33,14 @@ from pathlib import Path
 
 from bbwebscan.models import CommandPlan, Finding, RunArtifacts, RunConfig
 
+INJECTION_INDICATORS = (
+    "SQL injection found",
+    "injectable",
+    "sqlmap identified",
+    "[PAYLOAD]",
+    "vulnerability",
+)
+
 
 def build_plans(
     config: RunConfig, artifacts: RunArtifacts, urls: list[str]
@@ -107,28 +115,15 @@ def _build_sqlmap_command(url: str, output_dir: Path, config: RunConfig) -> list
 def _parse_single_report(artifact_path: Path) -> list[Finding]:
     """Parse sqlmap output from JSON, directory, or text files.
 
-    Handles:
-    - JSON test fixtures (for backward compatibility with tests)
-    - sqlmap output directories (actual command execution)
-    - Text files containing vulnerability indicators
+    Dispatches to specialized parsers: JSON fixtures, directories, or text files.
     """
-    findings: list[Finding] = []
-    if not artifact_path.exists():
-        return findings
-
-    # Try parsing as JSON first (test fixtures + potential future sqlmap JSON output)
     if artifact_path.is_file() and artifact_path.suffix == ".json":
         return _parse_json_report(artifact_path)
-
-    # Handle directory output from sqlmap
     if artifact_path.is_dir():
         return _parse_sqlmap_directory(artifact_path)
-
-    # Handle text files or other output
     if artifact_path.is_file():
         return _parse_text_report(artifact_path)
-
-    return findings
+    return []
 
 
 def _parse_json_report(artifact_path: Path) -> list[Finding]:
@@ -163,14 +158,13 @@ def _parse_json_report(artifact_path: Path) -> list[Finding]:
 
 
 def _parse_sqlmap_directory(artifact_path: Path) -> list[Finding]:
-    """Parse sqlmap output directory structure."""
+    """Parse sqlmap output directory structure by searching XML files."""
     findings: list[Finding] = []
 
-    # Look for XML or other result files sqlmap generates
-    for xml_file in artifact_path.glob("**/*.xml"):
+    for xml_file in artifact_path.glob("*.xml"):
         try:
             content = xml_file.read_text(encoding="utf-8", errors="ignore")
-            if "SQL injection" in content or "vulnerability" in content:
+            if any(indicator in content for indicator in INJECTION_INDICATORS):
                 findings.append(
                     Finding(
                         stage="sqlmap",
@@ -181,7 +175,7 @@ def _parse_sqlmap_directory(artifact_path: Path) -> list[Finding]:
                         evidence=str(xml_file),
                     )
                 )
-        except (OSError, ValueError):
+        except OSError:
             continue
 
     return findings
@@ -189,20 +183,13 @@ def _parse_sqlmap_directory(artifact_path: Path) -> list[Finding]:
 
 def _parse_text_report(artifact_path: Path) -> list[Finding]:
     """Parse sqlmap text output for vulnerability indicators."""
-    findings: list[Finding] = []
     try:
         content = artifact_path.read_text(encoding="utf-8", errors="ignore")
-    except (OSError, ValueError):
-        return findings
+    except OSError:
+        return []
 
-    # Check for sqlmap vulnerability indicators
-    if any(indicator in content for indicator in [
-        "SQL injection found",
-        "injectable",
-        "sqlmap identified",
-        "[PAYLOAD]",  # Common in sqlmap output
-    ]):
-        findings.append(
+    if any(indicator in content for indicator in INJECTION_INDICATORS):
+        return [
             Finding(
                 stage="sqlmap",
                 kind="sql-injection",
@@ -211,9 +198,9 @@ def _parse_text_report(artifact_path: Path) -> list[Finding]:
                 title="SQL Injection Detected",
                 evidence=str(artifact_path),
             )
-        )
+        ]
 
-    return findings
+    return []
 
 
 def _map_injection_type_to_severity(injection_type: str) -> str:
