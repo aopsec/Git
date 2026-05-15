@@ -93,7 +93,8 @@
       "Bash(.venv/bin/python -m ruff check --fix tests/test_coverage_v056_boost3.py)",
       "Bash(.venv/bin/python -m ruff check tests/test_coverage_v056_boost3.py)",
       "Bash(awk '$3>=2 {print}')",
-      "Bash(.venv/bin/python -m pytest --cov=bbwebscan.installer --cov-report=term-missing -q tests/test_coverage_v056_boost.py tests/test_coverage_v056_boost2.py)"
+      "Bash(.venv/bin/python -m pytest --cov=bbwebscan.installer --cov-report=term-missing -q tests/test_coverage_v056_boost.py tests/test_coverage_v056_boost2.py)",
+      "WebFetch(domain:github.com)"
     ]
   },
   "sandbox": {
