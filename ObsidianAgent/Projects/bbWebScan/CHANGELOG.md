@@ -6,6 +6,20 @@ adheres to [SemVer](https://semver.org/).
 
 ## [0.5.5] — 2026-05-14
 
+### Security
+- jwt_tool dry-run argv echo now masks the Bearer token slot.
+  `bbwebscan/stages/jwt_tool_stage.py` marks the `-t <token>` position via
+  the new `CommandPlan.redact_indices` field;
+  `bbwebscan/runner.py::redact_command_for_log` masks the indexed slot
+  before its existing header-flag walk. Previously the JWT was written
+  verbatim to stdout AND `runs/<UTC>/logs/jwt_tool.stdout.log` when
+  `--dry-run --jwt-analysis` was combined, regressing the documented
+  invariant *"Dry-run argv echo masks `Authorization:` and `Cookie:`
+  header values"*. Internal review finding (Medium severity, confidence 8/10).
+  Future stages that pass secrets via non-header argv slots (e.g.
+  `sqlmap --auth-cred user:pass`, `sqlmap --cookie`) opt in by setting
+  `redact_indices` on the plan they return.
+
 ### Added
 - `jwt_tool` stage for JWT analysis (`bbwebscan/stages/jwt_tool_stage.py`).
   Opt-in via `--jwt-analysis`. Consumes Bearer tokens from

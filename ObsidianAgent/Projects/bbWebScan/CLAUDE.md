@@ -76,6 +76,10 @@ bbwebscan scan example.com               # smart-default scan
 - Menu handlers catch `FileNotFoundError`, `FileExistsError`, `ValueError`,
   `OSError` and return to the menu — do not let them propagate as tracebacks.
 - Dry-run argv echo masks `Authorization:` and `Cookie:` header values.
+  Stages that pass a secret via a non-header argv slot (e.g. `jwt_tool -t <token>`)
+  must set `CommandPlan.redact_indices=[i, ...]` listing the secret-bearing
+  positions; the runner masks them before the dry-run echo and before any log
+  write. See `bbwebscan/stages/jwt_tool_stage.py` for the canonical pattern.
 - Determinism: same inputs + same run dir → byte-identical `summary.md` /
   `findings.jsonl`. Sort before writing; do not embed wall-clock outside of
   the run-dir name.

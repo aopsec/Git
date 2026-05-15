@@ -51,6 +51,9 @@ def test_build_plan_with_bearer_token(tmp_path: Path) -> None:
     assert "-t" in plan.command
     token_idx = plan.command.index("-t") + 1
     assert plan.command[token_idx] == "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    # [v0.5.5 sec-fix] The token slot must be marked for redaction so the
+    # dry-run argv echo doesn't leak the bearer JWT to stdout / log files.
+    assert plan.redact_indices == [token_idx]
 
 
 def test_build_plan_with_no_auth(tmp_path: Path) -> None:

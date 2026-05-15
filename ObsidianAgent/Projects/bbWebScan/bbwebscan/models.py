@@ -148,6 +148,12 @@ class CommandPlan(BaseModel):
     label: str
     command: list[str]
     artifacts: list[Path] = Field(default_factory=list)
+    # [v0.5.5 sec-fix] argv positions whose VALUES carry a secret. The runner
+    # masks these before any dry-run echo or log write, complementing the
+    # header-flag redaction in ``runner.redact_command_for_log``. Used by the
+    # jwt_tool stage today; future stages that pass secrets via non-header
+    # argv slots (e.g. ``sqlmap --auth-cred user:pass``) opt in by setting it.
+    redact_indices: list[int] = Field(default_factory=list)
 
 
 class ExecutionResult(BaseModel):

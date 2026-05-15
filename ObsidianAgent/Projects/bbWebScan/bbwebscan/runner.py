@@ -1,6 +1,7 @@
 import json
 import shlex
 import subprocess
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
@@ -11,7 +12,10 @@ _HEADER_VALUE_FLAGS: set[str] = {"-H", "--header", "--headers"}
 REDACT_PLACEHOLDER: str = "<redacted>"
 
 
-def redact_command_for_log(command: list[str]) -> list[str]:
+def redact_command_for_log(
+    command: list[str],
+    redact_indices: Iterable[int] = (),
+) -> list[str]:
     """[v0.4.4] Mask header VALUES before logging argv.
 
     [FIX-BBW-10] Any header flag may carry credentials under arbitrary names
@@ -23,10 +27,22 @@ def redact_command_for_log(command: list[str]) -> list[str]:
     2. ``["--header=X-API-Key: secret"]`` — inline flag assignment form.
     3. arjun's single-arg form: ``["--headers", "Accept: x\\nX-API-Key: y\\n..."]``
        — a multi-line string passed as one element. Each line redacted in place.
+
+    [v0.5.5 sec-fix] ``redact_indices`` masks argv positions whose VALUES carry
+    a secret in a non-header slot (e.g. ``jwt_tool -t <token>``). Indexed
+    masking runs before the header-flag walk so the masked placeholder cannot
+    accidentally match a header pattern.
     """
+    indices = set(redact_indices)
     redacted: list[str] = []
     redact_next = False
-    for arg in command:
+    for index, arg in enumerate(command):
+        if index in indices:
+            redacted.append(REDACT_PLACEHOLDER)
+            # Indexed masking takes precedence over the header-flag walk;
+            # never let a placeholder become the value-of-flag for a header.
+            redact_next = False
+            continue
         if redact_next:
             redacted.append(_redact_header_blob(arg))
             redact_next = False
@@ -120,7 +136,9 @@ def run_plan(plan: CommandPlan, config: RunConfig, artifacts: RunArtifacts) -> E
         # [FIX-BBW-06] Match the documented dry-run behavior by printing planned commands.
         # [v0.4.4] Redact Authorization/Cookie header VALUES before echo so secrets
         # don't land in stdout_log on disk or in console output.
-        command_line = shlex.join(redact_command_for_log(plan.command))
+        command_line = shlex.join(
+            redact_command_for_log(plan.command, plan.redact_indices)
+        )
         print(command_line)
         stdout_log.write_text(command_line + "\n", encoding="utf-8")
         stderr_log.write_text("", encoding="utf-8")

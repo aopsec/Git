@@ -680,6 +680,33 @@ def test_sqlmap_skipped_when_no_parameterised_urls(
     assert "no parameterised" in summary_md
 
 
+def test_jwt_tool_dry_run_does_not_leak_bearer_token(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """[v0.5.5 sec-fix] End-to-end: a dry-run scan with --jwt-analysis and a
+    Bearer header must NOT echo the raw token to stdout or to the on-disk
+    stdout log; redact_indices on the jwt_tool CommandPlan masks the slot.
+    Uses the REAL ``run_plan`` (no fake) so the dry-run echo path is exercised."""
+    _patch_pipeline_skeleton(monkeypatch)
+    bearer = "eyJhbGci.proof.JWT-do-not-leak"
+    config = _scan_config(tmp_path).model_copy(update={
+        "enabled_tools": ["httpx", "jwt_tool"],
+        "jwt_analysis": True,
+        "auth": AuthConfig(headers={"Authorization": f"Bearer {bearer}"}),
+        "verbose": False,
+    })
+    pipeline.execute_scan(config)
+    out = capsys.readouterr().out
+    log_text = (config.output_dir / "logs" / "jwt_tool.stdout.log").read_text(
+        encoding="utf-8",
+    )
+    assert bearer not in out, "raw JWT must not appear in dry-run stdout"
+    assert bearer not in log_text, "raw JWT must not land in jwt_tool.stdout.log"
+    assert "<redacted>" in log_text
+
+
 def test_pipeline_stage_order_v055(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
 ) -> None:

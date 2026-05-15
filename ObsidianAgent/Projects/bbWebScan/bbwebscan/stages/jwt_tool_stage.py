@@ -48,11 +48,16 @@ def build_plan(config: RunConfig, artifacts: RunArtifacts) -> CommandPlan | None
         "-o", str(output_file),
     ]
 
+    # [v0.5.5 sec-fix] Mark the token slot so the dry-run argv echo and any
+    # log writes (runner.run_plan + redact_command_for_log) mask the JWT.
+    # Without this the bearer token leaked verbatim to stdout and to
+    # ``runs/<UTC>/logs/jwt_tool.stdout.log``.
     return CommandPlan(
         stage="jwt-analysis",
         label="jwt_tool",
         command=command,
         artifacts=[output_file],
+        redact_indices=[2],
     )
 
 

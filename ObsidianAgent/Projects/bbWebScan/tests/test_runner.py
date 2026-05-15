@@ -174,3 +174,71 @@ def test_run_plan_dry_run_redacts_command_to_log_and_stdout(
     assert "SECRET-XYZ" not in log_text
     assert "Authorization: <redacted>" in out
     assert "Authorization: <redacted>" in log_text
+
+
+# ---- v0.5.5 sec-fix: redact_indices for non-header secret slots ----
+
+def test_redact_indices_masks_marked_positions() -> None:
+    """[v0.5.5 sec-fix] Indexed argv positions are masked with REDACT_PLACEHOLDER."""
+    cmd = ["jwt_tool", "-t", "eyJhbGci.proof.value", "-o", "/run/jwt.json"]
+    redacted = redact_command_for_log(cmd, redact_indices=[2])
+    assert redacted == ["jwt_tool", "-t", REDACT_PLACEHOLDER, "-o", "/run/jwt.json"]
+    assert "eyJhbGci.proof.value" not in " ".join(redacted)
+
+
+def test_redact_indices_combines_with_header_flag_redaction() -> None:
+    """[v0.5.5 sec-fix] Indexed masking and header-flag masking compose: an argv
+    that mixes ``-H Authorization: Bearer ...`` and a non-header secret slot
+    has both surfaces masked."""
+    cmd = [
+        "tool", "-t", "TOKEN-SECRET",
+        "-H", "Authorization: Bearer HEADER-SECRET",
+        "-o", "/run/x",
+    ]
+    redacted = redact_command_for_log(cmd, redact_indices=[2])
+    joined = " ".join(redacted)
+    assert "TOKEN-SECRET" not in joined
+    assert "HEADER-SECRET" not in joined
+    assert redacted[2] == REDACT_PLACEHOLDER
+    assert redacted[4] == f"Authorization: {REDACT_PLACEHOLDER}"
+
+
+def test_redact_indices_default_empty_is_backwards_compatible() -> None:
+    """[v0.5.5 sec-fix] Omitting redact_indices preserves the pre-fix behaviour
+    so existing callers and stages are unaffected."""
+    cmd = ["httpx", "-H", "Authorization: Bearer SECRET", "-o", "/x"]
+    assert redact_command_for_log(cmd) == redact_command_for_log(cmd, redact_indices=())
+
+
+def test_redact_indices_takes_precedence_over_header_flag_walk() -> None:
+    """[v0.5.5 sec-fix] If an argv index sits where a header VALUE would fall,
+    the indexed mask wins so a placeholder never reaches the header parser
+    (which could otherwise treat ``<redacted>`` as a header line)."""
+    # Position 2 holds what looks like a header value, but is marked as a secret
+    # slot by the stage. The redactor must mask by index, NOT try to parse it.
+    cmd = ["tool", "-H", "Authorization: Bearer LITERAL"]
+    redacted = redact_command_for_log(cmd, redact_indices=[2])
+    assert redacted[2] == REDACT_PLACEHOLDER
+    assert "LITERAL" not in " ".join(redacted)
+
+
+def test_run_plan_dry_run_honours_plan_redact_indices(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str],
+) -> None:
+    """[v0.5.5 sec-fix] End-to-end: a CommandPlan that sets ``redact_indices``
+    has those positions masked in BOTH stdout AND the on-disk stdout log."""
+    config = _config(tmp_path, dry_run=True)
+    artifacts = _artifacts(tmp_path)
+    plan = CommandPlan(
+        stage="jwt-analysis", label="jwt_tool",
+        command=["jwt_tool", "-t", "eyJ.proof.JWT", "-o", "/run/jwt.json"],
+        artifacts=[],
+        redact_indices=[2],
+    )
+    run_plan(plan, config, artifacts)
+    out = capsys.readouterr().out
+    log_text = (artifacts.logs / "jwt_tool.stdout.log").read_text(encoding="utf-8")
+    assert "eyJ.proof.JWT" not in out
+    assert "eyJ.proof.JWT" not in log_text
+    assert REDACT_PLACEHOLDER in out
+    assert REDACT_PLACEHOLDER in log_text
