@@ -77,7 +77,22 @@
       "Bash(.venv/bin/python -c \"import ruff, mypy, pytest, pytest_cov\")",
       "Bash(.venv/bin/python -m pytest -q tests/test_menu.py::test_scan_wizard_builds_run_config)",
       "Bash(.venv/bin/bbwebscan scan *)",
-      "Bash(.venv/bin/bbwebscan doctor *)"
+      "Bash(.venv/bin/bbwebscan doctor *)",
+      "Bash(.venv/bin/python -m pytest --cov --cov-report=term-missing --no-header -q)",
+      "Bash(.venv/bin/python -m pytest -q tests/test_coverage_v056_boost.py)",
+      "Bash(.venv/bin/python -m ruff check tests/test_coverage_v056_boost.py)",
+      "Bash(.venv/bin/python -m ruff check --fix tests/test_coverage_v056_boost.py)",
+      "Bash(awk '$4!=\"0\" {print}')",
+      "Bash(.venv/bin/python -m pytest -q tests/test_coverage_v056_boost2.py)",
+      "Bash(.venv/bin/python -m pytest tests/test_coverage_v056_boost2.py::test_run_discovery_executes_when_tool_enabled -x)",
+      "Bash(.venv/bin/python -m ruff check tests/test_coverage_v056_boost2.py)",
+      "Bash(.venv/bin/python -m ruff check --fix tests/test_coverage_v056_boost2.py)",
+      "Bash(awk '$3>=3 {print}')",
+      "Bash(.venv/bin/python -m pytest -q tests/test_coverage_v056_boost3.py)",
+      "Bash(.venv/bin/python -m pytest tests/test_coverage_v056_boost3.py::test_kiterunner_parse_skips_malformed_lines tests/test_coverage_v056_boost3.py::test_params_build_plans_with_raw_request_uses_raw_flag -x)",
+      "Bash(.venv/bin/python -m ruff check --fix tests/test_coverage_v056_boost3.py)",
+      "Bash(.venv/bin/python -m ruff check tests/test_coverage_v056_boost3.py)",
+      "Bash(awk '$3>=2 {print}')"
     ]
   }
 }

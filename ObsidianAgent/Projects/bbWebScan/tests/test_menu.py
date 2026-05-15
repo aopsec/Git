@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from bbwebscan import __version__
 from bbwebscan.config import build_run_config
 from bbwebscan.menu import run_menu
 from bbwebscan.menu_command import build_scan_command, scan_settings_to_args
@@ -44,7 +45,7 @@ def _input(values: Iterable[str]) -> InputFunc:
 def test_main_menu_exits_cleanly() -> None:
     io = FakeIO()
     assert run_menu(input_func=_input(["8"]), io=io) == 0
-    assert io.panels[0][0] == "bbWebScan v0.5.2"
+    assert io.panels[0][0] == f"bbWebScan v{__version__}"
 
 
 def test_scan_wizard_builds_run_config() -> None:

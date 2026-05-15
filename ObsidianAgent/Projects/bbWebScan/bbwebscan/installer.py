@@ -56,6 +56,9 @@ def run_installer(args: argparse.Namespace) -> int:
     # Install (or report installed) before we hand off so doctor reports a
     # consistent state after `bbwebscan install`.
     scrapy_rc = _ensure_scrapy(dry_run=args.dry_run)
+    # [v0.5.6] naabu landed after the bash installer was written; install it
+    # via `go install` if missing so doctor reports a consistent state.
+    naabu_rc = _ensure_naabu(dry_run=args.dry_run)
     cmd = build_install_command(
         installer,
         dry_run=args.dry_run,
@@ -68,7 +71,7 @@ def run_installer(args: argparse.Namespace) -> int:
     else:
         completed = subprocess.run(cmd, check=False)
         bash_rc = completed.returncode
-    return bash_rc or scrapy_rc
+    return bash_rc or scrapy_rc or naabu_rc
 
 
 def _ensure_scrapy(*, dry_run: bool) -> int:
@@ -86,6 +89,35 @@ def _ensure_scrapy(*, dry_run: bool) -> int:
         cmd = [pipx, "install", "scrapy"]
     else:
         cmd = [sys.executable, "-m", "pip", "install", "--user", "scrapy"]
+    if dry_run:
+        print(f"[bbwebscan install] [dry-run] would run: {' '.join(cmd)}", flush=True)
+        return 0
+    print(f"[bbwebscan install] {' '.join(cmd)}", flush=True)
+    completed = subprocess.run(cmd, check=False)
+    return completed.returncode
+
+
+def _ensure_naabu(*, dry_run: bool) -> int:
+    """[v0.5.6] Install naabu via `go install` when missing.
+
+    The upstream bash installer (`~/bbScan_Installer.sh`) was written before
+    naabu was wired and does not cover it. Mirroring `_ensure_scrapy` keeps
+    `bbwebscan install` self-contained for tools added after the script.
+    Requires `go` on PATH; if go is missing we surface a clear hint and
+    return 0 (non-fatal — the bash installer still runs).
+    """
+    if shutil.which("naabu") is not None:
+        print("[bbwebscan install] naabu: already installed", flush=True)
+        return 0
+    if shutil.which("go") is None:
+        print(
+            "[bbwebscan install] naabu: skipping — `go` not on PATH. "
+            "Install go and re-run, or `go install "
+            "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest` manually.",
+            flush=True,
+        )
+        return 0
+    cmd = ["go", "install", "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest"]
     if dry_run:
         print(f"[bbwebscan install] [dry-run] would run: {' '.join(cmd)}", flush=True)
         return 0

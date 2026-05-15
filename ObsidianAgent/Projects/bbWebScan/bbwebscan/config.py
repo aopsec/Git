@@ -151,7 +151,14 @@ def build_run_config(args: Namespace) -> RunConfig:
     )
     target_inputs = list(profile.seed_urls)
     target_inputs.extend(args.target)
-    output_dir = Path(args.output_dir) if args.output_dir else Path.cwd() / "runs" / args.run_label
+    # [v0.5.6] Expand ~ in user-supplied paths so menu inputs like
+    # `~/vswitcher` resolve to the home directory instead of becoming a
+    # literal directory named "~".
+    output_dir = (
+        Path(args.output_dir).expanduser()
+        if args.output_dir
+        else Path.cwd() / "runs" / args.run_label
+    )
     retry = RetryPolicy(
         max_attempts=args.max_attempts or profile.retry.max_attempts,
         backoff_s=args.backoff_s if args.backoff_s is not None else profile.retry.backoff_s,
@@ -165,7 +172,7 @@ def build_run_config(args: Namespace) -> RunConfig:
         auth=merge_auth(profile.auth, args.header, args.cookie, args.raw_request),
         mode=mode,
         enabled_tools=selected_tools,
-        wordlist=Path(args.wordlist) if args.wordlist else profile.wordlist,
+        wordlist=Path(args.wordlist).expanduser() if args.wordlist else profile.wordlist,
         threads=args.threads or profile.threads,
         rate=args.rate or profile.rate,
         tool_timeout_s=args.tool_timeout or profile.tool_timeout_s,
@@ -173,7 +180,7 @@ def build_run_config(args: Namespace) -> RunConfig:
         retry=retry,
         output_dir=output_dir,
         target_inputs=target_inputs,
-        input_file=Path(args.input) if args.input else None,
+        input_file=Path(args.input).expanduser() if args.input else None,
         check_tools=args.check_tools,
         dry_run=args.dry_run,
         ack_authorized=args.ack_authorized,

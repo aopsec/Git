@@ -4,6 +4,7 @@ import importlib
 from collections.abc import Callable
 from typing import Any
 
+from bbwebscan import __version__
 from bbwebscan.menu_actions import (
     run_compare_menu,
     run_doctor_auto_fix,
@@ -67,7 +68,7 @@ def run_menu(
     menu_io = io or RichMenuIO()
     handlers = _menu_handlers()
     while True:
-        menu_io.panel("bbWebScan v0.5.2", _main_menu_body())
+        menu_io.panel(f"bbWebScan v{__version__}", _main_menu_body())
         choice = input_func("Choose [1-8]: ").strip()
         if choice == "8":
             return 0
