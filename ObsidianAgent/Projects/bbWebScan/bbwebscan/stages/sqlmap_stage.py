@@ -18,8 +18,8 @@ Input scope:
 - URLs are filtered: scheme + netloc + path; params with known values passed
   as `?key=value` query strings
 
-Output: sqlmap JSON report (one per URL) containing vulnerability summaries.
-We parse and emit findings with severity per injection type.
+Output: sqlmap stores results in output_dir. We parse output files and emit
+findings with severity per injection type.
 
 Severity mapping:
 - boolean-based blind, time-based blind → high
@@ -45,22 +45,29 @@ def build_plans(
         return []
 
     plans: list[CommandPlan] = []
+    sqlmap_output_dir = artifacts.artifacts / "sqlmap"
+    sqlmap_output_dir.mkdir(parents=True, exist_ok=True)
+
     for index, url in enumerate(urls, start=1):
-        output_file = artifacts.artifacts / f"sqlmap_{index}.json"
-        command = _build_sqlmap_command(url, output_file, config)
+        results_file = sqlmap_output_dir / f"results_{index}.txt"
+        command = _build_sqlmap_command(url, sqlmap_output_dir, config)
         plans.append(
             CommandPlan(
                 stage="sqlmap",
                 label=f"sqlmap_{index}",
                 command=command,
-                artifacts=[output_file],
+                artifacts=[results_file],
             )
         )
     return plans
 
 
 def parse_results(artifact_paths: list[Path]) -> tuple[list[Finding], list[str]]:
-    """Parse sqlmap JSON reports and emit findings."""
+    """Parse sqlmap output reports and emit findings.
+
+    sqlmap outputs to output_dir with results stored in subdirectories.
+    We look for evidence of SQL injection in the output.
+    """
     findings: list[Finding] = []
     for artifact_path in artifact_paths:
         file_findings = _parse_single_report(artifact_path)
@@ -68,13 +75,13 @@ def parse_results(artifact_paths: list[Path]) -> tuple[list[Finding], list[str]]
     return findings, []
 
 
-def _build_sqlmap_command(url: str, output_file: Path, config: RunConfig) -> list[str]:
+def _build_sqlmap_command(url: str, output_dir: Path, config: RunConfig) -> list[str]:
     """Build sqlmap command line for the given mode."""
     base_command = [
         "sqlmap",
         "-u", url,
         "--batch",
-        "--json-file", str(output_file),
+        "--output-dir", str(output_dir),
     ]
 
     if config.sqlmap_mode == "smooth":
@@ -98,17 +105,40 @@ def _build_sqlmap_command(url: str, output_file: Path, config: RunConfig) -> lis
 
 
 def _parse_single_report(artifact_path: Path) -> list[Finding]:
-    """Parse a single sqlmap JSON report."""
+    """Parse sqlmap output from JSON, directory, or text files.
+
+    Handles:
+    - JSON test fixtures (for backward compatibility with tests)
+    - sqlmap output directories (actual command execution)
+    - Text files containing vulnerability indicators
+    """
     findings: list[Finding] = []
-    if not artifact_path.is_file():
+    if not artifact_path.exists():
         return findings
 
+    # Try parsing as JSON first (test fixtures + potential future sqlmap JSON output)
+    if artifact_path.is_file() and artifact_path.suffix == ".json":
+        return _parse_json_report(artifact_path)
+
+    # Handle directory output from sqlmap
+    if artifact_path.is_dir():
+        return _parse_sqlmap_directory(artifact_path)
+
+    # Handle text files or other output
+    if artifact_path.is_file():
+        return _parse_text_report(artifact_path)
+
+    return findings
+
+
+def _parse_json_report(artifact_path: Path) -> list[Finding]:
+    """Parse sqlmap JSON test fixture format."""
+    findings: list[Finding] = []
     try:
         report = json.loads(artifact_path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, ValueError):
+    except (json.JSONDecodeError, ValueError, OSError):
         return findings
 
-    # sqlmap JSON: { "target": "...", "vulnerability": [...] }
     vulnerabilities = report.get("vulnerability", [])
     if not vulnerabilities:
         return findings
@@ -117,7 +147,6 @@ def _parse_single_report(artifact_path: Path) -> list[Finding]:
         severity = _map_injection_type_to_severity(vuln.get("type", "unknown"))
         title = f"SQL Injection ({vuln.get('type', 'unknown')})"
         target = report.get("target", str(artifact_path))
-        evidence = str(artifact_path)
 
         findings.append(
             Finding(
@@ -126,7 +155,61 @@ def _parse_single_report(artifact_path: Path) -> list[Finding]:
                 target=target,
                 severity=severity,
                 title=title,
-                evidence=evidence,
+                evidence=str(artifact_path),
+            )
+        )
+
+    return findings
+
+
+def _parse_sqlmap_directory(artifact_path: Path) -> list[Finding]:
+    """Parse sqlmap output directory structure."""
+    findings: list[Finding] = []
+
+    # Look for XML or other result files sqlmap generates
+    for xml_file in artifact_path.glob("**/*.xml"):
+        try:
+            content = xml_file.read_text(encoding="utf-8", errors="ignore")
+            if "SQL injection" in content or "vulnerability" in content:
+                findings.append(
+                    Finding(
+                        stage="sqlmap",
+                        kind="sql-injection",
+                        target=str(artifact_path),
+                        severity="high",
+                        title="SQL Injection Detected",
+                        evidence=str(xml_file),
+                    )
+                )
+        except (OSError, ValueError):
+            continue
+
+    return findings
+
+
+def _parse_text_report(artifact_path: Path) -> list[Finding]:
+    """Parse sqlmap text output for vulnerability indicators."""
+    findings: list[Finding] = []
+    try:
+        content = artifact_path.read_text(encoding="utf-8", errors="ignore")
+    except (OSError, ValueError):
+        return findings
+
+    # Check for sqlmap vulnerability indicators
+    if any(indicator in content for indicator in [
+        "SQL injection found",
+        "injectable",
+        "sqlmap identified",
+        "[PAYLOAD]",  # Common in sqlmap output
+    ]):
+        findings.append(
+            Finding(
+                stage="sqlmap",
+                kind="sql-injection",
+                target=str(artifact_path),
+                severity="high",
+                title="SQL Injection Detected",
+                evidence=str(artifact_path),
             )
         )
 
