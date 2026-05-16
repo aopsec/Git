@@ -1,6 +1,6 @@
 # Alcides Pollazzon — Portfólio Acadêmico e Profissional
 
-[GitHub Pages](https://aops-dev.github.io/Git/) · [LinkedIn](https://www.linkedin.com/in/aops/) · [Currículo Completo](CV-AOPS.html)
+[GitHub Pages](https://aopsec.github.io/Git/) · [LinkedIn](https://www.linkedin.com/in/aops/) · [Currículo Completo](CV-AOPS.html)
 
 Repositório público de **Alcides Olivo Pollazzon Soterio**, estudante de Bacharelado em Ciência da Computação no UniCEUB (Brasília, DF). Reúne projetos acadêmicos, ferramentas de segurança, exercícios de programação e automações pessoais, organizados com boas práticas de versionamento Git e documentação.
 
@@ -12,7 +12,7 @@ Repositório público de **Alcides Olivo Pollazzon Soterio**, estudante de Bacha
 
 O portfólio completo — com currículo, projetos, certificações e habilidades — está publicado em:
 
-**[https://aops-dev.github.io/Git/](https://aops-dev.github.io/Git/)**
+**[https://aopsec.github.io/Git/](https://aopsec.github.io/Git/)**
 
 Desenvolvido com Jekyll (tema Hacker) via GitHub Pages a partir deste repositório.
 
@@ -21,7 +21,7 @@ Desenvolvido com Jekyll (tema Hacker) via GitHub Pages a partir deste repositór
 ## Repo DIR:
 
 ```
-aops-dev/Git
+aopsec/Git
 ├── BootCamp1/
 │   └── Projeto_Intermediario/        # Entrega Intermediária — Git + GitHub Pages (PDF)
 ├── CV-AOPS.html                      # Currículo completo (HTML com print-CSS)

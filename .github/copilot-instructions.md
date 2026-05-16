@@ -1,4 +1,4 @@
-# Copilot Instructions for aops-dev/Git
+# Copilot Instructions for aopsec/Git
 
 This repository is a multi-project monorepo combining educational coursework, security infrastructure projects, and AI-assisted development tools.
 

@@ -3,7 +3,7 @@ layout: default
 title: Alcides Pollazzon — Portfólio
 ---
 
-[LinkedIn](https://www.linkedin.com/in/aops/) · [GitHub](https://github.com/aops-dev/Git) · [Curriculum Vitae](CV-AOPS.html) · [aops@outlook.com.br](mailto:aops@outlook.com.br) · 
+[LinkedIn](https://www.linkedin.com/in/aops/) · [GitHub](https://github.com/aopsec/Git) · [Curriculum Vitae](CV-AOPS.html) · [aops@outlook.com.br](mailto:aops@outlook.com.br) · 
 
 ---
 
@@ -54,4 +54,4 @@ Estudante de Ciência da Computação com formação em redes de computadores, f
 
 ---
 
-*Repositório público: [github.com/aops-dev/Git](https://github.com/aops-dev/Git) · Perfil profissional: [linkedin.com/in/aops/](https://www.linkedin.com/in/aops/)*
+*Repositório público: [github.com/aopsec/Git](https://github.com/aopsec/Git) · Perfil profissional: [linkedin.com/in/aops/](https://www.linkedin.com/in/aops/)*
