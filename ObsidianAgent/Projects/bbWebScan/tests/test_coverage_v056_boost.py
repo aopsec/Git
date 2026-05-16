@@ -8,6 +8,7 @@ test here aims at a single concrete missed-line range from the pytest-cov
 from __future__ import annotations
 
 import argparse
+import asyncio
 import builtins
 import importlib
 import importlib.metadata as md
@@ -592,13 +593,18 @@ def test_bbspider_in_scope_matches_allowed_and_subdomains(tmp_path: Path) -> Non
 
 
 def test_bbspider_start_requests_yields_one_per_url(tmp_path: Path) -> None:
+    """Verify that start() async method yields correct requests."""
     urls = tmp_path / "urls.txt"
     urls.write_text(
         "https://example.com\nhttps://api.example.com\n# comment\n",
         encoding="utf-8",
     )
     spider = BbSpider(urls_file=str(urls), js_render=True)  # exercise js_render branch
-    requests = list(spider.start_requests())
+
+    async def collect_requests() -> list[Any]:
+        return [req async for req in spider.start()]
+
+    requests = asyncio.run(collect_requests())
     assert len(requests) == 2
     assert all(r.meta.get("playwright") is True for r in requests)
 

@@ -57,14 +57,13 @@ def build_plans(
     sqlmap_output_dir.mkdir(parents=True, exist_ok=True)
 
     for index, url in enumerate(urls, start=1):
-        results_file = sqlmap_output_dir / f"results_{index}.txt"
         command = _build_sqlmap_command(url, sqlmap_output_dir, config)
         plans.append(
             CommandPlan(
                 stage="sqlmap",
                 label=f"sqlmap_{index}",
                 command=command,
-                artifacts=[results_file],
+                artifacts=[sqlmap_output_dir],
             )
         )
     return plans

@@ -91,6 +91,7 @@ class RunConfig(BaseModel):
     scrapy_deep: bool = False
     scrapy_max_depth: int = Field(default=2, ge=1, le=5)
     scrapy_js_render: bool = False
+    scrapy_extended: bool = False
     discovery_status_filter: list[str] = Field(
         default_factory=lambda: ["200", "301", "302", "307", "308"]
     )

@@ -16,6 +16,7 @@ from bbwebscan.menu_prompts import (
     split_csv,
     validate_tools,
 )
+from bbwebscan.menu_templates import select_template
 from bbwebscan.menu_types import InputFunc, MenuIO, ScanExecutor, ScanSettings, default_input
 from bbwebscan.pipeline import execute_scan
 
@@ -27,6 +28,8 @@ def collect_scan_settings(
 ) -> ScanSettings:
     """[MENU-051] Collect scan args interactively, then reuse build_run_config."""
     base = existing or ScanSettings()
+    if prompt_bool("Apply a scan template?", False, input_func):
+        base = select_template(input_func)
     profile = blank_to_none(prompt("Profile YAML path", base.profile, input_func))
     targets = split_csv(prompt("Targets (comma-separated)", ",".join(base.targets), input_func))
     input_file = blank_to_none(prompt("Input file", base.input_file, input_func))
@@ -75,6 +78,10 @@ def collect_scan_settings(
         scrapy_js_render=prompt_bool(
             "Scrapy JS rendering via scrapy-playwright (requires [js] extra)",
             base.scrapy_js_render, input_func,
+        ),
+        scrapy_extended=prompt_bool(
+            "Scrapy extended harvesting (emails/exposed paths/documents)",
+            base.scrapy_extended, input_func,
         ),
         jwt_analysis=prompt_bool(
             "Run jwt_tool against Bearer tokens in Authorization header",

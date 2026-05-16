@@ -93,12 +93,15 @@ def test_scan_wizard_collects_active_amass_ack() -> None:
     # jwt_analysis + sqlmap_timeout inserted between scrapy_js_render and dry_run.
     # [v0.5.6] port_scan prompted between sqlmap_timeout and dry_run.
     # [v0.5.7] "Enable extra tools" removed; one placeholder "" dropped.
+    # [v0.5.8] Template selection + scrapy_extended prompts added.
     settings = collect_scan_settings(input_func=_input([
+        "n",                             # apply template (v0.5.8)
         "", "example.com", "", "", "", "", "y", "active", "AUTHORIZED",
         "",                              # sqlmap_mode (default "off")
         "n",                             # port_scan (v0.5.6, default "n")
         "n", "n", "", "", "", "", "", "", "", "", "", "", "n", "n",
         "n", "", "n",                    # scrapy_deep, scrapy_max_depth, scrapy_js_render
+        "n",                             # scrapy_extended (v0.5.8)
         "n", "",                         # jwt_analysis, sqlmap_timeout
         "y", "n", "n",
     ]))

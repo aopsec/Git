@@ -55,13 +55,16 @@ def test_scan_wizard_builds_run_config() -> None:
     # sqlmap_timeout prompted between scrapy_js_render and dry_run.
     # [v0.5.6] port_scan prompted between sqlmap_timeout and dry_run; mode/rate
     # prompts only fire if port_scan is "y".
+    # [v0.5.8] Template selection + scrapy_extended prompts added.
     settings = collect_scan_settings(input_func=_input([
+        "n",                             # apply template (v0.5.8)
         "", "example.com", "", "", "", "", "", "n",
         "",                              # sqlmap_mode (default "off")
         "n",                             # port_scan (v0.5.6, default "n")
         "n", "n", "", "", "",
         "5", "10", "", "", "", "", "medium", "y", "n",
         "n", "", "n",                    # scrapy_deep, scrapy_max_depth, scrapy_js_render
+        "n",                             # scrapy_extended (v0.5.8)
         "n", "",                         # jwt_analysis, sqlmap_timeout
         "y", "n", "n",
     ]))

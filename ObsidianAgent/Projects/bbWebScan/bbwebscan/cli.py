@@ -94,6 +94,13 @@ def _add_scan_args(parser: argparse.ArgumentParser) -> None:
         ),
     )
     parser.add_argument(
+        "--scrapy-extended", dest="scrapy_extended", action="store_true",
+        help=(
+            "Run extended Scrapy harvesting (emails, exposed paths, documents). "
+            "Runs after primary stage with same config."
+        ),
+    )
+    parser.add_argument(
         "--jwt-analysis", dest="jwt_analysis", action="store_true",
         help=(
             "Run jwt_tool against Bearer tokens in --header Authorization. "

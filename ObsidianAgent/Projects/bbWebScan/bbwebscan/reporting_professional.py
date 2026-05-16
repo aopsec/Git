@@ -122,12 +122,17 @@ def _format_header(
         if breakdown.get(sev, 0) > 0
     ]
     sev_str = ", ".join(sev_parts) if sev_parts else "none"
+    target_str = (
+        ", ".join(config.target_inputs)
+        if config.target_inputs
+        else ", ".join(config.seed_urls)
+    )
     return [
         "# Security Assessment Report",
         "",
         "## Executive Summary",
         "",
-        f"- **Target**: {', '.join(config.seed_urls)}",
+        f"- **Target**: {target_str}",
         f"- **Program**: {config.program_name}",
         f"- **Scan Mode**: {config.mode}",
         f"- **Overall Risk Rating**: {_risk_rating(findings)}",

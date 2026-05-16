@@ -28,6 +28,7 @@ from bbwebscan.stages import (
     naabu_stage,
     nuclei_stage,
     params_stage,
+    scrapy_dl_stage,
     scrapy_stage,
     sqlmap_stage,
 )
@@ -103,6 +104,7 @@ def execute_scan(config: RunConfig) -> int:
         _run_httpx(state)
         _run_katana(state)
         _run_scrapy(state)
+        _run_scrapy_dl(state)
         _suggest_wordlist(state)
         _build_wordlist_supplement(state)
         _run_discovery(state)
@@ -294,6 +296,29 @@ def _run_scrapy(state: _PipelineState) -> None:
             "Hint: re-run with --scrapy-deep to enable credential/secret "
             "extraction (vendored ruleset; never echoes raw values)."
         )
+
+
+def _run_scrapy_dl(state: _PipelineState) -> None:
+    config = state.config
+    # Scrapy extended stage: harvest emails, exposed paths, documents.
+    # Gated by --scrapy-extended flag.
+    if not (config.scrapy_extended and "scrapy" in config.enabled_tools):
+        return
+    scrapy_dl_input = state.live_urls or state.active_urls
+    if not scrapy_dl_input:
+        return
+    state.results.extend(
+        _run_stage_plans(
+            scrapy_dl_stage.build_plan(config, state.artifacts, scrapy_dl_input),
+            config, state.artifacts,
+        )
+    )
+    scrapy_dl_findings, scrapy_dl_urls = scrapy_dl_stage.parse_results(
+        state.artifacts.artifacts / "scrapy_extended.jsonl"
+    )
+    state.findings.extend(scrapy_dl_findings)
+    state.discovered_urls = list(dict.fromkeys(state.discovered_urls + scrapy_dl_urls))
+    state.active_urls = _scope_active_urls(state, state.discovered_urls)
 
 
 def _suggest_wordlist(state: _PipelineState) -> None:

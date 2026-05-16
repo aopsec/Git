@@ -44,6 +44,7 @@ class ScanSettings:
     scrapy_deep: bool = False
     scrapy_max_depth: int = 2
     scrapy_js_render: bool = False
+    scrapy_extended: bool = False
     jwt_analysis: bool = False
     sqlmap_mode: Literal["off", "smooth", "aggressive"] = "off"
     sqlmap_timeout: int = 600

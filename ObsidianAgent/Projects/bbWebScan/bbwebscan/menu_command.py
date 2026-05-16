@@ -50,6 +50,7 @@ def scan_settings_to_args(
         scrapy_deep=settings.scrapy_deep,
         scrapy_max_depth=settings.scrapy_max_depth,
         scrapy_js_render=settings.scrapy_js_render,
+        scrapy_extended=settings.scrapy_extended,
         jwt_analysis=settings.jwt_analysis,
         sqlmap_mode=settings.sqlmap_mode,
         sqlmap_timeout=settings.sqlmap_timeout,
@@ -107,6 +108,8 @@ def scan_command_args(  # noqa: PLR0912 - flag-to-argv mapping is naturally wide
         args.extend(["--scrapy-max-depth", str(settings.scrapy_max_depth)])
     if settings.scrapy_js_render:
         args.append("--scrapy-js-render")
+    if settings.scrapy_extended:
+        args.append("--scrapy-extended")
     if settings.jwt_analysis:
         args.append("--jwt-analysis")
     if settings.sqlmap_mode != "off":
