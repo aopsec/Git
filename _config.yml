@@ -1,0 +1,6 @@
+title: AOPS Git Repository
+description: Development and security research repository
+theme: jekyll-theme-minimal
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
