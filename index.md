@@ -49,19 +49,19 @@ Estudante de Ciência da Computação com formação em redes de computadores, f
 
 ## Habilidades Técnicas
 
-#### Redes & Infraestrutura
+### Redes & Infraestrutura
 
 `Arquitetura TCP/IP` `Modelo OSI` `IPv4 / IPv6` `VLSM / CIDR` `Roteamento Estático e Dinâmico` `Switching & VLANs` `Spanning Tree Protocol` `Redes Ethernet` `Wireless` `Cisco IOS` `Configuração de Roteadores & Switches` `Suporte Técnico & Help Desk` `Diagnóstico & Documentação`
 
-#### Cibersegurança
+### Cibersegurança
 
 `Firewalls` `IDS / IPS` `VPNs (IPSec & SSL/TLS)` `Controle de Acesso & ACLs` `Criptografia de Chave Pública` `Proteção de Dispositivos` `Modelagem de Ameaças (MITRE ATT&CK)` `Defesa de Redes` `Detecção de Intrusões` `Políticas de Segurança` `Testes de Intrusão (Pentest)`
 
-#### Softwares
+### Softwares
 
 `Nmap — Avançado` `Burp Suite — Avançado` `Wireshark — Intermediário` `Análise de Tráfego de Rede` `SSH` `Cisco Packet Tracer`
 
-#### Desenvolvimento & Automação
+### Desenvolvimento & Automação
 
 `Python` `Bash` `Git & GitHub` `Docker` `Apache` `VS Code` `brModelo`
 
