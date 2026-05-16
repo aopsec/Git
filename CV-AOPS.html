@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curriculum Vitae - Alcides Olivo Pollazzon Soterio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:           #faf8f8;
+    --surface:      #ffffff;
+    --ink:          #1a0808;
+    --ink-muted:    #5c3636;
+    --ink-faint:    #9e7070;
+    --accent:       #330000;
+    --accent-mid:   #5c0000;
+    --accent-rule:  #8c1a1a;
+    --rule:         #e8d5d5;
+    --tag-bg:       #f5eaea;
+    --tag-accent-bg:#f0dada;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body:    'DM Sans', system-ui, sans-serif;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .page { box-shadow: none; margin: 0; border-radius: 0; max-width: 100%; }
+    .section { page-break-inside: avoid; }
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem;
+    font-size: 14px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--surface);
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 2px 24px rgba(51,0,0,.08);
+  }
+
+ 
+  .accent-stripe {
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 60%, var(--accent-rule) 100%);
+  }
+
+
+  .header {
+    padding: 2.75rem 3.25rem 2.25rem;
+    border-bottom: 1.5px solid var(--rule);
+  }
+
+  .header-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 300;
+    letter-spacing: .08em;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .tagline {
+    font-family: var(--font-display);
+    font-size: .95rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ink-muted);
+    margin-top: .55rem;
+    letter-spacing: .03em;
+  }
+
+  .contact-block {
+    text-align: right;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    line-height: 2;
+    flex-shrink: 0;
+  }
+
+  .contact-block a {
+    color: var(--accent-mid);
+    text-decoration: none;
+  }
+
+  .contact-block a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+
+  .body {
+    padding: 0 3.25rem 3rem;
+  }
+
+
+  .section {
+    padding: 2rem 0 0;
+  }
+
+  .section + .section {
+    border-top: 1px solid var(--rule);
+    margin-top: 2rem;
+  }
+
+  .section-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent-rule);
+    margin-bottom: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+    display: block;
+  }
+
+
+  .profile-text {
+    font-family: var(--font-display);
+    font-size: 1.06rem;
+    font-weight: 600;
+    line-height: 1.8;
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  .skills-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .skill-group-title {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: .55rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .tag {
+    font-size: 11.5px;
+    background: var(--tag-bg);
+    color: var(--ink-muted);
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .tag.accent {
+    background: var(--tag-accent-bg);
+    color: var(--accent-mid);
+    font-weight: 500;
+  }
+
+
+  .cert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .cert-item {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: .5rem 1rem;
+    padding: .85rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .cert-item:last-child { border-bottom: none; }
+
+  .cert-date {
+    font-size: 11px;
+    color: var(--ink-faint);
+    padding-top: 3px;
+    white-space: nowrap;
+  }
+
+  .cert-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: .2rem;
+  }
+
+  .cert-org {
+    font-size: 11px;
+    color: var(--accent-rule);
+    font-weight: 400;
+    margin-bottom: .25rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  .cert-desc {
+    font-size: 12px;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+
+  .cert-badge-link {
+    display: inline-block;
+    margin-top: .3rem;
+    font-size: 10.5px;
+    color: var(--accent-rule);
+    text-decoration: none;
+    letter-spacing: .04em;
+    border-bottom: 1px dashed var(--rule);
+    transition: color .15s;
+  }
+  .cert-badge-link:hover { color: var(--accent); border-bottom-color: var(--accent-rule); }
+
+  .maratona-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--tag-accent-bg);
+    color: var(--accent-mid);
+    border-radius: 2px;
+    padding: 1px 7px;
+    letter-spacing: .04em;
+    margin-left: .4rem;
+    vertical-align: middle;
+    text-transform: uppercase;
+  }
+
+
+  .edu-item {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: .5rem 1rem;
+    padding: .6rem 0;
+  }
+
+  .edu-period {
+    font-size: 11px;
+    color: var(--ink-faint);
+    padding-top: 3px;
+    white-space: nowrap;
+  }
+
+  .edu-degree {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: .15rem;
+  }
+
+  .edu-inst {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  .lang-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lang-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .45rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 12.5px;
+  }
+
+  .lang-item:last-child { border-bottom: none; }
+
+  .lang-name { color: var(--ink); }
+
+  .lang-level {
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+
+
+  .env-group { margin-bottom: 1rem; }
+  .env-group:last-child { margin-bottom: 0; }
+
+  .env-label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--ink-faint);
+    margin-bottom: .3rem;
+  }
+
+  .env-items {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="accent-stripe"></div>
+
+
+  <header class="header">
+    <div class="header-top">
+      <div>
+        <h1 class="name">Alcides Olivo Pollazzon Soterio</h1>
+        <p class="tagline">Ciência da Computação · Segurança Cibernética · Red Team</p>
+      </div>
+      <address class="contact-block" style="font-style:normal;">
+        <span>Brasília, DF</span><br>
+        <span>+55 (61) 9 8285-2020</span><br>
+        <a href="mailto:aops@outlook.com.br">aops@outlook.com.br</a><br>
+        <a href="https://www.linkedin.com/in/aops/">LinkedIn</a>&ensp;·&ensp;<a href="https://github.com/aops-dev/Git">GitHub</a>
+      </address>
+    </div>
+  </header>
+
+  <div class="body">
+
+
+    <section class="section" aria-label="Perfil">
+      <p class="section-label">Perfil</p>
+      <p class="profile-text">
+        Estudante de Ciência da Computação com formação em redes de computadores, 
+        fundamentos de cibersegurança e conhecimento em controles de proteção, incluindo firewalls, IDS/IPS, VPNs e políticas de segurança.
+        Meu objetivo é atuar, no longo prazo, em operações ofensivas (Red Team / Red Ops).
+      </p>
+    </section>
+
+
+    <section class="section" aria-label="Habilidades Técnicas">
+      <p class="section-label">Habilidades Técnicas</p>
+
+      <div class="skills-grid">
+
+        <div>
+          <p class="skill-group-title">Redes &amp; Infraestrutura</p>
+          <div class="tags">
+            <span class="tag">Arquitetura TCP/IP</span>
+            <span class="tag">Modelo OSI</span>
+            <span class="tag">IPv4 / IPv6</span>
+            <span class="tag">VLSM / CIDR</span>
+            <span class="tag">Roteamento Estático e Dinâmico</span>
+            <span class="tag">Switching &amp; VLANs</span>
+            <span class="tag">Spanning Tree Protocol</span>
+            <span class="tag">Redes Ethernet</span>
+            <span class="tag">Wireless (Básico)</span>
+            <span class="tag">Cisco IOS</span>
+            <span class="tag">Configuração de Roteadores &amp; Switches</span>
+            <span class="tag">Suporte Técnico &amp; Help Desk</span>
+            <span class="tag">Diagnóstico &amp; Documentação</span>
+            <span class="tag">Resolução de Problemas em Redes</span>
+          </div>
+        </div>
+
+        <div>
+          <p class="skill-group-title">Cibersegurança</p>
+          <div class="tags">
+            <span class="tag accent">Firewalls</span>
+            <span class="tag accent">IDS / IPS</span>
+            <span class="tag accent">VPNs (IPSec &amp; SSL/TLS)</span>
+            <span class="tag accent">Controle de Acesso &amp; ACLs</span>
+            <span class="tag accent">Criptografia de Chave Pública</span>
+            <span class="tag accent">Proteção de Dispositivos</span>
+            <span class="tag accent">Modelagem de Ameaças (MITRE ATT&amp;CK)</span>
+            <span class="tag accent">Defesa de Redes</span>
+            <span class="tag accent">Detecção de Intrusões</span>
+            <span class="tag accent">Políticas de Segurança</span>
+            <span class="tag accent">Testes de Intrusão (Pentest)</span>
+          </div>
+        </div>
+
+        <div>
+          <p class="skill-group-title">Softwares</p>
+          <div class="tags">
+            <span class="tag">Nmap — Avançado</span>
+            <span class="tag">Burp Suite — Avançado</span>
+            <span class="tag">Wireshark — Intermediário</span>
+            <span class="tag">Análise de Tráfego de Rede</span>
+            <span class="tag">SSH</span>
+            <span class="tag">Cisco Packet Tracer</span>
+          </div>
+        </div>
+
+        <div>
+          <p class="skill-group-title">Desenvolvimento &amp; Automação</p>
+          <div class="tags">
+            <span class="tag">Python (Básico)</span>
+            <span class="tag">Bash(Intermediário)</span>
+            <span class="tag">Git &amp; GitHub</span>
+            <span class="tag">Docker</span>
+            <span class="tag">Apache</span>
+            <span class="tag">VS Code</span>
+            <span class="tag">brModelo</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <section class="section" aria-label="Certificações">
+      <p class="section-label">Certificações &amp; Cursos</p>
+
+      <div class="cert-list">
+
+        <div class="cert-item">
+          <span class="cert-date">Set. 2025</span>
+          <div>
+            <p class="cert-title">Network Security <span style="font-size:11px;color:#9e7070;font-weight:400;">· 70 h · nota 9,80</span></p>
+            <p class="cert-org">SENAI/SC — Escola Digital · Cisco Networking Academy</p>
+            <p class="cert-desc">Configuração e monitoramento de medidas de mitigação de ameaças: device hardening, IPS e firewalls para proteção de ativos de dados e sistemas de rede.</p>
+          </div>
+        </div>
+
+        <div class="cert-item">
+          <span class="cert-date">Jul. 2025</span>
+          <div>
+            <p class="cert-title">Network Security <span style="font-size:11px;color:#9e7070;font-weight:400;">· 70 h</span> <span class="maratona-tag">10ª Maratona · Fase 3</span></p>
+            <p class="cert-org">SENAI-SC/CDI · Cisco Networking Academy</p>
+            <p class="cert-desc">IPS, firewalls, VPNs (IPSec &amp; SSL/TLS), criptografia de chave pública, modelagem de ameaças (MITRE ATT&amp;CK) e políticas de controle de acesso. Concluído na fase profissionalizante da 10ª Maratona CiberEducação, entre os 1.500 melhores classificados no processo seletivo nacional.</p>
+            <a href="https://www.credly.com/badges/055fd08e-25e5-4b7b-a9cd-c00a611ac727" class="cert-badge-link" target="_blank">↗ Credly · Badge verificado</a>
+          </div>
+        </div>
+
+        <div class="cert-item">
+          <span class="cert-date">Jun. 2025</span>
+          <div>
+            <p class="cert-title">CCNA: Introdução às Redes <span style="font-size:11px;color:#9e7070;font-weight:400;">· 70 h</span> <span class="maratona-tag">10ª Maratona · Fase 3</span></p>
+            <p class="cert-org">SENAI-SC/CDI · Cisco Networking Academy</p>
+            <p class="cert-desc">Endereçamento IP, protocolos físicos e de enlace, Ethernet; configuração de switches, roteadores e dispositivos finais para acesso local e remoto. Até 54 laboratórios práticos (14 h) em hardware Cisco e Packet Tracer.</p>
+            <a href="https://www.credly.com/badges/2ca9c5f7-619c-4cbd-99ad-81232aee79e5" class="cert-badge-link" target="_blank">↗ Credly · Badge verificado</a>
+          </div>
+        </div>
+
+        <div class="cert-item">
+          <span class="cert-date">Abr. 2025</span>
+          <div>
+            <p class="cert-title">Network Technician Career Path <span style="font-size:11px;color:#9e7070;font-weight:400;">· 75 h</span> <span class="maratona-tag">10ª Maratona · Seletiva</span></p>
+            <p class="cert-org">Cisco do Brasil · Cisco Networking Academy</p>
+            <p class="cert-desc">Badge de conclusão da trilha completa de Técnico em Redes: fundamentos de redes, comunicação entre dispositivos, cabeamento, endereçamento, configuração de dispositivos Cisco, suporte e diagnóstico de redes. Até 50 atividades práticas.</p>
+            <a href="https://www.credly.com/badges/2b74cba7-4530-4e66-a59d-ebcf230df79c" class="cert-badge-link" target="_blank">↗ Credly · Badge verificado</a>
+          </div>
+        </div>
+
+        <div class="cert-item">
+          <span class="cert-date">Mar. 2025</span>
+          <div>
+            <p class="cert-title">Network Defense <span style="font-size:11px;color:#9e7070;font-weight:400;">· 40 h</span> <span class="maratona-tag">10ª Maratona · Fase 1</span></p>
+            <p class="cert-org">Senac-DF · Cisco Networking Academy</p>
+            <p class="cert-desc">Técnicas de monitoramento e proteção de redes: controle de acesso, firewalls, segurança em nuvem e criptografia. Fase inicial da 10ª Maratona CiberEducação Cisco Brasil — concluído com aprovação para o processo seletivo.</p>
+            <a href="https://www.credly.com/badges/e92242dc-c650-4b85-9763-96c5a8c54a94" class="cert-badge-link" target="_blank">↗ Credly · Badge verificado</a>
+          </div>
+        </div>
+
+        <div class="cert-item">
+          <span class="cert-date">Fev. 2025</span>
+          <div>
+            <p class="cert-title">Getting Started with Cisco Packet Tracer <span style="font-size:11px;color:#9e7070;font-weight:400;">· 2 h</span></p>
+            <p class="cert-org">Cisco Networking Academy</p>
+            <p class="cert-desc">Simulação de topologias de rede, testes de conectividade e configuração de equipamentos em ambiente virtual.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Formação -->
+    <section class="section" aria-label="Formação Acadêmica">
+      <p class="section-label">Formação Acadêmica</p>
+      <div class="edu-item">
+        <span class="edu-period">2025–2030</span>
+        <div>
+          <p class="edu-degree">Bacharelado em Ciência da Computação</p>
+          <p class="edu-inst">UniCEUB — Previsão de conclusão: dez./2030</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Idiomas & Ambientes -->
+    <section class="section" aria-label="Idiomas e Ambientes">
+      <p class="section-label">Idiomas &amp; Ambientes</p>
+
+      <div class="two-col">
+
+        <!-- Idiomas -->
+        <div>
+          <p class="skill-group-title">Idiomas</p>
+          <div class="lang-list">
+            <div class="lang-item">
+              <span class="lang-name">Português</span>
+              <span class="lang-level">Nativo</span>
+            </div>
+            <div class="lang-item">
+              <span class="lang-name">Inglês</span>
+              <span class="lang-level">Avançado</span>
+            </div>
+            <div class="lang-item">
+              <span class="lang-name">Espanhol</span>
+              <span class="lang-level">Básico</span>
+            </div>
+          </div>
+        </div>
+
+
+        <div>
+          <p class="skill-group-title">Sistemas Operacionais &amp; Ferramentas</p>
+
+          <div class="env-group">
+            <p class="env-label">Linux</p>
+            <p class="env-items">Arch · Debian · Fedora · QubesOS</p>
+          </div>
+
+          <div class="env-group">
+            <p class="env-label">Windows</p>
+            <p class="env-items">Windows · Windows Server</p>
+          </div>
+
+          <div class="env-group">
+            <p class="env-label">Virtualização</p>
+            <p class="env-items">Hyper-V · VirtualBox · VMware</p>
+          </div>
+
+          <div class="env-group">
+            <p class="env-label">Firewall</p>
+      
