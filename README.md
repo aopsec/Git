@@ -1,6 +1,6 @@
 # Alcides Pollazzon — Portfólio Acadêmico e Profissional
 
-[GitHub Pages](https://aopsec.github.io/Git/) · [LinkedIn](https://www.linkedin.com/in/aops/) · [Currículo Completo](CV-AOPS.html)
+[GitHub Pages](https://aopsec.github.io/Git/) · [LinkedIn](https://www.linkedin.com/in/aops/) · [Currículo Completo](CV-AOPS.html) · [aops@outlook.com.br](mailto:aops@outlook.com.br)
 
 Repositório público de **Alcides Olivo Pollazzon Soterio**, estudante de Bacharelado em Ciência da Computação no UniCEUB (Brasília, DF). Reúne projetos acadêmicos, ferramentas de segurança, exercícios de programação e automações pessoais, organizados com boas práticas de versionamento Git e documentação.
 
@@ -100,16 +100,20 @@ Projeto técnico da disciplina Introdução à Computação (UniCEUB, 2026). An�
 
 ---
 
-## Tecnologias Utilizadas
+## Tecnologias & Ferramentas
 
-| Categoria | Tecnologias |
+| Categoria | Ferramentas |
 | --- | --- |
-| Linguagens | Python · Bash · JavaScript · HTML/CSS |
-| Versionamento | Git · GitHub |
-| Publicação | GitHub Pages · Jekyll |
-| Redes & Segurança | Cisco IOS · Nmap · Burp Suite · Wireshark · nftables · WireGuard |
-| Ambientes | Arch Linux · Debian · QubesOS · Docker · KVM |
-| Documentação | Markdown · Obsidian |
+| Linux | Arch · Debian · Fedora · QubesOS |
+| Windows | Windows · Windows Server |
+| Virtualização | Hyper-V · VirtualBox · VMware · KVM · GNOME Boxes |
+| Versionamento | Git · GitHub · GitHub Pages |
+| Linguagens | Python 3 · JavaScript · Bash |
+| Redes & Privacy | nftables · WireGuard · Tor · dnscrypt-proxy · Mullvad VPN · iptables · Caddy |
+| IDS / IPS | Suricata · Falco · Zeek · ClamAV · auditd · Kunai · fail2ban |
+| Recon & BugBounty | httpx · katana · Scrapy · ffuf · feroxbuster · nuclei · amass · naabu · sqlmap · SecLists |
+| IA Local | LM Studio · OpenHands · Aider · Cline · Qdrant |
+| Build & Deploy | Docker · Pandoc · Chromium · GitHub Actions |
 
 ---
 
