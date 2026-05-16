@@ -3,16 +3,15 @@ layout: default
 title: Alcides Pollazzon — Portfólio
 ---
 
-[LinkedIn](https://www.linkedin.com/in/aops/) · [GitHub](https://github.com/aopsec/Git) · [Curriculum Vitae](CV-AOPS.html) · [aops@outlook.com.br](mailto:aops@outlook.com.br) · 
-
----
 
 ## Sobre
 
 Estudante de Ciência da Computação com formação em redes de computadores, fundamentos de cibersegurança, conhecimento em controles de proteção e políticas de segurança. 
-    *Objetivo: atuar em operações ofensivas — Red Team / Red Ops.*
+*Objetivo: atuar em operações ofensivas — Red Team / Red Ops.*
+
 
 ---
+
 
 ## Projetos
 
@@ -25,6 +24,7 @@ Estudante de Ciência da Computação com formação em redes de computadores, f
 | [IC01-aops/ADV7ia](IC01-aops/ADV7ia/) | ADV7ia — stack local de IA com LM Studio, OpenHands e Aider em Arch Linux; mesh de controle com rollover de estado de tarefas |
 | [Logica_Programacao_I](Logica_Programacao_I/) | Exercícios da disciplina de Lógica e Programação I — Python, 40+ arquivos em 9 módulos (geometria, física, álgebra, estruturas de dados) |
 | [Revisao_Prova01](Revisao_Prova01/) | Revisão para prova 01 — 6 exercícios Python |
+
 
 ### Segurança & Pesquisa
 
@@ -51,6 +51,10 @@ Estudante de Ciência da Computação com formação em redes de computadores, f
 | Recon & BugBounty | httpx · katana · Scrapy · ffuf · feroxbuster · nuclei · amass · naabu · sqlmap · SecLists |
 | IA Local | LM Studio · OpenHands · Aider · Cline · Qdrant |
 | Build & Deploy | Docker · Pandoc · Chromium · GitHub Actions |
+
+---
+
+[LinkedIn](https://www.linkedin.com/in/aops/) · [GitHub](https://github.com/aopsec/Git) · [Curriculum Vitae](CV-AOPS.html) · [aops@outlook.com.br](mailto:aops@outlook.com.br) ·
 
 ---
 
