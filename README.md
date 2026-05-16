@@ -14,7 +14,7 @@ Repositório público de **Alcides Olivo Pollazzon Soterio**, estudante de Bacha
 
 ---
 
-## Repo DIR
+## DIR
 
 ```
 aopsec/Git
