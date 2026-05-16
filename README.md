@@ -18,7 +18,7 @@ Desenvolvido com Jekyll (tema Hacker) via GitHub Pages a partir deste repositór
 
 ---
 
-## Estrutura do Repositório
+## Repo DIR:
 
 ```
 aops-dev/Git
