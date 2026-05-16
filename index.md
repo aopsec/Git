@@ -40,11 +40,18 @@ Estudante de Ciência da Computação com formação em redes de computadores, f
 
 ### Sistemas Operacionais & Ferramentas
 
-| Categoria | Sistemas |
+| Categoria | Ferramentas |
 | --- | --- |
 | Linux | Arch · Debian · Fedora · QubesOS |
 | Windows | Windows · Windows Server |
-| Virtualização | Hyper-V · VirtualBox · VMware · KVM |
+| Virtualização | Hyper-V · VirtualBox · VMware · KVM · GNOME Boxes |
+| Versionamento | Git · GitHub · GitHub Pages |
+| Linguagens | Python 3 · JavaScript · Bash |
+| Redes & Privacy | nftables · WireGuard · Tor · dnscrypt-proxy · Mullvad VPN · iptables · Caddy |
+| IDS / IPS | Suricata · Falco · Zeek · ClamAV · auditd · Kunai · fail2ban |
+| Recon & BugBounty | httpx · katana · Scrapy · ffuf · feroxbuster · nuclei · amass · naabu · sqlmap · SecLists |
+| IA Local | LM Studio · OpenHands · Aider · Cline · Qdrant |
+| Build & Deploy | Docker · Pandoc · Chromium · GitHub Actions |
 
 ---
 
