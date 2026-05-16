@@ -1,0 +1,37 @@
+allowed_hosts:
+- vswitcher.com
+auth:
+  cookies: {}
+  headers: {}
+  raw_request: null
+command_wall_clock_s: 900
+denied_hosts: []
+discovery_status_filter:
+- '200'
+- '301'
+- '302'
+- '307'
+- '308'
+enabled_tools: []
+mode_default: safe
+nuclei_max_targets: 1000
+program_name: vswitcher
+rate: 25
+retry:
+  backoff_s: 2.0
+  max_attempts: 1
+  transient_exit_codes:
+  - 124
+  - 137
+  - 143
+seed_urls:
+- https://vswitcher.com
+threads: 10
+tool_identity: {}
+tool_timeout_s: 15
+wordlist: /usr/share/dirb/wordlists/common.txt
+
+# tip: enabled_tools is empty so safe-mode defaults (httpx, katana) apply.
+# to run aggressive recon, set:
+#   enabled_tools: [ffuf, feroxbuster, arjun, nuclei]
+# and pass `--mode aggressive --ack-authorized` to bbwebscan scan.
