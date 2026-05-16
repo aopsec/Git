@@ -97,7 +97,9 @@
       "WebFetch(domain:vswitcher.com)",
       "WebFetch(domain:api.pdtm.sh)",
       "WebFetch(domain:pypi.org)",
-      "WebFetch(domain:files.pythonhosted.org)"
+      "WebFetch(domain:files.pythonhosted.org)",
+      "Skill(resume)",
+      "WebFetch(domain:api.github.com)"
     ]
   },
   "sandbox": {
