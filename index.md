@@ -34,6 +34,7 @@ Estudante de Ciência da Computação com formação em redes de computadores, f
 | Projeto | Descrição |
 | --- | --- |
 | [JustVibing/Snippets](JustVibing/Snippets/) | BugBounty recon toolkit v1.0.3 — scanner client-side em JavaScript; analisador de scripts, variáveis globais e formulários ocultos; security score 95/100 |
+| [ObsidianAgent/Projects](ObsidianAgent/Projects/) | Portfólio de projetos de segurança: **OpenBox0.1v** (appliance Linux hardened — nftables, WireGuard, Tor, DNS-crypt, IDS), **IPS_IDS/ADV7Sec** (runtime Python de detecção de intrusões — auditd, Falco, Suricata, Zeek), **bbWebScan** (orquestrador Python de recon para bug bounty v0.5.3) |
 | [KALInit](KALInit/) | Scripts de inicialização e provisionamento para ambientes Kali / Arch Linux |
 | [wordlists](wordlists/) | SecLists submodule + wordlists customizadas para reconhecimento e testes de intrusão |
 
