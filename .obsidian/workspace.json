@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
+                "file": "wordlists/README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Stage - Stages - params_stage.py"
+              "title": "README"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 380.5
   },
   "right": {
     "id": "c3a381d64eaf68b7",
@@ -185,6 +185,7 @@
   },
   "active": "14798aaad51fb4fc",
   "lastOpenFiles": [
+    "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
     "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_runner.cpython-314-pytest-9.0.3.pyc.963400",
     "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_pipeline.cpython-314-pytest-9.0.3.pyc.963400",
     "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_jwt_tool_stage.cpython-314-pytest-9.0.3.pyc.963400",
@@ -195,9 +196,7 @@
     "ObsidianAgent/Projects/bbWebScan/CHANGELOG.md.tmp.750254.757cdc3eb6aa",
     "ObsidianAgent/Projects/bbWebScan/tests/test_pipeline.py.tmp.750254.4df38c7fd046",
     "ObsidianAgent/Projects/bbWebScan/tests/test_pipeline.py.tmp.750254.9bbdb8fa69fc",
-    "ObsidianAgent/Projects/bbWebScan/tests/test_jwt_tool_stage.py.tmp.750254.fa5c5c3be4e2",
     "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - nuclei_stage.py.md",
-    "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
     "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - amass_stage.py.md",
     "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - _jsonl.py.md",
     "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - __init__.py.md",

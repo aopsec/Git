@@ -14,6 +14,11 @@ O CLI externo **não está neste repo**:
 Substituível via `$AOPS_OBSIDIAN_AGENT_CLI` (check/sync) ou `$AOPS_OBSIDIAN_AGENT_HOME`
 (wrapper scripts dentro de `Projects/`).
 
+`AGENTS.md` na raiz é o sibling Codex-side com guidance substancialmente
+sobreposto (comandos, layout, regra de determinismo). Ao alterar este CLAUDE.md
+verifique se `AGENTS.md` precisa do mesmo update — divergência entre os dois
+quebra parity Claude↔Codex.
+
 ## Stack
 
 | Camada | Tecnologia |
