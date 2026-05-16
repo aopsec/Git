@@ -3,7 +3,7 @@ layout: default
 title: Home
 ---
 
-# AOPS Git Repository
+# Git Repository [Main_Branch]
 
 This repository contains development tools, security research, and educational resources.
 
@@ -19,4 +19,4 @@ See the repository for the latest commits and changes.
 
 ---
 
-*Deployed via GitHub Pages*
+
