@@ -6,6 +6,8 @@ title: Alcides Pollazzon — Portfólio
 
 ## Sobre
 
+### Alcides Pollazzon 
+
 Estudante de Ciência da Computação com formação em redes de computadores, fundamentos de cibersegurança, conhecimento em controles de proteção e políticas de segurança. 
 *Objetivo: atuar em operações ofensivas — Red Team / Red Ops.*
 
