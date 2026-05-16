@@ -29,8 +29,8 @@
 
 ## URLs
 - p. 14: https://gist.github.com/jhaddix/86a06c5dc309d085
-- p. 31: https://acme.com/errorpage{{2*3}}
-- p. 31: https://acme.com/errorpage{{
+- p. 31: `https://acme.com/errorpage{% raw %}{{2*3}}{% endraw %}` (Note: Template expression example)
+- p. 31: `https://acme.com/errorpage{% raw %}{{{% endraw %}` (Note: Incomplete template expression example)
 - p. 33: http://blog.portswigger.net/2015/08/server-side-template-injection.html
 - p. 33: https://speakerdeck.com/owaspmontreal/workshop-server-side-template-i
 - p. 33: https://www.lanmaster53.com/2016/03/exploring-ssti-flask-jinja2/

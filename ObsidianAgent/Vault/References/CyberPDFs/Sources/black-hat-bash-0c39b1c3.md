@@ -38,7 +38,7 @@
 - p. 61: `$ docker compose --help`
 - p. 61: `$ sudo systemctl enable docker –-now`
 - p. 61: `$ git clone https://github.com/dolevf/Black-Hat-Bash.git`
-- p. 62: `$ docker ps -–format "{{.Names}}"`
+- p. 62: `$ docker ps -–format "{% raw %}{{.Names}}{% endraw %}"` (Note: `{{.Names}}` is Docker template syntax)
 - p. 66: `$ docker exec -it MACHINE-NAME bash`
 - p. 67: `$ curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -`
 - p. 67: `$ git clone https://github.com/wappalyzer/wappalyzer.git`
