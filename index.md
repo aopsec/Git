@@ -2,7 +2,6 @@
 layout: default
 title: Alcides Pollazzon — Portfólio
 ---
-*Ciência da Computação · Segurança Cibernética · Red Team*
 
 [LinkedIn](https://www.linkedin.com/in/aops/) · [GitHub](https://github.com/aops-dev/Git) · [Curriculum Vitae](CV-AOPS.html) · [aops@outlook.com.br](mailto:aops@outlook.com.br) · 
 
