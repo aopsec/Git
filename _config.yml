@@ -5,3 +5,7 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-remote-theme
+show_downloads: true
+# google_analytics: [add ID]
+
+gem "github-pages", group: :jekyll_plugins
