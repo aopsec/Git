@@ -116,7 +116,7 @@ ObsidianAgent/
 │   │                        #   Overviews. ADV7ia, OpenBox0.1v e bbWebScan têm ambos →
 │   │                        #   dupla entrada. IPS_IDS só tem README → só Overviews.
 │   ├── ADV7ia/               # Python project. Tem .aops-vault.toml + README.md → manifest E overview.
-│   ├── bbWebScan/            # Python project ativo (v0.5.3, CHANGELOG.md, coverage gate
+│   ├── bbWebScan/            # Python project ativo (v0.5.10, CHANGELOG.md, coverage gate
 │   │                         #   85%). Orquestrador de recon de bug bounty. Tem
 │   │                         #   .aops-vault.toml + README.md + CLAUDE.md próprio → dupla
 │   │                         #   entrada nos catálogos. Cyberref debt: Scrapy stage shipped
@@ -188,6 +188,7 @@ citação no vault — review blocker.
 
 | Camada | Detalhe |
 |---|---|
+| Versão atual | `0.5.10` (fonte de verdade: `pyproject.toml`) |
 | Stack | Python 3.12+, Pydantic v2, PyYAML, Scrapy (safe-default), opcional `publicsuffix2`, opcional `scrapy-playwright` via extra `[js]` |
 | Gates obrigatórios | `ruff check .`, `mypy --strict`, `pytest -q`, coverage ≥ 85% (rodar via `bash scripts/verify.sh`) |
 | CLI | `bbwebscan {scan,install,doctor,init,history,show,compare}`; smart-default `bbwebscan example.com` |
@@ -205,7 +206,7 @@ Comandos típicos dentro de `Projects/bbWebScan/`:
 source .venv/bin/activate
 pip install -e '.[dev,cov]'              # ',psl' opcional · ',js' para scrapy-playwright
 bash scripts/verify.sh                    # ruff + mypy + pytest --cov (gate único)
-bbwebscan --version                       # bbwebscan 0.5.8
+bbwebscan --version                       # bbwebscan 0.5.10
 bbwebscan doctor                          # readiness do toolchain (httpx/katana/scrapy/...)
 bbwebscan history --limit 10              # últimos runs
 
