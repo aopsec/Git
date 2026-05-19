@@ -56,6 +56,11 @@ class ProgramProfile(BaseModel):
         default_factory=lambda: ["200", "301", "302", "307", "308"]
     )
     nuclei_max_targets: int = 1000
+    # [v0.5.9] Allow profiles to encode scan-mode opt-ins so loading a profile
+    # auto-activates the matching stages (otherwise both fields would default
+    # to off/false and force CLI re-supply on every run).
+    sqlmap_mode: Literal["off", "smooth", "aggressive"] = "off"
+    scrapy_extended: bool = False
 
 
 class RunConfig(BaseModel):

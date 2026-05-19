@@ -205,9 +205,12 @@ Comandos típicos dentro de `Projects/bbWebScan/`:
 source .venv/bin/activate
 pip install -e '.[dev,cov]'              # ',psl' opcional · ',js' para scrapy-playwright
 bash scripts/verify.sh                    # ruff + mypy + pytest --cov (gate único)
-bbwebscan --version                       # bbwebscan 0.5.3
+bbwebscan --version                       # bbwebscan 0.5.8
 bbwebscan doctor                          # readiness do toolchain (httpx/katana/scrapy/...)
 bbwebscan history --limit 10              # últimos runs
+
+# Teste isolado (pytest)
+pytest tests/test_<module>.py::TestClass::test_name -v
 ```
 
 Códigos de saída do `scan`: `0` ok, `2` erro de preflight (tool/wordlist

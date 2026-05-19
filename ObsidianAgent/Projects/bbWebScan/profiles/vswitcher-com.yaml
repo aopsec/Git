@@ -1,5 +1,7 @@
 allowed_hosts:
 - vswitcher.com
+sqlmap_mode: smooth
+scrapy_extended: true
 auth:
   cookies:
     PHPSESSID: b1a5t7l6lb9tcq7ls395kskmhm

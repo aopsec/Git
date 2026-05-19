@@ -119,7 +119,7 @@ def test_richmenuio_falls_back_to_plain_when_rich_imports_fail(
 
 def test_run_menu_prints_invalid_choice_message() -> None:
     """An unrecognised numeric input prompts the user but does not exit."""
-    inputs = iter(["99", "6"])
+    inputs = iter(["99", "7"])
 
     class _IO:
         def __init__(self) -> None:
@@ -138,7 +138,7 @@ def test_run_menu_prints_invalid_choice_message() -> None:
     io = _IO()
     rc = menu_mod.run_menu(input_func=lambda _p: next(inputs), io=io)
     assert rc == 0
-    assert any("1 to 6" in m for m in io.messages)
+    assert any("1 to 7" in m for m in io.messages)
 
 
 # ---- cli.py — error handlers in each subcommand dispatcher ----

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bbwebscan"
-version = "0.5.8"
+version = "0.5.10"
 description = "Scope-aware bug bounty web recon orchestrator"
 requires-python = ">=3.12"
 dependencies = [
@@ -47,6 +47,10 @@ bbwebscan = "bbwebscan.cli:main"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# [v0.5.9] scrapy_url_downloader.py at repo root is a legacy standalone script
+# duplicated inside the package as bbwebscan/stages/scrapy/url_downloader.py.
+# Excluded so package-side improvements aren't blocked by orphan-file lint.
+extend-exclude = ["scrapy_url_downloader.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "PL"]

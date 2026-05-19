@@ -75,7 +75,7 @@ _BASE_SETTINGS: dict[str, Any] = {
     "ROBOTSTXT_OBEY": True,
     "DOWNLOAD_DELAY": 0.5,
     "CONCURRENT_REQUESTS_PER_DOMAIN": 4,
-    "USER_AGENT": "bbwebscan-scrapy-extended/0.5.3",
+    "USER_AGENT": "bbwebscan-scrapy-extended/0.5.8",
     "LOG_LEVEL": "WARNING",
     "HTTPCACHE_ENABLED": False,
     "DEPTH_PRIORITY": 1,

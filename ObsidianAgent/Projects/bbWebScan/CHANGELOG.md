@@ -4,11 +4,33 @@ All notable changes to bbWebScan are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [SemVer](https://semver.org/).
 
+## [0.5.10] — 2026-05-18
+
+### Fixed
+- `nuclei_stage`: strip URL fragments (`#...`) before writing `nuclei_targets.txt`, eliminating duplicate per-fragment requests against the same server path (e.g. 57 → ~18 unique targets for vswitcher)
+- `nuclei_stage`: add `-tags cve,misconfig,exposure,tech` and `-etags dos,bruteforce,fuzz,intrusive` so nuclei completes within the wall-clock budget; add `-duc` and `-ni` to skip update check and interactsh OOB waits
+- `kiterunner_stage`: switch subcommand from `scan` (requires `.kite` proto route files) to `brute` (accepts plain-text wordlists), fixing the `proto: illegal wireType 6` unmarshal error
+
+## [0.5.9] — 2026-05-18
+
+### Added
+- Form-select scan wizard (`menu_form.py`) — selection-based prompts for tools, scan mode, sqlmap mode, scrapy-extended, wordlist, and profile loading; replaces free-text entry for all discrete settings
+- `prompt_select()` and `prompt_multiselect()` helpers added to `menu_collect.py`
+
+### Fixed
+- Scrapy proxy isolation: both `bbspider.py` and `url_downloader.py` now set `HTTPPROXY_ENABLED: False` in `_BASE_SETTINGS`, preventing system `http_proxy`/`https_proxy` env vars from routing spider traffic through unrelated proxies
+- `url_downloader.py` USER_AGENT version string updated to `0.5.8`
+- `profiles/vswitcher-com.yaml` now declares `sqlmap_mode: smooth` and `scrapy_extended: true` so the vswitcher scan profile activates both stages when loaded
+
+### Notes
+- `test_changelog.py` enforces version/CHANGELOG parity automatically
+
 ## [0.5.8] — 2026-05-15
 
 ### Added
 - Professional security report generator (`reporting_professional.py`) — CWE/CVE/OWASP referenced `.md` report written to every run directory
 - Scrapy stage now uses venv-relative binary to fix Twisted 26.4.0 incompatibility
+- Scrapy extended stage (`scrapy_dl_stage.py` + `scrapy/url_downloader.py`) — opt-in harvesting of emails, exposed paths, and linked documents; gated by `--scrapy-extended`. Venv-relative binary and RETRY_EXCEPTIONS override applied identically to main spider.
 
 ### Fixed
 - Scrapy 0 findings caused by system Python's Twisted 26.4.0 removing `_setAcceptableProtocols`; pipeline now resolves scrapy binary from the active venv

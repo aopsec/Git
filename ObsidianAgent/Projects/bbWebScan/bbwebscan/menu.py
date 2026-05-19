@@ -7,9 +7,11 @@ from typing import Any
 from bbwebscan import __version__
 from bbwebscan.menu_actions import run_doctor_auto_fix, run_history_menu
 from bbwebscan.menu_custom import run_custom_scan
+from bbwebscan.menu_form import run_form_scan
 from bbwebscan.menu_profiles import run_profiles_menu
 from bbwebscan.menu_quick import run_quick_scan
 from bbwebscan.menu_types import InputFunc, MenuIO, default_input
+from bbwebscan.pipeline import execute_scan
 
 MenuHandler = Callable[[MenuIO, bool, InputFunc], int]
 
@@ -67,14 +69,14 @@ def run_menu(
 
     while True:
         menu_io.panel(f"bbWebScan v{__version__}", _main_menu_body())
-        choice = input_func("Choose [1-6]: ").strip()
+        choice = input_func("Choose [1-7]: ").strip()
 
-        if choice == "6":
+        if choice == "7":
             return 0
 
         handler = handlers.get(choice)
         if handler is None:
-            menu_io.print("Choose a number from 1 to 6.")
+            menu_io.print("Choose a number from 1 to 7.")
             continue
 
         try:
@@ -91,20 +93,37 @@ def _menu_handlers() -> dict[str, MenuHandler]:
     return {
         "1": lambda io, ack, fn: run_quick_scan(io, input_func=fn),
         "2": lambda io, ack, fn: run_custom_scan(io, session_ack=ack, input_func=fn),
-        "3": lambda io, _ack, fn: run_profiles_menu(io, input_func=fn),
-        "4": lambda io, _ack, fn: run_doctor_auto_fix(io, input_func=fn),
-        "5": lambda io, _ack, _fn: run_history_menu(),
+        "3": lambda io, _ack, fn: _run_form_scan_entry(io, fn),
+        "4": lambda io, _ack, fn: run_profiles_menu(io, input_func=fn),
+        "5": lambda io, _ack, fn: run_doctor_auto_fix(io, input_func=fn),
+        "6": lambda io, _ack, _fn: run_history_menu(),
     }
+
+
+def _run_form_scan_entry(io: MenuIO, input_func: InputFunc) -> int:
+    """[v0.5.9] Adapter from ``run_form_scan`` (returns RunConfig|None) to the
+    menu handler contract (returns int). Executes the scan via
+    :func:`bbwebscan.pipeline.execute_scan` when the wizard yields a config.
+    """
+    try:
+        config = run_form_scan(input_func=input_func)
+    except (FileNotFoundError, ValueError) as exc:
+        io.print(f"[bbwebscan menu] {exc}")
+        return 2
+    if config is None:
+        return 0
+    return execute_scan(config)
 
 
 def _main_menu_body() -> str:
     return "\n".join((
         "1. Quick Scan",
         "2. Custom Scan",
-        "3. Manage Profiles",
-        "4. Doctor / Auto Fix",
-        "5. History",
-        "6. Exit",
+        "3. Form Scan",
+        "4. Manage Profiles",
+        "5. Doctor / Auto Fix",
+        "6. History",
+        "7. Exit",
     ))
 
 

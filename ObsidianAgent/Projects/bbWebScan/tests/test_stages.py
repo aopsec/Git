@@ -265,8 +265,8 @@ def test_amass_parse_missing_file_returns_empty(tmp_path: Path) -> None:
 # ---- v0.5.0 kiterunner ----
 
 def test_kiterunner_command_includes_wordlist_and_url(tmp_path: Path) -> None:
-    """v0.5.0 Item 4: command derived from observed `kiterunner scan -h`.
-    `-o json` is a global flag (must precede `scan`)."""
+    """v0.5.10: switched from `scan` (requires .kite proto files) to `brute`
+    (accepts plain-text wordlists). `-o json` is a global flag (must precede subcommand)."""
     config = _run_config()
     plans = kiterunner_stage.build_plans(
         config,
@@ -276,10 +276,10 @@ def test_kiterunner_command_includes_wordlist_and_url(tmp_path: Path) -> None:
     assert len(plans) == 1
     cmd = plans[0].command
     assert cmd[0] == "kiterunner"
-    # -o json must come before `scan` subcommand (cobra-style global flag)
+    # -o json must come before `brute` subcommand (cobra-style global flag)
     assert cmd[cmd.index("-o") + 1] == "json"
-    assert cmd.index("-o") < cmd.index("scan")
-    # url passed positional after `scan`
+    assert cmd.index("-o") < cmd.index("brute")
+    # url passed positional after `brute`
     assert "https://app.example.com" in cmd
     assert "-w" in cmd  # wordlist flag
 

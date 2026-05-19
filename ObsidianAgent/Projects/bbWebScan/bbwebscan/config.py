@@ -115,8 +115,12 @@ def build_run_config(args: Namespace) -> RunConfig:
     scrapy_deep = getattr(args, "scrapy_deep", False)
     scrapy_max_depth = getattr(args, "scrapy_max_depth", 2)
     scrapy_js_render = getattr(args, "scrapy_js_render", False)
+    # [v0.5.9] Profile-supplied scrapy_extended honored when CLI omits it.
+    scrapy_extended = getattr(args, "scrapy_extended", False) or profile.scrapy_extended
     jwt_analysis = getattr(args, "jwt_analysis", False)
-    sqlmap_mode_raw = getattr(args, "sqlmap_mode", "off") or "off"
+    # [v0.5.9] Profile-supplied sqlmap_mode honored when CLI omits it.
+    cli_sqlmap_mode = getattr(args, "sqlmap_mode", None)
+    sqlmap_mode_raw = cli_sqlmap_mode or profile.sqlmap_mode or "off"
     if sqlmap_mode_raw not in ("off", "smooth", "aggressive"):
         raise ValueError(f"Unsupported --sqlmap-mode: {sqlmap_mode_raw}")
     sqlmap_mode_arg = cast(Literal["off", "smooth", "aggressive"], sqlmap_mode_raw)
@@ -195,6 +199,7 @@ def build_run_config(args: Namespace) -> RunConfig:
         scrapy_deep=scrapy_deep,
         scrapy_max_depth=scrapy_max_depth,
         scrapy_js_render=scrapy_js_render,
+        scrapy_extended=scrapy_extended,
         jwt_analysis=jwt_analysis,
         sqlmap_mode=sqlmap_mode_arg,
         sqlmap_timeout=sqlmap_timeout,

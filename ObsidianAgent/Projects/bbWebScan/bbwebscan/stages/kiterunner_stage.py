@@ -42,7 +42,7 @@ def build_plans(
             "kiterunner",
             "-o", "json",
             "-q",
-            "scan", url,
+            "brute", url,
             "-w", str(config.wordlist),
             *common_headers,
         ]

@@ -11,7 +11,7 @@ from bbwebscan.menu_prompts import (
     split_csv,
     validate_tools,
 )
-from bbwebscan.menu_types import InputFunc, ScanSettings
+from bbwebscan.menu_types import InputFunc, ScanSettings, default_input
 
 
 def collect_targets(settings: ScanSettings, input_func: InputFunc) -> list[str]:
@@ -97,3 +97,88 @@ def collect_authorization_ack(
         return prompt_bool("Authorization acknowledgement", existing, input_func)
     response = input_func("Type AUTHORIZED to acknowledge aggressive authorization: ").strip()
     return response == "AUTHORIZED"
+
+
+# [v0.5.9] Selection-based prompts for the form-style scan wizard
+# (`menu_form.run_form_scan`). Kept stdlib-only — they reuse the same
+# ``input_func`` indirection the rest of the menu uses so tests can drive
+# them deterministically.
+def prompt_select(
+    label: str,
+    options: list[str],
+    default: int = 1,
+    input_func: InputFunc = default_input,
+) -> str:
+    """Present a numbered list; return the selected option string.
+
+    Empty input returns the default option (1-indexed). Invalid choices
+    re-prompt until a valid 1..N integer is entered.
+    """
+    if not options:
+        raise ValueError("prompt_select requires at least one option")
+    if not 1 <= default <= len(options):
+        raise ValueError(
+            f"default must be in 1..{len(options)}, got {default}"
+        )
+    print(label)
+    rendered = "  ".join(f"[{idx}] {opt}" for idx, opt in enumerate(options, 1))
+    print(rendered)
+    while True:
+        raw = input_func(f"Enter choice [{default}]: ").strip()
+        if not raw:
+            return options[default - 1]
+        try:
+            picked = int(raw)
+        except ValueError:
+            print(f"Invalid choice: {raw!r}. Enter a number 1..{len(options)}.")
+            continue
+        if 1 <= picked <= len(options):
+            return options[picked - 1]
+        print(f"Out of range: {picked}. Enter a number 1..{len(options)}.")
+
+
+def prompt_multiselect(
+    label: str,
+    options: list[str],
+    default_all: bool = False,
+    input_func: InputFunc = default_input,
+) -> list[str]:
+    """Present a numbered checkbox list; return list of selected option strings.
+
+    Accepts comma-separated indices (``1,3,5``), ``a`` for all, ``n`` for none.
+    Empty input returns the default selection (all when ``default_all`` is
+    True, otherwise an empty list). Invalid input re-prompts.
+    """
+    if not options:
+        return []
+    print(label)
+    for idx, opt in enumerate(options, 1):
+        marker = "x" if default_all else " "
+        print(f"  [{marker}] [{idx}] {opt}")
+    while True:
+        raw = input_func(
+            "Enter numbers separated by commas (e.g. 1,3,5), 'a' for all, 'n' for none: "
+        ).strip().lower()
+        if not raw:
+            return list(options) if default_all else []
+        if raw == "a":
+            return list(options)
+        if raw == "n":
+            return []
+        parts = [p.strip() for p in raw.split(",") if p.strip()]
+        try:
+            indices = [int(p) for p in parts]
+        except ValueError:
+            print(f"Invalid input: {raw!r}. Use comma-separated numbers, 'a', or 'n'.")
+            continue
+        if any(idx < 1 or idx > len(options) for idx in indices):
+            print(f"Out of range. Valid indices: 1..{len(options)}.")
+            continue
+        # Preserve option order; de-duplicate while keeping first occurrence.
+        seen: set[int] = set()
+        ordered: list[str] = []
+        for idx in indices:
+            if idx not in seen:
+                seen.add(idx)
+                ordered.append(options[idx - 1])
+        return ordered
