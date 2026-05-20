@@ -11,11 +11,11 @@ header="#!/bin/bash
 #----------------------------------------------------------------------------
 # WheremI	: $whrmi
 #----------------------------------------------------------------------------
-# CreatedBy	: ADVAN7 Offensive Security | https://github.com/Advan7Sapo
+# CreatedBy	: ADVAN7 Offensive Security | https://github.com/aopsec
 #----------------------------------------------------------------------------
 "
 clear
 echo "$header" > $1
 chmod 755 $1
-micro $1
+nvim $1
 echo "Script $1 created successfully!"
