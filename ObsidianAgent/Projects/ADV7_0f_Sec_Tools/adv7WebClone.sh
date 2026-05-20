@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #----------------------------------------------------------------------------
 # Project	: adv7WebClone.sh
 #----------------------------------------------------------------------------
 # Date		: 20/05/2026
 #----------------------------------------------------------------------------
-# WheremI	: /home/kannonhyc/Desktop/ADV7SecTools
+# WheremI	: x
 #----------------------------------------------------------------------------
 # CreatedBy	: ADVAN7 Offensive Security | https://github.com/aopsec
 #----------------------------------------------------------------------------
-#!/usr/bin/env bash
+
 set -eo pipefail
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
