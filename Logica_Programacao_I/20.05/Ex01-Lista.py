@@ -34,7 +34,17 @@ y = int(input("Confira se o valor esta na lista: "))
 
 if y in list:
     print("O Valor esta na Lista")
+    print("Indice do Valor Pesquisado:", list.index(y))
 
 else: 
     print("O Valor NAO esta na Lista")
+
+list.sort()
+print('Ordem Crescente:', list)
+
+
+list.insert(1,33)
+print("Valor '33' adicionado com sucesso", list)
+list.reverse()
+print('Ordem Decrescente:', list)
 
