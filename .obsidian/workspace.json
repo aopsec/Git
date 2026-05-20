@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "ObsidianAgent/Projects/bbWebScan/vault/Generated/Profiles/Profile - Profiles - bbt.yaml.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "Profile - Profiles - bbt.yaml"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#bb-web-scan",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,7 +74,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -185,8 +186,8 @@
   },
   "active": "0207b06fa7ab4d44",
   "lastOpenFiles": [
-    "BootCamp1/Projeto_Intermediario/Entrega_Intermediaria_GitHub.pdf",
     "README.md",
+    "BootCamp1/Projeto_Intermediario/Entrega_Intermediaria_GitHub.pdf",
     "wordlists/README.md",
     "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - params_stage.py.md",
     "ObsidianAgent/Projects/bbWebScan/tests/__pycache__/test_runner.cpython-314-pytest-9.0.3.pyc.963400",
@@ -198,7 +199,6 @@
     "ObsidianAgent/Projects/bbWebScan/CLAUDE.md.tmp.750254.953c27a92877",
     "ObsidianAgent/Projects/bbWebScan/CHANGELOG.md.tmp.750254.757cdc3eb6aa",
     "ObsidianAgent/Projects/bbWebScan/tests/test_pipeline.py.tmp.750254.4df38c7fd046",
-    "ObsidianAgent/Projects/bbWebScan/tests/test_pipeline.py.tmp.750254.9bbdb8fa69fc",
     "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - nuclei_stage.py.md",
     "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - amass_stage.py.md",
     "ObsidianAgent/Projects/bbWebScan/vault/Generated/Stages/Stage - Stages - _jsonl.py.md",

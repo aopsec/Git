@@ -1,12 +1,20 @@
 {
-  "collapse-filter": false,
+  "collapse-filter": true,
   "search": "",
   "showTags": true,
   "showAttachments": false,
   "hideUnresolved": true,
   "showOrphans": true,
   "collapse-color-groups": false,
-  "colorGroups": [],
+  "colorGroups": [
+    {
+      "query": "path:ObsidianAgent/Projects/bbWebScan [\"tags\":",
+      "color": {
+        "a": 1,
+        "rgb": 14701138
+      }
+    }
+  ],
   "collapse-display": false,
   "showArrow": true,
   "textFadeMultiplier": -1.2,
@@ -17,6 +25,6 @@
   "repelStrength": 8.39680989583333,
   "linkStrength": 1,
   "linkDistance": 30,
-  "scale": 0.2962962962962963,
+  "scale": 1.5,
   "close": false
 }
