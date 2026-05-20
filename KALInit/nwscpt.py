@@ -13,6 +13,6 @@ header="#!/usr/bin/env python3
 clear
 echo "$header" > $1
 chmod 755 $1
-micro $1
+nvim $1
 echo "Script $1 created successfully!"
 
