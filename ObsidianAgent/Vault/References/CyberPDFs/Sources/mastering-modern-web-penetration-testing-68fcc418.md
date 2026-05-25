@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 17 strong cyber signals, 25 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Mastering Modern Web Penetration Testing.pdf`
+- Reason: 22 strong cyber signals, 23 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Mastering Modern Web Penetration Testing.pdf`
 - SHA256: `68fcc4180ed7aae3c4259a63fefac53db6887e3558f3a20590d8db83b83d27b9`
 - Pages: `298`
 - Text characters: `394590`

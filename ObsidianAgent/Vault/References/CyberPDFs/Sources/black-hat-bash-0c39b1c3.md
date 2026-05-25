@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 12 strong cyber signals, 22 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Bash.pdf`
+- Reason: 10 strong cyber signals, 16 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Bash.pdf`
 - SHA256: `0c39b1c35d99eec98adb37f0e9fb1a5a402b801f85b95bca47e17fbf1a2d9f0d`
 - Pages: `132`
 - Text characters: `404341`
@@ -38,7 +38,7 @@
 - p. 61: `$ docker compose --help`
 - p. 61: `$ sudo systemctl enable docker –-now`
 - p. 61: `$ git clone https://github.com/dolevf/Black-Hat-Bash.git`
-- p. 62: `$ docker ps -–format "{% raw %}{{.Names}}{% endraw %}"` (Note: `{{.Names}}` is Docker template syntax)
+- p. 62: `$ docker ps -–format "{{.Names}}"`
 - p. 66: `$ docker exec -it MACHINE-NAME bash`
 - p. 67: `$ curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -`
 - p. 67: `$ git clone https://github.com/wappalyzer/wappalyzer.git`

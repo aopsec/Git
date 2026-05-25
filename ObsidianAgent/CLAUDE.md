@@ -38,13 +38,19 @@ Bootstrap recomendado para a sessão (evita repetir o path em cada comando):
 ```bash
 export AOPS_OBSIDIAN_AGENT_CLI="${AOPS_OBSIDIAN_AGENT_CLI:-$HOME/plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py}"
 export LC_ALL=C.UTF-8 LANG=C.UTF-8   # ordenação determinística de globs no --sync
-test -x "$AOPS_OBSIDIAN_AGENT_CLI" || echo "MISSING: external CLI not reachable"
+test -f "$AOPS_OBSIDIAN_AGENT_CLI" || echo "MISSING: external CLI not reachable"
 ```
 
 Se o smoke-test acima reportar MISSING, **não** rode `--check`/`--sync` — corrija o
 path primeiro (`$AOPS_OBSIDIAN_AGENT_CLI` ou clone do repo `aops-agent`).
 
+O CLI não tem bit `+x` no filesystem de plugin (read-only). Sempre invocar via
+`python3 "$AOPS_OBSIDIAN_AGENT_CLI"` — nunca `"$AOPS_OBSIDIAN_AGENT_CLI"` direto.
+
 ```bash
+# Atalho: smoke driver (check + pytest + cyber-dry-run)
+bash .claude/skills/run-obsidian-agent/smoke.sh all
+
 # Verificar notas stale (somente leitura)
 python3 "${AOPS_OBSIDIAN_AGENT_CLI:-$HOME/plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py}" --check --repo .
 
@@ -57,6 +63,10 @@ bash tests/validate-collab-stack.sh
 # Regenerar o vault de referência CyberPDF (cyber-only, copyright-bounded)
 python3 tools/extract_cyber_pdf_reference.py \
   --pdf-list tools/cyber_pdf_ref/b00ks_sources.txt --repo . --copy-pdfs --replace
+
+# Dry-run: classifica PDFs sem escrever nada (safe para auditoria)
+python3 tools/extract_cyber_pdf_reference.py \
+  --pdf-list tools/cyber_pdf_ref/b00ks_sources.txt --repo . --dry-run
 
 # Teste Python do extractor CyberPDF
 pytest -q tests/test_cyber_pdf_ref.py
@@ -90,6 +100,11 @@ podem estar disponíveis no ambiente mas são opcionais — não validados pelo 
 
 Skill dual-ecossistema: `cyberref` em `~/.codex/skills/cyberref/SKILL.md` (Codex) e `~/.claude/commands/cyberref.md` (Claude); opt-in para trabalho cyber/offensive-security com vault CyberPDF certificado e gate `objective_complete=100%`.
 
+Skill projeto-local: `.claude/skills/run-obsidian-agent/` — driver de smoke para o
+ObsidianAgent (check + pytest + cyber-dry-run). Exposto ao harness como skill
+`run-obsidian-agent`; o entry-point é `smoke.sh` com subcomandos
+`check|sync|test|cyber-dry|all`.
+
 ## Arquitetura
 
 ```
@@ -116,8 +131,13 @@ ObsidianAgent/
 │   │                        #   Overviews. ADV7ia, OpenBox0.1v e bbWebScan têm ambos →
 │   │                        #   dupla entrada. IPS_IDS só tem README → só Overviews.
 │   ├── ADV7ia/               # Python project. Tem .aops-vault.toml + README.md → manifest E overview.
-│   ├── bbWebScan/            # Python project ativo (v0.5.10, CHANGELOG.md, coverage gate
-│   │                         #   85%). Orquestrador de recon de bug bounty. Tem
+│   ├── ADV7_0f_Sec_Tools/    # Offensive security tooling (bash scripts; sem .aops-vault.toml
+│   │   │                     #   → não entra nos catálogos do meta-vault).
+│   │   ├── adv7FUZZ0.1.5v.sh    # Fuzzer HTTP (versão ativa)
+│   │   ├── adv7SQLMap0.0.7v.sh  # SQLi automation + evasion (versão ativa)
+│   │   ├── adv7WebClone.sh   # Clone de site para análise offline
+│   │   └── bbWebScan/        # Python project ativo (v0.5.10, CHANGELOG.md, coverage gate
+│   │                         #   98%). Orquestrador de recon de bug bounty. Tem
 │   │                         #   .aops-vault.toml + README.md + CLAUDE.md próprio → dupla
 │   │                         #   entrada nos catálogos. Cyberref debt: Scrapy stage shipped
 │   │                         #   com `cyberref: PENDING` marker (promover quando vault
@@ -156,11 +176,37 @@ ObsidianAgent/
 │   └── cyber_pdf_ref/        # Módulos do extractor (cli, extractor, render,
 │                             #   patterns, sections, source_note, ...)
 ├── Vault/References/CyberPDFs/  # Vault de referência cyber-only (copyright-bounded,
-│                                #   gerado por tools/extract_cyber_pdf_reference.py)
+│   ├── B00Ks/                   #   Mirror repo-local dos PDFs fonte (PT_books/,
+│   │                            #   My-CyberSecurity-Store/, R3DH47/, 1Sem/).
+│   │                            #   Substituiu dependência de mount externo [REF-CYBERPDF-04].
+│   └── Sources/                 #   Notas geradas por tools/extract_cyber_pdf_reference.py
 └── tests/
     ├── validate-collab-stack.sh   # Health check do stack completo
     └── test_cyber_pdf_ref.py      # Testes pytest do extractor CyberPDF
 ```
+
+## CyberPDF Extractor — Classificação de PDFs
+
+O extractor (`tools/cyber_pdf_ref/extractor.py`) produz um de quatro status por PDF:
+
+| Status | Critério |
+|---|---|
+| `cyber-active` | ≥ 3 hits em `STRONG_CYBER_KEYWORDS`, ou ≥ 1 strong + (hits ≥ 6 ou título marcado em `CYBER_TITLE_MARKERS`) |
+| `cyber-adjacent` | ≥ 1 strong hit, ou título marcado + ≥ 3 broad hits |
+| `non-cyber` | Path contém parte em `NON_CYBER_PATH_PARTS` **ou** título/conteúdo bate `GENERAL_PROGRAMMING_TITLE_MARKERS` ou `NON_CYBER_MARKERS` |
+| `duplicate` | SHA256 já visto num PDF anterior |
+
+`NON_CYBER_PATH_PARTS` (em `patterns.py`) filtra automaticamente prateleiras
+misturadas: `1sem`, `finance books`, `learn programming`, `self help books`.
+O `B00Ks/` mirror pode conter essas prateleiras — elas não entram nos índices
+CyberPDF mesmo que passem pelo `b00ks_sources.txt`.
+
+`[REF-CYBERPDF-06]` — keyword matching usa word-boundary regex para evitar falsos
+positivos como `tor` em `investor`.
+
+Ao adicionar novos PDFs a `B00Ks/`, rodar `--dry-run` primeiro para verificar o
+status antes de fazer `--replace`. Status `cyber-adjacent` não gera nota ativa —
+revisar manualmente se deve promover a `cyber-active`.
 
 ## CLAUDE.md aninhados
 
@@ -172,12 +218,14 @@ ObsidianAgent/
   que reaproveita OpenBox0.1v + IPS_IDS, **não fonte**.
 - `Projects/OpenBox0.1v/ADV7Box/CLAUDE.md` — entrega AV01-A consolidada (também
   derivada, referência visual; não editar).
+- `Projects/ADV7_0f_Sec_Tools/bbWebScan/CLAUDE.md` — engenharia do bbWebScan
+  (convenções de commit, gotchas, gates de qualidade).
 
 Escopos complementares, não sobrepostos ao contrato de vault do meta-repo.
 
-## Projects/bbWebScan (Python, ativo)
+## Projects/ADV7_0f_Sec_Tools/bbWebScan (Python, ativo)
 
-Projeto Python com `CLAUDE.md` próprio em `Projects/bbWebScan/CLAUDE.md`
+Projeto Python com `CLAUDE.md` próprio em `Projects/ADV7_0f_Sec_Tools/bbWebScan/CLAUDE.md`
 (escopo de engenharia). Contratação de produto continua em `README.md` +
 `CHANGELOG.md`. É o projeto Python mais desenvolvido do meta-repo e o que
 mais se modifica entre releases.
@@ -190,7 +238,7 @@ citação no vault — review blocker.
 |---|---|
 | Versão atual | `0.5.10` (fonte de verdade: `pyproject.toml`) |
 | Stack | Python 3.12+, Pydantic v2, PyYAML, Scrapy (safe-default), opcional `publicsuffix2`, opcional `scrapy-playwright` via extra `[js]` |
-| Gates obrigatórios | `ruff check .`, `mypy --strict`, `pytest -q`, coverage ≥ 85% (rodar via `bash scripts/verify.sh`) |
+| Gates obrigatórios | `ruff check .`, `mypy --strict`, `pytest -q`, coverage ≥ 98% (rodar via `bash scripts/verify.sh`) |
 | CLI | `bbwebscan {scan,install,doctor,init,history,show,compare}`; smart-default `bbwebscan example.com` |
 | Layout | `bbwebscan/` package · `bbwebscan/stages/` (httpx/katana/scrapy/discovery/params/nuclei/amass/kiterunner) · `bbwebscan/data/` (vendored secrets ruleset) · `tests/fixtures/` JSONL · `runs/<UTC>/` artefatos |
 | Versionamento | `pyproject.toml` é única fonte de verdade; `__version__` lê via `importlib.metadata`; `tests/test_changelog.py` falha se um bump de versão esquecer de atualizar o CHANGELOG. |
@@ -200,7 +248,7 @@ citação no vault — review blocker.
 citation existir para Scrapy. Atualizar quarterly o `bbwebscan/data/secrets_patterns.yml`
 (vendored de mazen160/secrets-patterns-db, CC-BY-4.0).
 
-Comandos típicos dentro de `Projects/bbWebScan/`:
+Comandos típicos dentro de `Projects/ADV7_0f_Sec_Tools/bbWebScan/`:
 
 ```bash
 source .venv/bin/activate
@@ -257,6 +305,12 @@ Valores de `title_mode` em uso: `standard`, `project-parent`, `session-log`, `da
 - O CLI (`obsidian_agent_cli.py`) NÃO está neste repo. Se `$AOPS_OBSIDIAN_AGENT_CLI`
   não estiver definido e `$HOME/plugins/aops-agent/obsidian-agent/` não existir,
   todos os comandos sync/check falharão.
+- **`--sync` aborta com orphan files** — contrato two-phase do CLI externo: `scan_drift`
+  detecta orphans em `Vault/Generated/` → `run_sync` recusa escrever qualquer coisa
+  enquanto houver orphans. Remover o(s) arquivo(s) ou registrá-los no `[[catalog]]`
+  do `.aops-vault.toml` antes de rodar `--sync`. Orphan = arquivo com frontmatter
+  `project: <name>` + `type: generated-index|source-note` não produzido pelo
+  gerador atual.
 - `validate-collab-stack.sh` exige que os skills Claude (`preserve`, `compress`,
   `resume`, `collab`) estejam em `~/.claude/commands/`. Skills ausentes → FAIL.
   O script também espera o checkout canônico em `$HOME/ObsidianAgent`; rodando

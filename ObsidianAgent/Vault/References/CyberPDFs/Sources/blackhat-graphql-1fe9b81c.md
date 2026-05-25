@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 17 strong cyber signals, 28 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/BlackHat GraphQL.pdf`
+- Reason: 20 strong cyber signals, 23 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/BlackHat GraphQL.pdf`
 - SHA256: `1fe9b81c040464569627ff14f6eba49f9ae587df6ed66b7c8847aa71bb6ec83f`
 - Pages: `314`
 - Text characters: `735491`

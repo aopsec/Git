@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 18 strong cyber signals, 30 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Hacking APIs - Early Access.pdf`
+- Reason: 23 strong cyber signals, 27 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Hacking APIs - Early Access.pdf`
 - SHA256: `691dcdd74114267a38f8608e07111f5279c7b8c748d5c6f48f39a287d704814e`
 - Pages: `353`
 - Text characters: `805815`

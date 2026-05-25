@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 10 strong cyber signals, 21 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Go.pdf`
+- Reason: 10 strong cyber signals, 15 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Go.pdf`
 - SHA256: `21619c7f03e26581567fad65bf01aa35446ae79b8e549dcaba91a46b6268731d`
 - Pages: `593`
 - Text characters: `759265`

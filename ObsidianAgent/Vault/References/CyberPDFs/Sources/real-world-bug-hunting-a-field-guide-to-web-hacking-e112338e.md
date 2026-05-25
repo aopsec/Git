@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 16 strong cyber signals, 25 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Real-World Bug Hunting - A Field Guide to Web Hacking.pdf`
+- Reason: 19 strong cyber signals, 22 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Real-World Bug Hunting - A Field Guide to Web Hacking.pdf`
 - SHA256: `e112338e882c39e70d1bb36878a2562fee720ee70e5f607b1407ae0cff5046ab`
 - Pages: `350`
 - Text characters: `533254`

@@ -99,7 +99,14 @@
       "WebFetch(domain:pypi.org)",
       "WebFetch(domain:files.pythonhosted.org)",
       "Skill(resume)",
-      "WebFetch(domain:api.github.com)"
+      "WebFetch(domain:api.github.com)",
+      "Bash(sqlmap --help)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(sqlmap -hh)",
+      "Bash(shellcheck -S warning adv7SQLMap0.0.5v.sh)",
+      "Bash(rm -rf ./sqli_multi_* ./sqli_subdomains_*)",
+      "Bash(ls -d ./sqli_*)",
+      "Bash(rm -rf ./sqli_example.com_*)"
     ]
   },
   "sandbox": {

@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 12 strong cyber signals, 21 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/PT_books/Python Penetration Testing Essentials.pdf`
+- Reason: 15 strong cyber signals, 16 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/PT_books/Python Penetration Testing Essentials.pdf`
 - SHA256: `2c0e9938c87d5e509a87086948ef940140e20196e160b3cfad729dbeb1ecd894`
 - Pages: `178`
 - Text characters: `265854`

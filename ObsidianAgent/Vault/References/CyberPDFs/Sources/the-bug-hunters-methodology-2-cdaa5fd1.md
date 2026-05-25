@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 13 strong cyber signals, 19 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/The Bug Hunters Methodology 2.pdf`
+- Reason: 14 strong cyber signals, 16 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/The Bug Hunters Methodology 2.pdf`
 - SHA256: `cdaa5fd1dcb43fa4014966ff839aaa44a2a0b1dd08ffb9e6f8ebd0a81d560862`
 - Pages: `57`
 - Text characters: `23319`
@@ -29,8 +29,8 @@
 
 ## URLs
 - p. 14: https://gist.github.com/jhaddix/86a06c5dc309d085
-- p. 31: `https://acme.com/errorpage{% raw %}{{2*3}}{% endraw %}` (Note: Template expression example)
-- p. 31: `https://acme.com/errorpage{% raw %}{{{% endraw %}` (Note: Incomplete template expression example)
+- p. 31: https://acme.com/errorpage{{2*3}}
+- p. 31: https://acme.com/errorpage{{
 - p. 33: http://blog.portswigger.net/2015/08/server-side-template-injection.html
 - p. 33: https://speakerdeck.com/owaspmontreal/workshop-server-side-template-i
 - p. 33: https://www.lanmaster53.com/2016/03/exploring-ssti-flask-jinja2/

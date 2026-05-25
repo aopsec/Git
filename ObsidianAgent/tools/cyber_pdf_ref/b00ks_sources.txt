@@ -1,12 +1,13 @@
 # [REF-CYBERPDF-03] Curated source set requested for the CyberPDF vault replacement.
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/PT_books/Python Penetration Testing Essentials.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/PT_books/Black Hat Python Python Programming for Hackers and Pentesters.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/PT_books/Bug Hunter Diary.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/The Hacker Playbook 3 - Practical Guide To Penetration Testing.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/The Bug Hunters Methodology 2.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Real-World Bug Hunting - A Field Guide to Web Hacking.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Mastering Modern Web Penetration Testing.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Hacking APIs - Early Access.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/BlackHat GraphQL.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Bash.pdf
-/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Go.pdf
+# [REF-CYBERPDF-04] Use the repo-local B00Ks mirror so regeneration does not depend on an external mount.
+Vault/References/CyberPDFs/B00Ks/PT_books/Python Penetration Testing Essentials.pdf
+Vault/References/CyberPDFs/B00Ks/PT_books/Black Hat Python Python Programming for Hackers and Pentesters.pdf
+Vault/References/CyberPDFs/B00Ks/PT_books/Bug Hunter Diary.pdf
+Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/The Hacker Playbook 3 - Practical Guide To Penetration Testing.pdf
+Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/The Bug Hunters Methodology 2.pdf
+Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Real-World Bug Hunting - A Field Guide to Web Hacking.pdf
+Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Mastering Modern Web Penetration Testing.pdf
+Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Hacking APIs - Early Access.pdf
+Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/BlackHat GraphQL.pdf
+Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Bash.pdf
+Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/Black-Hat-Go.pdf

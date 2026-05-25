@@ -69,6 +69,96 @@ def test_encrypted_copyable_pdf_is_extracted(
     assert any(item.value.startswith("nmap -sV") for item in record.commands)
 
 
+@pytest.mark.parametrize(
+    ("relative_path", "title", "text"),
+    [
+        (
+            "My-CyberSecurity-Store/Finance Books/Security_Analysis.pdf",
+            "Security Analysis",
+            "Investor portfolio capital factor operator constructor valuation margin security.",
+        ),
+        (
+            "My-CyberSecurity-Store/Self Help Books/Atomic Habits.pdf",
+            "Atomic Habits",
+            "Mentor routines factor motivation personal security and productive habits.",
+        ),
+        (
+            "My-CyberSecurity-Store/Learn Programming/PythonNotesForProfessionals.pdf",
+            "Python Notes For Professionals",
+            "Python Bash Linux Docker API examples for general programming tutorials.",
+        ),
+        (
+            "My-CyberSecurity-Store/Books/No-Starch-Press-The-Rust.pdf",
+            "The Rust Programming Language",
+            "Rust operator iterator constructor security API examples for systems programming.",
+        ),
+        (
+            "PT_books/Python Pocket Reference, 5th Edition.pdf",
+            "Python Pocket Reference",
+            "Python module reference with file network Linux Bash API examples.",
+        ),
+    ],
+)
+def test_broad_discovery_rejects_non_cyber_b00ks_false_positives(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    relative_path: str,
+    title: str,
+    text: str,
+) -> None:
+    pdf = tmp_path / relative_path
+    pdf.parent.mkdir(parents=True)
+    pdf.write_bytes(b"fake")
+
+    def fake_meta(path: Path) -> PdfMeta:
+        return PdfMeta(
+            path=path,
+            sha256="b" * 64,
+            size_bytes=4,
+            title=title,
+            author="tester",
+            pages=1,
+            encrypted=False,
+            javascript=False,
+        )
+
+    monkeypatch.setattr(extractor, "_pdf_meta", fake_meta)
+    monkeypatch.setattr(extractor, "_pdf_text", lambda _path: text * 20)
+
+    record = extractor.build_records([pdf])[0]
+
+    assert record.status == "non-cyber"
+
+
+def test_broad_discovery_keeps_cyber_book_active(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    pdf = tmp_path / "My-CyberSecurity-Store/Books/BlackHat GraphQL.pdf"
+    pdf.parent.mkdir(parents=True)
+    pdf.write_bytes(b"fake")
+
+    def fake_meta(path: Path) -> PdfMeta:
+        return PdfMeta(
+            path=path,
+            sha256="c" * 64,
+            size_bytes=4,
+            title="BlackHat GraphQL",
+            author="tester",
+            pages=1,
+            encrypted=False,
+            javascript=False,
+        )
+
+    text = "GraphQL API OWASP vulnerability exploit SSRF SQLi IDOR JWT recon payload. "
+    monkeypatch.setattr(extractor, "_pdf_meta", fake_meta)
+    monkeypatch.setattr(extractor, "_pdf_text", lambda _path: text * 20)
+
+    record = extractor.build_records([pdf])[0]
+
+    assert record.status == "cyber-active"
+
+
 def test_write_vault_replaces_stale_content_and_copies_pdf(tmp_path: Path) -> None:
     source_pdf = tmp_path / "source.pdf"
     source_pdf.write_bytes(b"minimal pdf bytes")

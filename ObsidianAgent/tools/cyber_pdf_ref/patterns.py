@@ -12,7 +12,9 @@ CYBER_KEYWORDS: tuple[str, ...] = (
     "csrf", "ssrf", "sqli", "recon", "osint", "hardening",
 )
 STRONG_CYBER_KEYWORDS: tuple[str, ...] = (
-    "pentest", "bug bounty", "red team", "blue team", "vulnerability",
+    "cybersecurity", "cyber security", "information security", "web security",
+    "network security", "penetration testing", "pentest", "bug bounty",
+    "hacker", "hacking", "red team", "blue team", "vulnerability",
     "exploit", "owasp", "mitre", "cve", "nmap", "burp", "metasploit",
     "kali", "xss", "csrf", "ssrf", "sqli", "recon", "osint", "hardening",
     "suricata", "zeek", "falco", "auditd", "nftables", "fail2ban",
@@ -28,6 +30,41 @@ NON_CYBER_MARKERS: tuple[str, ...] = (
     "ederhiedeki",
 )
 HARD_NON_CYBER_MARKERS: tuple[str, ...] = NON_CYBER_MARKERS
+# [REF-CYBERPDF-05] Broad B00Ks discovery includes mixed personal-library shelves.
+# Keep these shelves out of active CyberRef indexes unless they are curated explicitly.
+NON_CYBER_PATH_PARTS: frozenset[str] = frozenset(
+    {"1sem", "finance books", "learn programming", "self help books"}
+)
+CYBER_TITLE_MARKERS: tuple[str, ...] = (
+    "advanced penetration testing", "api security", "black hat",
+    "black-hat", "blue team", "bug bounty", "bug hunter", "cyber",
+    "cve", "exploit", "forensic", "forensics", "graphql", "hacker",
+    "hacking", "malicious code", "metasploit", "offensive security",
+    "owasp", "penetration testing", "pentest", "privilege escalation",
+    "red team", "reverse engineering", "security testing", "web hacking",
+    "web penetration",
+)
+GENERAL_PROGRAMMING_TITLE_MARKERS: tuple[str, ...] = (
+    "automate the boring stuff with python",
+    "beyond the basic stuff with python",
+    "build an html5 game",
+    "how linux works",
+    "learn windows powershell in a month of lunches",
+    "learning python network programming",
+    "make python talk",
+    "no starch press the rust",
+    "perl one liners",
+    "powershell for sysadmins",
+    "python 2 1 bible",
+    "python pocket reference",
+    "ruby by example",
+    "the book of ruby",
+    "the linux command line",
+    "webbots spiders and screen scrapers",
+    "wicked cool perl scripts",
+    "wicked cool ruby scripts",
+    "wicked cool shell scripts",
+)
 TOOL_NAMES: tuple[str, ...] = (
     "nmap", "burp", "metasploit", "kali", "docker", "linux", "bash",
     "python", "ffuf", "feroxbuster", "dirsearch", "arjun", "httpx",

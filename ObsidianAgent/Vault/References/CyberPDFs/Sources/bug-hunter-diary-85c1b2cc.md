@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 9 strong cyber signals, 17 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/PT_books/Bug Hunter Diary.pdf`
+- Reason: 10 strong cyber signals, 14 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/PT_books/Bug Hunter Diary.pdf`
 - SHA256: `85c1b2cc4afde5357f79d29dc0ccbd1cf3d3684f2f5935eb767c48d00854a2ed`
 - Pages: `212`
 - Text characters: `438142`

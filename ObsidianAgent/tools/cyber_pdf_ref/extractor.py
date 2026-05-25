@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import re
 import subprocess
+from functools import lru_cache
 from pathlib import Path
 
 from tools.cyber_pdf_ref.items import (
@@ -16,10 +17,13 @@ from tools.cyber_pdf_ref.items import (
 )
 from tools.cyber_pdf_ref.models import PdfMeta, PdfRecord
 from tools.cyber_pdf_ref.patterns import (
+    CYBER_TITLE_MARKERS,
     CYBER_KEYWORDS,
     EXCLUDED_PARTS,
     EXCLUDED_SUBPATHS,
+    GENERAL_PROGRAMMING_TITLE_MARKERS,
     HARD_NON_CYBER_MARKERS,
+    NON_CYBER_PATH_PARTS,
     NON_CYBER_MARKERS,
     STRONG_CYBER_KEYWORDS,
 )
@@ -124,22 +128,58 @@ def _classify(path: Path, text: str, meta: PdfMeta, duplicate: bool) -> tuple[st
         return ("duplicate", "exact sha256 duplicate of another discovered PDF")
     if len(text.strip()) < max(100, meta.pages * 20):
         return ("needs-ocr", "low extracted text coverage or extraction unavailable")
+    non_cyber_part = _non_cyber_path_part(path)
+    if non_cyber_part is not None:
+        return ("non-cyber", f"path category `{non_cyber_part}` is outside CyberPDF scope")
     source_label = f"{path.name}\n{meta.title}".lower()
     if any(marker in source_label for marker in HARD_NON_CYBER_MARKERS):
         return ("non-cyber", "filename/title identifies academic/admin non-cyber source")
+    if _has_title_marker(GENERAL_PROGRAMMING_TITLE_MARKERS, source_label):
+        return ("non-cyber", "filename/title identifies general programming source")
     haystack = f"{source_label}\n{text}".lower()
-    hits = sum(1 for keyword in CYBER_KEYWORDS if keyword in haystack)
-    strong_hits = sum(1 for keyword in STRONG_CYBER_KEYWORDS if keyword in haystack)
+    hits = _count_keywords(CYBER_KEYWORDS, haystack)
+    strong_hits = _count_keywords(STRONG_CYBER_KEYWORDS, haystack)
+    title_has_cyber = _has_title_marker(CYBER_TITLE_MARKERS, source_label)
     non_cyber = any(marker in haystack for marker in NON_CYBER_MARKERS)
     if non_cyber and strong_hits < 2:
         return ("non-cyber", "academic/admin PDF without enough cyber-specific signals")
     if "portfolio" in haystack and strong_hits > 0:
         return ("cyber-adjacent", "portfolio/course document with cyber skills listed")
-    if strong_hits >= 3 or (strong_hits >= 1 and hits >= 6):
-        return ("cyber-active", f"{strong_hits} strong cyber signals, {hits} total signals")
-    if strong_hits > 0 or hits >= 3:
-        return ("cyber-adjacent", f"{strong_hits} strong cyber signals, {hits} total signals")
+    if strong_hits >= 3 or (strong_hits >= 1 and (hits >= 6 or title_has_cyber)):
+        return ("cyber-active", f"{strong_hits} strong cyber signals, {hits} broad signals")
+    if strong_hits > 0 or (title_has_cyber and hits >= 3):
+        return ("cyber-adjacent", f"{strong_hits} strong cyber signals, {hits} broad signals")
     return ("non-cyber", "no cyber/security signals above threshold")
+
+
+def _non_cyber_path_part(path: Path) -> str | None:
+    for part in path.parts:
+        lowered = part.lower()
+        if lowered in NON_CYBER_PATH_PARTS:
+            return part
+    return None
+
+
+def _count_keywords(keywords: tuple[str, ...], haystack: str) -> int:
+    return sum(1 for keyword in keywords if _keyword_pattern(keyword).search(haystack))
+
+
+def _has_title_marker(markers: tuple[str, ...], source_label: str) -> bool:
+    normalized_label = _normalized_title(source_label)
+    return any(_normalized_title(marker) in normalized_label for marker in markers)
+
+
+def _normalized_title(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
+
+
+@lru_cache(maxsize=None)
+def _keyword_pattern(keyword: str) -> re.Pattern[str]:
+    # [REF-CYBERPDF-06] Avoid substring false positives like `tor` in `investor`.
+    escaped = re.escape(keyword.lower())
+    if keyword == "vulnerab":
+        return re.compile(escaped)
+    return re.compile(rf"(?<![a-z0-9]){escaped}(?![a-z0-9])")
 
 
 def _to_int(value: str) -> int:

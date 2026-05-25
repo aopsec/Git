@@ -2,8 +2,8 @@
 
 ## Metadata
 - Status: `cyber-active`
-- Reason: 20 strong cyber signals, 30 total signals
-- Source path: `/run/media/aops/SapoHD/ComputerScience/Git/B00Ks/My-CyberSecurity-Store/Books/The Hacker Playbook 3 - Practical Guide To Penetration Testing.pdf`
+- Reason: 24 strong cyber signals, 28 broad signals
+- Source path: `Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/Books/The Hacker Playbook 3 - Practical Guide To Penetration Testing.pdf`
 - SHA256: `0d16e56ace337ddbe89520586b0d62c090e2563ebdd43c459b84d3ead193baf4`
 - Pages: `264`
 - Text characters: `585466`
