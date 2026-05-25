@@ -1,0 +1,3 @@
+# ADV7 large scan output files (exceed GitHub's 100 MB hard limit / 50 MB warning)
+ObsidianAgent/Projects/ADV7_0f_Sec_Tools/fuzz_*/phase3_combined.json
+ObsidianAgent/Projects/ADV7_0f_Sec_Tools/fuzz_*/adv7FUZZ_*.log

@@ -193,6 +193,17 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Auto-detect: if -u received a file path rather than a URL, route to --targets semantics
+if [[ -n "$TARGET" && ! "$TARGET" =~ ^https?:// && -f "$TARGET" ]]; then
+    if [[ -n "$BURP_FILE" || -n "$TARGETS_FILE" || -n "$SUBDOMAINS_FILE" ]]; then
+        echo -e "${R}[!] -u file path conflicts with an active import mode. Use --targets.${RS}"
+        exit 1
+    fi
+    echo -e "${G}[*] Auto-detected scope file via -u — switching to --targets mode: $TARGET${RS}"
+    TARGETS_FILE="$TARGET"
+    TARGET=""
+fi
+
 # ── Dependency check ─────────────────────────────────────────────────────────
 for _tool in sqlmap jq; do
     if ! command -v "$_tool" &>/dev/null; then
@@ -270,10 +281,20 @@ tor_get_exit_ip() {
 }
 
 tor_is_blocked() {
-    local _code _size _out
+    local _code _size _out _probe_url
+    # Resolve a valid probe URL for the Tor block check.
+    # TARGET may be empty (--targets / --subdomains mode) or a bare hostname (Burp mode).
+    # In those cases fall back to the first https?:// URL in TARGETS_FILE, or skip the
+    # probe entirely (return 1 = not blocked) to avoid false rotation delays.
+    if [[ "$TARGET" =~ ^https?:// ]]; then
+        _probe_url="$TARGET"
+    elif [[ -n "$TARGETS_FILE" && -f "$TARGETS_FILE" ]]; then
+        _probe_url=$(grep -m1 -E '^https?://' "$TARGETS_FILE" 2>/dev/null || true)
+    fi
+    [[ -z "$_probe_url" ]] && return 1   # nothing probeable — assume unblocked
     _out=$(torsocks curl -s -o /dev/null \
         -w "%{http_code} %{size_download}" \
-        --max-time "$TOR_CANARY_TIMEOUT" -A "$UA" "$TARGET" 2>/dev/null) || _out="000 0"
+        --max-time "$TOR_CANARY_TIMEOUT" -A "$UA" "$_probe_url" 2>/dev/null) || _out="000 0"
     read -r _code _size <<< "$_out"
     [[ "$_code" == "000" ]] && return 0
     [[ "$_code" == "403" ]] && [[ "$_size" -ge 4400 ]] && [[ "$_size" -le 4700 ]] && return 0
@@ -796,8 +817,15 @@ menu_configure() {
         draw_configure_menu
         read -r cfg_choice
         case "${cfg_choice,,}" in
-            1) echo -ne "${G}Target URL${RS}: "; read -r TARGET
-               AUTH_OK=false; OUT=""; LOG="/dev/null" ;;
+            1) echo -ne "${G}Target URL or scope .txt file${RS}: "; read -r TARGET
+               if [[ -n "$TARGET" && ! "$TARGET" =~ ^https?:// && -f "$TARGET" ]]; then
+                   TARGETS_FILE="$TARGET"; BURP_FILE=""; SUBDOMAINS_FILE=""; URL_TPL=""
+                   TARGET=""; AUTH_OK=false; OUT=""; LOG="/dev/null"
+                   echo -e "${G}  [*] Scope file set. Use [6] Run All to launch multi-target scan.${RS}"
+                   sleep 1
+               else
+                   AUTH_OK=false; OUT=""; LOG="/dev/null"
+               fi ;;
             2) echo -ne "${G}Parameter${RS}: ";  read -r PARAM ;;
             3) echo -ne "${G}Cookie${RS}: ";     read -r COOKIE ;;
             4) echo -ne "${G}Header${RS}: ";     read -r HEADER ;;
@@ -1210,7 +1238,18 @@ main_loop() {
             3) guard_ready && { run_phase2 || true; echo -ne "${D}Press Enter...${RS}"; read -r _; } ;;
             4) guard_ready && { run_phase3 || true; echo -ne "${D}Press Enter...${RS}"; read -r _; } ;;
             5) guard_ready && { run_phase4 || true; echo -ne "${D}Press Enter...${RS}"; read -r _; } ;;
-            6) guard_ready && { run_all; echo -ne "${D}Press Enter...${RS}"; read -r _; } ;;
+            6) if [[ -n "$TARGETS_FILE" ]]; then
+                   do_auth_bulk "$TARGETS_FILE" && { run_multi_target || true; }
+                   echo -ne "${D}Press Enter...${RS}"; read -r _
+               elif [[ -n "$BURP_FILE" ]]; then
+                   run_burp_mode || true
+                   echo -ne "${D}Press Enter...${RS}"; read -r _
+               elif [[ -n "$SUBDOMAINS_FILE" ]]; then
+                   run_subdomain_scan || true
+                   echo -ne "${D}Press Enter...${RS}"; read -r _
+               else
+                   guard_ready && { run_all; echo -ne "${D}Press Enter...${RS}"; read -r _; }
+               fi ;;
             7) menu_results ;;
             9) if $USE_TOR; then
                    tor_rotate 1 || true

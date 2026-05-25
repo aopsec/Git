@@ -1,0 +1,3 @@
+https://osrsahk.com/download/bbt-pk-v1//.git/index	->	/download/bbt-pk-v1/.git/	[308]
+https://osrsahk.com/download/bbt-pk-v1//index	->	/download/bbt-pk-v1/	[308]
+https://osrsahk.com/download/bbt-pk-v1//index.html	->	/download/bbt-pk-v1/	[308]

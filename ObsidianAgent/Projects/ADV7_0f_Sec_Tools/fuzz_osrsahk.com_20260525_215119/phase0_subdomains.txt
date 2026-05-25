@@ -1,0 +1,2 @@
+osrsahk.com (FQDN) --> ns_record --> lee.ns.cloudflare.com (FQDN)
+osrsahk.com (FQDN) --> ns_record --> thea.ns.cloudflare.com (FQDN)

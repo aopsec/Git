@@ -1,0 +1,17 @@
+# .NET build output
+bin/
+obj/
+.vs/
+*.user
+*.suo
+.vscode/settings.json
+
+# Publish artifacts
+publish/
+
+# Bundled tool binaries — NEVER commit these
+src/adv7YT/Assets/yt-dlp.exe
+src/adv7YT/Assets/ffmpeg.exe
+
+# macOS
+.DS_Store

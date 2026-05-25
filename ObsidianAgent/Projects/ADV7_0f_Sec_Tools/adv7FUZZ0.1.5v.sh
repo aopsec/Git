@@ -199,6 +199,12 @@ if [[ -n "$TARGET" && -n "$TARGETS_FILE" ]]; then
     echo "[!] -u and -f are mutually exclusive. Use one or the other."
     exit 1
 fi
+# Auto-detect: if -u received a file path rather than a URL, route to -f semantics
+if [[ -n "$TARGET" && ! "$TARGET" =~ ^https?:// && -f "$TARGET" ]]; then
+    echo "[*] Auto-detected scope file via -u — switching to batch mode: $TARGET"
+    TARGETS_FILE="$TARGET"
+    TARGET=""
+fi
 if [[ -n "$ONLY_PHASE" ]]; then
     if ! [[ "$ONLY_PHASE" =~ ^[0-8]$ ]]; then
         echo "[!] --phase must be 0-8 (got: $ONLY_PHASE)"
@@ -293,11 +299,23 @@ select_cookies() {
 #— Build target list ---------------------------------------------------------
 declare -a TARGET_LIST=()
 
+# Interactive prompt when neither -u nor -f was given
+if [[ -z "$TARGETS_FILE" && -z "$TARGET" ]]; then
+    read -rp "Insert Target URL or scope file path... ># " TARGET
+    TARGET="${TARGET//[[:space:]]/}"    # strip accidental leading/trailing spaces
+    # Auto-detect: file path typed at the prompt → batch mode
+    if [[ -n "$TARGET" && ! "$TARGET" =~ ^https?:// && -f "$TARGET" ]]; then
+        echo "[*] Auto-detected scope file — batch mode: $TARGET"
+        TARGETS_FILE="$TARGET"
+        TARGET=""
+    fi
+fi
+
 if [[ -n "$TARGETS_FILE" ]]; then
     [[ ! -f "$TARGETS_FILE" ]] && { echo "[!] Targets file not found: $TARGETS_FILE"; exit 1; }
     while IFS= read -r _line || [[ -n "$_line" ]]; do
-        _line="${_line%%#*}"                                   # strip inline comments
-        _line="$(printf '%s' "$_line" | tr -d '[:space:]')"   # trim whitespace
+        _line="${_line%%#*}"                   # strip inline comments
+        _line="${_line//[[:space:]]/}"         # trim all whitespace (pure bash, no subprocess)
         [[ -z "$_line" ]] && continue
         if [[ "$_line" =~ ^https?://[^[:space:],]+$ ]]; then
             TARGET_LIST+=("$_line")
@@ -307,14 +325,12 @@ if [[ -n "$TARGETS_FILE" ]]; then
     done < "$TARGETS_FILE"
     [[ ${#TARGET_LIST[@]} -eq 0 ]] && { echo "[!] No valid URLs in $TARGETS_FILE"; exit 1; }
 else
-    if [[ -z "$TARGET" ]]; then
-        read -rp "Insert Target URL... ># " TARGET
-    fi
     [[ -z "$TARGET" ]] && { echo "[!] No URL provided. Aborting."; exit 1; }
     if ! [[ "$TARGET" =~ ^https?://[^[:space:],]+$ ]]; then
         echo "[!] Invalid target URL: '$TARGET'"
         echo "    Must start with http:// or https:// and contain no spaces or commas."
         echo "    Example: https://target.com  or  http://target.com:8080/path"
+        echo "    Tip: To scan from a scope file, pass the .txt path (e.g. /home/aops/scope.txt)"
         exit 1
     fi
     TARGET_LIST=("$TARGET")
@@ -524,10 +540,13 @@ run_ffuf() {
 }
 
 #— Line count helper ---------------------------------------------------------
+# awk NR correctly counts lines even when the file has no trailing newline.
+# wc -l undercounts by 1 in that case, causing run_ffuf_chunked to exit its
+# loop one iteration early and silently skip the last wordlist entry.
 line_count() {
     local f="$1"
     if [[ -f "$f" ]]; then
-        wc -l < "$f" | tr -d ' \t'
+        awk 'END { print NR }' "$f"
     else
         echo 0
     fi
