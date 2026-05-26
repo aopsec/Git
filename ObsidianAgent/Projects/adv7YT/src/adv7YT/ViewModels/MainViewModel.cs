@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
-using Application = System.Windows.Application; // Disambiguate from System.Windows.Forms.Application
 using adv7YT.Models;
 using adv7YT.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -142,13 +142,13 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void BrowseOutputFolder()
     {
-        var dlg = new System.Windows.Forms.FolderBrowserDialog
+        var dlg = new Microsoft.Win32.OpenFolderDialog
         {
-            Description  = "Select output folder",
-            SelectedPath = OutputFolder
+            Title            = "Select output folder",
+            InitialDirectory = OutputFolder
         };
-        if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            OutputFolder = dlg.SelectedPath;
+        if (dlg.ShowDialog() == true)
+            OutputFolder = dlg.FolderName;
     }
 
     [RelayCommand]

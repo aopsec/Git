@@ -14,7 +14,9 @@ public sealed class EnumToBoolConverter : IValueConverter
     {
         if (parameter is not string paramStr)
             return false;
-        return Enum.TryParse(value?.GetType(), paramStr, out var parsed) &&
+        var enumType = value?.GetType();
+        if (enumType is null) return false;
+        return Enum.TryParse(enumType, paramStr, out var parsed) &&
                Equals(value, parsed);
     }
 
