@@ -8,3 +8,6 @@ ObsidianAgent/Vault/References/CyberPDFs/B00Ks/PT_books/
 # Can exceed 100 MB (GitHub hard limit). Keep local, never commit.
 ObsidianAgent/Projects/ADV7_0f_Sec_Tools/fuzz_*/
 ObsidianAgent/Projects/ADV7_0f_Sec_Tools/sqli_multi_*/
+
+# SecLists wordlist collection (2.5 GB, independent git repo). Local-only.
+wordlists/SecLists/
