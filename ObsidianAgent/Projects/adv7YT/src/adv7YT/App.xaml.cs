@@ -3,6 +3,7 @@ using adv7YT.ViewModels;
 using adv7YT.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using Application = System.Windows.Application; // Disambiguate from System.Windows.Forms.Application
 
 namespace adv7YT;
 

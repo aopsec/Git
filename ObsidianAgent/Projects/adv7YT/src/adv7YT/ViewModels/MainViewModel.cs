@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using Application = System.Windows.Application; // Disambiguate from System.Windows.Forms.Application
 using adv7YT.Models;
 using adv7YT.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
