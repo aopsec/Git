@@ -11,3 +11,7 @@ ObsidianAgent/Projects/ADV7_0f_Sec_Tools/sqli_multi_*/
 
 # SecLists wordlist collection (2.5 GB, independent git repo). Local-only.
 wordlists/SecLists/
+
+# Compiled adv7YT binaries — built by CI and downloaded locally; never commit.
+ObsidianAgent/Projects/adv7YT/*.exe
+ObsidianAgent/Projects/adv7YT/publish/
