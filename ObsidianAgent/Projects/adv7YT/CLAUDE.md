@@ -2,7 +2,7 @@
 
 ## Stack
 - **C# .NET 8** — `net8.0-windows`, WPF, `win-x64`
-- **WPF UI 3.0.5** — Fluent Design controls (`FluentWindow`, `TextBox`, etc.)
+- **WPF UI 4.0.3** — Fluent Design controls (`FluentWindow`, `TextBox`, etc.)
 - **CommunityToolkit.Mvvm 8.3.2** — `[ObservableProperty]`, `[RelayCommand]` source generators
 - **xunit + NSubstitute + FluentAssertions** — tests
 
@@ -26,14 +26,14 @@ Get-FileHash src\adv7YT\Assets\yt-dlp.exe -Algorithm SHA256 | Select Hash
 Get-FileHash src\adv7YT\Assets\ffmpeg.exe  -Algorithm SHA256 | Select Hash
 ```
 
-Then uncomment the `<EmbeddedResource>` block in `adv7YT.csproj`.
+The `<EmbeddedResource>` block in `adv7YT.csproj` is already active — no edit needed.
 
 ## Build Commands
 ```bash
-dotnet build                           # compile check
-dotnet test                            # unit tests
-dotnet publish ... -o publish/portable # portable .exe
-iscc installer\adv7YT.iss             # Inno Setup installer
+dotnet build                                                    # compile check
+dotnet test                                                     # unit tests
+dotnet publish src/adv7YT -c Release -o publish/portable       # portable .exe
+iscc installer\adv7YT.iss                                      # Inno Setup installer (runs after publish)
 ```
 
 ## Adding a New Output Format

@@ -1202,3 +1202,90 @@ it is recommended to perform only basic UNION tests if there is not at least one
 [14:47:43] [INFO] testing 'Oracle AND time-based blind (heavy query)'
 [14:49:08] [INFO] testing 'IBM DB2 AND time-based blind (heavy query)'
 [14:50:34] [INFO] testing 'SQLite > 2.0 AND time-based blind (heavy query)'
+[14:52:03] [INFO] testing 'Informix AND time-based blind (heavy query)'
+[14:53:28] [INFO] testing 'MySQL >= 5.1 time-based blind (heavy query) - PROCEDURE ANALYSE (EXTRACTVALUE)'
+[14:54:54] [INFO] testing 'MySQL >= 5.0.12 time-based blind - Parameter replace'
+[14:54:59] [INFO] testing 'MySQL >= 5.0.12 time-based blind - Parameter replace (substraction)'
+[14:55:02] [INFO] testing 'PostgreSQL > 8.1 time-based blind - Parameter replace'
+[14:55:06] [INFO] testing 'Oracle time-based blind - Parameter replace (DBMS_LOCK.SLEEP)'
+[14:55:10] [INFO] testing 'Oracle time-based blind - Parameter replace (DBMS_PIPE.RECEIVE_MESSAGE)'
+[14:55:14] [INFO] testing 'MySQL >= 5.0.12 time-based blind - ORDER BY, GROUP BY clause'
+[14:55:22] [INFO] testing 'PostgreSQL > 8.1 time-based blind - ORDER BY, GROUP BY clause'
+[14:55:29] [INFO] testing 'Oracle time-based blind - ORDER BY, GROUP BY clause (DBMS_LOCK.SLEEP)'
+[14:55:37] [INFO] testing 'Oracle time-based blind - ORDER BY, GROUP BY clause (DBMS_PIPE.RECEIVE_MESSAGE)'
+[14:55:45] [INFO] testing 'Generic UNION query (NULL) - 1 to 10 columns'
+[14:58:35] [INFO] testing 'Generic UNION query (random number) - 1 to 10 columns'
+[15:01:25] [INFO] testing 'MySQL UNION query (NULL) - 1 to 10 columns'
+[15:04:16] [INFO] testing 'MySQL UNION query (random number) - 1 to 10 columns'
+[15:07:12] [WARNING] parameter 'User-Agent' does not seem to be injectable
+[15:07:12] [ERROR] all tested parameters do not appear to be injectable. Try to increase values for '--level'/'--risk' options if you wish to perform more tests, skipping to the next target
+[15:07:12] [INFO] you can find results of scanning in multiple targets mode inside the CSV file '/home/aops/OPia/Git/ObsidianAgent/Projects/ADV7_0f_Sec_Tools/sqli_multi_20260525_2249/multi_scan/results-05252026_1050pm.csv'
+[15:07:12] [INFO] starting crawler for target URL 'https://redeem-8fa6fecbf6b75e53.osrsahk.com/?request=<BBTPKREQ1_REAL>&lang=pt' (6/14)
+[15:07:12] [INFO] starting 2 threads
+[15:07:20] [INFO] skipping 'https://redeem-8fa6fecbf6b75e53.osrsahk.com/?request=<BBTPKREQ1_REAL>&lang=pt'
+[15:07:20] [INFO] you can find results of scanning in multiple targets mode inside the CSV file '/home/aops/OPia/Git/ObsidianAgent/Projects/ADV7_0f_Sec_Tools/sqli_multi_20260525_2249/multi_scan/results-05252026_1050pm.csv'
+[15:07:20] [INFO] starting crawler for target URL 'https://redeem-8fa6fecbf6b75e53.osrsahk.com/?request=<BBTPKREQ1_REAL>&lang=es' (7/14)
+[15:07:20] [INFO] starting 2 threads
+[15:07:27] [INFO] skipping 'https://redeem-8fa6fecbf6b75e53.osrsahk.com/?request=<BBTPKREQ1_REAL>&lang=es'
+[15:07:27] [INFO] you can find results of scanning in multiple targets mode inside the CSV file '/home/aops/OPia/Git/ObsidianAgent/Projects/ADV7_0f_Sec_Tools/sqli_multi_20260525_2249/multi_scan/results-05252026_1050pm.csv'
+[15:07:27] [INFO] starting crawler for target URL 'https://redeem-8fa6fecbf6b75e53.osrsahk.com/patreon/start?request=<BBTPKREQ1_REAL>&locale=en&app_version=<APP_VERSION>' (8/14)
+[15:07:27] [INFO] starting 2 threads
+[15:07:30] [INFO] starting 2 threads
+[1/1] URL:
+GET https://redeem-8fa6fecbf6b75e53.osrsahk.com/patreon/start?request=<BBTPKREQ1_REAL>&locale=en&app_version=<APP_VERSION>
+do you want to test this URL? [Y/n/q]
+> Y
+[15:07:34] [INFO] testing URL 'https://redeem-8fa6fecbf6b75e53.osrsahk.com/patreon/start?request=<BBTPKREQ1_REAL>&locale=en&app_version=<APP_VERSION>'
+it appears that provided value for GET parameter 'request' has boundaries. Do you want to inject inside? ('<BBTPKREQ1_REAL*>') [y/N] N
+it appears that provided value for GET parameter 'app_version' has boundaries. Do you want to inject inside? ('<APP_VERSION*>') [y/N] N
+[15:07:35] [INFO] testing connection to the target URL
+[15:07:38] [WARNING] the web server responded with an HTTP error code (400) which could interfere with the results of the tests
+[15:07:38] [INFO] testing if the target URL content is stable
+[15:07:42] [WARNING] target URL content is not stable (i.e. content differs). sqlmap will base the page comparison on a sequence matcher. If no dynamic nor injectable parameters are detected, or in case of junk results, refer to user's manual paragraph 'Page comparison'
+how do you want to proceed? [(C)ontinue/(s)tring/(r)egex/(q)uit] C
+[15:07:42] [INFO] testing if GET parameter 'request' is dynamic
+[15:07:46] [WARNING] GET parameter 'request' does not appear to be dynamic
+[15:07:49] [WARNING] heuristic (basic) test shows that GET parameter 'request' might not be injectable
+[15:07:53] [INFO] testing for SQL injection on GET parameter 'request'
+[15:07:53] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause'
+[15:10:46] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause (subquery - comment)'
+[15:12:19] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause (comment)'
+[15:13:34] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause (MySQL comment)'
+[15:15:06] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause (Microsoft Access comment)'
+[15:16:36] [INFO] testing 'MySQL RLIKE boolean-based blind - WHERE, HAVING, ORDER BY or GROUP BY clause'
+[15:19:23] [INFO] testing 'MySQL AND boolean-based blind - WHERE, HAVING, ORDER BY or GROUP BY clause (MAKE_SET)'
+[15:22:11] [INFO] testing 'PostgreSQL AND boolean-based blind - WHERE or HAVING clause (CAST)'
+[15:24:57] [INFO] testing 'Oracle AND boolean-based blind - WHERE or HAVING clause (CTXSYS.DRITHSX.SN)'
+[15:27:48] [INFO] testing 'SQLite AND boolean-based blind - WHERE, HAVING, GROUP BY or HAVING clause (JSON)'
+[15:30:37] [INFO] testing 'Boolean-based blind - Parameter replace (original value)'
+[15:30:45] [INFO] testing 'PostgreSQL boolean-based blind - Parameter replace'
+[15:30:53] [INFO] testing 'Microsoft SQL Server/Sybase boolean-based blind - Parameter replace'
+[15:31:00] [INFO] testing 'Oracle boolean-based blind - Parameter replace'
+[15:31:08] [INFO] testing 'Informix boolean-based blind - Parameter replace'
+[15:31:16] [INFO] testing 'Microsoft Access boolean-based blind - Parameter replace'
+[15:31:24] [INFO] testing 'Boolean-based blind - Parameter replace (DUAL)'
+[15:31:32] [INFO] testing 'Boolean-based blind - Parameter replace (DUAL - original value)'
+[15:31:39] [INFO] testing 'Boolean-based blind - Parameter replace (CASE)'
+[15:31:46] [INFO] testing 'Boolean-based blind - Parameter replace (CASE - original value)'
+[15:31:54] [INFO] testing 'MySQL >= 5.0 boolean-based blind - ORDER BY, GROUP BY clause'
+[15:32:09] [INFO] testing 'MySQL >= 5.0 boolean-based blind - ORDER BY, GROUP BY clause (original value)'
+[15:32:25] [INFO] testing 'MySQL < 5.0 boolean-based blind - ORDER BY, GROUP BY clause'
+[15:32:25] [INFO] testing 'PostgreSQL boolean-based blind - ORDER BY, GROUP BY clause'
+[15:32:40] [INFO] testing 'Microsoft SQL Server/Sybase boolean-based blind - ORDER BY clause'
+[15:32:55] [INFO] testing 'Oracle boolean-based blind - ORDER BY, GROUP BY clause'
+[15:33:10] [INFO] testing 'HAVING boolean-based blind - WHERE, GROUP BY clause'
+[15:35:58] [INFO] testing 'PostgreSQL boolean-based blind - Stacked queries'
+[15:37:33] [INFO] testing 'Microsoft SQL Server/Sybase boolean-based blind - Stacked queries (IF)'
+[15:39:09] [INFO] testing 'MySQL >= 5.1 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (EXTRACTVALUE)'
+[15:40:35] [INFO] testing 'MySQL >= 5.6 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (GTID_SUBSET)'
+[15:42:02] [INFO] testing 'MySQL >= 5.1 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (UPDATEXML)'
+[15:43:28] [INFO] testing 'PostgreSQL AND error-based - WHERE or HAVING clause'
+[15:44:55] [INFO] testing 'Microsoft SQL Server/Sybase AND error-based - WHERE or HAVING clause (IN)'
+[15:46:23] [INFO] testing 'Microsoft SQL Server/Sybase AND error-based - WHERE or HAVING clause (CONVERT)'
+[15:47:49] [INFO] testing 'Microsoft SQL Server/Sybase AND error-based - WHERE or HAVING clause (CONCAT)'
+[15:49:12] [INFO] testing 'Oracle AND error-based - WHERE or HAVING clause (XMLType)'
+[15:50:41] [INFO] testing 'Oracle AND error-based - WHERE or HAVING clause (UTL_INADDR.GET_HOST_ADDRESS)'
+[15:52:09] [INFO] testing 'Oracle AND error-based - WHERE or HAVING clause (CTXSYS.DRITHSX.SN)'
+[15:53:34] [INFO] testing 'Firebird AND error-based - WHERE or HAVING clause'
+[15:55:00] [INFO] testing 'MonetDB AND error-based - WHERE or HAVING clause'
+[15:56:24] [INFO] testing 'Vertica AND error-based - WHERE or HAVING clause'

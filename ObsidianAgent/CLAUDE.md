@@ -129,7 +129,7 @@ ObsidianAgent/
 ├── Projects/                # Projetos aninhados. Quem tem .aops-vault.toml entra em
 │   │                        #   Project Manifests; quem tem README.md entra em Project
 │   │                        #   Overviews. ADV7ia, OpenBox0.1v e bbWebScan têm ambos →
-│   │                        #   dupla entrada. IPS_IDS só tem README → só Overviews.
+│   │                        #   dupla entrada. IPS_IDS e adv7YT só têm README → só Overviews.
 │   ├── ADV7ia/               # Python project. Tem .aops-vault.toml + README.md → manifest E overview.
 │   ├── ADV7_0f_Sec_Tools/    # Offensive security tooling (bash scripts; sem .aops-vault.toml
 │   │   │                     #   → não entra nos catálogos do meta-vault).
@@ -142,6 +142,12 @@ ObsidianAgent/
 │   │                         #   entrada nos catálogos. Cyberref debt: Scrapy stage shipped
 │   │                         #   com `cyberref: PENDING` marker (promover quando vault
 │   │                         #   citation existir).
+│   ├── adv7YT/               # C# .NET 8 WPF app (Windows desktop, YouTube downloader +
+│   │                         #   converter). Sem .aops-vault.toml → só entra em Project
+│   │                         #   Overviews. Tem README.md + CLAUDE.md próprio. Binários
+│   │                         #   bundled (yt-dlp.exe, ffmpeg.exe) não estão no git — devem
+│   │                         #   ser adicionados em src/adv7YT/Assets/ antes do build.
+│   │                         #   Stack: WPF-UI 4.0.3, CommunityToolkit.Mvvm 8.3.2.
 │   ├── IC01-aops/            # Umbrella com sub-projetos (ADV7ia, AVAL01-IC, IPS_IDS, OpenB0X,
 │   │                         #   OpenBox0.1v). Sem TOML/README na raiz → fora dos catálogos do
 │   │                         #   meta-vault. Possui CLAUDE.md aninhados (ver seção abaixo).
@@ -220,6 +226,8 @@ revisar manualmente se deve promover a `cyber-active`.
   derivada, referência visual; não editar).
 - `Projects/ADV7_0f_Sec_Tools/bbWebScan/CLAUDE.md` — engenharia do bbWebScan
   (convenções de commit, gotchas, gates de qualidade).
+- `Projects/adv7YT/CLAUDE.md` — app Windows C#/.NET 8 WPF (YouTube downloader);
+  stack, security rules, bundled binaries workflow, commit prefix.
 
 Escopos complementares, não sobrepostos ao contrato de vault do meta-repo.
 
