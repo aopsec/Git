@@ -21,9 +21,10 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </ui:FluentWindow.Resources>
 
-    <!-- Custom title bar -->
-    <ui:FluentWindow.TitleBar>
-        <ui:TitleBar Title="adv7YT">
+    <DockPanel>
+        <!-- Custom title bar — FluentWindow has no TitleBar property in WPF-UI 3.x;
+             TitleBar is placed as a docked child of the window content instead. -->
+        <ui:TitleBar DockPanel.Dock="Top" Title="adv7YT">
             <ui:TitleBar.TrailingContent>
                 <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
                     <ui:ToggleSwitch
@@ -36,9 +37,8 @@
                 </StackPanel>
             </ui:TitleBar.TrailingContent>
         </ui:TitleBar>
-    </ui:FluentWindow.TitleBar>
 
-    <Grid Margin="20,8,20,20">
+        <Grid Margin="20,8,20,20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>  <!-- URL input -->
             <RowDefinition Height="12"/>
@@ -102,18 +102,15 @@
             <ComboBox Width="155"
                       ItemsSource="{Binding VideoFormats}"
                       SelectedItem="{Binding SelectedFormat}"
-                      DisplayMemberPath="Label"
-                      PlaceholderText="Video"/>
+                      DisplayMemberPath="Label"/>
             <ComboBox Width="155" Margin="8,0,0,0"
                       ItemsSource="{Binding AudioFormats}"
                       SelectedItem="{Binding SelectedFormat}"
-                      DisplayMemberPath="Label"
-                      PlaceholderText="Audio"/>
+                      DisplayMemberPath="Label"/>
             <ComboBox Width="155" Margin="8,0,0,0"
                       ItemsSource="{Binding ProjectFormats}"
                       SelectedItem="{Binding SelectedFormat}"
-                      DisplayMemberPath="Label"
-                      PlaceholderText="Project"/>
+                      DisplayMemberPath="Label"/>
         </StackPanel>
 
         <!-- Output Folder -->
@@ -181,5 +178,6 @@
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      VirtualizingPanel.IsVirtualizing="True"/>
         </Expander>
-    </Grid>
+        </Grid>
+    </DockPanel>
 </ui:FluentWindow>
