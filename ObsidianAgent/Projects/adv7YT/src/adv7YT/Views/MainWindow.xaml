@@ -11,14 +11,23 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
     Title="adv7YT"
-    Width="660" Height="520"
-    MinWidth="560" MinHeight="440"
+    Width="660" Height="560"
+    MinWidth="560" MinHeight="460"
     WindowStartupLocation="CenterScreen"
     ExtendsContentIntoTitleBar="True">
 
     <ui:FluentWindow.Resources>
-        <helpers:EnumToBoolConverter x:Key="EnumToBool" />
-        <helpers:InvertBoolConverter x:Key="InvertBool" />
+        <helpers:EnumToBoolConverter      x:Key="EnumToBool"     />
+        <helpers:InvertBoolConverter      x:Key="InvertBool"     />
+        <helpers:BoolToOkFailedConverter  x:Key="BoolToOkFailed" />
+        <!-- CollectionViewSource groups AllFormats by Category for the single grouped ComboBox.
+             Note: Source="{Binding AllFormats}" resolves only at runtime (not design-time);
+             the designer may show an empty ComboBox — this is expected and harmless. -->
+        <CollectionViewSource x:Key="FormatsView" Source="{Binding AllFormats}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Category"/>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
     </ui:FluentWindow.Resources>
 
     <DockPanel>
@@ -40,21 +49,24 @@
 
         <Grid Margin="20,8,20,20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- URL input -->
+            <RowDefinition Height="Auto"/>  <!-- 0:  URL input -->
             <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- Quality selector -->
+            <RowDefinition Height="Auto"/>  <!-- 2:  Quality selector -->
             <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- Format dropdowns -->
+            <RowDefinition Height="Auto"/>  <!-- 4:  Format grouped ComboBox -->
             <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- Output folder -->
+            <RowDefinition Height="Auto"/>  <!-- 6:  Output folder -->
             <RowDefinition Height="16"/>
-            <RowDefinition Height="Auto"/>  <!-- Progress bar -->
+            <RowDefinition Height="Auto"/>  <!-- 8:  Progress bar -->
             <RowDefinition Height="4"/>
-            <RowDefinition Height="Auto"/>  <!-- Status text -->
+            <RowDefinition Height="Auto"/>  <!-- 10: Status text -->
             <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- Action buttons -->
+            <RowDefinition Height="Auto"/>  <!-- 12: Action buttons -->
             <RowDefinition Height="12"/>
-            <RowDefinition Height="*"/>     <!-- Log expander -->
+            <RowDefinition Height="Auto"/>  <!-- 14: Log expander -->
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>  <!-- 16: History expander -->
+            <RowDefinition Height="*"/>     <!-- 17: filler -->
         </Grid.RowDefinitions>
 
         <!-- URL Input Row -->
@@ -95,22 +107,27 @@
                              ConverterParameter=Fast}"/>
         </StackPanel>
 
-        <!-- Format Dropdowns -->
+        <!-- Format — single grouped ComboBox replacing the three per-category boxes -->
         <StackPanel Grid.Row="4" Orientation="Horizontal">
             <TextBlock Text="Format:" VerticalAlignment="Center" Margin="0,0,12,0"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-            <ComboBox Width="155"
-                      ItemsSource="{Binding VideoFormats}"
+            <ComboBox Width="478"
+                      ItemsSource="{Binding Source={StaticResource FormatsView}}"
                       SelectedItem="{Binding SelectedFormat}"
-                      DisplayMemberPath="Label"/>
-            <ComboBox Width="155" Margin="8,0,0,0"
-                      ItemsSource="{Binding AudioFormats}"
-                      SelectedItem="{Binding SelectedFormat}"
-                      DisplayMemberPath="Label"/>
-            <ComboBox Width="155" Margin="8,0,0,0"
-                      ItemsSource="{Binding ProjectFormats}"
-                      SelectedItem="{Binding SelectedFormat}"
-                      DisplayMemberPath="Label"/>
+                      DisplayMemberPath="Label">
+                <ComboBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Margin="4,4,0,2"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ComboBox.GroupStyle>
+            </ComboBox>
         </StackPanel>
 
         <!-- Output Folder -->
@@ -150,7 +167,8 @@
         <TextBlock Grid.Row="10"
                    Text="{Binding StatusText}"
                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                   FontSize="11"/>
+                   FontSize="11"
+                   TextTrimming="CharacterEllipsis"/>
 
         <!-- Action Buttons -->
         <StackPanel Grid.Row="12" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -165,7 +183,7 @@
             <ui:Button Content="Cancel"
                        Margin="8,0,0,0"
                        Appearance="Secondary"
-                       Command="{Binding DownloadCancelCommand}"
+                       Command="{Binding CancelCurrentCommand}"
                        IsEnabled="{Binding IsRunning}"
                        Width="88"/>
         </StackPanel>
@@ -173,10 +191,10 @@
         <!-- Collapsible Log -->
         <Expander Grid.Row="14"
                   Header="Log"
-                  IsExpanded="{Binding IsLogExpanded}"
-                  VerticalAlignment="Stretch">
+                  IsExpanded="{Binding IsLogExpanded}">
             <ListBox ItemsSource="{Binding LogLines}"
                      helpers:AutoScrollBehavior.IsEnabled="True"
+                     MaxHeight="200"
                      FontFamily="Consolas"
                      FontSize="11"
                      BorderThickness="0"
@@ -185,6 +203,50 @@
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      VirtualizingPanel.IsVirtualizing="True"/>
         </Expander>
+
+        <!-- Collapsible History -->
+        <Expander Grid.Row="16"
+                  Header="History"
+                  IsExpanded="{Binding IsHistoryExpanded}">
+            <Grid Margin="0,4,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ui:Button Grid.Row="0"
+                           Content="Clear"
+                           HorizontalAlignment="Right"
+                           Margin="0,0,0,4"
+                           Command="{Binding ClearHistoryCommand}"/>
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding History}"
+                         MaxHeight="150"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         VirtualizingPanel.IsVirtualizing="True">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,2">
+                                <TextBlock FontSize="11">
+                                    <Run Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd HH:mm}, Mode=OneWay}"/>
+                                    <Run Text=" · "/>
+                                    <Run Text="{Binding RunType, Mode=OneWay}"/>
+                                    <Run Text=" · "/>
+                                    <Run Text="{Binding Success, Converter={StaticResource BoolToOkFailed}, Mode=OneWay}"
+                                         FontWeight="SemiBold"/>
+                                </TextBlock>
+                                <TextBlock Text="{Binding OutputPath, Mode=OneWay}"
+                                           FontSize="10"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Expander>
+
         </Grid>
     </DockPanel>
 </ui:FluentWindow>

@@ -25,7 +25,19 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # ── 3. Download yt-dlp.exe ─────────────────────────────────────────────
+      # ── 3. Stub asset files so the main project compiles without real binaries ─
+      - name: Create asset stubs for test build
+        shell: pwsh
+        run: |
+          New-Item -Force -ItemType Directory  src\adv7YT\Assets | Out-Null
+          New-Item -Force -ItemType File src\adv7YT\Assets\yt-dlp.exe | Out-Null
+          New-Item -Force -ItemType File src\adv7YT\Assets\ffmpeg.exe  | Out-Null
+
+      # ── 4. Run unit tests ────────────────────────────────────────────────────
+      - name: Test
+        run: dotnet test tests/adv7YT.Tests/ -c Release --logger "console;verbosity=normal"
+
+      # ── 5. Download yt-dlp.exe ─────────────────────────────────────────────
       - name: Download yt-dlp.exe
         shell: pwsh
         run: |
@@ -33,7 +45,7 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile "src\adv7YT\Assets\yt-dlp.exe"
           Write-Host "yt-dlp downloaded: $((Get-Item 'src\adv7YT\Assets\yt-dlp.exe').Length) bytes"
 
-      # ── 4. Download ffmpeg.exe (from gyan.dev essentials build) ───────────
+      # ── 6. Download ffmpeg.exe (from gyan.dev essentials build) ───────────
       - name: Download ffmpeg.exe
         shell: pwsh
         run: |
@@ -50,7 +62,7 @@ jobs:
           Copy-Item $exe.FullName "src\adv7YT\Assets\ffmpeg.exe"
           Write-Host "ffmpeg downloaded: $((Get-Item 'src\adv7YT\Assets\ffmpeg.exe').Length) bytes"
 
-      # ── 5. Compute SHA-256 hashes and patch ToolHashes.cs ─────────────────
+      # ── 7. Compute SHA-256 hashes and patch ToolHashes.cs ─────────────────
       - name: Patch ToolHashes.cs
         shell: pwsh
         run: |
@@ -68,7 +80,7 @@ jobs:
           Set-Content $file $content -NoNewline
           Write-Host "ToolHashes.cs patched."
 
-      # ── 6. Publish ─────────────────────────────────────────────────────────
+      # ── 8. Publish ─────────────────────────────────────────────────────────
       - name: Publish portable .exe
         shell: pwsh
         run: |
@@ -80,7 +92,7 @@ jobs:
             -p:EnableCompressionInSingleFile=true `
             -o publish/portable
 
-      # ── 7. Upload artifact ─────────────────────────────────────────────────
+      # ── 9. Upload artifact ─────────────────────────────────────────────────
       - name: Upload portable exe
         uses: actions/upload-artifact@v4
         with:

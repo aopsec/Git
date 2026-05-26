@@ -11,15 +11,20 @@ namespace adv7YT.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    private readonly IDownloadService _downloader;
-    private readonly IConvertService  _converter;
+    private readonly IDownloadService   _downloader;
+    private readonly IConvertService    _converter;
+    private readonly IRunHistoryService _history;
 
-    public MainViewModel(IDownloadService downloader, IConvertService converter)
+    public MainViewModel(IDownloadService downloader, IConvertService converter, IRunHistoryService history)
     {
-        _downloader = downloader;
-        _converter  = converter;
+        _downloader    = downloader;
+        _converter     = converter;
+        _history       = history;
         SelectedFormat = FormatRegistry.ByCategory(FormatCategory.Video).First();
         OutputFolder   = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+
+        foreach (var r in _history.Load())
+            History.Add(r);
     }
 
     // ── Observable properties ─────────────────────────────────────────────
@@ -41,16 +46,23 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty] private bool _isLogExpanded;
     [ObservableProperty] private bool _isDarkTheme = true;
+    [ObservableProperty] private bool _isHistoryExpanded;
 
     // ── Collections ───────────────────────────────────────────────────────
-    public ObservableCollection<string> LogLines { get; } = new();
+    public ObservableCollection<string>    LogLines { get; } = new();
+    public ObservableCollection<RunRecord> History  { get; } = new();
 
+    // Per-category lists kept for test compatibility (FormatRegistryTests.ByCategory_…)
     public IReadOnlyList<FormatDefinition> VideoFormats
         => FormatRegistry.ByCategory(FormatCategory.Video).ToList();
     public IReadOnlyList<FormatDefinition> AudioFormats
         => FormatRegistry.ByCategory(FormatCategory.Audio).ToList();
     public IReadOnlyList<FormatDefinition> ProjectFormats
         => FormatRegistry.ByCategory(FormatCategory.Project).ToList();
+
+    /// <summary>All formats ordered Project → Video → Audio for the grouped ComboBox.</summary>
+    public IReadOnlyList<FormatDefinition> AllFormats { get; } =
+        FormatRegistry.All.OrderBy(f => f.Category).ToList();
 
     // ── Commands ──────────────────────────────────────────────────────────
     [RelayCommand(CanExecute = nameof(CanDownload))]
@@ -60,9 +72,12 @@ public partial class MainViewModel : ObservableObject
         ProgressValue = 0;
         LogLines.Clear();
 
+        bool   success      = false;
+        string errorMessage = string.Empty;
+
         try
         {
-            var request         = new DownloadRequest(Url, SelectedQuality, OutputFolder);
+            var request          = new DownloadRequest(Url, SelectedQuality, OutputFolder);
             var progressReporter = new Progress<ProgressReport>(r =>
             {
                 ProgressValue = r.Percentage;
@@ -73,20 +88,37 @@ public partial class MainViewModel : ObservableObject
 
             await _downloader.DownloadAsync(request, progressReporter, logReporter, ct);
             ProgressValue = 100;
-            StatusText    = "Download complete.";
+            StatusText    = $"Done → {OutputFolder}";
+            success       = true;
         }
         catch (OperationCanceledException)
         {
-            StatusText = "Cancelled.";
+            StatusText   = "Cancelled.";
+            errorMessage = "Cancelled by user.";
         }
         catch (Exception ex)
         {
-            StatusText = $"Error: {ex.Message}";
+            StatusText   = $"Error: {ex.Message}";
+            errorMessage = ex.Message;
         }
         finally
         {
             IsRunning = false;
         }
+
+        // Persist to history regardless of success/failure (CancellationToken.None so
+        // the write is not cancelled even if the user triggered cancellation above).
+        var record = new RunRecord
+        {
+            RunType      = RunType.Download,
+            Source       = Url,
+            OutputPath   = OutputFolder,
+            FormatLabel  = string.Empty,   // yt-dlp picks the container; we don't know it here
+            Success      = success,
+            ErrorMessage = success ? null : errorMessage,
+        };
+        await _history.AddAsync(record, CancellationToken.None);
+        History.Insert(0, record);
     }
 
     private bool CanDownload() =>
@@ -103,9 +135,13 @@ public partial class MainViewModel : ObservableObject
         IsRunning = true;
         LogLines.Clear();
 
+        bool   success      = false;
+        string errorMessage = string.Empty;
+        string inputPath    = string.Empty;
+        string outputPath   = string.Empty;
+
         try
         {
-            // Prompt user for input file via OpenFileDialog
             var openDlg = new Microsoft.Win32.OpenFileDialog
             {
                 Title  = "Select video to convert",
@@ -114,11 +150,12 @@ public partial class MainViewModel : ObservableObject
             if (openDlg.ShowDialog() != true)
             {
                 StatusText = "Convert cancelled.";
+                IsRunning  = false;
                 return;
             }
 
-            var inputPath  = openDlg.FileName;
-            var outputPath = Path.Combine(
+            inputPath  = openDlg.FileName;
+            outputPath = Path.Combine(
                 OutputFolder,
                 Path.GetFileNameWithoutExtension(inputPath) + "." + SelectedFormat.Extension);
 
@@ -127,11 +164,39 @@ public partial class MainViewModel : ObservableObject
 
             var req = new ConversionRequest(inputPath, outputPath, SelectedFormat);
             await _converter.ConvertAsync(req, logReporter, ct);
-            StatusText = $"Converted: {Path.GetFileName(outputPath)}";
+            StatusText = $"Done → {outputPath}";
+            success    = true;
         }
-        catch (OperationCanceledException) { StatusText = "Cancelled."; }
-        catch (Exception ex)               { StatusText = $"Error: {ex.Message}"; }
-        finally                            { IsRunning = false; }
+        catch (OperationCanceledException)
+        {
+            StatusText   = "Cancelled.";
+            errorMessage = "Cancelled by user.";
+        }
+        catch (Exception ex)
+        {
+            StatusText   = $"Error: {ex.Message}";
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            IsRunning = false;
+        }
+
+        // Only record if the file dialog was accepted (outputPath non-empty).
+        if (!string.IsNullOrEmpty(outputPath))
+        {
+            var record = new RunRecord
+            {
+                RunType      = RunType.Convert,
+                Source       = inputPath,
+                OutputPath   = outputPath,
+                FormatLabel  = SelectedFormat?.Label ?? string.Empty,
+                Success      = success,
+                ErrorMessage = success ? null : errorMessage,
+            };
+            await _history.AddAsync(record, CancellationToken.None);
+            History.Insert(0, record);
+        }
     }
 
     private bool CanConvert() => !IsRunning && SelectedFormat is not null;
@@ -157,5 +222,22 @@ public partial class MainViewModel : ObservableObject
         IsDarkTheme = !IsDarkTheme;
         ApplicationThemeManager.Apply(
             IsDarkTheme ? ApplicationTheme.Dark : ApplicationTheme.Light);
+    }
+
+    /// <summary>Cancels whichever of Download or Convert is currently running.</summary>
+    [RelayCommand]
+    private void CancelCurrent()
+    {
+        if (DownloadCancelCommand.CanExecute(null))
+            DownloadCancelCommand.Execute(null);
+        else if (ConvertCancelCommand.CanExecute(null))
+            ConvertCancelCommand.Execute(null);
+    }
+
+    [RelayCommand]
+    private void ClearHistory()
+    {
+        _history.Clear();
+        History.Clear();
     }
 }

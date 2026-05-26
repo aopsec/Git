@@ -16,6 +16,7 @@ public partial class App : Application
         services.AddSingleton<IToolExtractor, ToolExtractorService>();
         services.AddSingleton<IDownloadService, DownloadService>();
         services.AddSingleton<IConvertService, ConvertService>();
+        services.AddSingleton<IRunHistoryService, RunHistoryService>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();
         _provider = services.BuildServiceProvider();
