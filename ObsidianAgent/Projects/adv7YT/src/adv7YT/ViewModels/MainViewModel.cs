@@ -228,10 +228,13 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void CancelCurrent()
     {
-        if (DownloadCancelCommand.CanExecute(null))
-            DownloadCancelCommand.Execute(null);
-        else if (ConvertCancelCommand.CanExecute(null))
-            ConvertCancelCommand.Execute(null);
+        // CommunityToolkit.Mvvm generates AsyncRelayCommand (IAsyncRelayCommand) for
+        // async [RelayCommand] methods. Cancel is via .Cancel() / .CanBeCanceled —
+        // there is no separate generated CancelCommand property.
+        if (DownloadCommand.CanBeCanceled)
+            DownloadCommand.Cancel();
+        else if (ConvertCommand.CanBeCanceled)
+            ConvertCommand.Cancel();
     }
 
     [RelayCommand]

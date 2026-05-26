@@ -1,3 +1,5 @@
-# ADV7 large scan output files (exceed GitHub's 100 MB hard limit / 50 MB warning)
-ObsidianAgent/Projects/ADV7_0f_Sec_Tools/fuzz_*/phase3_combined.json
-ObsidianAgent/Projects/ADV7_0f_Sec_Tools/fuzz_*/adv7FUZZ_*.log
+# Large local-only PDF libraries — never commit; local working copies have their
+# own .git dirs (independent repos). b00ks_sources.txt references them by relative
+# path for the CyberPDF extractor; they are not needed in CI.
+ObsidianAgent/Vault/References/CyberPDFs/B00Ks/My-CyberSecurity-Store/
+ObsidianAgent/Vault/References/CyberPDFs/B00Ks/PT_books/
