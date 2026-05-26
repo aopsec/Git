@@ -24,10 +24,8 @@
 
   <!-- Embedded tool binaries — must be added manually before build -->
   <!-- See Assets/.gitkeep and CLAUDE.md for instructions -->
-  <!-- Uncomment after adding binaries:
   <ItemGroup>
     <EmbeddedResource Include="Assets\yt-dlp.exe" />
     <EmbeddedResource Include="Assets\ffmpeg.exe" />
   </ItemGroup>
-  -->
 </Project>
