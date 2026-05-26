@@ -3,6 +3,7 @@ using System.Windows.Data;
 using adv7YT.Helpers;
 using adv7YT.Models;
 using FluentAssertions;
+using Xunit;
 
 namespace adv7YT.Tests.Helpers;
 

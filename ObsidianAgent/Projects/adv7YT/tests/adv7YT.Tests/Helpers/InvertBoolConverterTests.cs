@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Windows.Data;
 using adv7YT.Helpers;
 using FluentAssertions;
+using Xunit;
 
 namespace adv7YT.Tests.Helpers;
 
