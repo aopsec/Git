@@ -1,0 +1,102 @@
+name: adv7YT — Publish Portable
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ObsidianAgent/Projects/adv7YT/**'
+  workflow_dispatch:   # run manually from the Actions tab any time
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ObsidianAgent/Projects/adv7YT
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. .NET 8 SDK ──────────────────────────────────────────────────────
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ── 3. Download yt-dlp.exe ─────────────────────────────────────────────
+      - name: Download yt-dlp.exe
+        shell: pwsh
+        run: |
+          $url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+          Invoke-WebRequest -Uri $url -OutFile "src\adv7YT\Assets\yt-dlp.exe"
+          Write-Host "yt-dlp downloaded: $((Get-Item 'src\adv7YT\Assets\yt-dlp.exe').Length) bytes"
+
+      # ── 4. Download ffmpeg.exe (from gyan.dev essentials build) ───────────
+      - name: Download ffmpeg.exe
+        shell: pwsh
+        run: |
+          $zip = "$env:TEMP\ffmpeg.zip"
+          Invoke-WebRequest -Uri "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip" `
+            -OutFile $zip
+          $dest = "$env:TEMP\ffmpeg_extracted"
+          Expand-Archive -Path $zip -DestinationPath $dest -Force
+          # The zip contains a versioned folder; find ffmpeg.exe inside bin/
+          $exe = Get-ChildItem -Path $dest -Recurse -Filter "ffmpeg.exe" |
+                 Where-Object { $_.DirectoryName -like "*\bin" } |
+                 Select-Object -First 1
+          if (-not $exe) { throw "ffmpeg.exe not found inside zip" }
+          Copy-Item $exe.FullName "src\adv7YT\Assets\ffmpeg.exe"
+          Write-Host "ffmpeg downloaded: $((Get-Item 'src\adv7YT\Assets\ffmpeg.exe').Length) bytes"
+
+      # ── 5. Compute SHA-256 hashes and patch ToolHashes.cs ─────────────────
+      - name: Patch ToolHashes.cs
+        shell: pwsh
+        run: |
+          $ytHash  = (Get-FileHash "src\adv7YT\Assets\yt-dlp.exe"  -Algorithm SHA256).Hash.ToLower()
+          $ffHash  = (Get-FileHash "src\adv7YT\Assets\ffmpeg.exe"   -Algorithm SHA256).Hash.ToLower()
+          Write-Host "yt-dlp  SHA256: $ytHash"
+          Write-Host "ffmpeg  SHA256: $ffHash"
+
+          $file = "src\adv7YT\Helpers\ToolHashes.cs"
+          (Get-Content $file) `
+            -replace 'PLACEHOLDER_REPLACE_AFTER_ADDING_BINARY(?=.*YtDlp|\s*//.*yt-dlp)', $ytHash `
+            -replace 'PLACEHOLDER_REPLACE_AFTER_ADDING_BINARY', $ffHash |
+            Set-Content $file
+          Write-Host "ToolHashes.cs updated."
+
+      # ── 6. Uncomment <EmbeddedResource> block in .csproj ──────────────────
+      - name: Enable EmbeddedResource in csproj
+        shell: pwsh
+        run: |
+          $csproj = "src\adv7YT\adv7YT.csproj"
+          $content = Get-Content $csproj -Raw
+
+          # Remove the comment wrapper that surrounds the EmbeddedResource block
+          $content = $content -replace `
+            '(?s)<!--\s*Uncomment after adding binaries:\s*\r?\n\s*(<ItemGroup>\s*\r?\n\s*<EmbeddedResource[^>]+/>\s*\r?\n\s*<EmbeddedResource[^>]+/>\s*\r?\n\s*</ItemGroup>)\s*\r?\n\s*-->', `
+            '$1'
+
+          Set-Content $csproj $content
+          Write-Host "EmbeddedResource block enabled."
+
+      # ── 7. Publish ─────────────────────────────────────────────────────────
+      - name: Publish portable .exe
+        shell: pwsh
+        run: |
+          dotnet publish src/adv7YT/adv7YT.csproj `
+            -c Release -r win-x64 `
+            -p:PublishSingleFile=true `
+            -p:SelfContained=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true `
+            -o publish/portable
+
+      # ── 8. Upload artifact ─────────────────────────────────────────────────
+      - name: Upload portable exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: adv7YT-portable-${{ github.run_number }}
+          path: ObsidianAgent/Projects/adv7YT/publish/portable/adv7YT.exe
+          retention-days: 30
