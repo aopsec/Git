@@ -18,7 +18,7 @@
 
     <ui:FluentWindow.Resources>
         <helpers:EnumToBoolConverter x:Key="EnumToBool" />
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <helpers:InvertBoolConverter x:Key="InvertBool" />
     </ui:FluentWindow.Resources>
 
     <DockPanel>
@@ -68,7 +68,7 @@
                         PlaceholderText="https://youtube.com/watch?v=..."
                         Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
                         ClearButtonEnabled="True"
-                        IsEnabled="{Binding IsRunning, Converter={StaticResource BoolToVis}, ConverterParameter=invert}"/>
+                        IsEnabled="{Binding IsRunning, Converter={StaticResource InvertBool}}"/>
             <ui:Button Grid.Column="2"
                        Content="Paste"
                        Command="{Binding PasteUrlCommand}"/>
