@@ -1,0 +1,25 @@
+theme: jekyll-theme-primer
+
+title: aopsec / Git
+description: >-
+  Repositório público de Alcides Olivo Pollazzon Soterio —
+  segurança ofensiva, projetos académicos, ferramentas e automações.
+
+# ── Jekyll build exclusions ───────────────────────────────────────────────────
+# Everything below is source code / vault content that must NOT be rendered
+# as GitHub Pages. Without this list, Jekyll crawls Obsidian vault files that
+# contain Liquid-style {{ }} syntax and fails with a Liquid parse error.
+exclude:
+  - ObsidianAgent
+  - Computer_Science
+  - KALInit
+  - wordlists
+  - __pycache__
+  - .obsidian
+  - .claude
+  - .codex
+  - .github
+  - .gitignore
+  - .nojekyll
+  - Gemfile
+  - Gemfile.lock
