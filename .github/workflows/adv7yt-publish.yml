@@ -54,34 +54,21 @@ jobs:
       - name: Patch ToolHashes.cs
         shell: pwsh
         run: |
-          $ytHash  = (Get-FileHash "src\adv7YT\Assets\yt-dlp.exe"  -Algorithm SHA256).Hash.ToLower()
-          $ffHash  = (Get-FileHash "src\adv7YT\Assets\ffmpeg.exe"   -Algorithm SHA256).Hash.ToLower()
+          $ytHash = (Get-FileHash "src\adv7YT\Assets\yt-dlp.exe" -Algorithm SHA256).Hash.ToLower()
+          $ffHash = (Get-FileHash "src\adv7YT\Assets\ffmpeg.exe"  -Algorithm SHA256).Hash.ToLower()
           Write-Host "yt-dlp  SHA256: $ytHash"
           Write-Host "ffmpeg  SHA256: $ffHash"
 
+          # Match by field name so the regex works whether the source file
+          # currently contains a real hash or a PLACEHOLDER value.
           $file = "src\adv7YT\Helpers\ToolHashes.cs"
-          (Get-Content $file) `
-            -replace 'PLACEHOLDER_REPLACE_AFTER_ADDING_BINARY(?=.*YtDlp|\s*//.*yt-dlp)', $ytHash `
-            -replace 'PLACEHOLDER_REPLACE_AFTER_ADDING_BINARY', $ffHash |
-            Set-Content $file
-          Write-Host "ToolHashes.cs updated."
+          $content = (Get-Content $file -Raw) `
+            -replace '(?<=YtDlpSha256\s*=\s*")[^"]*', $ytHash `
+            -replace '(?<=FfmpegSha256\s*=\s*")[^"]*', $ffHash
+          Set-Content $file $content -NoNewline
+          Write-Host "ToolHashes.cs patched."
 
-      # ── 6. Uncomment <EmbeddedResource> block in .csproj ──────────────────
-      - name: Enable EmbeddedResource in csproj
-        shell: pwsh
-        run: |
-          $csproj = "src\adv7YT\adv7YT.csproj"
-          $content = Get-Content $csproj -Raw
-
-          # Remove the comment wrapper that surrounds the EmbeddedResource block
-          $content = $content -replace `
-            '(?s)<!--\s*Uncomment after adding binaries:\s*\r?\n\s*(<ItemGroup>\s*\r?\n\s*<EmbeddedResource[^>]+/>\s*\r?\n\s*<EmbeddedResource[^>]+/>\s*\r?\n\s*</ItemGroup>)\s*\r?\n\s*-->', `
-            '$1'
-
-          Set-Content $csproj $content
-          Write-Host "EmbeddedResource block enabled."
-
-      # ── 7. Publish ─────────────────────────────────────────────────────────
+      # ── 6. Publish ─────────────────────────────────────────────────────────
       - name: Publish portable .exe
         shell: pwsh
         run: |
@@ -93,7 +80,7 @@ jobs:
             -p:EnableCompressionInSingleFile=true `
             -o publish/portable
 
-      # ── 8. Upload artifact ─────────────────────────────────────────────────
+      # ── 7. Upload artifact ─────────────────────────────────────────────────
       - name: Upload portable exe
         uses: actions/upload-artifact@v4
         with:

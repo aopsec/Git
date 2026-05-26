@@ -162,6 +162,12 @@
                        Margin="8,0,0,0"
                        Command="{Binding ConvertCommand}"
                        Width="120"/>
+            <ui:Button Content="Cancel"
+                       Margin="8,0,0,0"
+                       Appearance="Secondary"
+                       Command="{Binding DownloadCancelCommand}"
+                       IsEnabled="{Binding IsRunning}"
+                       Width="88"/>
         </StackPanel>
 
         <!-- Collapsible Log -->
@@ -170,6 +176,7 @@
                   IsExpanded="{Binding IsLogExpanded}"
                   VerticalAlignment="Stretch">
             <ListBox ItemsSource="{Binding LogLines}"
+                     helpers:AutoScrollBehavior.IsEnabled="True"
                      FontFamily="Consolas"
                      FontSize="11"
                      BorderThickness="0"
