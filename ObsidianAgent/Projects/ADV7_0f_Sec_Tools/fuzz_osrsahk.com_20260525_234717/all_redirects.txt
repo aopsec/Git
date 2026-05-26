@@ -1,3 +1,0 @@
-https://osrsahk.com/download/bbt-osrs-client//.git/index	->	/download/bbt-osrs-client/.git/	[308]
-https://osrsahk.com/download/bbt-osrs-client//index	->	/download/bbt-osrs-client/	[308]
-https://osrsahk.com/download/bbt-osrs-client//index.html	->	/download/bbt-osrs-client/	[308]

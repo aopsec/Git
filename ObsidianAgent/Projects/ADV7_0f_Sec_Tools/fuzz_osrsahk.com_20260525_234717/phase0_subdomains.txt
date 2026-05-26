@@ -1,4 +1,0 @@
-osrsahk.com (FQDN) --> ns_record --> lee.ns.cloudflare.com (FQDN)
-osrsahk.com (FQDN) --> ns_record --> thea.ns.cloudflare.com (FQDN)
-osrsahk.com (FQDN) --> node --> members.osrsahk.com (FQDN)
-members.osrsahk.com (FQDN) --> cname_record --> custom.patreon-domains.com (FQDN)
