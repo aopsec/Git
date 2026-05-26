@@ -1,0 +1,3 @@
+https://osrsahk.com/download/bbt-skiller//.git/index	->	/download/bbt-skiller/.git/	[308]
+https://osrsahk.com/download/bbt-skiller//index	->	/download/bbt-skiller/	[308]
+https://osrsahk.com/download/bbt-skiller//index.html	->	/download/bbt-skiller/	[308]
