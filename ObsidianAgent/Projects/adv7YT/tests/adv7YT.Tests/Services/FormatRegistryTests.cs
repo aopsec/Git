@@ -46,4 +46,9 @@ public class FormatRegistryTests
     [Fact]
     public void All_NoNullExtensions()
         => FormatRegistry.All.Should().AllSatisfy(f => f.Extension.Should().NotBeNullOrWhiteSpace());
+
+    [Fact]
+    public void All_AllHaveNonEmptyDescription()
+        => FormatRegistry.All.Should()
+               .AllSatisfy(f => f.Description.Should().NotBeNullOrWhiteSpace());
 }

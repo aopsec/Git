@@ -17,25 +17,35 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel(IDownloadService downloader, IConvertService converter, IRunHistoryService history)
     {
-        _downloader    = downloader;
-        _converter     = converter;
-        _history       = history;
-        SelectedFormat = FormatRegistry.ByCategory(FormatCategory.Video).First();
-        OutputFolder   = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+        _downloader          = downloader;
+        _converter           = converter;
+        _history             = history;
+        SelectedConvertFormat = FormatRegistry.ByCategory(FormatCategory.Video).First();
+        OutputFolder          = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
 
         foreach (var r in _history.Load())
             History.Add(r);
     }
 
-    // ── Observable properties ─────────────────────────────────────────────
+    // ── Download properties ───────────────────────────────────────────────
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DownloadCommand))]
     private string _url = string.Empty;
 
-    [ObservableProperty] private QualityPreset _selectedQuality = QualityPreset.Native;
-    [ObservableProperty] private FormatDefinition? _selectedFormat;
-    [ObservableProperty] private string _outputFolder = string.Empty;
+    [ObservableProperty] private QualityPreset          _selectedQuality       = QualityPreset.Native;
+    [ObservableProperty] private DownloadFormatOption   _selectedDownloadFormat = DownloadFormatOption.Mp4;
 
+    // ── Convert properties ────────────────────────────────────────────────
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ConvertCommand))]
+    private FormatDefinition? _selectedConvertFormat;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ConvertCommand))]
+    private string _convertInputPath = string.Empty;
+
+    // ── Shared properties ─────────────────────────────────────────────────
+    [ObservableProperty] private string _outputFolder = string.Empty;
     [ObservableProperty] private double _progressValue;
     [ObservableProperty] private string _statusText = "Ready";
 
@@ -45,8 +55,20 @@ public partial class MainViewModel : ObservableObject
     private bool _isRunning;
 
     [ObservableProperty] private bool _isLogExpanded;
-    [ObservableProperty] private bool _isDarkTheme = true;
     [ObservableProperty] private bool _isHistoryExpanded;
+
+    // ── Theme (full property — avoids ToggleSwitch double-flip bug) ───────
+    private bool _isDarkTheme = true;
+    public bool IsDarkTheme
+    {
+        get => _isDarkTheme;
+        set
+        {
+            if (SetProperty(ref _isDarkTheme, value))
+                ApplicationThemeManager.Apply(
+                    value ? ApplicationTheme.Dark : ApplicationTheme.Light);
+        }
+    }
 
     // ── Collections ───────────────────────────────────────────────────────
     public ObservableCollection<string>    LogLines { get; } = new();
@@ -60,11 +82,19 @@ public partial class MainViewModel : ObservableObject
     public IReadOnlyList<FormatDefinition> ProjectFormats
         => FormatRegistry.ByCategory(FormatCategory.Project).ToList();
 
-    /// <summary>All formats ordered Project → Video → Audio for the grouped ComboBox.</summary>
+    /// <summary>All formats ordered Video → Audio → Project for the grouped ComboBox.</summary>
     public IReadOnlyList<FormatDefinition> AllFormats { get; } =
-        FormatRegistry.All.OrderBy(f => f.Category).ToList();
+        FormatRegistry.All
+            .OrderBy(f => f.Category switch
+            {
+                FormatCategory.Video   => 0,
+                FormatCategory.Audio   => 1,
+                FormatCategory.Project => 2,
+                _                      => 3
+            })
+            .ToList();
 
-    // ── Commands ──────────────────────────────────────────────────────────
+    // ── Download commands ─────────────────────────────────────────────────
     [RelayCommand(CanExecute = nameof(CanDownload))]
     private async Task DownloadAsync(CancellationToken ct)
     {
@@ -77,7 +107,12 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
-            var request          = new DownloadRequest(Url, SelectedQuality, OutputFolder);
+            var request = new DownloadRequest(
+                Url,
+                SelectedQuality,
+                OutputFolder,
+                MergeFormat: SelectedDownloadFormat.ToMergeFlag());
+
             var progressReporter = new Progress<ProgressReport>(r =>
             {
                 ProgressValue = r.Percentage;
@@ -106,14 +141,12 @@ public partial class MainViewModel : ObservableObject
             IsRunning = false;
         }
 
-        // Persist to history regardless of success/failure (CancellationToken.None so
-        // the write is not cancelled even if the user triggered cancellation above).
         var record = new RunRecord
         {
             RunType      = RunType.Download,
             Source       = Url,
             OutputPath   = OutputFolder,
-            FormatLabel  = string.Empty,   // yt-dlp picks the container; we don't know it here
+            FormatLabel  = SelectedDownloadFormat.ToMergeFlag().ToUpperInvariant(),
             Success      = success,
             ErrorMessage = success ? null : errorMessage,
         };
@@ -127,42 +160,32 @@ public partial class MainViewModel : ObservableObject
         Uri.TryCreate(Url, UriKind.Absolute, out var uri) &&
         (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp);
 
+    [RelayCommand]
+    private void PasteUrl() => Url = Clipboard.GetText();
+
+    // ── Convert commands ──────────────────────────────────────────────────
     [RelayCommand(CanExecute = nameof(CanConvert))]
     private async Task ConvertAsync(CancellationToken ct)
     {
-        if (SelectedFormat is null) return;
+        if (SelectedConvertFormat is null || string.IsNullOrEmpty(ConvertInputPath)) return;
 
         IsRunning = true;
         LogLines.Clear();
 
         bool   success      = false;
         string errorMessage = string.Empty;
-        string inputPath    = string.Empty;
         string outputPath   = string.Empty;
 
         try
         {
-            var openDlg = new Microsoft.Win32.OpenFileDialog
-            {
-                Title  = "Select video to convert",
-                Filter = "Video files|*.mp4;*.mkv;*.avi;*.webm;*.mov;*.ts|All files|*.*"
-            };
-            if (openDlg.ShowDialog() != true)
-            {
-                StatusText = "Convert cancelled.";
-                IsRunning  = false;
-                return;
-            }
-
-            inputPath  = openDlg.FileName;
             outputPath = Path.Combine(
                 OutputFolder,
-                Path.GetFileNameWithoutExtension(inputPath) + "." + SelectedFormat.Extension);
+                Path.GetFileNameWithoutExtension(ConvertInputPath) + "." + SelectedConvertFormat.Extension);
 
             var logReporter = new Progress<string>(line =>
                 Application.Current.Dispatcher.Invoke(() => LogLines.Add(line)));
 
-            var req = new ConversionRequest(inputPath, outputPath, SelectedFormat);
+            var req = new ConversionRequest(ConvertInputPath, outputPath, SelectedConvertFormat);
             await _converter.ConvertAsync(req, logReporter, ct);
             StatusText = $"Done → {outputPath}";
             success    = true;
@@ -182,15 +205,14 @@ public partial class MainViewModel : ObservableObject
             IsRunning = false;
         }
 
-        // Only record if the file dialog was accepted (outputPath non-empty).
         if (!string.IsNullOrEmpty(outputPath))
         {
             var record = new RunRecord
             {
                 RunType      = RunType.Convert,
-                Source       = inputPath,
+                Source       = ConvertInputPath,
                 OutputPath   = outputPath,
-                FormatLabel  = SelectedFormat?.Label ?? string.Empty,
+                FormatLabel  = SelectedConvertFormat?.Label ?? string.Empty,
                 Success      = success,
                 ErrorMessage = success ? null : errorMessage,
             };
@@ -199,11 +221,25 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private bool CanConvert() => !IsRunning && SelectedFormat is not null;
+    private bool CanConvert() =>
+        !IsRunning &&
+        SelectedConvertFormat is not null &&
+        !string.IsNullOrEmpty(ConvertInputPath);
 
     [RelayCommand]
-    private void PasteUrl() => Url = Clipboard.GetText();
+    private void BrowseInputFile()
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title  = "Select file to convert",
+            Filter = "Video and audio files|*.mp4;*.mkv;*.avi;*.webm;*.mov;*.ts;" +
+                     "*.mp3;*.aac;*.wav;*.flac;*.ogg;*.m4a|All files|*.*"
+        };
+        if (dlg.ShowDialog() == true)
+            ConvertInputPath = dlg.FileName;
+    }
 
+    // ── Shared commands ───────────────────────────────────────────────────
     [RelayCommand]
     private void BrowseOutputFolder()
     {
@@ -216,21 +252,10 @@ public partial class MainViewModel : ObservableObject
             OutputFolder = dlg.FolderName;
     }
 
-    [RelayCommand]
-    private void ToggleTheme()
-    {
-        IsDarkTheme = !IsDarkTheme;
-        ApplicationThemeManager.Apply(
-            IsDarkTheme ? ApplicationTheme.Dark : ApplicationTheme.Light);
-    }
-
     /// <summary>Cancels whichever of Download or Convert is currently running.</summary>
     [RelayCommand]
     private void CancelCurrent()
     {
-        // CommunityToolkit.Mvvm generates AsyncRelayCommand (IAsyncRelayCommand) for
-        // async [RelayCommand] methods. Cancel is via .Cancel() / .CanBeCanceled —
-        // there is no separate generated CancelCommand property.
         if (DownloadCommand.CanBeCanceled)
             DownloadCommand.Cancel();
         else if (ConvertCommand.CanBeCanceled)

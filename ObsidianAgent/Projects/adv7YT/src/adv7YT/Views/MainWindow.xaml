@@ -11,8 +11,8 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
     Title="adv7YT"
-    Width="660" Height="560"
-    MinWidth="560" MinHeight="460"
+    Width="660" Height="600"
+    MinWidth="560" MinHeight="500"
     WindowStartupLocation="CenterScreen"
     ExtendsContentIntoTitleBar="True">
 
@@ -20,9 +20,7 @@
         <helpers:EnumToBoolConverter      x:Key="EnumToBool"     />
         <helpers:InvertBoolConverter      x:Key="InvertBool"     />
         <helpers:BoolToOkFailedConverter  x:Key="BoolToOkFailed" />
-        <!-- CollectionViewSource groups AllFormats by Category for the single grouped ComboBox.
-             Note: Source="{Binding AllFormats}" resolves only at runtime (not design-time);
-             the designer may show an empty ComboBox — this is expected and harmless. -->
+        <!-- CollectionViewSource groups AllFormats by Category for the Convert ComboBox. -->
         <CollectionViewSource x:Key="FormatsView" Source="{Binding AllFormats}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Category"/>
@@ -31,14 +29,12 @@
     </ui:FluentWindow.Resources>
 
     <DockPanel>
-        <!-- Custom title bar — FluentWindow has no TitleBar property in WPF-UI 3.x;
-             TitleBar is placed as a docked child of the window content instead. -->
+        <!-- Title bar — ToggleSwitch uses two-way IsChecked only (no Command) -->
         <ui:TitleBar DockPanel.Dock="Top" Title="adv7YT">
             <ui:TitleBar.TrailingContent>
                 <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
                     <ui:ToggleSwitch
                         IsChecked="{Binding IsDarkTheme}"
-                        Command="{Binding ToggleThemeCommand}"
                         OffContent="Light"
                         OnContent="Dark"
                         VerticalAlignment="Center"
@@ -48,204 +44,289 @@
         </ui:TitleBar>
 
         <Grid Margin="20,8,20,20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- 0:  URL input -->
-            <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- 2:  Quality selector -->
-            <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- 4:  Format grouped ComboBox -->
-            <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- 6:  Output folder -->
-            <RowDefinition Height="16"/>
-            <RowDefinition Height="Auto"/>  <!-- 8:  Progress bar -->
-            <RowDefinition Height="4"/>
-            <RowDefinition Height="Auto"/>  <!-- 10: Status text -->
-            <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- 12: Action buttons -->
-            <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- 14: Log expander -->
-            <RowDefinition Height="12"/>
-            <RowDefinition Height="Auto"/>  <!-- 16: History expander -->
-            <RowDefinition Height="*"/>     <!-- 17: filler -->
-        </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- 0: TabControl (Download / Convert) -->
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="Auto"/>  <!-- 2: Output folder -->
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="Auto"/>  <!-- 4: Progress bar -->
+                <RowDefinition Height="4"/>
+                <RowDefinition Height="Auto"/>  <!-- 6: Status text -->
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="Auto"/>  <!-- 8: Cancel button -->
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="Auto"/>  <!-- 10: Log expander -->
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="Auto"/>  <!-- 12: History expander -->
+                <RowDefinition Height="*"/>     <!-- 13: filler -->
+            </Grid.RowDefinitions>
 
-        <!-- URL Input Row -->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <ui:TextBox Grid.Column="0"
-                        PlaceholderText="https://youtube.com/watch?v=..."
-                        Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
-                        ClearButtonEnabled="True"
-                        IsEnabled="{Binding IsRunning, Converter={StaticResource InvertBool}}"/>
-            <ui:Button Grid.Column="2"
-                       Content="Paste"
-                       Command="{Binding PasteUrlCommand}"/>
-        </Grid>
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- Row 0: Download / Convert tab control                       -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <TabControl Grid.Row="0">
 
-        <!-- Quality Selector -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock Text="Quality:" VerticalAlignment="Center" Margin="0,0,12,0"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-            <RadioButton Content="Native"
-                         GroupName="Quality"
-                         IsChecked="{Binding SelectedQuality,
-                             Converter={StaticResource EnumToBool},
-                             ConverterParameter=Native}"/>
-            <RadioButton Content="FHD 1080p" Margin="16,0,0,0"
-                         GroupName="Quality"
-                         IsChecked="{Binding SelectedQuality,
-                             Converter={StaticResource EnumToBool},
-                             ConverterParameter=Fhd}"/>
-            <RadioButton Content="Fast" Margin="16,0,0,0"
-                         GroupName="Quality"
-                         IsChecked="{Binding SelectedQuality,
-                             Converter={StaticResource EnumToBool},
-                             ConverterParameter=Fast}"/>
-        </StackPanel>
+                <!-- ── Download tab ─────────────────────────────────── -->
+                <TabItem Header="⬇  Download">
+                    <Grid Margin="0,12,0,4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>  <!-- URL -->
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="Auto"/>  <!-- Quality -->
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="Auto"/>  <!-- Output format -->
+                            <RowDefinition Height="16"/>
+                            <RowDefinition Height="Auto"/>  <!-- Download button -->
+                        </Grid.RowDefinitions>
 
-        <!-- Format — single grouped ComboBox replacing the three per-category boxes -->
-        <StackPanel Grid.Row="4" Orientation="Horizontal">
-            <TextBlock Text="Format:" VerticalAlignment="Center" Margin="0,0,12,0"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-            <ComboBox Width="478"
-                      ItemsSource="{Binding Source={StaticResource FormatsView}}"
-                      SelectedItem="{Binding SelectedFormat}"
-                      DisplayMemberPath="Label">
-                <ComboBox.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                           Margin="4,4,0,2"/>
-                            </DataTemplate>
-                        </GroupStyle.HeaderTemplate>
-                    </GroupStyle>
-                </ComboBox.GroupStyle>
-            </ComboBox>
-        </StackPanel>
+                        <!-- URL input -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBox Grid.Column="0"
+                                        PlaceholderText="https://youtube.com/watch?v=..."
+                                        Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
+                                        ClearButtonEnabled="True"
+                                        IsEnabled="{Binding IsRunning, Converter={StaticResource InvertBool}}"/>
+                            <ui:Button Grid.Column="2"
+                                       Content="Paste"
+                                       Command="{Binding PasteUrlCommand}"/>
+                        </Grid>
 
-        <!-- Output Folder -->
-        <Grid Grid.Row="6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <ui:TextBox Grid.Column="0"
-                        Text="{Binding OutputFolder}"
-                        PlaceholderText="Output folder…"
-                        IsReadOnly="True"/>
-            <ui:Button Grid.Column="2"
-                       Content="Browse"
-                       Command="{Binding BrowseOutputFolderCommand}"/>
-        </Grid>
+                        <!-- Quality selector -->
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Quality:" VerticalAlignment="Center" Margin="0,0,12,0"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <RadioButton Content="Native"
+                                         GroupName="Quality"
+                                         IsChecked="{Binding SelectedQuality,
+                                             Converter={StaticResource EnumToBool},
+                                             ConverterParameter=Native}"/>
+                            <RadioButton Content="FHD 1080p" Margin="16,0,0,0"
+                                         GroupName="Quality"
+                                         IsChecked="{Binding SelectedQuality,
+                                             Converter={StaticResource EnumToBool},
+                                             ConverterParameter=Fhd}"/>
+                            <RadioButton Content="Fast" Margin="16,0,0,0"
+                                         GroupName="Quality"
+                                         IsChecked="{Binding SelectedQuality,
+                                             Converter={StaticResource EnumToBool},
+                                             ConverterParameter=Fast}"/>
+                        </StackPanel>
 
-        <!-- Progress Bar -->
-        <Grid Grid.Row="8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="48"/>
-            </Grid.ColumnDefinitions>
-            <ProgressBar Grid.Column="0"
-                         Value="{Binding ProgressValue}"
-                         Minimum="0" Maximum="100"
-                         Height="10"/>
-            <TextBlock Grid.Column="2"
-                       Text="{Binding ProgressValue, StringFormat={}{0:F0}%}"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"/>
-        </Grid>
+                        <!-- Output format for download (MP4 / MKV / WebM) -->
+                        <StackPanel Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Format:" VerticalAlignment="Center" Margin="0,0,12,0"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <RadioButton Content="MP4"  GroupName="DlFmt"
+                                         IsChecked="{Binding SelectedDownloadFormat,
+                                             Converter={StaticResource EnumToBool},
+                                             ConverterParameter=Mp4}"/>
+                            <RadioButton Content="MKV"  GroupName="DlFmt" Margin="16,0,0,0"
+                                         IsChecked="{Binding SelectedDownloadFormat,
+                                             Converter={StaticResource EnumToBool},
+                                             ConverterParameter=Mkv}"/>
+                            <RadioButton Content="WebM" GroupName="DlFmt" Margin="16,0,0,0"
+                                         IsChecked="{Binding SelectedDownloadFormat,
+                                             Converter={StaticResource EnumToBool},
+                                             ConverterParameter=WebM}"/>
+                        </StackPanel>
 
-        <!-- Status Text -->
-        <TextBlock Grid.Row="10"
-                   Text="{Binding StatusText}"
-                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                   FontSize="11"
-                   TextTrimming="CharacterEllipsis"/>
+                        <!-- Download button -->
+                        <ui:Button Grid.Row="6"
+                                   Content="Download"
+                                   Appearance="Primary"
+                                   HorizontalAlignment="Right"
+                                   Command="{Binding DownloadCommand}"
+                                   Width="120"/>
+                    </Grid>
+                </TabItem>
 
-        <!-- Action Buttons -->
-        <StackPanel Grid.Row="12" Orientation="Horizontal" HorizontalAlignment="Right">
-            <ui:Button Content="Download"
-                       Appearance="Primary"
-                       Command="{Binding DownloadCommand}"
-                       Width="120"/>
-            <ui:Button Content="Convert"
-                       Margin="8,0,0,0"
-                       Command="{Binding ConvertCommand}"
-                       Width="120"/>
-            <ui:Button Content="Cancel"
-                       Margin="8,0,0,0"
+                <!-- ── Convert tab ──────────────────────────────────── -->
+                <TabItem Header="🔄  Convert">
+                    <Grid Margin="0,12,0,4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>  <!-- File picker -->
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="Auto"/>  <!-- Format -->
+                            <RowDefinition Height="16"/>
+                            <RowDefinition Height="Auto"/>  <!-- Convert button -->
+                        </Grid.RowDefinitions>
+
+                        <!-- Input file picker -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBox Grid.Column="0"
+                                        Text="{Binding ConvertInputPath}"
+                                        PlaceholderText="Select a file to convert…"
+                                        IsReadOnly="True"/>
+                            <ui:Button Grid.Column="2"
+                                       Content="Browse…"
+                                       Command="{Binding BrowseInputFileCommand}"/>
+                        </Grid>
+
+                        <!-- Convert format: all categories grouped, with description tooltip -->
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <TextBlock Text="Format:" VerticalAlignment="Center" Margin="0,0,12,0"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <ComboBox Width="478"
+                                      ItemsSource="{Binding Source={StaticResource FormatsView}}"
+                                      SelectedItem="{Binding SelectedConvertFormat}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Label}"
+                                                   ToolTip="{Binding Description}"
+                                                   ToolTipService.ShowDuration="8000"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                                <ComboBox.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                           Margin="4,4,0,2"/>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </ComboBox.GroupStyle>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Convert button -->
+                        <ui:Button Grid.Row="4"
+                                   Content="Convert"
+                                   HorizontalAlignment="Right"
+                                   Command="{Binding ConvertCommand}"
+                                   Width="120"/>
+                    </Grid>
+                </TabItem>
+
+            </TabControl>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- Row 2: Output folder (shared)                               -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ui:TextBox Grid.Column="0"
+                            Text="{Binding OutputFolder}"
+                            PlaceholderText="Output folder…"
+                            IsReadOnly="True"/>
+                <ui:Button Grid.Column="2"
+                           Content="Browse"
+                           Command="{Binding BrowseOutputFolderCommand}"/>
+            </Grid>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- Row 4: Progress bar                                         -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+                <ProgressBar Grid.Column="0"
+                             Value="{Binding ProgressValue}"
+                             Minimum="0" Maximum="100"
+                             Height="10"/>
+                <TextBlock Grid.Column="2"
+                           Text="{Binding ProgressValue, StringFormat={}{0:F0}%}"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"/>
+            </Grid>
+
+            <!-- Row 6: Status text -->
+            <TextBlock Grid.Row="6"
+                       Text="{Binding StatusText}"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       FontSize="11"
+                       TextTrimming="CharacterEllipsis"/>
+
+            <!-- Row 8: Cancel button -->
+            <ui:Button Grid.Row="8"
+                       Content="Cancel"
+                       HorizontalAlignment="Right"
                        Appearance="Secondary"
                        Command="{Binding CancelCurrentCommand}"
                        IsEnabled="{Binding IsRunning}"
                        Width="88"/>
-        </StackPanel>
 
-        <!-- Collapsible Log -->
-        <Expander Grid.Row="14"
-                  Header="Log"
-                  IsExpanded="{Binding IsLogExpanded}">
-            <ListBox ItemsSource="{Binding LogLines}"
-                     helpers:AutoScrollBehavior.IsEnabled="True"
-                     MaxHeight="200"
-                     FontFamily="Consolas"
-                     FontSize="11"
-                     BorderThickness="0"
-                     Background="Transparent"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                     VirtualizingPanel.IsVirtualizing="True"/>
-        </Expander>
-
-        <!-- Collapsible History -->
-        <Expander Grid.Row="16"
-                  Header="History"
-                  IsExpanded="{Binding IsHistoryExpanded}">
-            <Grid Margin="0,4,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <ui:Button Grid.Row="0"
-                           Content="Clear"
-                           HorizontalAlignment="Right"
-                           Margin="0,0,0,4"
-                           Command="{Binding ClearHistoryCommand}"/>
-                <ListBox Grid.Row="1"
-                         ItemsSource="{Binding History}"
-                         MaxHeight="150"
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- Row 10: Log expander                                        -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <Expander Grid.Row="10"
+                      Header="Log"
+                      IsExpanded="{Binding IsLogExpanded}">
+                <ListBox ItemsSource="{Binding LogLines}"
+                         helpers:AutoScrollBehavior.IsEnabled="True"
+                         MaxHeight="200"
+                         FontFamily="Consolas"
+                         FontSize="11"
                          BorderThickness="0"
                          Background="Transparent"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         VirtualizingPanel.IsVirtualizing="True">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="0,2">
-                                <TextBlock FontSize="11">
-                                    <Run Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd HH:mm}, Mode=OneWay}"/>
-                                    <Run Text=" · "/>
-                                    <Run Text="{Binding RunType, Mode=OneWay}"/>
-                                    <Run Text=" · "/>
-                                    <Run Text="{Binding Success, Converter={StaticResource BoolToOkFailed}, Mode=OneWay}"
-                                         FontWeight="SemiBold"/>
-                                </TextBlock>
-                                <TextBlock Text="{Binding OutputPath, Mode=OneWay}"
-                                           FontSize="10"
-                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                           TextTrimming="CharacterEllipsis"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
-        </Expander>
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         VirtualizingPanel.IsVirtualizing="True"/>
+            </Expander>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- Row 12: History expander                                    -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <Expander Grid.Row="12"
+                      Header="History"
+                      IsExpanded="{Binding IsHistoryExpanded}">
+                <Grid Margin="0,4,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ui:Button Grid.Row="0"
+                               Content="Clear"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,0,4"
+                               Command="{Binding ClearHistoryCommand}"/>
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding History}"
+                             MaxHeight="150"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             VirtualizingPanel.IsVirtualizing="True">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,2">
+                                    <TextBlock FontSize="11">
+                                        <Run Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd HH:mm}, Mode=OneWay}"/>
+                                        <Run Text=" · "/>
+                                        <Run Text="{Binding RunType, Mode=OneWay}"/>
+                                        <Run Text=" · "/>
+                                        <Run Text="{Binding Success, Converter={StaticResource BoolToOkFailed}, Mode=OneWay}"
+                                             FontWeight="SemiBold"/>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding OutputPath, Mode=OneWay}"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Expander>
 
         </Grid>
     </DockPanel>

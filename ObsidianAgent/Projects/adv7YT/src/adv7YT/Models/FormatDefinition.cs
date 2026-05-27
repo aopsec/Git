@@ -8,5 +8,5 @@ public sealed record FormatDefinition(
     FormatCategory Category,
     string VideoCodec,
     string AudioCodec,
-    string? ExtraFlags
-);
+    string? ExtraFlags,
+    string Description);

@@ -68,7 +68,7 @@ python3 tools/extract_cyber_pdf_reference.py \
 python3 tools/extract_cyber_pdf_reference.py \
   --pdf-list tools/cyber_pdf_ref/b00ks_sources.txt --repo . --dry-run
 
-# Teste Python do extractor CyberPDF
+# Teste Python do extractor CyberPDF (esperado: 10 passed, sem warnings)
 pytest -q tests/test_cyber_pdf_ref.py
 
 # Testes da fixture OpenBox
@@ -151,6 +151,8 @@ ObsidianAgent/
 │   ├── IC01-aops/            # Umbrella com sub-projetos (ADV7ia, AVAL01-IC, IPS_IDS, OpenB0X,
 │   │                         #   OpenBox0.1v). Sem TOML/README na raiz → fora dos catálogos do
 │   │                         #   meta-vault. Possui CLAUDE.md aninhados (ver seção abaixo).
+│   │                         #   NOTA: este diretório existe na árvore pai `Git/`, não
+│   │                         #   diretamente em `ObsidianAgent/Projects/`.
 │   ├── IPS_IDS/              # Sem .aops-vault.toml. Tem CLAUDE.md próprio (instalador
 │   │                         #   IPS/IDS Arch, fase 1 detection-only). README entra no
 │   │                         #   catálogo Project Overviews do meta-vault.
@@ -321,8 +323,10 @@ Valores de `title_mode` em uso: `standard`, `project-parent`, `session-log`, `da
   gerador atual.
 - `validate-collab-stack.sh` exige que os skills Claude (`preserve`, `compress`,
   `resume`, `collab`) estejam em `~/.claude/commands/`. Skills ausentes → FAIL.
-  O script também espera o checkout canônico em `$HOME/ObsidianAgent`; rodando
-  fora dele alguns checks de path absoluto podem falhar.
+  O script também espera o checkout canônico em `$HOME/ObsidianAgent` (sem o
+  prefixo `OPia/Git/`). Nesta máquina isso causa **5 de 25 checks falharem por
+  path mismatch** — são falhas ambientais, não bugs de código. Os 20 que passam
+  cobrem CPR skills, PreCompact hook, redactor, Codex bridge e systemd units.
 - O `.aops-vault.toml` raiz e o do OpenBox são contratos separados.
   `--repo .` na raiz processa apenas o meta-vault.
 - `Projects/OpenBox0.1v/tests/validate-stack.sh` usa `set -uo pipefail` (falta `-e`,

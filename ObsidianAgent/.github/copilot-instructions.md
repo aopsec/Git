@@ -80,7 +80,7 @@ pip install -e '.[dev,cov]'        # Add ',psl' for publicsuffix2 support
 ```bash
 ruff check .                        # Ruff checks (code quality)
 mypy                                # Type checking (strict mode)
-pytest -q --cov                     # Run tests with coverage; gate is 85%
+pytest -q --cov                     # Run tests with coverage; gate is 98%
 ```
 
 **Single test run:**

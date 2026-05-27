@@ -36,7 +36,7 @@ public sealed class DownloadService : IDownloadService
         foreach (var arg in new[]
         {
             "-f", format,
-            "--merge-output-format", "mkv",
+            "--merge-output-format", request.MergeFormat,
             "--newline",
             "--no-playlist",
             "--no-mtime",
