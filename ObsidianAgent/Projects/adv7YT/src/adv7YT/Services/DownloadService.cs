@@ -33,20 +33,8 @@ public sealed class DownloadService : IDownloadService
         };
 
         // Use ArgumentList to prevent shell injection from user-supplied URLs
-        foreach (var arg in new[]
-        {
-            "-f", format,
-            "--merge-output-format", request.MergeFormat,
-            "--newline",
-            "--no-playlist",
-            "--no-mtime",
-            "-o", template,
-            "--ffmpeg-location", ffmpeg,
-            request.Url
-        })
-        {
+        foreach (var arg in BuildArgs(format, request.MergeFormat, template, ffmpeg, request.Url))
             psi.ArgumentList.Add(arg);
-        }
 
         using var proc = Process.Start(psi)
             ?? throw new InvalidOperationException("Failed to start yt-dlp.");
@@ -76,6 +64,21 @@ public sealed class DownloadService : IDownloadService
         if (proc.ExitCode != 0)
             throw new InvalidOperationException($"yt-dlp exited with code {proc.ExitCode}.");
     }
+
+    // Exposed internal for unit tests (InternalsVisibleTo adv7YT.Tests).
+    internal static IReadOnlyList<string> BuildArgs(
+        string format, string mergeFormat, string outputTemplate, string ffmpegPath, string url)
+        => new[]
+        {
+            "-f",                    format,
+            "--merge-output-format", mergeFormat,
+            "--newline",
+            "--no-playlist",
+            "--no-mtime",
+            "-o",                    outputTemplate,
+            "--ffmpeg-location",     ffmpegPath,
+            url,
+        };
 
     private static async Task ConsumeStreamAsync(
         StreamReader reader,
