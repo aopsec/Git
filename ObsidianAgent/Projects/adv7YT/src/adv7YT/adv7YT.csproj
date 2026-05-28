@@ -21,6 +21,12 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>adv7YT.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
   <!-- Embedded tool binaries — must be added manually before build -->
   <!-- See Assets/.gitkeep and CLAUDE.md for instructions -->
   <ItemGroup>

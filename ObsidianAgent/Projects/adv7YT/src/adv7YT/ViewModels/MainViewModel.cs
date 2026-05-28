@@ -178,9 +178,7 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
-            outputPath = Path.Combine(
-                OutputFolder,
-                Path.GetFileNameWithoutExtension(ConvertInputPath) + "." + SelectedConvertFormat.Extension);
+            outputPath = ResolveOutputPath(ConvertInputPath, OutputFolder, SelectedConvertFormat.Extension);
 
             var logReporter = new Progress<string>(line =>
                 Application.Current.Dispatcher.Invoke(() => LogLines.Add(line)));
@@ -267,5 +265,19 @@ public partial class MainViewModel : ObservableObject
     {
         _history.Clear();
         History.Clear();
+    }
+
+    // Exposed internal for unit tests (InternalsVisibleTo adv7YT.Tests).
+    internal static string ResolveOutputPath(string inputPath, string outputFolder, string extension)
+    {
+        var candidate = Path.Combine(outputFolder,
+            Path.GetFileNameWithoutExtension(inputPath) + "." + extension);
+
+        // Guard: prevent silently overwriting the source file when folder and extension collide.
+        if (string.Equals(candidate, inputPath, StringComparison.OrdinalIgnoreCase))
+            candidate = Path.Combine(outputFolder,
+                Path.GetFileNameWithoutExtension(inputPath) + "_converted." + extension);
+
+        return candidate;
     }
 }

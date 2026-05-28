@@ -40,8 +40,6 @@ Get-FileHash src\adv7YT\Assets\yt-dlp.exe  -Algorithm SHA256 | Select Hash
 Get-FileHash src\adv7YT\Assets\ffmpeg.exe   -Algorithm SHA256 | Select Hash
 ```
 
-Uncomment the `EmbeddedResource` block in `adv7YT.csproj`.
-
 ### Build & Test
 
 ```bash

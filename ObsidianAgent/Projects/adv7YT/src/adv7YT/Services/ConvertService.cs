@@ -19,10 +19,11 @@ public sealed class ConvertService : IConvertService
 
         var psi = new ProcessStartInfo
         {
-            FileName              = ffmpeg,
-            RedirectStandardError = true,
-            UseShellExecute       = false,
-            CreateNoWindow        = true,
+            FileName               = ffmpeg,
+            RedirectStandardError  = true,
+            RedirectStandardOutput = true,
+            UseShellExecute        = false,
+            CreateNoWindow         = true,
         };
 
         // Core args
@@ -68,9 +69,12 @@ public sealed class ConvertService : IConvertService
             }
         }, ct);
 
+        // Drain stdout so ffmpeg never blocks on a full pipe buffer.
+        var stdoutTask = proc.StandardOutput.ReadToEndAsync(ct);
+
         try
         {
-            await stderrTask;
+            await Task.WhenAll(stderrTask, stdoutTask);
             await proc.WaitForExitAsync(ct);
         }
         catch (OperationCanceledException)
