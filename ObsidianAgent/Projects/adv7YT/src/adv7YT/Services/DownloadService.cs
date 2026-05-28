@@ -32,6 +32,10 @@ public sealed class DownloadService : IDownloadService
             CreateNoWindow         = true,
         };
 
+        // [FIX-BUG-01] Force Python unbuffered output so progress lines flush
+        // immediately to stdout instead of being held in pipe buffers.
+        psi.EnvironmentVariables["PYTHONUNBUFFERED"] = "1";
+
         // Use ArgumentList to prevent shell injection from user-supplied URLs
         foreach (var arg in BuildArgs(format, request.MergeFormat, template, ffmpeg, request.Url))
             psi.ArgumentList.Add(arg);
@@ -41,14 +45,16 @@ public sealed class DownloadService : IDownloadService
 
         try
         {
-            var stderrTask = ConsumeStreamAsync(proc.StandardError, line =>
+            // [FIX-BUG-01] yt-dlp emits [download] progress to stdout, errors to stderr.
+            // The previous implementation had these swapped, which froze the progress bar.
+            var stdoutTask = ConsumeStreamAsync(proc.StandardOutput, line =>
             {
                 log?.Report(line);
                 if (ProgressParser.TryParse(line, out var report) && report is not null)
                     progress?.Report(report);
             }, ct);
 
-            var stdoutTask = ConsumeStreamAsync(proc.StandardOutput,
+            var stderrTask = ConsumeStreamAsync(proc.StandardError,
                 line => log?.Report(line), ct);
 
             await Task.WhenAll(stderrTask, stdoutTask);
@@ -73,6 +79,7 @@ public sealed class DownloadService : IDownloadService
             "-f",                    format,
             "--merge-output-format", mergeFormat,
             "--newline",
+            "--no-colors",
             "--no-playlist",
             "--no-mtime",
             "-o",                    outputTemplate,

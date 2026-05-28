@@ -10,7 +10,7 @@
     xmlns:helpers="clr-namespace:adv7YT.Helpers"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
-    Title="adv7YT"
+    Title="adv7ProTools"
     Width="660" Height="600"
     MinWidth="560" MinHeight="500"
     WindowStartupLocation="CenterScreen"
@@ -20,12 +20,28 @@
         <helpers:EnumToBoolConverter      x:Key="EnumToBool"     />
         <helpers:InvertBoolConverter      x:Key="InvertBool"     />
         <helpers:BoolToOkFailedConverter  x:Key="BoolToOkFailed" />
-        <!-- CollectionViewSource groups AllFormats by Category for the Convert ComboBox. -->
-        <CollectionViewSource x:Key="FormatsView" Source="{Binding AllFormats}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="Category"/>
-            </CollectionViewSource.GroupDescriptions>
-        </CollectionViewSource>
+        <!-- [FIX-BUG-02] Flat-list ComboBox: FormatHeader rows are disabled
+             labels, FormatEntry rows are selectable FormatDefinition items. -->
+        <helpers:IsFormatEntryConverter x:Key="IsFormatEntryConverter"/>
+        <helpers:FormatItemTemplateSelector x:Key="FormatItemSelector">
+            <helpers:FormatItemTemplateSelector.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="4,4,0,2"
+                               IsHitTestVisible="False"/>
+                </DataTemplate>
+            </helpers:FormatItemTemplateSelector.HeaderTemplate>
+            <helpers:FormatItemTemplateSelector.EntryTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Format.Label}"
+                               ToolTip="{Binding Format.Description}"
+                               ToolTipService.ShowDuration="8000"
+                               Margin="12,0,0,0"/>
+                </DataTemplate>
+            </helpers:FormatItemTemplateSelector.EntryTemplate>
+        </helpers:FormatItemTemplateSelector>
     </ui:FluentWindow.Resources>
 
     <DockPanel>
@@ -87,7 +103,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <ui:TextBox Grid.Column="0"
-                                        PlaceholderText="https://youtube.com/watch?v=..."
+                                        PlaceholderText="Paste a URL — YouTube, Vimeo, TikTok, Instagram, SoundCloud and 1700+ sites"
                                         Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
                                         ClearButtonEnabled="True"
                                         IsEnabled="{Binding IsRunning, Converter={StaticResource InvertBool}}"/>
@@ -176,28 +192,22 @@
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
                             <TextBlock Text="Format:" VerticalAlignment="Center" Margin="0,0,12,0"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <!-- [FIX-BUG-02] Flat-list ComboBox: header rows are disabled via
+                                 ItemContainerStyle/IsFormatEntryConverter; entry rows bind to
+                                 FormatEntry.Format and surface through SelectedValuePath. -->
                             <ComboBox Width="478"
-                                      ItemsSource="{Binding Source={StaticResource FormatsView}}"
-                                      SelectedItem="{Binding SelectedConvertFormat}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Label}"
-                                                   ToolTip="{Binding Description}"
-                                                   ToolTipService.ShowDuration="8000"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                                <ComboBox.GroupStyle>
-                                    <GroupStyle>
-                                        <GroupStyle.HeaderTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Name}"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                           Margin="4,4,0,2"/>
-                                            </DataTemplate>
-                                        </GroupStyle.HeaderTemplate>
-                                    </GroupStyle>
-                                </ComboBox.GroupStyle>
+                                      ItemsSource="{Binding ConvertFormatList}"
+                                      ItemTemplateSelector="{StaticResource FormatItemSelector}"
+                                      SelectedValuePath="Format"
+                                      SelectedValue="{Binding SelectedConvertFormat}">
+                                <ComboBox.ItemContainerStyle>
+                                    <Style TargetType="ComboBoxItem"
+                                           BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                        <Setter Property="IsEnabled"
+                                                Value="{Binding Converter={StaticResource IsFormatEntryConverter}}"/>
+                                        <Setter Property="Padding" Value="4,2"/>
+                                    </Style>
+                                </ComboBox.ItemContainerStyle>
                             </ComboBox>
                         </StackPanel>
 

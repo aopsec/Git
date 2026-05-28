@@ -37,4 +37,14 @@ public class MainViewModelOutputPathTests
         var result = MainViewModel.ResolveOutputPath(@"C:\Videos\TEST.MP4", @"C:\Videos", "mp4");
         Path.GetFileName(result).Should().Contain("_converted");
     }
+
+    [Fact]
+    public void FrameSequence_BuildsDirectoryAndTemplate()
+    {
+        // [FEATURE-01] PNG/JPEG frame outputs use <folder>/<basename>/frame_%04d.<ext>.
+        var result = MainViewModel.ResolveOutputPath(
+            @"C:\Videos\test.mp4", @"C:\out", "png", isFrameSequence: true);
+        result.Should().Contain("frame_%04d.png");
+        result.Should().Contain("test");
+    }
 }

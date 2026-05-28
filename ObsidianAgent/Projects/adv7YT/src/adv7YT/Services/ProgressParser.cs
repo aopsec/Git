@@ -6,8 +6,11 @@ namespace adv7YT.Services;
 
 public static class ProgressParser
 {
+    // [FIX-BUG-01] Tolerate leading ANSI colour codes (yt-dlp emits them even
+    // with --no-colors on some platforms) and the optional "~" prefix that
+    // marks an approximate total size for fragmented downloads.
     private static readonly Regex ProgressRegex = new(
-        @"\[download\]\s+(?<pct>\d+(?:\.\d+)?)%\s+of\s+[\d.]+\w+\s+at\s+(?<spd>[\d.]+\w+/s)\s+ETA\s+(?<eta>[\d:]+)",
+        @"(?:\x1b\[[0-9;]*m)*\[download\]\s+(?<pct>\d+(?:\.\d+)?)%\s+of\s+~?[\d.]+\w+\s+at\s+(?<spd>[\S]+)\s+ETA\s+(?<eta>[\d:]+)",
         RegexOptions.Compiled | RegexOptions.ExplicitCapture
     );
 

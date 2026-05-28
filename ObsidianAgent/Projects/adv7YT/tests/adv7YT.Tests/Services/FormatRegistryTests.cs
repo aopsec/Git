@@ -8,13 +8,14 @@ namespace adv7YT.Tests.Services;
 public class FormatRegistryTests
 {
     [Fact]
-    public void All_HasSixteenFormats()
-        => FormatRegistry.All.Should().HaveCount(16);
+    public void All_HasThirtyFormats()
+        => FormatRegistry.All.Should().HaveCount(30);
 
     [Theory]
-    [InlineData(FormatCategory.Project, 4)]
-    [InlineData(FormatCategory.Video,   6)]
-    [InlineData(FormatCategory.Audio,   6)]
+    [InlineData(FormatCategory.Project, 6)]
+    [InlineData(FormatCategory.Video,   10)]
+    [InlineData(FormatCategory.Audio,   10)]
+    [InlineData(FormatCategory.Image,   4)]
     public void ByCategory_ReturnsCorrectCount(FormatCategory category, int expected)
         => FormatRegistry.ByCategory(category).Should().HaveCount(expected);
 
@@ -51,4 +52,14 @@ public class FormatRegistryTests
     public void All_AllHaveNonEmptyDescription()
         => FormatRegistry.All.Should()
                .AllSatisfy(f => f.Description.Should().NotBeNullOrWhiteSpace());
+
+    [Fact]
+    public void FrameSequenceFormats_HaveIsFrameSequenceTrue()
+        // [FEATURE-01] PNG Frames and JPEG Frames write to a directory of
+        // numbered files via the frame_%04d.<ext> template, so MainViewModel
+        // must mkdir before invoking ffmpeg.
+        => FormatRegistry.All
+               .Where(f => f.Label is "PNG Frames" or "JPEG Frames")
+               .Should().AllSatisfy(f => f.IsFrameSequence.Should().BeTrue())
+               .And.HaveCount(2);
 }

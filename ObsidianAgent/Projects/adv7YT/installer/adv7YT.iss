@@ -1,36 +1,36 @@
-; adv7YT Inno Setup Script
+; adv7ProTools Inno Setup Script
 ; Build: iscc installer\adv7YT.iss
-; Requires: publish/portable/adv7YT.exe to exist (run dotnet publish first)
+; Requires: publish/portable/adv7ProTools0.0.1v.exe to exist (run dotnet publish first)
 
 [Setup]
-AppName=adv7YT
-AppVersion=0.1.0
+AppName=adv7ProTools
+AppVersion=0.0.1
 AppPublisher=AOPS
 AppPublisherURL=https://github.com/aops-dev
 AppSupportURL=https://github.com/aops-dev/adv7YT
-DefaultDirName={autopf}\adv7YT
-DefaultGroupName=adv7YT
+DefaultDirName={autopf}\adv7ProTools
+DefaultGroupName=adv7ProTools
 AllowNoIcons=yes
 OutputDir=..\publish\installer
-OutputBaseFilename=adv7YT-0.1.0-setup
+OutputBaseFilename=adv7ProTools0.0.1v-setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
 WizardStyle=modern
-UninstallDisplayIcon={app}\adv7YT.exe
+UninstallDisplayIcon={app}\adv7ProTools0.0.1v.exe
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 
 [Files]
-Source: "..\publish\portable\adv7YT.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\publish\portable\adv7ProTools0.0.1v.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\adv7YT";      Filename: "{app}\adv7YT.exe"
-Name: "{group}\Uninstall adv7YT"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\adv7YT"; Filename: "{app}\adv7YT.exe"; Tasks: desktopicon
+Name: "{group}\adv7ProTools";      Filename: "{app}\adv7ProTools0.0.1v.exe"
+Name: "{group}\Uninstall adv7ProTools"; Filename: "{uninstallexe}"
+Name: "{autodesktop}\adv7ProTools"; Filename: "{app}\adv7ProTools0.0.1v.exe"; Tasks: desktopicon
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Run]
-Filename: "{app}\adv7YT.exe"; Description: "Launch adv7YT now"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\adv7ProTools0.0.1v.exe"; Description: "Launch adv7ProTools now"; Flags: nowait postinstall skipifsilent

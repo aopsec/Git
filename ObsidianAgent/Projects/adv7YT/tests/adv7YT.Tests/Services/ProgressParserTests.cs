@@ -10,6 +10,11 @@ public class ProgressParserTests
     [InlineData("[download]  72.3% of   45.67MiB at    2.34MiB/s ETA 00:08", 72.3, "2.34MiB/s", "00:08")]
     [InlineData("[download]   5.0% of  100.00MiB at  500.00KiB/s ETA 03:20",  5.0, "500.00KiB/s", "03:20")]
     [InlineData("[download]   0.5% of    1.23MiB at    1.00MiB/s ETA 00:01",  0.5, "1.00MiB/s", "00:01")]
+    // [FIX-BUG-01] Leading ANSI reset escape that yt-dlp still emits on some
+    // platforms even with --no-colors. Must parse cleanly.
+    [InlineData("\x1b[0m[download]  50.0% of 10.00MiB at 1.00MiB/s ETA 00:10", 50.0, "1.00MiB/s", "00:10")]
+    // [FIX-BUG-01] Approximate-size prefix "~" used by fragmented downloads.
+    [InlineData("[download]  50.0% of ~10.00MiB at 1.00MiB/s ETA 00:10", 50.0, "1.00MiB/s", "00:10")]
     public void TryParse_ValidProgressLine_ReturnsTrue(
         string line, double expectedPct, string expectedSpd, string expectedEta)
     {

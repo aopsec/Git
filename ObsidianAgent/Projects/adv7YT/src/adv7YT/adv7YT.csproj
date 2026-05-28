@@ -8,9 +8,9 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <AssemblyName>adv7YT</AssemblyName>
+    <AssemblyName>adv7ProTools0.0.1v</AssemblyName>
     <RootNamespace>adv7YT</RootNamespace>
-    <Version>0.1.0</Version>
+    <Version>0.0.1</Version>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>5</WarningLevel>
   </PropertyGroup>

@@ -89,9 +89,22 @@ public partial class MainViewModel : ObservableObject
             {
                 FormatCategory.Video   => 0,
                 FormatCategory.Audio   => 1,
-                FormatCategory.Project => 2,
-                _                      => 3
+                FormatCategory.Image   => 2,
+                FormatCategory.Project => 3,
+                _                      => 4
             })
+            .ToList();
+
+    /// <summary>
+    /// [FIX-BUG-02] Flat list of FormatHeader + FormatEntry rows for the Convert
+    /// ComboBox. Replaces the CollectionViewSource/GroupStyle pattern, which
+    /// broke SelectedItem binding when the user re-clicked the same group.
+    /// Order: Video → Audio → Image → Project.
+    /// </summary>
+    public IReadOnlyList<FormatItem> ConvertFormatList { get; } =
+        new[] { FormatCategory.Video, FormatCategory.Audio, FormatCategory.Image, FormatCategory.Project }
+            .SelectMany(cat => (new FormatItem[] { new FormatHeader(cat.ToString()) })
+                .Concat(FormatRegistry.ByCategory(cat).Select(f => (FormatItem)new FormatEntry(f))))
             .ToList();
 
     // ── Download commands ─────────────────────────────────────────────────
@@ -178,7 +191,13 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
-            outputPath = ResolveOutputPath(ConvertInputPath, OutputFolder, SelectedConvertFormat.Extension);
+            outputPath = ResolveOutputPath(ConvertInputPath, OutputFolder,
+                SelectedConvertFormat.Extension, SelectedConvertFormat.IsFrameSequence);
+
+            // [FEATURE-01] Frame-sequence outputs write to <folder>/<name>/frame_%04d.<ext>.
+            // ffmpeg will not create the intermediate directory itself.
+            if (SelectedConvertFormat.IsFrameSequence)
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath)!);
 
             var logReporter = new Progress<string>(line =>
                 Application.Current.Dispatcher.Invoke(() => LogLines.Add(line)));
@@ -268,16 +287,23 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Exposed internal for unit tests (InternalsVisibleTo adv7YT.Tests).
-    internal static string ResolveOutputPath(string inputPath, string outputFolder, string extension)
+    // [FEATURE-01] isFrameSequence builds <outputFolder>/<basename>/frame_%04d.<ext>
+    // — ffmpeg expands %04d to a zero-padded frame index. MainViewModel.ConvertAsync
+    // creates the parent directory before invoking ffmpeg.
+    internal static string ResolveOutputPath(
+        string inputPath, string outputFolder, string extension,
+        bool isFrameSequence = false)
     {
+        if (isFrameSequence)
+            return Path.Combine(outputFolder,
+                Path.GetFileNameWithoutExtension(inputPath),
+                $"frame_%04d.{extension}");
+
         var candidate = Path.Combine(outputFolder,
             Path.GetFileNameWithoutExtension(inputPath) + "." + extension);
-
-        // Guard: prevent silently overwriting the source file when folder and extension collide.
-        if (string.Equals(candidate, inputPath, StringComparison.OrdinalIgnoreCase))
-            candidate = Path.Combine(outputFolder,
-                Path.GetFileNameWithoutExtension(inputPath) + "_converted." + extension);
-
-        return candidate;
+        return string.Equals(candidate, inputPath, StringComparison.OrdinalIgnoreCase)
+            ? Path.Combine(outputFolder,
+                Path.GetFileNameWithoutExtension(inputPath) + $"_converted.{extension}")
+            : candidate;
     }
 }

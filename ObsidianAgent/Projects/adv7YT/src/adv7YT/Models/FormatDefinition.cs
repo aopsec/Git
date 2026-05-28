@@ -1,6 +1,7 @@
 namespace adv7YT.Models;
 
-public enum FormatCategory { Project, Video, Audio }
+// [FEATURE-01] Image category added for animated/static frame outputs.
+public enum FormatCategory { Project, Video, Audio, Image }
 
 public sealed record FormatDefinition(
     string Label,
@@ -9,4 +10,8 @@ public sealed record FormatDefinition(
     string VideoCodec,
     string AudioCodec,
     string? ExtraFlags,
-    string Description);
+    string Description,
+    // [FEATURE-01] When true the output path is a directory + frame_%04d.<ext>
+    // template (used by PNG Frames / JPEG Frames). MainViewModel creates the
+    // directory before invoking ffmpeg.
+    bool IsFrameSequence = false);

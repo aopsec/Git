@@ -42,9 +42,18 @@ public sealed class ConvertService : IConvertService
             psi.ArgumentList.Add(fmt.VideoCodec);
         }
 
-        // Audio codec
-        psi.ArgumentList.Add("-c:a");
-        psi.ArgumentList.Add(fmt.AudioCodec);
+        // Audio codec — [FIX-BUG-03] Image formats use AudioCodec="none" to
+        // emit -an (drop audio). Previously the literal "none" was passed to
+        // ffmpeg as a codec name, which failed for GIF/WebP/PNG/JPEG outputs.
+        if (fmt.AudioCodec == "none")
+        {
+            psi.ArgumentList.Add("-an");
+        }
+        else
+        {
+            psi.ArgumentList.Add("-c:a");
+            psi.ArgumentList.Add(fmt.AudioCodec);
+        }
 
         // Extra flags — split on space; these are compile-time constants, not user input
         if (!string.IsNullOrEmpty(fmt.ExtraFlags))

@@ -4,6 +4,11 @@ namespace adv7YT.Services;
 
 public static class FormatRegistry
 {
+    // [FEATURE-01] Expanded from 16 → 30 formats:
+    //   Video   x10 (6 original + HEVC MP4, FLV, WMV, 3GP)
+    //   Audio   x10 (6 original + WMA, OPUS, AIFF, AC3)
+    //   Image   x 4 (NEW — Animated GIF, Animated WebP, PNG Frames, JPEG Frames)
+    //   Project x 6 (4 original + ProRes 4444, DNxHR HQ)
     public static IReadOnlyList<FormatDefinition> All { get; } = new FormatDefinition[]
     {
         // ── Project formats ──────────────────────────────────────────────────
@@ -30,6 +35,20 @@ public static class FormatRegistry
             AudioCodec: "pcm_s16le",
             ExtraFlags: "-quality 5 -pix_fmt yuv422p10le",
             Description: "GoPro CineForm quality 5. Good balance of quality and file size for NLE."),
+
+        // [FEATURE-01] new
+        new("ProRes 4444 .mov", "mov", FormatCategory.Project,
+            VideoCodec: "prores_ks",
+            AudioCodec: "pcm_s16le",
+            ExtraFlags: "-profile:v 4 -pix_fmt yuv444p10le",
+            Description: "Apple ProRes 4444. Max quality + alpha channel support. For compositing in After Effects."),
+
+        // [FEATURE-01] new
+        new("DNxHR HQ .mxf", "mxf", FormatCategory.Project,
+            VideoCodec: "dnxhd",
+            AudioCodec: "pcm_s16le",
+            ExtraFlags: "-profile:v dnxhr_hq -pix_fmt yuv422p",
+            Description: "Avid DNxHR HQ. Resolution-independent successor to DNxHD. For Avid Media Composer."),
 
         // ── Video formats ─────────────────────────────────────────────────────
         new("MP4",  "mp4",  FormatCategory.Video,
@@ -67,6 +86,34 @@ public static class FormatRegistry
             AudioCodec: "aac",
             ExtraFlags: "-crf 18 -preset slow",
             Description: "MPEG Transport Stream. Used in broadcast, IPTV, and OBS recordings."),
+
+        // [FEATURE-01] new
+        new("HEVC MP4", "mp4", FormatCategory.Video,
+            VideoCodec: "libx265",
+            AudioCodec: "aac",
+            ExtraFlags: "-crf 22 -preset slow -pix_fmt yuv420p -tag:v hvc1",
+            Description: "H.265 HEVC MP4. ~50% smaller than H.264 at same quality. Requires hardware decoder."),
+
+        // [FEATURE-01] new
+        new("FLV", "flv", FormatCategory.Video,
+            VideoCodec: "libx264",
+            AudioCodec: "aac",
+            ExtraFlags: "-crf 22 -ar 44100",
+            Description: "Flash Video legacy container. Use only for compatibility with older streaming platforms."),
+
+        // [FEATURE-01] new
+        new("WMV", "wmv", FormatCategory.Video,
+            VideoCodec: "wmv2",
+            AudioCodec: "wmav2",
+            ExtraFlags: "-b:v 2M -b:a 192k",
+            Description: "Windows Media Video. Legacy format for Windows XP/Vista era players."),
+
+        // [FEATURE-01] new
+        new("3GP", "3gp", FormatCategory.Video,
+            VideoCodec: "libx264",
+            AudioCodec: "aac",
+            ExtraFlags: "-crf 28 -vf scale=640:-2 -b:a 64k",
+            Description: "3GPP Mobile format. Very small files for legacy feature phones and MMS."),
 
         // ── Audio formats ─────────────────────────────────────────────────────
         // NOTE: -vn is intentionally absent from all audio ExtraFlags.
@@ -106,6 +153,64 @@ public static class FormatRegistry
             AudioCodec: "aac",
             ExtraFlags: "-b:a 256k -movflags +faststart",
             Description: "AAC in MPEG-4 container. Standard format for Apple Music / iTunes."),
+
+        // [FEATURE-01] new
+        new("WMA", "wma", FormatCategory.Audio,
+            VideoCodec: "none",
+            AudioCodec: "wmav2",
+            ExtraFlags: "-b:a 192k",
+            Description: "Windows Media Audio. Legacy format for Windows Media Player compatibility."),
+
+        // [FEATURE-01] new
+        new("OPUS", "opus", FormatCategory.Audio,
+            VideoCodec: "none",
+            AudioCodec: "libopus",
+            ExtraFlags: "-b:a 128k -vbr on -compression_level 10",
+            Description: "Opus in .opus container. Best quality/bitrate ratio at low bitrates. VoIP and streaming."),
+
+        // [FEATURE-01] new
+        new("AIFF", "aiff", FormatCategory.Audio,
+            VideoCodec: "none",
+            AudioCodec: "pcm_s16be",
+            ExtraFlags: "-ar 44100 -ac 2",
+            Description: "AIFF PCM big-endian. Lossless Apple format. Identical quality to WAV; used in macOS/Pro Tools."),
+
+        // [FEATURE-01] new
+        new("AC3", "ac3", FormatCategory.Audio,
+            VideoCodec: "none",
+            AudioCodec: "ac3",
+            ExtraFlags: "-b:a 384k",
+            Description: "Dolby AC-3 (Dolby Digital) surround. Standard for Blu-ray, DVD, and A/V receivers."),
+
+        // ── Image formats (NEW) ───────────────────────────────────────────────
+        // AudioCodec="none" triggers -an in ConvertService ([FIX-BUG-03]).
+        new("Animated GIF", "gif", FormatCategory.Image,
+            VideoCodec: "gif",
+            AudioCodec: "none",
+            ExtraFlags: "-vf fps=10,scale=480:-1:flags=lanczos -loop 0",
+            Description: "Animated GIF at 10fps, 480px wide. Web-compatible loop. Best for short clips under 15s.",
+            IsFrameSequence: false),
+
+        new("Animated WebP", "webp", FormatCategory.Image,
+            VideoCodec: "libwebp_anim",
+            AudioCodec: "none",
+            ExtraFlags: "-vf fps=15,scale=480:-1 -quality 80 -loop 0",
+            Description: "Animated WebP at 15fps. ~40% smaller than GIF with 24-bit color and alpha support.",
+            IsFrameSequence: false),
+
+        new("PNG Frames", "png", FormatCategory.Image,
+            VideoCodec: "png",
+            AudioCodec: "none",
+            ExtraFlags: "-vf fps=1",
+            Description: "PNG frame sequence at 1fps (one image per second). Lossless. Output: frame_0001.png etc.",
+            IsFrameSequence: true),
+
+        new("JPEG Frames", "jpg", FormatCategory.Image,
+            VideoCodec: "mjpeg",
+            AudioCodec: "none",
+            ExtraFlags: "-vf fps=1 -q:v 2",
+            Description: "JPEG frame sequence at 1fps. High quality VBR. Output: frame_0001.jpg etc.",
+            IsFrameSequence: true),
     };
 
     public static IEnumerable<FormatDefinition> ByCategory(FormatCategory category)

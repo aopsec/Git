@@ -46,6 +46,15 @@ public class DownloadServiceTests
     }
 
     [Fact]
+    public void BuildArgs_ContainsNoColorsFlag()
+    {
+        // [FIX-BUG-01] Without --no-colors, yt-dlp emits ANSI escape sequences
+        // that break the progress regex parse.
+        var args = DownloadService.BuildArgs(AnyFormat, "mp4", AnyTemplate, AnyFfmpeg, AnyUrl);
+        args.Should().Contain("--no-colors");
+    }
+
+    [Fact]
     public void BuildArgs_FfmpegLocationFollowsFfmpegLocationFlag()
     {
         var args = DownloadService.BuildArgs(AnyFormat, "mp4", AnyTemplate, AnyFfmpeg, AnyUrl);
