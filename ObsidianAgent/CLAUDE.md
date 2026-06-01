@@ -16,8 +16,8 @@ Substituível via `$AOPS_OBSIDIAN_AGENT_CLI` (check/sync) ou `$AOPS_OBSIDIAN_AGE
 
 `AGENTS.md` na raiz é o sibling Codex-side com guidance substancialmente
 sobreposto (comandos, layout, regra de determinismo). Ao alterar este CLAUDE.md
-verifique se `AGENTS.md` precisa do mesmo update — divergência entre os dois
-quebra parity Claude↔Codex.
+verifique se `AGENTS.md` e `.github/copilot-instructions.md` precisam do mesmo
+update — divergência entre os três quebra parity Claude↔Codex↔Copilot.
 
 ## Stack
 
@@ -103,7 +103,7 @@ Skill dual-ecossistema: `cyberref` em `~/.codex/skills/cyberref/SKILL.md` (Codex
 Skill projeto-local: `.claude/skills/run-obsidian-agent/` — driver de smoke para o
 ObsidianAgent (check + pytest + cyber-dry-run). Exposto ao harness como skill
 `run-obsidian-agent`; o entry-point é `smoke.sh` com subcomandos
-`check|sync|test|cyber-dry|all`.
+`check|sync|test|cyber-dry|stack|all`.
 
 ## Arquitetura
 
@@ -335,6 +335,9 @@ Valores de `title_mode` em uso: `standard`, `project-parent`, `session-log`, `da
   na raiz, que usa `set -euo pipefail` (aborta na primeira falha).
 - OpenBox é alvo Debian/Raspbian (apt), não Arch. Scripts de instalação NÃO rodam
   em Arch sem adaptação.
+- **`ci-syntax-check.sh` falha em `py_compile obsidian_agent/__init__.py`** com "Read-only
+  file system" ao tentar escrever `.pyc` na árvore do plugin (read-only). Não é erro de
+  sintaxe — o módulo é Python válido. Ignorar este item na saída do script.
 - Determinismo do `--sync` depende de locale consistente (ordenação de globs).
   Sempre exportar `LC_ALL=C.UTF-8` antes de gerar/comparar — divergência entre
   máquinas com locales distintos pode produzir reordenação de catálogos sem que

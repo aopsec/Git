@@ -11,7 +11,7 @@
 - `Vault/References/CyberPDFs/` holds the generated cyber-only PDF reference vault. Use it only for security, pentest, bug bounty, Linux hardening, and related automation work.
 - `Projects/` contains nested project repos. Current project folders include `ADV7ia/`, `IPS_IDS/`, `OpenBox0.1v/`, and `bbWebScan/`.
 - `Projects/OpenBox0.1v/` is the canonical vault-tooling proof fixture and holds its own docs, tests, tools, and repo-local vault.
-- `Projects/bbWebScan/` is a Python recon orchestrator. It has its own `pyproject.toml`, package modules, profile templates, and tests.
+- `Projects/ADV7_0f_Sec_Tools/bbWebScan/` is a Python recon orchestrator. It has its own `pyproject.toml`, package modules, profile templates, and tests.
 - `tests/` contains root-level collaboration and Obsidian stack checks.
 
 ## Build, Test, and Development Commands
@@ -34,8 +34,8 @@ Run all commands from the repo root unless noted otherwise.
   Confirms OpenBox vault state stays synchronized.
 - `bash Projects/OpenBox0.1v/tests/ci-syntax-check.sh`
   Runs the broad shell, TOML, Python, and vault verification stack.
-- `cd Projects/bbWebScan && ruff check . && mypy && pytest -q`
-  Verifies the Python recon orchestrator after code changes in `Projects/bbWebScan/`.
+- `cd Projects/ADV7_0f_Sec_Tools/bbWebScan && ruff check . && mypy && pytest -q`
+  Verifies the Python recon orchestrator after code changes in `Projects/ADV7_0f_Sec_Tools/bbWebScan/`.
 
 ## Coding Style & Naming Conventions
 
@@ -43,7 +43,7 @@ Keep manual notes short, title-cased, and link-friendly, for example `Vault Home
 
 ## Testing Guidelines
 
-After changing `.aops-vault.toml`, `Vault/`, or nested project vault tooling, run `--check` first, then `--sync`, then re-run `--check`. If the change affects shared vault behavior, also run the three OpenBox scripts above. For `bbWebScan` code changes, run its Python lint/type/test stack from `Projects/bbWebScan/`. Treat deterministic output as required: the same repo state must produce the same generated files.
+After changing `.aops-vault.toml`, `Vault/`, or nested project vault tooling, run `--check` first, then `--sync`, then re-run `--check`. If the change affects shared vault behavior, also run the three OpenBox scripts above. For `bbWebScan` code changes, run its Python lint/type/test stack from `Projects/ADV7_0f_Sec_Tools/bbWebScan/`. Treat deterministic output as required: the same repo state must produce the same generated files.
 
 ## Commit & Pull Request Guidelines
 

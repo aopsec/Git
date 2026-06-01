@@ -106,7 +106,11 @@
       "Bash(shellcheck -S warning adv7SQLMap0.0.5v.sh)",
       "Bash(rm -rf ./sqli_multi_* ./sqli_subdomains_*)",
       "Bash(ls -d ./sqli_*)",
-      "Bash(rm -rf ./sqli_example.com_*)"
+      "Bash(rm -rf ./sqli_example.com_*)",
+      "WebFetch(domain:www.youtube.com)",
+      "WebFetch(domain:quizlet.com)",
+      "WebFetch(domain:www.docsity.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "sandbox": {

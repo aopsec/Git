@@ -71,7 +71,7 @@ bash Projects/OpenBox0.1v/tests/validate-stack.sh
 bbWebScan is a scope-aware bug bounty web recon orchestrator. It has the most active Python development in the meta-repo.
 
 ```bash
-cd Projects/bbWebScan
+cd Projects/ADV7_0f_Sec_Tools/bbWebScan
 source .venv/bin/activate
 pip install -e '.[dev,cov]'        # Add ',psl' for publicsuffix2 support
 ```
@@ -80,7 +80,7 @@ pip install -e '.[dev,cov]'        # Add ',psl' for publicsuffix2 support
 ```bash
 ruff check .                        # Ruff checks (code quality)
 mypy                                # Type checking (strict mode)
-pytest -q --cov                     # Run tests with coverage; gate is 98%
+pytest -q --cov                     # Run tests with coverage; gate ≥ 98%
 ```
 
 **Single test run:**
@@ -91,7 +91,7 @@ pytest tests/test_<module>.py::TestClass::test_name -v
 **Check tool readiness:**
 ```bash
 bbwebscan doctor                    # Validates httpx, katana, nuclei, etc.
-bbwebscan --version                 # v0.5.0
+bbwebscan --version                 # bbwebscan 0.5.10
 ```
 
 **View recent scans:**
@@ -171,7 +171,7 @@ Use scoped prefixes following established patterns:
 vault: <subject>           # Changes to root .aops-vault.toml or Vault/
 tests: <subject>           # Changes to test harness
 projects/openbox: <subject>  # Changes under Projects/OpenBox0.1v/
-projects/bbwebscan: <subject>  # Changes under Projects/bbWebScan/
+projects/bbwebscan: <subject>  # Changes under Projects/ADV7_0f_Sec_Tools/bbWebScan/
 projects/adv7ia: <subject>    # Changes under Projects/ADV7ia/
 projects/ips_ids: <subject>   # Changes under Projects/IPS_IDS/
 ```
@@ -203,7 +203,7 @@ bash Projects/OpenBox0.1v/tests/ci-syntax-check.sh
 
 ### After bbWebScan Code Changes
 
-From `Projects/bbWebScan/`:
+From `Projects/ADV7_0f_Sec_Tools/bbWebScan/`:
 ```bash
 ruff check . && mypy && pytest -q --cov
 ```
@@ -211,7 +211,7 @@ ruff check . && mypy && pytest -q --cov
 All gates must pass:
 - ruff (code quality)
 - mypy (strict type checking)
-- pytest (tests pass + coverage ≥ 85%)
+- pytest (tests pass + coverage ≥ 98%)
 
 ## Critical Gotchas
 
@@ -231,7 +231,7 @@ All gates must pass:
 
 Before editing nested projects, check for project-local instruction files:
 
-- **bbWebScan**: Read `Projects/bbWebScan/README.md` and `CHANGELOG.md`. Linting rules and version bumping are documented there.
+- **bbWebScan**: Read `Projects/ADV7_0f_Sec_Tools/bbWebScan/README.md` and `CHANGELOG.md`. Linting rules and version bumping are documented there.
 - **OpenBox0.1v**: Read `Projects/OpenBox0.1v/README.md` and check phase scripts in `install.d/` for phase-specific contracts.
 - **ADV7ia**, **IPS_IDS**: Check for `CLAUDE.md` or `AGENTS.md` in project root.
 
