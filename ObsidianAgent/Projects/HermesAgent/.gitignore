@@ -1,0 +1,13 @@
+# Secrets / local-only config
+.env
+
+# Machine-generated vault output (produced by the project's own --sync locally)
+vault/Generated/*
+!vault/Generated/.gitkeep
+
+# Local upstream clone (lives at $HOME/plugins/hermes-agent — never vendored here)
+hermes-agent/
+
+# Hermes runtime data dir, model caches, logs
+.hermes/
+*.log
