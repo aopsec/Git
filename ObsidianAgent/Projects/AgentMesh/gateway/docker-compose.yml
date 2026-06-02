@@ -1,0 +1,72 @@
+# AgentMesh gateway — unified local LLM control plane.
+#
+# Phase 1 (this file): mesh-ollama (GPU) + LiteLLM + Postgres, LiteLLM published on
+# 127.0.0.1:4000 ONLY. No public exposure yet — Caddy TLS + WireGuard overlay come in
+# Phase 4. Cloud provider keys are added to .env in Phase 2 (env_file passes them through).
+#
+#   cp .env.example .env   # set LITELLM_MASTER_KEY + POSTGRES_PASSWORD (strong)
+#   docker compose up -d
+#   docker exec mesh-ollama ollama pull hermes3:8b
+#   docker exec mesh-ollama ollama pull qwen2.5-coder:7b
+
+services:
+  # ── Mesh-local inference (GPU) — separate from HermesAgent's air-gapped ollama ──
+  mesh-ollama:
+    image: ollama/ollama:latest
+    container_name: mesh-ollama
+    restart: unless-stopped
+    devices:
+      - "nvidia.com/gpu=all"        # CDI (nvidia-container-toolkit); shares the 4070 Ti
+    volumes:
+      - mesh-ollama-models:/root/.ollama
+    networks:
+      - mesh
+
+  # ── LiteLLM state (virtual keys, budgets, audit) ──────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: mesh-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: litellm
+      POSTGRES_USER: litellm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - mesh-pg:/var/lib/postgresql/data
+    networks:
+      - mesh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U litellm -d litellm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── LiteLLM gateway (OpenAI-compatible; the single endpoint for every agent) ───
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    container_name: mesh-litellm
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mesh-ollama:
+        condition: service_started
+    ports:
+      - "127.0.0.1:4000:4000"       # localhost ONLY in Phase 1 (Caddy/overlay in Phase 4)
+    env_file:
+      - .env                         # LITELLM_MASTER_KEY + (Phase 2) cloud provider keys
+    environment:
+      - DATABASE_URL=postgresql://litellm:${POSTGRES_PASSWORD}@postgres:5432/litellm
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml:ro
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    networks:
+      - mesh
+
+networks:
+  mesh:
+    driver: bridge
+
+volumes:
+  mesh-ollama-models:
+  mesh-pg:

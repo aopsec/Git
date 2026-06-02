@@ -1,0 +1,18 @@
+# Secrets / local-only
+.env
+*.secret
+secrets/
+
+# WireGuard / overlay keys (Phase 4) — never commit
+wireguard/*.key
+wireguard/*.conf
+!wireguard/*.example
+
+# Caddy local state
+caddy/data/
+caddy/config/
+
+# Python venvs for MCP servers
+mcp/.venv/
+__pycache__/
+*.pyc
