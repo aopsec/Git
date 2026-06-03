@@ -11,7 +11,11 @@ services:
       - "127.0.0.1:3000:3000"
     environment:
       SANDBOX_USER_ID: "${ADV7IA_OPENHANDS_SANDBOX_USER_ID:-1000}"
-      SANDBOX_RUNTIME_BINDING_ADDRESS: "127.0.0.1"
+      # Runtime sandbox ports must be reachable by THIS app container, which connects via
+      # host.docker.internal (= docker0 gateway 172.17.0.1). 127.0.0.1 bound them to host
+      # loopback only -> app got "connection refused". Bind to the docker-bridge IP so the
+      # exec port is reachable on docker0 but NOT on the physical NIC (safer than 0.0.0.0).
+      SANDBOX_RUNTIME_BINDING_ADDRESS: "172.17.0.1"
       USE_HOST_NETWORK: "false"
       FILE_STORE: "local"
       FILE_STORE_PATH: "/.openhands"
