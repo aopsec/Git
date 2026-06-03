@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "fs-mesh": {
+      "command": "/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/mcp-fs-mesh.sh",
+      "args": []
+    },
+    "git-mesh": {
+      "command": "/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/mcp-git-mesh.sh",
+      "args": []
+    },
+    "vault-mesh": {
+      "command": "/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/mcp-vault-mesh.sh",
+      "args": []
+    },
+    "exec-mesh": {
+      "command": "/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/mcp-exec-mesh.sh",
+      "args": []
+    }
+  }
+}
