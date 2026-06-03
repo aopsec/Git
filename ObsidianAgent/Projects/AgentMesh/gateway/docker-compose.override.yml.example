@@ -1,0 +1,8 @@
+# Copy to `docker-compose.override.yml` and set YOUR tailnet IP (`tailscale ip -4`).
+# Adds a tailnet-only bind (WireGuard-encrypted) so other Tailscale devices reach the
+# gateway, gated by LiteLLM virtual keys. Compose appends this to the base 127.0.0.1 bind.
+# Prefer `tailscale serve` (TLS) once the tailnet has HTTPS enabled — then delete the override.
+services:
+  litellm:
+    ports:
+      - "<YOUR_TAILNET_IP>:4000:4000"
