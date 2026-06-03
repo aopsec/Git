@@ -1,0 +1,25 @@
+# Secrets / local-only
+.env
+*.secret
+secrets/
+
+# Machine-specific remote bind (tailnet IP) — keep the .example committed, not the real one
+gateway/docker-compose.override.yml
+
+# WireGuard / overlay keys (Phase 4) — never commit
+wireguard/*.key
+wireguard/*.conf
+!wireguard/*.example
+
+# Caddy local state
+caddy/data/
+caddy/config/
+
+# Python venvs for MCP servers
+mcp/.venv/
+__pycache__/
+*.pyc
+
+# Machine-generated project-local vault output
+vault/Generated/*
+!vault/Generated/.gitkeep

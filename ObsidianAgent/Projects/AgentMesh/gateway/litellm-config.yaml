@@ -1,0 +1,31 @@
+# AgentMesh — LiteLLM gateway model routing.
+# Phase 1: local-only via the mesh's own Ollama (GPU). HermesAgent keeps its OWN
+# air-gapped ollama; this `mesh-ollama` is a separate, gateway-reachable instance so we
+# don't break Hermes' isolation. Cloud models (anthropic/openai/gemini/openrouter) are
+# added in Phase 2 with fallback chains; remote/multi-user (virtual keys) in Phase 4.
+
+model_list:
+  # ── Local (Ollama on the RTX 4070 Ti) ──────────────────────────────────────
+  - model_name: hermes3
+    litellm_params:
+      model: ollama_chat/hermes3:8b
+      api_base: http://mesh-ollama:11434
+  - model_name: qwen2.5-coder
+    litellm_params:
+      model: ollama_chat/qwen2.5-coder:7b
+      api_base: http://mesh-ollama:11434
+  # Back-compat alias so agents still set to the old LM Studio model keep working
+  # after they're repointed at the gateway (maps to the local coder model).
+  - model_name: qwen3-coder-local
+    litellm_params:
+      model: ollama_chat/qwen2.5-coder:7b
+      api_base: http://mesh-ollama:11434
+
+litellm_settings:
+  drop_params: true        # tolerate provider-specific params across backends
+  num_retries: 2
+  request_timeout: 600
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY   # admin key; mints per-user virtual keys (Phase 4)
+  database_url: os.environ/DATABASE_URL        # Postgres: virtual keys, budgets, audit

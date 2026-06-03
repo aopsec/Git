@@ -1,0 +1,20 @@
+{
+  "servers": {
+    "fs-mesh": {
+      "type": "stdio",
+      "command": "/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/mcp-fs-mesh.sh"
+    },
+    "git-mesh": {
+      "type": "stdio",
+      "command": "/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/mcp-git-mesh.sh"
+    },
+    "vault-mesh": {
+      "type": "stdio",
+      "command": "/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/mcp-vault-mesh.sh"
+    },
+    "exec-mesh": {
+      "type": "stdio",
+      "command": "/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/mcp-exec-mesh.sh"
+    }
+  }
+}

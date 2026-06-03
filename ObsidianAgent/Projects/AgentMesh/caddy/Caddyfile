@@ -1,0 +1,21 @@
+# AgentMesh — ALTERNATIVE TLS reverse proxy.
+#
+# Preferred remote path is Tailscale Serve (tailnet-only + auto-TLS; see docs/RUNBOOK.md).
+# Use THIS only for a public/LAN HTTPS front with your own domain — and only behind a
+# firewall + the LiteLLM virtual-key auth. Never expose :4000 directly to the internet.
+
+{
+	email admin@example.com   # for Let's Encrypt; change me
+}
+
+# Replace with your domain. Caddy auto-provisions TLS.
+llm.example.com {
+	# LiteLLM enforces virtual-key auth at the app layer; add forward_auth/basicauth here
+	# for defense-in-depth before allowing any non-tailnet access.
+	reverse_proxy 127.0.0.1:4000
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+	}
+	encode gzip
+}

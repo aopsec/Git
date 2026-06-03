@@ -1,0 +1,69 @@
+version = 1
+
+[project]
+name = "HermesAgent"
+tag = "hermes-agent"
+
+[vault]
+root = "vault"
+generated = "vault/Generated"
+
+[render]
+generator_ref = "plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py"
+regenerate_command = "python3 \"${AOPS_OBSIDIAN_AGENT_CLI:-$HOME/plugins/aops-agent/obsidian-agent/obsidian_agent_cli.py}\" --sync --repo ."
+stale_message = "HermesAgent vault output is stale. Regenerate with:"
+summary_fallback = "absolute"
+
+[repository_map]
+include = true
+core_documents = [
+  "README",
+  "HARDENING",
+]
+manual_dashboards = [
+  "HermesAgent Vault Home",
+]
+
+[related_notes]
+defaults = ["README"]
+
+[related_notes.match]
+hermes = ["README", "HARDENING"]
+security = ["HARDENING", "README"]
+hardening = ["HARDENING", "README"]
+network = ["HARDENING"]
+egress = ["HARDENING"]
+squid = ["HARDENING"]
+gpu = ["README", "HARDENING"]
+ollama = ["README", "HARDENING"]
+
+[[catalog]]
+label = "Project Docs"
+folder = "Project Docs"
+note_prefix = "Doc"
+tag = "project-doc"
+source_patterns = ["docs/*.md"]
+title_mode = "standard"
+index_name = "Project Doc Index"
+
+[[catalog]]
+label = "Automation"
+folder = "Automation"
+note_prefix = "Automation"
+tag = "automation"
+source_patterns = ["setup.sh"]
+title_mode = "standard"
+index_name = "Automation Index"
+
+[[catalog]]
+label = "Configs"
+folder = "Configs"
+note_prefix = "Config"
+tag = "config"
+source_patterns = [
+  "docker-compose.yml",
+  "cli-config.yaml",
+  "squid/*.conf",
+]
+title_mode = "config"
+index_name = "Config Index"

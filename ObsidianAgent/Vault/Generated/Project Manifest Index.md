@@ -14,6 +14,8 @@ Generated from the repository by `plugins/aops-agent/obsidian-agent/obsidian_age
 | Note | Source | Role |
 |---|---|---|
 | [[Project Manifest - ADV7ia]] | `Projects/ADV7ia/.aops-vault.toml` | Source note for `Projects/ADV7ia/.aops-vault.toml`. |
+| [[Project Manifest - AgentMesh]] | `Projects/AgentMesh/.aops-vault.toml` | Source note for `Projects/AgentMesh/.aops-vault.toml`. |
+| [[Project Manifest - HermesAgent]] | `Projects/HermesAgent/.aops-vault.toml` | Source note for `Projects/HermesAgent/.aops-vault.toml`. |
 | [[Project Manifest - OpenBox0.1v]] | `Projects/OpenBox0.1v/.aops-vault.toml` | Source note for `Projects/OpenBox0.1v/.aops-vault.toml`. |
 
 ## Related Dashboards

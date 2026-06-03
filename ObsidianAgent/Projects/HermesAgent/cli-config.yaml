@@ -1,0 +1,40 @@
+# HermesAgent — Hermes Agent CLI config (modeled on upstream cli-config.yaml.example).
+# Goal: 100% local inference on the RTX 4070 Ti via Ollama; no cloud LLM, no API key.
+
+model:
+  # Nous Hermes 3 8B served by Ollama on the GPU.
+  default: "hermes3:8b"
+  # `custom` = a local OpenAI-compatible endpoint (Ollama's /v1). `ollama` is also
+  # accepted upstream; `custom` keeps the base_url explicit and provider-agnostic.
+  provider: "custom"
+  # Reaches the air-gapped ollama container over the `internal` Docker network.
+  base_url: "http://ollama:11434/v1"
+  # No api_key: the endpoint is local and unauthenticated on the internal network.
+
+terminal:
+  # `local` = tools run INSIDE this already-wrapped container. We deliberately do
+  # NOT use the `docker` backend or mount docker.sock — that would grant host escape
+  # and is LESS safe. The whole-process wrap is the security boundary (SECURITY.md).
+  backend: "local"
+  cwd: "/workspace"
+  timeout: 180
+  lifetime_seconds: 300
+
+# Git worktree-per-session is OFF on purpose: the agent's workspace (/workspace = the
+# Obsidian Vault) is NOT a git checkout, and `worktree: true` hard-fails `hermes chat`
+# with "--worktree requires being inside a git repository". Blast radius is instead
+# bounded by the container wrap + the read-only Vault/Generated mount.
+worktree: false
+
+# Trip warnings on repeated tool failures / no-progress loops.
+tool_loop_guardrails:
+  warnings_enabled: true
+  hard_stop_enabled: true
+  warn_after:
+    exact_failure: 2
+    same_tool_failure: 3
+    idempotent_no_progress: 2
+
+# OpenAI-compatible API server stays OFF (no api_server block / no API_SERVER_HOST).
+# The dashboard runs as the gateway container's own s6 service, published to host
+# loopback only (HERMES_DASHBOARD* env in docker-compose.yml).

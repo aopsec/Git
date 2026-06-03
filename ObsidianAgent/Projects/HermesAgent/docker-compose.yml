@@ -1,0 +1,103 @@
+# HermesAgent — hardened local deployment of nousresearch/hermes-agent.
+#
+# Posture: Hermes' own "safest architecture" — whole-process Docker wrapping
+# (SECURITY.md) + the documented internal/egress network split with a Squid
+# allowlist proxy (docs/security/network-egress-isolation.md). Upstream's default
+# `network_mode: host` is DELIBERATELY overridden here; host networking would put
+# the agent on the host's stack and defeat the egress isolation.
+#
+# Inference is air-gapped: `ollama` lives ONLY on the `internal` (no-route) network,
+# so prompts never leave the host. GPU passthrough uses the CDI device name that
+# `nvidia-ctk cdi generate` writes to /etc/cdi/nvidia.yaml (see setup.sh).
+#
+# Build the image first:  make build   (clones upstream to $HOME/plugins/hermes-agent)
+# Image tag `hermes-agent:local` is produced from that clone — NOT vendored in git.
+
+services:
+  # ── Local inference engine (GPU, air-gapped) ─────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: hermes-ollama
+    restart: unless-stopped
+    # CDI device reference. Requires nvidia-container-toolkit + a generated
+    # /etc/cdi/nvidia.yaml on the host (see `make setup`). Docker 29 reads CDI natively.
+    devices:
+      - "nvidia.com/gpu=all"
+    volumes:
+      - ollama-models:/root/.ollama
+    networks:
+      - internal            # internal: true → NO route to the internet
+    # No published ports: ollama is reachable only as http://ollama:11434 from the
+    # internal network. The model is pulled once (see setup.sh) into ollama-models.
+
+  # ── Hermes gateway + its s6-supervised dashboard (the agent core) ────────────
+  gateway:
+    image: hermes-agent:local
+    container_name: hermes
+    restart: unless-stopped
+    depends_on:
+      - ollama
+      - egress-proxy
+    # Dual-homed per upstream egress-isolation doc: `internal` to reach ollama,
+    # `egress` to reach the Squid proxy. All outbound HTTP(S) is forced through
+    # Squid via the proxy env below; Squid denies everything not allowlisted.
+    networks:
+      - internal
+      - egress
+    environment:
+      - HERMES_UID=${HERMES_UID:-10000}
+      - HERMES_GID=${HERMES_GID:-10000}
+      - HTTP_PROXY=http://egress-proxy:3128
+      - HTTPS_PROXY=http://egress-proxy:3128
+      - NO_PROXY=ollama,localhost,127.0.0.1
+      # The dashboard runs as the image's OWN s6-supervised service INSIDE this
+      # container. One container = one /opt/data writer; a *separate* dashboard
+      # container runs a second s6 tree and fights the shared volume's s6-log lock
+      # (Resource busy → crash loop). Bound 0.0.0.0 inside; the published port below
+      # pins host exposure to 127.0.0.1 only. INSECURE=1 is required because no OAuth
+      # DashboardAuthProvider is configured and Hermes fails closed on non-loopback
+      # binds — the loopback-only publish is the compensating control.
+      - HERMES_DASHBOARD=1
+      - HERMES_DASHBOARD_HOST=0.0.0.0
+      - HERMES_DASHBOARD_PORT=${HERMES_DASHBOARD_PORT:-9119}
+      - HERMES_DASHBOARD_INSECURE=1
+    ports:
+      - "127.0.0.1:${HERMES_DASHBOARD_PORT:-9119}:${HERMES_DASHBOARD_PORT:-9119}"   # dashboard — host loopback ONLY
+    volumes:
+      - hermes-data:/opt/data
+      # Pinned config as the PREFERRED user config. The image sets HERMES_HOME=/opt/data
+      # and Hermes loads {HERMES_HOME}/config.yaml FIRST — verified on the built image:
+      # `hermes config show` reflects our model.default/provider/base_url + terminal.cwd
+      # ONLY when mounted here as config.yaml. (A mount at /opt/data/cli-config.yaml is
+      # read by NEITHER lookup path; the project fallback is /opt/hermes/cli-config.yaml.)
+      # Safe RO: the s6 stage2-hook seeds config.yaml only when absent, and its
+      # chmod/chown are best-effort (|| true); HERMES_UID maps to the host file owner.
+      - ./cli-config.yaml:/opt/data/config.yaml:ro
+      # Full RW vault mount = the agent's workspace (terminal.cwd: /workspace).
+      - ../../Vault:/workspace:rw
+      # ...with the machine-generated tree pinned READ-ONLY on top to preserve the
+      # meta-vault determinism contract. Remove this one line to grant RW (residual risk).
+      - ../../Vault/Generated:/workspace/Generated:ro
+    # Preserve the s6-overlay entrypoint (/init, PID 1). `command` is the s6 CMD.
+    command: ["gateway", "run"]
+
+  # ── Egress allowlist proxy (Squid) ───────────────────────────────────────────
+  egress-proxy:
+    image: ubuntu/squid:6.6-24.04_edge   # Squid 6.6 on Ubuntu 24.04 LTS (pinned; verified to exist on Docker Hub)
+    container_name: hermes-egress-proxy
+    restart: unless-stopped
+    networks:
+      - egress              # only the proxy gets a real route to the internet
+    volumes:
+      - ./squid/squid-allowlist.conf:/etc/squid/conf.d/allowlist.conf:ro
+
+networks:
+  internal:
+    driver: bridge
+    internal: true          # the actual containment boundary: no default route
+  egress:
+    driver: bridge
+
+volumes:
+  hermes-data:              # ~/.hermes equivalent (/opt/data)
+  ollama-models:            # cached hermes3:8b weights — pulled once, then air-gapped

@@ -1,0 +1,10 @@
+# AgentMesh — LOCAL remote-bind override (gitignored; machine-specific tailnet IP).
+# Appends a tailnet-only port bind so other Tailscale devices reach the gateway
+# (WireGuard-encrypted in transit, gated by LiteLLM virtual keys). The base compose keeps
+# the 127.0.0.1 bind. Prefer `tailscale serve` (TLS+MagicDNS) once the tailnet has HTTPS
+# enabled in the admin console — then delete this file.
+# Tailnet IP for this host (blk7rch / blk7rch.tail66a94.ts.net):
+services:
+  litellm:
+    ports:
+      - "100.109.241.110:4000:4000"
