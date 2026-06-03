@@ -1,0 +1,17 @@
+# SuperGateway MCP bridge — systemd --user service (template).
+# Install:
+#   cp supergateway.service.example ~/.config/systemd/user/agentmesh-supergateway.service
+#   # FIRST apply the firewall rule in docs/HARDENING.md (ports 8101-8103 -> docker bridge only)
+#   systemctl --user daemon-reload && systemctl --user enable --now agentmesh-supergateway
+[Unit]
+Description=AgentMesh SuperGateway MCP bridge (fs/git/vault stdio -> SSE for OpenHands)
+After=network-online.target docker.service
+
+[Service]
+Type=simple
+ExecStart=/home/aops/OPia/Git/ObsidianAgent/Projects/AgentMesh/mcp/supergateway-up.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -35,6 +35,13 @@ in-process screening (per Hermes `SECURITY.md`).
    current trust surface until added.
 5. **Tailnet membership = network trust** — anyone on the tailnet can reach the gateway (still
    needs a valid virtual key). Use tailnet ACLs to scope which devices may reach `:4000`.
+6. **SuperGateway MCP ports (8101-8103) bind `0.0.0.0`** (no `--host` flag) and expose host
+   filesystem/git access to any reachable network. **Restrict them to the Docker bridge
+   before starting the bridge** — only the OpenHands container needs them:
+   ```
+   sudo nft add rule inet filter input tcp dport 8101-8103 ip saddr != 172.16.0.0/12 drop
+   ```
+   (or the equivalent iptables/firewalld rule). Treat these as sensitive as the gateway.
 
 ## Certification gate
 Mark `objective_complete=100%` only when: gateway routes to GPU ✓, `claude mcp list` all ✓,

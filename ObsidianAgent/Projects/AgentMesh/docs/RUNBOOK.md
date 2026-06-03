@@ -60,7 +60,17 @@ sudo systemctl disable --now lmstudio-docker-proxy.service   # + any LM Studio l
 # then remove LM Studio; agents already use the gateway.
 ```
 
-## OpenHands / Cline MCP (deferred wiring)
-- OpenHands MCP: front the host stdio servers with **SuperGateway** (stdio→SSE/HTTP), then add
-  them to `~/.openhands/config.toml` `[mcp] sse_servers`.
-- Cline MCP: add the same servers via Cline's MCP settings UI.
+## OpenHands MCP via SuperGateway
+The shared stdio servers are bridged to SSE for the OpenHands container; `config.toml`
+`[mcp] sse_servers` is already wired to `host.docker.internal:8101/8102/8103`. To activate:
+1. **Firewall first** — SuperGateway binds `0.0.0.0` and fs/git MCP are sensitive; restrict
+   the ports to the Docker bridge (nft rule in `docs/HARDENING.md`).
+2. Start the bridge: `bash mcp/supergateway-up.sh` (or install `mcp/supergateway.service.example`
+   as a `systemd --user` service). Verify: `curl http://127.0.0.1:8101/healthz` → `ok`.
+3. Restart OpenHands (`~/bin/restart-openhands-local`) so it loads the SSE servers.
+4. `~/.openhands/settings.json` is root-owned (written by the container) and may take
+   precedence over `config.toml`; if OpenHands doesn't show the tools, add the three
+   `http://host.docker.internal:<port>/sse` servers via the OpenHands **MCP settings UI**.
+
+## Cline MCP
+Add the same `mcp/*.sh` servers via Cline's MCP settings UI in VS Code (extension state).
