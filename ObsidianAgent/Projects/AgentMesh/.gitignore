@@ -16,3 +16,7 @@ caddy/config/
 mcp/.venv/
 __pycache__/
 *.pyc
+
+# Machine-generated project-local vault output
+vault/Generated/*
+!vault/Generated/.gitkeep
