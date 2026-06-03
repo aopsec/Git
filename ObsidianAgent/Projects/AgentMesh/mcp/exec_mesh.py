@@ -47,13 +47,17 @@ def run_opencode(prompt: str, cwd: str = REPO_DEFAULT) -> str:
 
 @mcp.tool()
 def run_openhands(prompt: str) -> str:
-    """Dispatch a task to OpenHands (headless). NOT YET WIRED — exact headless invocation
-    (CLI vs REST :3000 against the openhands-app container) is confirmed at Phase 3/4
-    implementation; returns guidance until then so the tool surface stays honest."""
-    return (
-        "[not-wired] OpenHands executor dispatch is pending: confirm the headless entrypoint "
-        "(openhands CLI or REST API on the openhands-app container) before enabling. "
-        f"Requested task: {prompt!r}"
+    """Dispatch a one-shot task to OpenHands (headless, gateway-backed qwen2.5-coder) and
+    return the agent's run output. Runs `openhands.core.main` inside the openhands-app
+    container, which spawns its own runtime sandbox; iterations are capped so a runaway task
+    can't hang the planner."""
+    return _run(
+        ["docker", "exec", "openhands-app",
+         "python", "-m", "openhands.core.main",
+         "--config-file", "/app/config.toml",
+         "-i", "30",            # cap agent iterations
+         "-t", prompt],
+        timeout=900,            # OpenHands runs are long; first run pulls the runtime image
     )
 
 

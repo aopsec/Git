@@ -53,6 +53,12 @@ services:
         condition: service_started
     ports:
       - "127.0.0.1:4000:4000"       # localhost ONLY in Phase 1 (Caddy/overlay in Phase 4)
+      # Docker-bridge gateway IP so OTHER containers (OpenHands) reach the gateway via
+      # host.docker.internal:4000. SAFE bind (unlike the retired tailnet-IP override): 172.17.0.1
+      # is the always-present docker0 gateway, so it can't fail "cannot assign requested address"
+      # on boot. Reachable by default-bridge containers but still virtual-key-gated; optionally
+      # tighten with an nft rule on docker0 (see docs/HARDENING.md).
+      - "172.17.0.1:4000:4000"
     env_file:
       - .env                         # LITELLM_MASTER_KEY + (Phase 2) cloud provider keys
     environment:

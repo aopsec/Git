@@ -25,29 +25,43 @@ Give each person their `sk-...` virtual key; the master key never leaves `gatewa
 ## Point an agent at the gateway
 Set the agent's OpenAI-compatible **base_url** = `http://127.0.0.1:4000/v1`, **api_key** = a
 virtual key, **model** = `qwen2.5-coder` (or `hermes3`). Backups were saved as
-`*.bak-pre-mesh`. Done: OpenCode. Pending by choice/limitation:
-- **OpenHands** (`~/.openhands/config.toml`): `base_url=http://host.docker.internal:4000/v1`,
-  `model=openai/qwen2.5-coder` — needs a host→container route for `:4000` (replicate the
-  existing `:1234` bridge proxy) before it works.
+`*.bak-pre-mesh`. Done: OpenCode, **OpenHands**. Pending by choice/limitation:
+- **OpenHands** (`~/.openhands/config.toml`): DONE & end-to-end verified —
+  `base_url=http://host.docker.internal:4000/v1`, `model=openai/qwen2.5-coder`, scoped vkey;
+  reachability via the gateway's `172.17.0.1:4000` docker-bridge bind. Also required (all done):
+  (a) `[sandbox] runtime_container_image=docker.openhands.dev/openhands/runtime:1.6-nikolaik`
+  (OpenHands was failing to *build* a runtime; this pulls the prebuilt one);
+  (b) **ADV7ia** `deploy/openhands/compose.yaml` `SANDBOX_RUNTIME_BINDING_ADDRESS=172.17.0.1`
+  (was `127.0.0.1` → app couldn't reach the runtime; bound to docker0, not the physical NIC);
+  (c) `[mcp] sse_servers=[]` (the `:8101-3` SuperGateway endpoints are down → ~30s timeout/run;
+  restore when the bridge is up). Verified: headless run drives `qwen2.5-coder` on the GPU
+  (6 `200 OK /chat/completions`/run). Run quality is bounded by the 7B model's CodeAct ability.
 - **Cline**: set provider = OpenAI-compatible, base URL = gateway, key = virtual key, in the
   Cline settings UI.
 - **HermesAgent**: intentionally left on its own air-gapped ollama.
 
 ## Remote access (Tailscale) — RECOMMENDED
-Tailnet host: `blk7rch` / `100.109.241.110` / `blk7rch.tail66a94.ts.net`.
+Tailnet host: `blk7rch` / `100.109.241.110` / `blk7rch.taile9fb66.ts.net`.
 1. **One-time (admin console):** enable **HTTPS Certificates / Serve** for the tailnet
    (https://login.tailscale.com/admin/dns → "Enable HTTPS").
 2. Expose the gateway over tailnet HTTPS:
    ```bash
-   sudo tailscale serve --bg 4000          # → https://blk7rch.tail66a94.ts.net  ->  127.0.0.1:4000
+   sudo tailscale serve --bg 4000          # → https://blk7rch.taile9fb66.ts.net  ->  127.0.0.1:4000
    tailscale serve status
    ```
-3. Remote use: `curl https://blk7rch.tail66a94.ts.net/v1/models -H "Authorization: Bearer <virtual-key>"`.
+3. Remote use: `curl https://blk7rch.taile9fb66.ts.net/v1/models -H "Authorization: Bearer <virtual-key>"`.
 
-**Interim (no admin toggle needed):** bind the gateway on the tailnet IP — add
-`"100.109.241.110:4000:4000"` to the `litellm` `ports:` in `gateway/docker-compose.yml`,
-`docker compose up -d`. Reachable by tailnet members over WireGuard-encrypted HTTP; still
-gated by virtual keys. Scope which devices may reach it with **tailnet ACLs**.
+> ⚠️ **Do NOT bind the gateway directly on the tailnet IP** (the old interim
+> `docker-compose.override.yml` with `"100.109.241.110:4000:4000"`). Docker cannot bind a
+> port to an address that does not yet exist, so if `mesh-litellm` (re)starts while
+> `tailscaled` is down or hasn't assigned the `100.x` address — e.g. on reboot, when Docker
+> starts before Tailscale — the bind fails with *"cannot assign requested address"* and the
+> container **exits 128 and stays down, taking loopback access with it** (one container binds
+> both addresses). This took the whole gateway offline on 2026-06-03. The override is retired
+> (`gateway/docker-compose.override.yml.bak`); the gateway binds `127.0.0.1:4000` only, which
+> always exists. Use `tailscale serve` (above) for remote — it runs inside `tailscaled` and
+> forwards to `127.0.0.1:4000`, so it can never block litellm's startup. Scope which devices
+> may reach it with **tailnet ACLs**.
 
 ## Egress allowlist (only if cloud is enabled later — Phase 2)
 Add provider keys to `gateway/.env`, add cloud `model_list` entries + fallbacks to
