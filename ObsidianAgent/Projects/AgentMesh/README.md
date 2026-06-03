@@ -54,8 +54,9 @@ docker exec mesh-ollama ollama pull qwen2.5-coder:7b
 curl http://127.0.0.1:4000/v1/models -H "Authorization: Bearer <sua-chave>"
 ```
 
-Passo a passo completo (subir/derrubar, criar chave por usuário, acesso remoto via
-Tailscale, apontar cada agente): **[`docs/RUNBOOK.md`](docs/RUNBOOK.md)**.
+**Guia do usuário completo** (passo a passo, do zero ao uso de cada agente, com
+solução de problemas; em inglês): **[`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)**.
+Cheat-sheet de operação: **[`docs/RUNBOOK.md`](docs/RUNBOOK.md)**.
 Arquitetura: **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**.
 
 ## Segurança em uma frase

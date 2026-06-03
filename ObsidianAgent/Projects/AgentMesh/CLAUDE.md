@@ -2,8 +2,9 @@
 
 Unifies the box's local AI stack into one mesh: **planners** (Claude, Copilot) drive
 **executors** (Hermes, OpenCode, OpenHands) over **MCP**, on a **single LiteLLM gateway**.
-Product framing in `README.md` (pt-br); architecture in `docs/ARCHITECTURE.md`; security in
-`docs/HARDENING.md`; ops in `docs/RUNBOOK.md`. Additive to the meta-vault contract.
+Product framing in `README.md` (pt-br); step-by-step usage in `docs/USER_GUIDE.md`; architecture
+in `docs/ARCHITECTURE.md`; security in `docs/HARDENING.md`; ops cheat-sheet in `docs/RUNBOOK.md`.
+Additive to the meta-vault contract.
 
 ## Components
 - **Gateway** (`gateway/`): LiteLLM `127.0.0.1:4000` + Postgres (virtual keys/budgets/audit)
