@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #----------------------------------------------------------------------------
-# Project     : adv7FUZZ v0.1.5
+# Project     : adv7FUZZ v0.1.6
 # Description : Phased web content discovery for authorized pentesting
-# Date        : 23/05/2026
+# Date        : 04/06/2026
 # CreatedBy   : ADVAN7 Offensive Security | https://github.com/aopsec
 #----------------------------------------------------------------------------
 # PHASES:
@@ -71,13 +71,26 @@
 #   --recurse-redirects  Phase 4: also recurse into 301/302/403 dirs (use with auth sessions)
 #   --no-ac           Disable ffuf auto-calibration (-ac) — required when all unauth requests
 #                     return uniform redirects (e.g. app redirects everything to /login)
+#   --seclists DIR    Override SecLists root (else auto-detected — see PORTABILITY)
+#   --doctor          Check toolchain + wordlist readiness and exit (no scan)
 #   --dry-run         Print commands without executing
 #   -h, --help        Show this help
+#
+# PORTABILITY (runs on any Linux — Arch/Debian/Kali/Fedora/…):
+#   SecLists root is auto-detected from common locations. Override priority:
+#     $ADV7_SECLISTS / $SECLISTS_DIR  >  --seclists DIR  >  autodetect
+#   Autodetect order: ~/Git/wordlists/SecLists, ~/OPia/Git/wordlists/SecLists,
+#     ~/wordlists/SecLists, ~/SecLists, /usr/share/seclists,
+#     /usr/share/wordlists/{seclists,SecLists}, /opt/SecLists, <script-dir>/SecLists
+#   $ADV7_KITE_ROUTES   Path to kiterunner routes-large.kite (Phase 7b; optional)
+#   Run  ./adv7FUZZ.sh --doctor  first to certify your box is ready.
 #----------------------------------------------------------------------------
 
 set -uo pipefail   # no -e: phases may fail independently
 
-VERSION="0.1.5"
+VERSION="0.1.6"
+
+_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 _CLEANUP_FILES=()
 _cleanup_tmp() {
@@ -130,10 +143,14 @@ THREADS=50
 DRY_RUN=false
 ONLY_PHASE=""
 
-WORDLIST="/home/aops/OPia/Git/wordlists/SecLists/Discovery/Web-Content/big.txt"
-COMMON="/home/aops/OPia/Git/wordlists/SecLists/Discovery/Web-Content/common.txt"
-COMBINED="/home/aops/OPia/Git/wordlists/SecLists/Discovery/Web-Content/combined_words.txt"
-API_WL="/home/aops/OPia/Git/wordlists/SecLists/Discovery/Web-Content/api/objects.txt"
+# Wordlists are resolved from a SecLists root (auto-detected or overridden).
+# WORDLIST stays empty unless -w is given; the rest are filled by resolve_wordlists().
+SECLISTS_ROOT="${ADV7_SECLISTS:-${SECLISTS_DIR:-}}"
+WORDLIST=""
+COMMON=""
+COMBINED=""
+API_WL=""
+DOCTOR=false
 
 #— Argument parsing ----------------------------------------------------------
 while [[ $# -gt 0 ]]; do
@@ -158,6 +175,8 @@ while [[ $# -gt 0 ]]; do
         --recurse-redirects) RECURSE_REDIRECTS=true;   shift ;;
         --no-ac)            NO_AC=true;                 shift ;;
         --no-nuclei)        NO_NUCLEI=true;             shift ;;
+        --seclists)         SECLISTS_ROOT="$2";         shift 2 ;;
+        --doctor)           DOCTOR=true;                shift ;;
         --burp)         BURP_MODE=true;                 shift ;;
         --burp-port)    BURP_PORT="$2";                 shift 2 ;;
         -f)             TARGETS_FILE="$2";              shift 2 ;;
@@ -219,18 +238,169 @@ if [[ -n "$ONLY_PHASE" ]]; then
     fi
 fi
 
+#— Portability helpers (distro-agnostic) -------------------------------------
+# Distro-correct install hint for a tool, derived from /etc/os-release.
+# Maps the few tools whose package name differs from the command name.
+_pkg_hint() {
+    local _tool="$1" _id _pkg="$1"
+    _id="$( . /etc/os-release 2>/dev/null; echo "${ID:-} ${ID_LIKE:-}" )"
+    case "$_id" in
+        *arch*)
+            case "$_tool" in nc) _pkg=openbsd-netcat ;; ss) _pkg=iproute2 ;; esac
+            echo "pacman -S $_pkg" ;;
+        *debian*|*ubuntu*|*kali*)
+            case "$_tool" in nc) _pkg=netcat-openbsd ;; ss) _pkg=iproute2 ;; esac
+            echo "sudo apt install $_pkg" ;;
+        *fedora*|*rhel*|*centos*)
+            case "$_tool" in nc) _pkg=nmap-ncat ;; ss) _pkg=iproute ;; xxd) _pkg=vim-common ;; esac
+            echo "sudo dnf install $_pkg" ;;
+        *suse*)
+            case "$_tool" in nc) _pkg=netcat-openbsd ;; ss) _pkg=iproute2 ;; esac
+            echo "sudo zypper in $_pkg" ;;
+        *)  echo "install '$_tool' with your package manager" ;;
+    esac
+}
+
+# SecLists root candidates — first dir containing Discovery/Web-Content wins.
+SECLISTS_CANDIDATES=(
+    "$SECLISTS_ROOT"
+    "$HOME/Git/wordlists/SecLists"
+    "$HOME/OPia/Git/wordlists/SecLists"
+    "$HOME/wordlists/SecLists"
+    "$HOME/SecLists"
+    /usr/share/seclists
+    /usr/share/wordlists/seclists
+    /usr/share/wordlists/SecLists
+    /opt/SecLists
+    "${_SCRIPT_DIR}/SecLists"
+)
+resolve_seclists_root() {
+    local _c
+    for _c in "${SECLISTS_CANDIDATES[@]}"; do
+        [[ -n "$_c" && -d "$_c/Discovery/Web-Content" ]] && { printf '%s\n' "$_c"; return 0; }
+    done
+    return 1
+}
+
+# Resolve COMMON/WORDLIST/COMBINED/API_WL from the SecLists root.
+# Honours an explicit -w override for WORDLIST. Aborts (unless doctor) if no root.
+resolve_wordlists() {
+    local _root _wc
+    _root="$(resolve_seclists_root || true)"
+    if [[ -z "$_root" ]]; then
+        echo "[!] SecLists not found. Checked:"
+        local _c
+        for _c in "${SECLISTS_CANDIDATES[@]}"; do
+            [[ -n "$_c" ]] && echo "      - $_c"
+        done
+        echo "    Fix: export ADV7_SECLISTS=/path/to/SecLists   (or pass --seclists DIR)"
+        echo "    Get it: git clone https://github.com/danielmiessler/SecLists"
+        echo "            or: $(_pkg_hint seclists)"
+        return 1
+    fi
+    SECLISTS_ROOT="$_root"
+    _wc="$_root/Discovery/Web-Content"
+    COMMON="$_wc/common.txt"
+    [[ -z "$WORDLIST" ]] && WORDLIST="$_wc/big.txt"
+    COMBINED="$_wc/combined_words.txt"
+    API_WL="$_wc/api/objects.txt"
+    [[ -f "$API_WL" ]] || API_WL="$COMMON"   # fallback if SecLists api/ absent
+    return 0
+}
+
+# Resolve kiterunner routes-large.kite (Phase 7b). Empty = not found → skip.
+resolve_kite_routes() {
+    local _c
+    for _c in "${ADV7_KITE_ROUTES:-}" \
+              "$HOME/.cache/kiterunner/routes-large.kite" \
+              "$HOME/routes-large.kite" \
+              "${_SCRIPT_DIR}/routes-large.kite" \
+              ./routes-large.kite \
+              /usr/share/kiterunner/routes-large.kite; do
+        [[ -n "$_c" && -f "$_c" ]] && { printf '%s\n' "$_c"; return 0; }
+    done
+    return 1
+}
+
+# Tor SOCKS liveness: ss check, with a curl --socks5 fallback when ss is absent.
+tor_socks_up() {
+    if command -v ss &>/dev/null; then
+        ss -tlnp 2>/dev/null | grep -q "127.0.0.1:9050" && return 0
+    fi
+    curl -s --socks5 127.0.0.1:9050 --max-time 6 -o /dev/null \
+        "https://check.torproject.org/" 2>/dev/null && return 0
+    return 1
+}
+
+#— Doctor: certify the box can run adv7FUZZ, then exit ------------------------
+run_doctor() {
+    local _miss=0 _t _root
+    echo "adv7FUZZ v${VERSION} — readiness check"
+    echo "────────────────────────────────────────────────────"
+    echo "Required tools:"
+    for _t in ffuf jq curl openssl shuf; do
+        if command -v "$_t" &>/dev/null; then
+            printf "  [OK]   %s\n" "$_t"
+        else
+            printf "  [MISS] %-8s → %s\n" "$_t" "$(_pkg_hint "$_t")"; _miss=1
+        fi
+    done
+    if $USE_TOR; then
+        if command -v torsocks &>/dev/null; then printf "  [OK]   torsocks\n"
+        else printf "  [MISS] %-8s → %s\n" "torsocks" "$(_pkg_hint torsocks)"; _miss=1; fi
+    fi
+    echo "Optional tools (missing = that phase is skipped):"
+    for _t in amass katana arjun kiterunner nuclei; do
+        if command -v "$_t" &>/dev/null; then printf "  [OK]   %s\n" "$_t"
+        else printf "  [--]   %-10s (%s)\n" "$_t" "$(_pkg_hint "$_t")"; fi
+    done
+    echo "Tor egress:"
+    if $USE_TOR; then
+        if tor_socks_up; then echo "  [OK]   SOCKS 127.0.0.1:9050 reachable"
+        else echo "  [WARN] SOCKS 127.0.0.1:9050 not reachable — start tor or use --no-tor"; fi
+    else
+        echo "  [--]   disabled (--no-tor)"
+    fi
+    echo "Wordlists:"
+    _root="$(resolve_seclists_root || true)"
+    if [[ -n "$_root" ]]; then
+        echo "  [OK]   SecLists root: $_root"
+        for _t in common.txt big.txt combined_words.txt api/objects.txt; do
+            if [[ -f "$_root/Discovery/Web-Content/$_t" ]]; then printf "  [OK]   %s\n" "$_t"
+            else printf "  [WARN] %s missing under Discovery/Web-Content/\n" "$_t"; fi
+        done
+    else
+        echo "  [MISS] SecLists root not found — set \$ADV7_SECLISTS or --seclists DIR"; _miss=1
+    fi
+    local _kite; _kite="$(resolve_kite_routes || true)"
+    [[ -n "$_kite" ]] && echo "  [OK]   kiterunner routes: $_kite" \
+                      || echo "  [--]   kiterunner routes-large.kite not found (Phase 7b skipped)"
+    echo "────────────────────────────────────────────────────"
+    if [[ "$_miss" -eq 0 ]]; then
+        echo "[+] READY — all required components present."
+        return 0
+    fi
+    echo "[!] NOT READY — install the [MISS] items above (or pass --no-tor)."
+    return 1
+}
+
+if $DOCTOR; then
+    run_doctor
+    exit $?
+fi
+
 #— Burp mode: set PROXY (fed into BASE_FFUF via existing -x handling) --------
 if $BURP_MODE; then PROXY="http://127.0.0.1:${BURP_PORT}"; fi
 
 #— Dependency check ----------------------------------------------------------
-for tool in ffuf jq curl; do
+for tool in ffuf jq curl openssl shuf; do
     if ! command -v "$tool" &>/dev/null; then
-        echo "[!] Error: $tool not found. Install it first."
+        echo "[!] Error: $tool not found. Install: $(_pkg_hint "$tool")"
         exit 1
     fi
 done
 if $USE_TOR && ! command -v torsocks &>/dev/null; then
-    echo "[!] Error: torsocks not found. Arch: pacman -S torsocks  |  or pass --no-tor"
+    echo "[!] Error: torsocks not found. Install: $(_pkg_hint torsocks)  |  or pass --no-tor"
     exit 1
 fi
 
@@ -243,9 +413,9 @@ HAS_NUCLEI=false;   command -v nuclei     &>/dev/null && HAS_NUCLEI=true
 
 #— Tor pre-flight (hard abort — no silent IP leak) ---------------------------
 if $USE_TOR; then
-    if ! ss -tlnp 2>/dev/null | grep -q "127.0.0.1:9050"; then
-        echo "[!] Tor SOCKS not listening on 127.0.0.1:9050"
-        echo "    Start Tor : systemctl start tor"
+    if ! tor_socks_up; then
+        echo "[!] Tor SOCKS not reachable on 127.0.0.1:9050"
+        echo "    Start Tor : sudo systemctl start tor  (Debian: sudo systemctl start tor@default)"
         echo "    Skip Tor  : pass --no-tor"
         exit 1
     fi
@@ -330,7 +500,7 @@ else
         echo "[!] Invalid target URL: '$TARGET'"
         echo "    Must start with http:// or https:// and contain no spaces or commas."
         echo "    Example: https://target.com  or  http://target.com:8080/path"
-        echo "    Tip: To scan from a scope file, pass the .txt path (e.g. /home/aops/scope.txt)"
+        echo "    Tip: To scan from a scope file, pass the .txt path (e.g. ~/scope.txt)"
         exit 1
     fi
     TARGET_LIST=("$TARGET")
@@ -358,12 +528,13 @@ select_cookies
 #— User-Agent resolution (random from pool if not overridden by --ua) --------
 [[ -z "$UA" ]] && rotate_ua
 
-#— Wordlist validation -------------------------------------------------------
-[[ -f "$API_WL" ]] || API_WL="$COMMON"   # fallback if SecLists api/ absent
+#— Wordlist resolution + validation ------------------------------------------
+resolve_wordlists || exit 1
 for wl in "$COMMON" "$WORDLIST" "$COMBINED"; do
     if [[ ! -f "$wl" ]]; then
         echo "[!] Wordlist not found: $wl"
-        echo "    Check the path or use -w to override."
+        echo "    SecLists root resolved to: ${SECLISTS_ROOT}"
+        echo "    Override with -w FILE, --seclists DIR, or \$ADV7_SECLISTS."
         exit 1
     fi
 done
@@ -461,9 +632,10 @@ tor_rotate() {
     echo "    Blocked exit : ${_current_ip:-unknown}" | tee -a "$LOG"
 
     # Tier 1: sudo systemctl restart tor (interactive — user enters password at terminal)
-    echo "[*] Running: sudo systemctl restart tor" | tee -a "$LOG"
+    # Try the plain unit first, then Debian/Ubuntu's instanced tor@default.
+    echo "[*] Running: sudo systemctl restart tor (or tor@default)" | tee -a "$LOG"
     echo "    (Enter sudo password if prompted)" | tee -a "$LOG"
-    if sudo systemctl restart tor 2>/dev/null; then
+    if sudo systemctl restart tor 2>/dev/null || sudo systemctl restart tor@default 2>/dev/null; then
         echo "[*] Tor restarted — waiting ${TOR_WAIT_AFTER_RESTART}s for circuits..." \
             | tee -a "$LOG"
         sleep "$TOR_WAIT_AFTER_RESTART"
@@ -776,8 +948,16 @@ run_phase7() {
         echo "[*] Phase 7b skipped — kiterunner not installed" | tee -a "$LOG"
         return 0
     fi
+    local _kite
+    _kite="$(resolve_kite_routes || true)"
+    if [[ -z "$_kite" ]]; then
+        echo "[*] Phase 7b skipped — routes-large.kite not found" | tee -a "$LOG"
+        echo "    Set \$ADV7_KITE_ROUTES or place routes-large.kite in ~/.cache/kiterunner/" \
+            | tee -a "$LOG"
+        return 0
+    fi
     local _kr_out="${OUT}/phase7_api_kr.txt"
-    local -a _cmd=(kiterunner scan "$TARGET" -w routes-large.kite \
+    local -a _cmd=(kiterunner scan "$TARGET" -w "$_kite" \
         -H "User-Agent: ${UA}" --max-connection-timeout 10)
     $USE_TOR && _cmd=(torsocks "${_cmd[@]}")
     echo "[*] Phase 7b — API Routes (kiterunner)" | tee -a "$LOG"
