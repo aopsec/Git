@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #----------------------------------------------------------------------------
-# Project     : adv7SQLMap v0.0.7
+# Project     : adv7SQLMap v0.0.8
 # Description : SQLi automation with built-in adv7-evasion layer
-# Date        : 23/05/2026
+# Date        : 04/06/2026
 # CreatedBy   : ADVAN7 Offensive Security | https://github.com/aopsec
 #----------------------------------------------------------------------------
 # EVASION LAYER (default ON — adv7FUZZ evasion principles applied to sqlmap):
@@ -67,12 +67,19 @@
 #   --targets FILE       URL file for multi-target scan (one URL per line)
 #   --subdomains FILE    Subdomain list file (requires --url-tpl)
 #   --url-tpl TEMPLATE   URL template with {HOST} for subdomain mode
+#   --doctor       Check toolchain + Tor readiness and exit (no scan)
 #   -h, --help     Show this help
+#
+# PORTABILITY (runs on any Linux — Arch/Debian/Kali/Fedora/…):
+#   Required: sqlmap jq openssl shuf (+ torsocks unless --no-tor).
+#   Optional: nc, xxd — enable Tier-0 NEWNYM Tor rotation (degrades to Tier-1 if absent).
+#   Tor control cookie is searched in /var/lib/tor, /run/tor, /var/run/tor.
+#   Run  ./adv7SQLMap.sh --doctor  first to certify your box is ready.
 #----------------------------------------------------------------------------
 
 set -uo pipefail
 
-VERSION="0.0.7"
+VERSION="0.0.8"
 
 # ── ANSI colours ────────────────────────────────────────────────────────────
 G='\033[0;32m'
@@ -114,6 +121,7 @@ LOG="/dev/null"
 TEMPLATE=""
 EXTRA_FLAGS=()
 ONLY_PHASE=""
+DOCTOR=false
 
 # ── Evasion defaults (always ON) ──────────────────────────────────────────────
 USE_TOR=true
@@ -186,6 +194,7 @@ while [[ $# -gt 0 ]]; do
         --targets)    TARGETS_FILE="$2";    shift 2 ;;
         --subdomains) SUBDOMAINS_FILE="$2"; shift 2 ;;
         --url-tpl)    URL_TPL="$2";         shift 2 ;;
+        --doctor)     DOCTOR=true;          shift ;;
         -h|--help)
             grep "^#" "$0" | grep -v "^#!/" | sed 's/^# \{0,\}//'
             exit 0 ;;
@@ -204,24 +213,113 @@ if [[ -n "$TARGET" && ! "$TARGET" =~ ^https?:// && -f "$TARGET" ]]; then
     TARGET=""
 fi
 
+# ── Portability helpers (distro-agnostic) ────────────────────────────────────
+# Distro-correct install hint for a tool, derived from /etc/os-release.
+# Maps the few tools whose package name differs from the command name.
+_pkg_hint() {
+    local _tool="$1" _id _pkg="$1"
+    _id="$( . /etc/os-release 2>/dev/null; echo "${ID:-} ${ID_LIKE:-}" )"
+    case "$_id" in
+        *arch*)
+            case "$_tool" in nc) _pkg=openbsd-netcat ;; ss) _pkg=iproute2 ;; esac
+            echo "pacman -S $_pkg" ;;
+        *debian*|*ubuntu*|*kali*)
+            case "$_tool" in nc) _pkg=netcat-openbsd ;; ss) _pkg=iproute2 ;; esac
+            echo "sudo apt install $_pkg" ;;
+        *fedora*|*rhel*|*centos*)
+            case "$_tool" in nc) _pkg=nmap-ncat ;; ss) _pkg=iproute ;; xxd) _pkg=vim-common ;; esac
+            echo "sudo dnf install $_pkg" ;;
+        *suse*)
+            case "$_tool" in nc) _pkg=netcat-openbsd ;; ss) _pkg=iproute2 ;; esac
+            echo "sudo zypper in $_pkg" ;;
+        *)  echo "install '$_tool' with your package manager" ;;
+    esac
+}
+
+# Tor control-cookie path varies by distro — return the first readable one.
+TOR_COOKIE_CANDIDATES=(
+    /var/lib/tor/control_auth_cookie
+    /run/tor/control.authcookie
+    /var/run/tor/control.authcookie
+)
+find_tor_cookie() {
+    local _c
+    for _c in "${TOR_COOKIE_CANDIDATES[@]}"; do
+        [[ -r "$_c" ]] && { printf '%s\n' "$_c"; return 0; }
+    done
+    return 1
+}
+
+# Tor SOCKS liveness: ss check, with a curl --socks5 fallback when ss is absent.
+tor_socks_up() {
+    if command -v ss &>/dev/null; then
+        ss -tlnp 2>/dev/null | grep -q "127.0.0.1:9050" && return 0
+    fi
+    curl -s --socks5 127.0.0.1:9050 --max-time 6 -o /dev/null \
+        "https://check.torproject.org/" 2>/dev/null && return 0
+    return 1
+}
+
+# ── Doctor: certify the box can run adv7SQLMap, then exit ─────────────────────
+run_doctor() {
+    local _miss=0 _t _ck
+    echo "adv7SQLMap v${VERSION} — readiness check"
+    echo "────────────────────────────────────────────────────"
+    echo "Required tools:"
+    for _t in sqlmap jq openssl shuf; do
+        if command -v "$_t" &>/dev/null; then printf "  [OK]   %s\n" "$_t"
+        else printf "  [MISS] %-8s → %s\n" "$_t" "$(_pkg_hint "$_t")"; _miss=1; fi
+    done
+    if $USE_TOR; then
+        if command -v torsocks &>/dev/null; then printf "  [OK]   torsocks\n"
+        else printf "  [MISS] %-8s → %s\n" "torsocks" "$(_pkg_hint torsocks)"; _miss=1; fi
+    fi
+    echo "Optional tools (enable Tier-0 NEWNYM Tor rotation):"
+    for _t in nc xxd; do
+        if command -v "$_t" &>/dev/null; then printf "  [OK]   %s\n" "$_t"
+        else printf "  [--]   %-4s (%s) — NEWNYM falls back to restart\n" "$_t" "$(_pkg_hint "$_t")"; fi
+    done
+    echo "Tor egress:"
+    if $USE_TOR; then
+        if tor_socks_up; then echo "  [OK]   SOCKS 127.0.0.1:9050 reachable"
+        else echo "  [WARN] SOCKS 127.0.0.1:9050 not reachable — start tor or use --no-tor"; fi
+        _ck="$(find_tor_cookie || true)"
+        [[ -n "$_ck" ]] && echo "  [OK]   control cookie: $_ck" \
+                        || echo "  [--]   control cookie not found (ControlPort NEWNYM unavailable)"
+    else
+        echo "  [--]   disabled (--no-tor)"
+    fi
+    echo "────────────────────────────────────────────────────"
+    if [[ "$_miss" -eq 0 ]]; then
+        echo -e "${G}[+] READY — all required components present.${RS}"
+        return 0
+    fi
+    echo -e "${R}[!] NOT READY — install the [MISS] items above (or pass --no-tor).${RS}"
+    return 1
+}
+
+if $DOCTOR; then
+    run_doctor
+    exit $?
+fi
+
 # ── Dependency check ─────────────────────────────────────────────────────────
-for _tool in sqlmap jq; do
+for _tool in sqlmap jq openssl shuf; do
     if ! command -v "$_tool" &>/dev/null; then
-        echo -e "${R}[!] Error: $_tool not found. Install it first.${RS}"
+        echo -e "${R}[!] Error: $_tool not found. Install: $(_pkg_hint "$_tool")${RS}"
         exit 1
     fi
 done
 if $USE_TOR && ! command -v torsocks &>/dev/null; then
-    echo -e "${R}[!] Error: torsocks not found. Install it or pass --no-tor${RS}"
-    echo -e "    Arch: pacman -S torsocks"
+    echo -e "${R}[!] Error: torsocks not found. Install: $(_pkg_hint torsocks)  |  or pass --no-tor${RS}"
     exit 1
 fi
 
 # ── Tor pre-flight (hard abort — no silent IP leak) ──────────────────────────
 if $USE_TOR; then
-    if ! ss -tlnp 2>/dev/null | grep -q "127.0.0.1:9050"; then
-        echo "[!] Tor SOCKS not listening on 127.0.0.1:9050"
-        echo "    Start Tor : systemctl start tor"
+    if ! tor_socks_up; then
+        echo "[!] Tor SOCKS not reachable on 127.0.0.1:9050"
+        echo "    Start Tor : sudo systemctl start tor  (Debian: sudo systemctl start tor@default)"
         echo "    Skip Tor  : pass --no-tor"
         exit 1
     fi
@@ -302,15 +400,25 @@ tor_is_blocked() {
 }
 
 tor_newnym() {
-    local _auth_cookie="/var/lib/tor/control_auth_cookie"
-    local _nc_out
-    if [[ -r "$_auth_cookie" ]]; then
-        local _hex
-        _hex=$(xxd -p < "$_auth_cookie" | tr -d '\n')
-        _nc_out=$(printf 'AUTHENTICATE %s\r\nSIGNAL NEWNYM\r\nQUIT\r\n' "$_hex" \
-            | nc -w 5 127.0.0.1 9051 2>/dev/null)
-        echo "$_nc_out" | grep -q "^250" && return 0
+    # Tier-0 rotation needs nc (ControlPort talk) and xxd (cookie hex). Without
+    # them, degrade cleanly so the caller falls through to Tier-1 restart.
+    if ! command -v nc &>/dev/null; then
+        echo "[!] NEWNYM unavailable — 'nc' not installed ($(_pkg_hint nc))" | tee -a "$LOG"
         return 1
+    fi
+    local _auth_cookie _nc_out
+    _auth_cookie="$(find_tor_cookie || true)"
+    if [[ -n "$_auth_cookie" ]]; then
+        if ! command -v xxd &>/dev/null; then
+            echo "[!] NEWNYM auth needs 'xxd' ($(_pkg_hint xxd)) — trying empty auth" | tee -a "$LOG"
+        else
+            local _hex
+            _hex=$(xxd -p < "$_auth_cookie" | tr -d '\n')
+            _nc_out=$(printf 'AUTHENTICATE %s\r\nSIGNAL NEWNYM\r\nQUIT\r\n' "$_hex" \
+                | nc -w 5 127.0.0.1 9051 2>/dev/null)
+            echo "$_nc_out" | grep -q "^250" && return 0
+            return 1
+        fi
     fi
     _nc_out=$(printf 'AUTHENTICATE ""\r\nSIGNAL NEWNYM\r\nQUIT\r\n' \
         | nc -w 5 127.0.0.1 9051 2>/dev/null)
@@ -342,10 +450,10 @@ tor_rotate() {
         echo "[!] NEWNYM failed (ControlPort not available) — trying Tier 1" | tee -a "$LOG"
     fi
 
-    # Tier 1: sudo systemctl restart tor
-    echo "[*] Tier 1 — sudo systemctl restart tor" | tee -a "$LOG"
+    # Tier 1: sudo systemctl restart tor (Debian/Ubuntu use the tor@default instance)
+    echo "[*] Tier 1 — sudo systemctl restart tor (or tor@default)" | tee -a "$LOG"
     echo "    (Enter sudo password if prompted)" | tee -a "$LOG"
-    if sudo systemctl restart tor 2>/dev/null; then
+    if sudo systemctl restart tor 2>/dev/null || sudo systemctl restart tor@default 2>/dev/null; then
         echo "[*] Tor restarted — waiting ${TOR_WAIT_AFTER_RESTART}s for circuits..." \
             | tee -a "$LOG"
         sleep "$TOR_WAIT_AFTER_RESTART"
