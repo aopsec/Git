@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # Mantém as próprias GitHub Actions atualizadas (supply-chain).
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Dependências Python dos projetos (ajuste os diretórios conforme o repositório).
+  - package-ecosystem: "pip"
+    directory: "/ObsidianAgent"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

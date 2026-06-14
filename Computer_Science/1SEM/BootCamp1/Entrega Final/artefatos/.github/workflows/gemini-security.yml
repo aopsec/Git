@@ -1,0 +1,36 @@
+name: Gemini Security Review
+
+# Revisão de segurança por IA nos Pull Requests:
+#  - automática ao abrir/atualizar um PR
+#  - sob demanda com o comentário "@gemini-cli /review" no PR
+# Requer configurar autenticação GitHub -> Google Cloud (ver codelab oficial:
+# codelabs.developers.google.com/gemini-cli/gemini-cli-security-review).
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  review:
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@gemini-cli'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gemini CLI + Security Extension
+        uses: google-github-actions/run-gemini-cli@v0
+        with:
+          # Carrega a extensão de segurança do Gemini CLI:
+          #   comando /security:github-pr + varredura de dependências (OSV-Scanner)
+          settings: '{ "extensions": ["security"] }'
+          # Defina os segredos GEMINI_API_KEY / GCP_WORKLOAD_IDENTITY_PROVIDER
+          # em Settings > Secrets and variables > Actions.

@@ -110,9 +110,17 @@
       "WebFetch(domain:www.youtube.com)",
       "WebFetch(domain:quizlet.com)",
       "WebFetch(domain:www.docsity.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "PowerShell(claude mcp *)",
+      "PowerShell(claude sandbox *)"
     ]
   },
+  "enabledMcpjsonServers": [
+    "fs-mesh",
+    "git-mesh",
+    "vault-mesh",
+    "exec-mesh"
+  ],
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true

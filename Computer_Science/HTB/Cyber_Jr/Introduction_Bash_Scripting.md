@@ -319,3 +319,470 @@ PRO
     ---
     
     ### Submit the echo statement that would print "www2.inlanefreight.com" when running the last "Arrays.sh" script.
+
+
+
+Section 5 / 10
+
+# Arithmetic
+
+---
+
+In Bash, we have seven different `arithmetic operators` we can work with. These are used to perform different mathematical operations or to modify certain integers.
+
+#### Arithmetic Operators
+
+|**Operator**|**Description**|
+|---|---|
+|`+`|Addition|
+|`-`|Subtraction|
+|`*`|Multiplication|
+|`/`|Division|
+|`%`|Modulus|
+|`variable++`|Increase the value of the variable by 1|
+|`variable--`|Decrease the value of the variable by 1|
+
+We can summarize all these operators in a small script:
+
+#### Arithmetic.sh
+
+        bash
+`#!/bin/bash increase=1 decrease=1 echo "Addition: 10 + 10 = $((10 + 10))" echo "Subtraction: 10 - 10 = $((10 - 10))" echo "Multiplication: 10 * 10 = $((10 * 10))" echo "Division: 10 / 10 = $((10 / 10))" echo "Modulus: 10 % 4 = $((10 % 4))" ((increase++)) echo "Increase Variable: $increase" ((decrease--)) echo "Decrease Variable: $decrease"`
+
+The output of this script looks like this:
+
+#### Arithmetic.sh - Execution
+
+        shellsession
+`aopsec@htb[/htb]$ ./Arithmetic.sh Addition: 10 + 10 = 20 Subtraction: 10 - 10 = 0 Multiplication: 10 * 10 = 100 Division: 10 / 10 = 1 Modulus: 10 % 4 = 2 Increase Variable: 2 Decrease Variable: 0`
+
+---
+
+We can also calculate the length of the variable. Using this function `${#variable}`, every character gets counted, and we get the total number of characters in the variable.
+
+#### VarLength.sh
+
+        bash
+`#!/bin/bash htb="HackTheBox" echo ${#htb}`
+
+#### VarLength.sh
+
+        shellsession
+`aopsec@htb[/htb]$ ./VarLength.sh 10`
+
+---
+
+If we look at our `CIDR.sh` script, we will see that we have used the `increase` and `decrease` operators several times. This ensures that the while loop, which we will discuss later, runs and pings the hosts while the variable "`stat`" has a value of `1`. If the ping command ends with code `0` (successful), we get a message that the `host is up` and the "`stat`" variable, as well as the variables "`hosts_up`" and "`hosts_total`" get changed.
+
+#### CIDR.sh
+
+        bash
+`<SNIP>     echo -e "\nPinging host(s):"    for host in $cidr_ips    do        stat=1        while [ $stat -eq 1 ]        do            ping -c 2 $host > /dev/null 2>&1            if [ $? -eq 0 ]            then                echo "$host is up."                ((stat--))                ((hosts_up++))                ((hosts_total++))            else                echo "$host is down."                ((stat--))                ((hosts_total++))            fi        done    done <SNIP>`
+
+Section 6 / 10
+
+# Input and Output
+
+---
+
+## Input Control
+
+We may get results from our sent requests and executed commands, which we have to decide manually on how to proceed. Another example would be that we have defined several functions in our script designed for different scenarios. We have to decide which of them should be executed after a manual check and based on the results. It is also quite possible that specific scans or activities may not be allowed to be performed. Therefore, we need to be familiar with how to get a running script to wait for our instructions. If we look at our `CIDR.sh` script again, we see that we have added such a call to decide further steps.
+
+#### CIDR.sh
+
+        bash
+`# Available options <SNIP> echo -e "Additional options available:" echo -e "\t1) Identify the corresponding network range of target domain." echo -e "\t2) Ping discovered hosts." echo -e "\t3) All checks." echo -e "\t*) Exit.\n" read -p "Select your option: " opt case $opt in     "1") network_range ;;    "2") ping_host ;;    "3") network_range && ping_host ;;    "*") exit 0 ;; esac`
+
+The first `echo` lines serve as a display menu for the options available to us. With the `read` command, the line with "`Select your option:`" is displayed, and the additional option `-p` ensures that our input remains on the same line. Our input is stored in the variable `opt`, which we then use to execute the corresponding functions with the `case` statement, which we will look at later. Depending on the number we enter, the `case` statement determines which functions are executed.
+
+---
+
+## Output Control
+
+We have already learned about the output redirections of output in the `Linux Fundamentals` module. Nevertheless, the problem with the redirections is that we do not get any output from the respective command. It will be redirected to the appropriate file. If our scripts become more complicated later, they can take much more time than just a few seconds. To avoid sitting inactively and waiting for our script's results, we can use the [tee](https://man7.org/linux/man-pages/man1/tee.1.html) utility. It ensures that we see the results we get immediately and that they are stored in the corresponding files. In our `CIDR.sh` script, we have used this utility twice in different ways.
+
+#### CIDR.sh
+
+        bash
+`<SNIP> # Identify Network range for the specified IP address(es) function network_range {     for ip in $ipaddr    do        netrange=$(whois $ip | grep "NetRange\|CIDR" | tee -a CIDR.txt)        cidr=$(whois $ip | grep "CIDR" | awk '{print $2}')        cidr_ips=$(prips $cidr)        echo -e "\nNetRange for $ip:"        echo -e "$netrange"    done } <SNIP> # Identify IP address of the specified domain hosts=$(host $domain | grep "has address" | cut -d" " -f4 | tee discovered_hosts.txt) <SNIP>`
+
+When using `tee`, we transfer the received output and use the pipe (`|`) to forward it to `tee`. The "`-a` / `--append`" parameter ensures that the specified file is not overwritten but supplemented with the new results. At the same time, it shows us the results and how they will be found in the file.
+
+        shellsession
+`aopsec@htb[/htb]$ cat discovered_hosts.txt CIDR.txt 165.22.119.202 NetRange:       165.22.0.0 - 165.22.255.255 CIDR:           165.22.0.0/16`
+
+
+
+
+  
+
+Section 7 / 10
+
+[Go to Questions](https://academy.hackthebox.com/app/module/21/section/128#questions-list)
+
+# Flow Control - Loops
+
+---
+
+The control of the flow of our scripts is essential. We have already learned about the `if-else` conditions, which are also part of flow control. After all, we want our script to work quickly and efficiently, and for this, we can use other components to increase efficiency and allow error-free processing. Each control structure is either a `branch` or a `loop`. Logical expressions of boolean values usually control the execution of a control structure. These control structures include:
+
+- Branches:
+    - `If-Else` Conditions
+    - `Case` Statements
+- Loops:
+    - `For` Loops
+    - `While` Loops
+    - `Until` Loops
+
+---
+
+## For Loops
+
+Let us start with the `For` loops. The `For` loop is executed on each pass for precisely one parameter, which the shell takes from a list, calculates from an increment, or takes from another data source. The for loop runs as long as it finds corresponding data. This type of loop can be structured and defined in different ways. For example, the for loops are often used when we need to work with many different values from an array. This can be used to scan different hosts or ports. We can also use it to execute specific commands for known ports and their services to speed up our enumeration process. The syntax for this can be as follows:
+
+#### Syntax - Examples
+
+        bash
+`for variable in 1 2 3 4 do     echo $variable done`
+
+        bash
+`for variable in file1 file2 file3 do     echo $variable done`
+
+        bash
+`for ip in "10.10.10.170 10.10.10.174 10.10.10.175" do     ping -c 1 $ip done`
+
+Of course, we can also write these commands in a single line. Such a command would look like this:
+
+        shellsession
+`aopsec@htb[/htb]$ for ip in 10.10.10.170 10.10.10.174;do ping -c 1 $ip;done PING 10.10.10.170 (10.10.10.170): 56 data bytes 64 bytes from 10.10.10.170: icmp_seq=0 ttl=63 time=42.106 ms --- 10.10.10.170 ping statistics --- 1 packets transmitted, 1 packets received, 0.0% packet loss round-trip min/avg/max/stddev = 42.106/42.106/42.106/0.000 ms PING 10.10.10.174 (10.10.10.174): 56 data bytes 64 bytes from 10.10.10.174: icmp_seq=0 ttl=63 time=45.700 ms --- 10.10.10.174 ping statistics --- 1 packets transmitted, 1 packets received, 0.0% packet loss round-trip min/avg/max/stddev = 45.700/45.700/45.700/0.000 ms`
+
+---
+
+Let us have another look at our `CIDR.sh` script. We have added several for loops to the script, but let us stick with this little code section.
+
+#### CIDR.sh
+
+        bash
+`<SNIP> # Identify Network range for the specified IP address(es) function network_range {     for ip in $ipaddr    do        netrange=$(whois $ip | grep "NetRange\|CIDR" | tee -a CIDR.txt)        cidr=$(whois $ip | grep "CIDR" | awk '{print $2}')        cidr_ips=$(prips $cidr)        echo -e "\nNetRange for $ip:"        echo -e "$netrange"    done } <SNIP>`
+
+As in the previous example, for each IP address from the array "`ipaddr`" we make a "`whois`" request, whose output is filtered for "`NetRange`" and "`CIDR`." This helps us to determine which address range our target is located in. We can use this information to search for additional hosts during a penetration test, `if approved by the client`. The results that we receive are displayed accordingly and stored in the file "`CIDR.txt`."
+
+---
+
+## While Loops
+
+The `while` loop is conceptually simple and follows the following principle:
+
+- A statement is executed as long as a condition is fulfilled (`true`).
+
+We can also combine loops and merge their execution with different values. It is important to note that the excessive combination of several loops in each other can make the code very unclear and lead to errors that can be hard to find and follow. Such a combination can look like in our `CIDR.sh` script.
+
+#### CIDR.sh
+
+        bash
+`<SNIP>         stat=1        while [ $stat -eq 1 ]        do            ping -c 2 $host > /dev/null 2>&1            if [ $? -eq 0 ]            then                echo "$host is up."                ((stat--))                ((hosts_up++))                ((hosts_total++))            else                echo "$host is down."                ((stat--))                ((hosts_total++))            fi        done <SNIP>`
+
+The `while` loops also work with conditions like `if-else`. A while loop needs some sort of a counter to orientate itself when it has to stop executing the commands it contains. Otherwise, this leads to an endless loop. Such a counter can be a variable that we have declared with a specific value or a boolean value. `While` loops run while the boolean value is "`True`". Besides the counter, we can also use the command "`break`," which interrupts the loop when reaching this command like in the following example:
+
+#### WhileBreaker.sh
+
+        bash
+`#!/bin/bash counter=0 while [ $counter -lt 10 ] do   # Increase $counter by 1  ((counter++))  echo "Counter: $counter"   if [ $counter == 2 ]  then    continue  elif [ $counter == 4 ]  then    break  fi done`
+
+#### WhileBreaker.sh
+
+        shellsession
+`aopsec@htb[/htb]$ ./WhileBreaker.sh Counter: 1 Counter: 2 Counter: 3 Counter: 4`
+
+---
+
+## Until Loops
+
+There is also the `until` loop, which is relatively rare. Nevertheless, the `until` loop works precisely like the `while` loop, but with the difference:
+
+- The code inside a `until` loop is executed as long as the particular condition is `false`.
+
+The other way is to let the loop run until the desired value is reached. The "`until`" loops are very well suited for this. This type of loop works similarly to the "`while`" loop but, as already mentioned, with the difference that it runs until the boolean value is "`False`."
+
+#### Until.sh
+
+        bash
+`#!/bin/bash counter=0 until [ $counter -eq 10 ] do   # Increase $counter by 1  ((counter++))  echo "Counter: $counter" done`
+
+#### Until.sh
+
+        shellsession
+`aopsec@htb[/htb]$ ./Until.sh Counter: 1 Counter: 2 Counter: 3 Counter: 4 Counter: 5 Counter: 6 Counter: 7 Counter: 8 Counter: 9 Counter: 10`
+
+---
+
+---
+
+## Exercise Script
+
+        bash
+`#!/bin/bash # Decrypt function function decrypt {     MzSaas7k=$(echo $hash | sed 's/988sn1/83unasa/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/4d298d/9999/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/3i8dqos82/873h4d/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/4n9Ls/20X/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/912oijs01/i7gg/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/k32jx0aa/n391s/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/nI72n/YzF1/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/82ns71n/2d49/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/JGcms1a/zIm12/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/MS9/4SIs/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/Ymxj00Ims/Uso18/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/sSi8Lm/Mit/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/9su2n/43n92ka/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/ggf3iunds/dn3i8/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/uBz/TT0K/g')     flag=$(echo $MzSaas7k | base64 -d | openssl enc -aes-128-cbc -a -d -salt -pass pass:$salt) } # Variables var="9M" salt="" hash="VTJGc2RHVmtYMTl2ZnYyNTdUeERVRnBtQWVGNmFWWVUySG1wTXNmRi9rQT0K" # Base64 Encoding Example: #        user@htb$ echo "Some Text" | base64 # <- For-Loop here # Check if $salt is empty if [[ ! -z "$salt" ]] then     decrypt    echo $flag else     exit 1 fi`
+
+## Connect to HTB
+
+
+
+### Create a "For" loop that encodes the variable "var" 28 times in "base64". The number of characters in the 28th hash is the value that must be assigned to the "salt" variable.
+
+
+
+
+
+Section 7 / 10
+
+[Go to Questions](https://academy.hackthebox.com/app/module/21/section/128#questions-list)
+
+# Flow Control - Loops
+
+---
+
+The control of the flow of our scripts is essential. We have already learned about the `if-else` conditions, which are also part of flow control. After all, we want our script to work quickly and efficiently, and for this, we can use other components to increase efficiency and allow error-free processing. Each control structure is either a `branch` or a `loop`. Logical expressions of boolean values usually control the execution of a control structure. These control structures include:
+
+- Branches:
+    - `If-Else` Conditions
+    - `Case` Statements
+- Loops:
+    - `For` Loops
+    - `While` Loops
+    - `Until` Loops
+
+---
+
+## For Loops
+
+Let us start with the `For` loops. The `For` loop is executed on each pass for precisely one parameter, which the shell takes from a list, calculates from an increment, or takes from another data source. The for loop runs as long as it finds corresponding data. This type of loop can be structured and defined in different ways. For example, the for loops are often used when we need to work with many different values from an array. This can be used to scan different hosts or ports. We can also use it to execute specific commands for known ports and their services to speed up our enumeration process. The syntax for this can be as follows:
+
+#### Syntax - Examples
+
+        bash
+`for variable in 1 2 3 4 do     echo $variable done`
+
+        bash
+`for variable in file1 file2 file3 do     echo $variable done`
+
+        bash
+`for ip in "10.10.10.170 10.10.10.174 10.10.10.175" do     ping -c 1 $ip done`
+
+Of course, we can also write these commands in a single line. Such a command would look like this:
+
+        shellsession
+`aopsec@htb[/htb]$ for ip in 10.10.10.170 10.10.10.174;do ping -c 1 $ip;done PING 10.10.10.170 (10.10.10.170): 56 data bytes 64 bytes from 10.10.10.170: icmp_seq=0 ttl=63 time=42.106 ms --- 10.10.10.170 ping statistics --- 1 packets transmitted, 1 packets received, 0.0% packet loss round-trip min/avg/max/stddev = 42.106/42.106/42.106/0.000 ms PING 10.10.10.174 (10.10.10.174): 56 data bytes 64 bytes from 10.10.10.174: icmp_seq=0 ttl=63 time=45.700 ms --- 10.10.10.174 ping statistics --- 1 packets transmitted, 1 packets received, 0.0% packet loss round-trip min/avg/max/stddev = 45.700/45.700/45.700/0.000 ms`
+
+---
+
+Let us have another look at our `CIDR.sh` script. We have added several for loops to the script, but let us stick with this little code section.
+
+#### CIDR.sh
+
+        bash
+`<SNIP> # Identify Network range for the specified IP address(es) function network_range {     for ip in $ipaddr    do        netrange=$(whois $ip | grep "NetRange\|CIDR" | tee -a CIDR.txt)        cidr=$(whois $ip | grep "CIDR" | awk '{print $2}')        cidr_ips=$(prips $cidr)        echo -e "\nNetRange for $ip:"        echo -e "$netrange"    done } <SNIP>`
+
+As in the previous example, for each IP address from the array "`ipaddr`" we make a "`whois`" request, whose output is filtered for "`NetRange`" and "`CIDR`." This helps us to determine which address range our target is located in. We can use this information to search for additional hosts during a penetration test, `if approved by the client`. The results that we receive are displayed accordingly and stored in the file "`CIDR.txt`."
+
+---
+
+## While Loops
+
+The `while` loop is conceptually simple and follows the following principle:
+
+- A statement is executed as long as a condition is fulfilled (`true`).
+
+We can also combine loops and merge their execution with different values. It is important to note that the excessive combination of several loops in each other can make the code very unclear and lead to errors that can be hard to find and follow. Such a combination can look like in our `CIDR.sh` script.
+
+#### CIDR.sh
+
+        bash
+`<SNIP>         stat=1        while [ $stat -eq 1 ]        do            ping -c 2 $host > /dev/null 2>&1            if [ $? -eq 0 ]            then                echo "$host is up."                ((stat--))                ((hosts_up++))                ((hosts_total++))            else                echo "$host is down."                ((stat--))                ((hosts_total++))            fi        done <SNIP>`
+
+The `while` loops also work with conditions like `if-else`. A while loop needs some sort of a counter to orientate itself when it has to stop executing the commands it contains. Otherwise, this leads to an endless loop. Such a counter can be a variable that we have declared with a specific value or a boolean value. `While` loops run while the boolean value is "`True`". Besides the counter, we can also use the command "`break`," which interrupts the loop when reaching this command like in the following example:
+
+#### WhileBreaker.sh
+
+        bash
+`#!/bin/bash counter=0 while [ $counter -lt 10 ] do   # Increase $counter by 1  ((counter++))  echo "Counter: $counter"   if [ $counter == 2 ]  then    continue  elif [ $counter == 4 ]  then    break  fi done`
+
+#### WhileBreaker.sh
+
+        shellsession
+`aopsec@htb[/htb]$ ./WhileBreaker.sh Counter: 1 Counter: 2 Counter: 3 Counter: 4`
+
+---
+
+## Until Loops
+
+There is also the `until` loop, which is relatively rare. Nevertheless, the `until` loop works precisely like the `while` loop, but with the difference:
+
+- The code inside a `until` loop is executed as long as the particular condition is `false`.
+
+The other way is to let the loop run until the desired value is reached. The "`until`" loops are very well suited for this. This type of loop works similarly to the "`while`" loop but, as already mentioned, with the difference that it runs until the boolean value is "`False`."
+
+#### Until.sh
+
+        bash
+`#!/bin/bash counter=0 until [ $counter -eq 10 ] do   # Increase $counter by 1  ((counter++))  echo "Counter: $counter" done`
+
+#### Until.sh
+
+        shellsession
+`aopsec@htb[/htb]$ ./Until.sh Counter: 1 Counter: 2 Counter: 3 Counter: 4 Counter: 5 Counter: 6 Counter: 7 Counter: 8 Counter: 9 Counter: 10`
+
+---
+
+---
+
+## Exercise Script
+
+        bash
+`#!/bin/bash # Decrypt function function decrypt {     MzSaas7k=$(echo $hash | sed 's/988sn1/83unasa/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/4d298d/9999/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/3i8dqos82/873h4d/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/4n9Ls/20X/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/912oijs01/i7gg/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/k32jx0aa/n391s/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/nI72n/YzF1/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/82ns71n/2d49/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/JGcms1a/zIm12/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/MS9/4SIs/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/Ymxj00Ims/Uso18/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/sSi8Lm/Mit/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/9su2n/43n92ka/g')    Mzns7293sk=$(echo $MzSaas7k | sed 's/ggf3iunds/dn3i8/g')    MzSaas7k=$(echo $Mzns7293sk | sed 's/uBz/TT0K/g')     flag=$(echo $MzSaas7k | base64 -d | openssl enc -aes-128-cbc -a -d -salt -pass pass:$salt) } # Variables var="9M" salt="" hash="VTJGc2RHVmtYMTl2ZnYyNTdUeERVRnBtQWVGNmFWWVUySG1wTXNmRi9rQT0K" # Base64 Encoding Example: #        user@htb$ echo "Some Text" | base64 # <- For-Loop here # Check if $salt is empty if [[ ! -z "$salt" ]] then     decrypt    echo $flag else     exit 1 fi`
+
+
+
+
+
+
+Section 8 / 10
+
+# Flow Control - Branches
+
+---
+
+As we have already seen, the branches in flow control include `if-else` and the `case` statements. We have already discussed the `if-else` statements in detail and know how this works. Now we will take a closer look at the case statements.
+
+---
+
+## Case Statements
+
+`Case` statements are also known as `switch-case` statements in other languages, such as C/C++ and C#. The main difference between `if-else` and `switch-case` is that `if-else` constructs allow us to check any boolean expression, while `switch-case` always compares only the variable with the exact value. Therefore, the same conditions as for `if-else`, such as "greater-than," are not allowed for `switch-case`. The syntax for the switch-case statements looks like this:
+
+#### Syntax - Switch-Case
+
+        bash
+`case <expression> in     pattern_1 ) statements ;;    pattern_2 ) statements ;;    pattern_3 ) statements ;; esac`
+
+The definition of switch-case starts with `case`, followed by the variable or value as an expression, which is then compared in the pattern. If the variable or value matches the expression, then the statements are executed after the parenthesis and ended with a double semicolon (`;;`).
+
+In our `CIDR.sh` script, we have used such a `case` statement. Here we defined four different options that we assigned to our script, how it should proceed after our decision.
+
+#### CIDR.sh
+
+        bash
+`<SNIP> # Available options echo -e "Additional options available:" echo -e "\t1) Identify the corresponding network range of target domain." echo -e "\t2) Ping discovered hosts." echo -e "\t3) All checks." echo -e "\t*) Exit.\n" read -p "Select your option: " opt case $opt in     "1") network_range ;;    "2") ping_host ;;    "3") network_range && ping_host ;;    "*") exit 0 ;; esac <SNIP>`
+
+With the first two options, this script executes different functions that we had defined before. With the third option, both functions are executed, and with any other option, the script will be terminated.
+
+
+Section 9 / 10
+
+# Functions
+
+---
+
+The bigger our scripts get, the more chaotic they become. If we use the same routines several times in the script, the script's size will increase accordingly. In such cases, `functions` are the solution that improves both the size and the clarity of the script many times. We combine several commands in a block between curly brackets ( `{` ... `}` ) and call them with a function name defined by us with `functions`. Once a function has been defined, it can be called and used again during the script.
+
+`Functions` are an essential part of scripts and programs, as they are used to execute recurring commands for different values and phases of the script or program. Therefore, we do not have to repeat the whole section of code repeatedly but can create a single function that executes the specific commands. The definition of such functions makes the code easier to read and helps to keep the code as short as possible. It is important to note that functions must always be defined logically `before` the first call since a script is also processed from top to bottom. Therefore the definition of a function is always `at the beginning` of the script. There are two methods to define the functions:
+
+#### Method 1 - Functions
+
+        bash
+`function name {     <commands> }`
+
+#### Method 2 - Functions
+
+        bash
+`name() {     <commands> }`
+
+We can choose the method to define a function that is most comfortable for us. In our `CIDR.sh` script, we used the first method because it is easier to read with the keyword "`function`."
+
+#### CIDR.sh
+
+        bash
+`<SNIP> # Identify Network range for the specified IP address(es) function network_range {     for ip in $ipaddr    do        netrange=$(whois $ip | grep "NetRange\|CIDR" | tee -a CIDR.txt)        cidr=$(whois $ip | grep "CIDR" | awk '{print $2}')        cidr_ips=$(prips $cidr)        echo -e "\nNetRange for $ip:"        echo -e "$netrange"    done } <SNIP>`
+
+The function is called only by calling the specified name of the function, as we have seen in the case statement.
+
+#### Function Execution - CIDR.sh
+
+        bash
+`<SNIP> case $opt in     "1") network_range ;;    "2") ping_host ;;    "3") network_range && ping_host ;;    "*") exit 0 ;; esac`
+
+---
+
+## Parameter Passing
+
+Such functions should be designed so that they can be used with a fixed structure of the values or at least only with a fixed format. Like we have already seen in our `CIDR.sh` script, we used the format of an IP address for the function "`network_range`". The parameters are optional, and therefore we can call the function without parameters. In principle, the same applies to the passed parameters as to parameters passed to a shell script. These are `$1` - `$9` (`${n}`), or `$variable` as we have already seen. Each function has its own set of parameters. So they do not collide with those of other functions or the parameters of the shell script.
+
+An important difference between bash scripts and other programming languages is that all defined variables are always processed `globally` unless otherwise declared by "[local](https://www.tldp.org/LDP/abs/html/localvar.html)." This means that the first time we have defined a variable in a function, we will call it in our main script (outside the function). Passing the parameters to the functions is done the same way as we passed the arguments to our script and looks like this:
+
+#### PrintPars.sh
+
+        bash
+`#!/bin/bash function print_pars {     echo $1 $2 $3 } one="First parameter" two="Second parameter" three="Third parameter" print_pars "$one" "$two" "$three"`
+
+        shellsession
+`aopsec@htb[/htb]$ ./PrintPars.sh First parameter Second parameter Third parameter`
+
+---
+
+## Return Values
+
+When we start a new process, each `child process` (for example, a `function` in the executed script) returns a `return code` to the `parent process` (`bash shell` through which we executed the script) at its termination, informing it of the status of the execution. This information is used to determine whether the process ran successfully or whether specific errors occurred. Based on this information, the `parent process` can decide on further program flow.
+
+|**Return Code**|**Description**|
+|---|---|
+|`1`|General errors|
+|`2`|Misuse of shell builtins|
+|`126`|Command invoked cannot execute|
+|`127`|Command not found|
+|`128`|Invalid argument to exit|
+|`128+n`|Fatal error signal "`n`"|
+|`130`|Script terminated by Control-C|
+|`255\*`|Exit status out of range|
+
+---
+
+To get the value of a function back, we can use several methods like `return`, `echo`, or a `variable`. In the next example, we will see how to use "`$?`" to read the "`return code`," how to pass the arguments to the function and how to assign the result to a variable.
+
+#### Return.sh
+
+        bash
+`#!/bin/bash function given_args {         if [ $# -lt 1 ]        then                echo -e "Number of arguments: $#"                return 1        else                echo -e "Number of arguments: $#"                return 0        fi } # No arguments given given_args echo -e "Function status code: $?\n" # One argument given given_args "argument" echo -e "Function status code: $?\n" # Pass the results of the funtion into a variable content=$(given_args "argument") echo -e "Content of the variable: \n\t$content"`
+
+#### Return.sh - Execution
+
+        shellsession
+`aopsec@htb[/htb]$ ./Return.sh Number of arguments: 0 Function status code: 1 Number of arguments: 1 Function status code: 0 Content of the variable:     Number of arguments: 1`
+
+
+
+
+Section 10 / 10
+
+# Debugging
+
+---
+
+Bash gives us an excellent opportunity to find, track, and fix errors in our code. The term `debugging` can have many different meanings. Nevertheless, [Bash debugging](https://tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_03.html) is the process of removing errors (bugs) from our code. Debugging can be performed in many different ways. For example, we can use our code for debugging to check for typos, or we can use it for code analysis to track them and determine why specific errors occur.
+
+This process is also used to find vulnerabilities in programs. For example, we can try to cause errors using different input types and track their handling in the CPU through the assembler, which may provide a way to manipulate the handling of these errors to insert our own code and force the system to execute it. This topic will be covered and discussed in detail in other modules. Bash allows us to debug our code by using the "`-x`" (`xtrace`) and "`-v`" options. Now let us see an example with our `CIDR.sh` script.
+
+#### CIDR.sh - Debugging
+
+        shellsession
+`aopsec@htb[/htb]$ bash -x CIDR.sh + '[' 0 -eq 0 ']' + echo -e 'You need to specify the target domain.\n' You need to specify the target domain. + echo -e Usage: Usage: + echo -e '\tCIDR.sh <domain>'     CIDR.sh <domain> + exit 1`
+
+Here Bash shows us precisely which function or command was executed with which values. This is indicated by the plus sign (`+`) at the beginning of the line. If we want to see all the code for a particular function, we can set the "`-v`" option that displays the output in more detail.
+
+#### CIDR.sh - Verbose Debugging
+
+        shellsession
+`aopsec@htb[/htb]$ bash -x -v CIDR.sh #!/bin/bash # Check for given argument if [ $# -eq 0 ] then     echo -e "You need to specify the target domain.\n"    echo -e "Usage:"    echo -e "\t$0 <domain>"    exit 1 else     domain=$1 fi + '[' 0 -eq 0 ']' + echo -e 'You need to specify the target domain.\n' You need to specify the target domain. + echo -e Usage: Usage: + echo -e '\tCIDR.sh <domain>'     CIDR.sh <domain> + exit 1`
+
+In comparison to normal debugging, we see the entire code section that has been processed so far and then the individual steps that have been taken.
+
+

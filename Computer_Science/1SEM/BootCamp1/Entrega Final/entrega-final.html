@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Entrega Final — Implantação do PortfolioHUB + IA Gemini</title>
+<style>
+  :root{
+    --ink:#15212e; --muted:#5b6b7b; --line:#d7dee6; --bg:#ffffff;
+    --accent:#0b6b5e; --accent2:#0d3b66; --warn:#9a4a00; --soft:#f4f7f9;
+    --code-bg:#0f1b27; --code-ink:#e6edf3; --chip:#eaf3f1;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:"Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color:var(--ink); background:var(--bg); font-size:10.6pt; line-height:1.5;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  @page{ size:A4; margin:18mm 16mm 16mm 16mm; }
+  .page{ page-break-after:always; }
+  .page:last-child{ page-break-after:auto; }
+  h1,h2,h3,h4{ color:var(--accent2); line-height:1.25; margin:0 0 .4em; }
+  h2{ font-size:16.5pt; border-bottom:2px solid var(--accent); padding-bottom:.18em; margin-top:.2em; }
+  h3{ font-size:12.5pt; color:var(--accent); margin-top:1.1em; }
+  h4{ font-size:10.8pt; color:var(--ink); margin-top:.9em; text-transform:uppercase; letter-spacing:.04em; }
+  p{ margin:.45em 0; }
+  ul,ol{ margin:.4em 0 .6em; padding-left:1.25em; }
+  li{ margin:.18em 0; }
+  a{ color:var(--accent2); text-decoration:none; }
+  code{ font-family:"Cascadia Code","Consolas",monospace; font-size:9pt; background:var(--chip); padding:.05em .35em; border-radius:4px; color:#0a3a33; }
+  pre{ background:var(--code-bg); color:var(--code-ink); border-radius:8px; padding:11px 13px; overflow:auto;
+       font-family:"Cascadia Code","Consolas",monospace; font-size:8.4pt; line-height:1.45; margin:.5em 0; }
+  pre code{ background:none; color:inherit; padding:0; font-size:inherit; }
+  table{ border-collapse:collapse; width:100%; margin:.6em 0; font-size:9.2pt; }
+  th,td{ border:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top; }
+  th{ background:var(--soft); color:var(--accent2); font-weight:600; }
+  tr:nth-child(even) td{ background:#fbfcfd; }
+  .muted{ color:var(--muted); }
+  .small{ font-size:8.8pt; }
+  .tag{ display:inline-block; background:var(--chip); color:#0a3a33; border:1px solid #cfe6e1;
+        border-radius:999px; padding:1px 9px; font-size:8pt; font-weight:600; }
+  .callout{ border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--soft);
+            border-radius:6px; padding:9px 12px; margin:.7em 0; }
+  .callout.warn{ border-left-color:var(--warn); background:#fff7ef; }
+  .callout.gem{ border-left-color:#6b3fa0; background:#f6f2fb; }
+  .callout h4{ margin:.1em 0 .3em; color:var(--accent2); }
+  .grid2{ display:flex; gap:14px; }
+  .grid2 > div{ flex:1; }
+  sup.ref{ color:var(--accent2); font-weight:700; font-size:7.6pt; }
+
+  /* Cover */
+  .cover{ height:255mm; display:flex; flex-direction:column; justify-content:space-between;
+          background:linear-gradient(155deg,#0d3b66 0%,#0b6b5e 100%); color:#eef5f4;
+          border-radius:12px; padding:24mm 20mm; }
+  .cover .kicker{ font-size:10pt; letter-spacing:.28em; text-transform:uppercase; opacity:.85; }
+  .cover h1{ color:#fff; font-size:33pt; line-height:1.08; margin:.35em 0 .1em; }
+  .cover .sub{ font-size:14pt; color:#cfe6e1; font-weight:400; }
+  .cover .meta{ font-size:10.5pt; line-height:1.7; }
+  .cover .meta b{ color:#fff; }
+  .cover .rule{ height:3px; width:70px; background:#9fe3d6; border-radius:3px; margin:14px 0; }
+  .cover .foot{ display:flex; justify-content:space-between; align-items:flex-end; font-size:9pt; opacity:.9; }
+  .badgeRow .tag{ background:rgba(255,255,255,.14); color:#eef5f4; border-color:rgba(255,255,255,.3); }
+
+  .toc li{ margin:.25em 0; }
+  .toc .n{ color:var(--accent); font-weight:700; display:inline-block; width:1.8em; }
+  .phasebar{ display:flex; gap:6px; margin:.6em 0; }
+  .phasebar div{ flex:1; text-align:center; font-size:7.8pt; font-weight:600; padding:6px 3px;
+                 border-radius:6px; background:var(--chip); color:#0a3a33; border:1px solid #cfe6e1; }
+  .arch{ border:1px solid var(--line); border-radius:8px; padding:10px; background:#fff; }
+  .arch .row{ display:flex; gap:8px; margin:6px 0; }
+  .arch .node{ flex:1; border:1px solid var(--line); border-radius:6px; padding:7px 8px; font-size:8.4pt; background:var(--soft); }
+  .arch .node b{ display:block; color:var(--accent2); font-size:8.8pt; }
+  .arch .lbl{ font-size:7.6pt; color:var(--muted); text-align:center; margin:2px 0; }
+  .check td:first-child{ width:26px; text-align:center; font-weight:700; color:var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ============== CAPA ============== -->
+<section class="page">
+  <div class="cover">
+    <div>
+      <div class="kicker">Desafio · Entrega Final</div>
+      <div class="rule"></div>
+      <h1>Implantação do<br>PortfolioHUB</h1>
+      <div class="sub">Integração com GitHub, Gestão de Usuários e Segurança,<br>com apoio da IA Google&nbsp;Gemini</div>
+    </div>
+    <div class="badgeRow">
+      <span class="tag">GitHub</span>
+      <span class="tag">GitHub&nbsp;Pages</span>
+      <span class="tag">GitHub&nbsp;Actions</span>
+      <span class="tag">Segurança</span>
+      <span class="tag">Google&nbsp;Gemini</span>
+      <span class="tag">CI/CD</span>
+    </div>
+    <div class="meta">
+      <b>Aluno:</b> Alcides Olivo Pollazzon Soterio (AOPS)<br>
+      <b>Curso:</b> Bacharelado em Ciência da Computação — UniCEUB (EaD)<br>
+      <b>Repositório:</b> github.com/aopsec/Git &nbsp;·&nbsp; <b>Site:</b> aopsec.github.io/Git/<br>
+      <b>Entrega:</b> individual em PDF — prazo 14/06/2026, 23h55
+    </div>
+    <div class="foot">
+      <div>Documento elaborado com pesquisa técnica e apoio do Google&nbsp;Gemini</div>
+      <div>13 de junho de 2026 · Brasília/DF</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SUMÁRIO + RESUMO ============== -->
+<section class="page">
+  <h2>Sumário</h2>
+  <ol class="toc" style="list-style:none; padding-left:0;">
+    <li><span class="n">0.</span> Resumo executivo e visão geral do PortfolioHUB</li>
+    <li><span class="n">1.</span> Planejamento da Implantação <span class="muted small">(plano detalhado + configuração do Gemini como guia)</span></li>
+    <li><span class="n">2.</span> Configuração Inicial e Integração com GitHub</li>
+    <li><span class="n">3.</span> Gestão de Usuários e Segurança</li>
+    <li><span class="n">4.</span> Compartilhamento e Controle de Acesso com GitHub</li>
+    <li><span class="n">5.</span> Finalização da Integração e Testes</li>
+    <li><span class="n">6.</span> Revisão Final e Apresentação (roteiro YouTube)</li>
+    <li><span class="n">7.</span> Mapa de atendimento aos critérios de avaliação</li>
+    <li><span class="n">A.</span> Apêndices — artefatos de configuração (arquivos prontos)</li>
+    <li><span class="n">R.</span> Referências</li>
+  </ol>
+
+  <h2 style="margin-top:1.2em;">0 · Resumo Executivo</h2>
+  <p>O <b>PortfolioHUB</b> é uma plataforma centralizada para <b>exibir e gerenciar projetos e portfólios
+  digitais</b>. Esta entrega documenta a sua implantação completa de ponta a ponta, tendo o <b>GitHub</b>
+  como espinha dorsal (armazenamento de projetos, versionamento, hospedagem e automação) e o <b>Google
+  Gemini</b> como copiloto de IA que guiou o planejamento, a escrita de configurações e a auditoria de
+  segurança em cada fase.</p>
+
+  <p>A instância real do PortfolioHUB é o repositório público <code>github.com/aopsec/Git</code>, publicado
+  como site em <code>aopsec.github.io/Git/</code> (GitHub Pages). Ele agrega projetos acadêmicos, ferramentas
+  de segurança ofensiva e automações pessoais, servindo simultaneamente de <i>vitrine</i> (página) e de
+  <i>repositório de gestão</i> (código, issues, releases).</p>
+
+  <div class="callout">
+    <h4>Resultado em uma frase</h4>
+    Um portfólio digital versionado, automaticamente publicado por CI/CD, com políticas de segurança
+    <i>secure-by-default</i> (2FA, proteção de branch, varredura de segredos, Dependabot, code scanning e
+    revisão de PR por IA), governança de acesso por menor privilégio e documentação reproduzível.
+  </div>
+
+  <h3>Visão geral da arquitetura</h3>
+  <div class="arch">
+    <div class="row">
+      <div class="node"><b>Autor / Colaboradores</b>2FA obrigatório · chaves SSH · tokens fine-grained</div>
+      <div class="node"><b>Google Gemini</b>Code Assist (GitHub) · Gemini CLI + Security Extension · App (planejamento)</div>
+    </div>
+    <div class="lbl">▼ commits / pull requests &nbsp;&nbsp;|&nbsp;&nbsp; revisão e auditoria por IA ▼</div>
+    <div class="row">
+      <div class="node"><b>Repositório GitHub — <i>aopsec/Git</i></b>Código dos projetos · Issues/Projects · Releases · Branch rulesets · CODEOWNERS · SECURITY.md</div>
+    </div>
+    <div class="lbl">▼ GitHub Actions (CI/CD) — build &amp; deploy + varreduras de segurança ▼</div>
+    <div class="row">
+      <div class="node"><b>GitHub Advanced/Native Security</b>Secret scanning + push protection · Dependabot · CodeQL</div>
+      <div class="node"><b>GitHub Pages</b>Site público <i>aopsec.github.io/Git/</i> · HTTPS forçado</div>
+    </div>
+    <div class="lbl">▼ vitrine pública do portfólio ▼</div>
+    <div class="row">
+      <div class="node" style="text-align:center;"><b>Visitantes / Recrutadores</b>Consomem o PortfolioHUB publicado (somente leitura)</div>
+    </div>
+  </div>
+  <p class="small muted">Figura 1 — Topologia lógica do PortfolioHUB: pessoas e IA à esquerda/topo, o
+  repositório como núcleo, automação de segurança e publicação na base.</p>
+</section>
+
+<!-- ============== SEÇÃO 1 ============== -->
+<section class="page">
+  <h2>1 · Planejamento da Implantação</h2>
+  <p>Objetivo da seção: <b>criar um plano de implantação detalhado</b> e <b>configurar o Google Gemini
+  para guiar a trilha</b> de implantação.</p>
+
+  <h3>1.1 Escopo, objetivos e premissas</h3>
+  <table>
+    <tr><th style="width:26%">Item</th><th>Definição</th></tr>
+    <tr><td>Produto</td><td>PortfolioHUB — hub central de projetos/portfólios digitais do aluno.</td></tr>
+    <tr><td>Objetivo</td><td>Publicar um portfólio versionado, seguro e colaborativo, 100% sobre o ecossistema GitHub, pronto para uso real (produção).</td></tr>
+    <tr><td>Plataforma</td><td>GitHub (repositório, Pages, Actions, recursos de segurança) + Google Gemini como IA de apoio.</td></tr>
+    <tr><td>Fora de escopo</td><td>Backend dinâmico/servidor próprio; o hub é um site estático (Jekyll/HTML) servido por GitHub Pages.</td></tr>
+    <tr><td>Premissas</td><td>Conta GitHub ativa; acesso ao Google Gemini (App, Code Assist e/ou CLI); domínio padrão <code>*.github.io</code>.</td></tr>
+  </table>
+
+  <h3>1.2 Plano de implantação por fases</h3>
+  <div class="phasebar">
+    <div>F1 · Planejar</div><div>F2 · Configurar GitHub</div><div>F3 · Usuários &amp; Segurança</div>
+    <div>F4 · Acesso &amp; Colaboração</div><div>F5 · Testes &amp; Go-live</div><div>F6 · Revisão &amp; Apresentação</div>
+  </div>
+  <table>
+    <tr><th style="width:8%">Fase</th><th>Entregáveis</th><th style="width:24%">Critério de conclusão</th></tr>
+    <tr><td><b>F1</b></td><td>Plano (este documento), backlog de tarefas, configuração do Gemini como guia.</td><td>Plano aprovado e Gemini operacional.</td></tr>
+    <tr><td><b>F2</b></td><td>Repositório dedicado, estrutura de pastas, GitHub Pages via Actions, Jekyll.</td><td>Site publicado em HTTPS.</td></tr>
+    <tr><td><b>F3</b></td><td>2FA, papéis/permissões, tokens fine-grained, branch ruleset, secret scanning, Dependabot, CodeQL, <code>SECURITY.md</code>.</td><td>Varreduras verdes; políticas ativas.</td></tr>
+    <tr><td><b>F4</b></td><td>Modelo de branches, fluxo de PR, <code>CODEOWNERS</code>, convenções de commit, revisão por Gemini.</td><td>PR de exemplo revisado e mesclado.</td></tr>
+    <tr><td><b>F5</b></td><td>Matriz de testes, checklist de go-live, validação de links/HTTPS/builds.</td><td>Todos os testes <i>PASS</i>.</td></tr>
+    <tr><td><b>F6</b></td><td>Roteiro e gravação no YouTube, retrospectiva de desafios.</td><td>Vídeo publicado; entrega em PDF.</td></tr>
+  </table>
+
+  <h3>1.3 Cronograma e riscos</h3>
+  <div class="grid2">
+    <div>
+      <h4>Cronograma (sprint único)</h4>
+      <ul class="small">
+        <li><b>Dia 1:</b> F1–F2 — planejamento + repositório + Pages.</li>
+        <li><b>Dia 2:</b> F3–F4 — segurança, usuários, colaboração.</li>
+        <li><b>Dia 3:</b> F5–F6 — testes, go-live, vídeo, PDF.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Riscos e mitigação</h4>
+      <ul class="small">
+        <li><b>Vazamento de segredo:</b> push protection + secret scanning.</li>
+        <li><b>Takeover de subdomínio:</b> verificar domínio antes do DNS<sup class="ref">[8]</sup>.</li>
+        <li><b>Token excessivo:</b> tokens <i>fine-grained</i> + expiração<sup class="ref">[2][3]</sup>.</li>
+        <li><b>Dependência vulnerável:</b> Dependabot + OSV-Scanner via Gemini<sup class="ref">[11]</sup>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>1.4 Configuração do Google Gemini como guia da trilha</h3>
+  <p>O Gemini foi configurado em três frentes complementares, cada uma cobrindo um momento do ciclo:</p>
+  <table>
+    <tr><th style="width:22%">Frente Gemini</th><th>Para quê</th><th style="width:24%">Onde atua</th></tr>
+    <tr><td><b>Gemini (App/Chat)</b></td><td>Planejamento, redação do plano, explicação de conceitos e geração de checklists.</td><td>Navegador / app.</td></tr>
+    <tr><td><b>Gemini Code Assist no GitHub</b></td><td>Revisão automática de <i>pull requests</i>, sugestões de código e conformidade; mantém memória persistente (<i>persistent memory</i>) do histórico do repositório.<sup class="ref">[4][5][10]</sup></td><td>App GitHub <code>gemini-code-assist</code>.</td></tr>
+    <tr><td><b>Gemini CLI + Security Extension</b></td><td>Auditoria de segurança local e em PR (<code>/security:github-pr</code>), varredura de dependências com OSV-Scanner.<sup class="ref">[6][7][11]</sup></td><td>Terminal + GitHub Actions.</td></tr>
+  </table>
+  <div class="callout gem">
+    <h4>Como o Gemini guiou cada fase (exemplos reais de prompt)</h4>
+    <ul class="small" style="margin:0;">
+      <li><b>F1:</b> «Crie um plano de implantação em 6 fases para um portfólio no GitHub Pages, com critérios de conclusão e riscos.»</li>
+      <li><b>F3:</b> «Revise meu <code>ruleset</code> de proteção de branch e meu <code>SECURITY.md</code> contra as melhores práticas do GitHub e aponte lacunas.»</li>
+      <li><b>F4:</b> «@gemini-code-assist /review» em um PR para obter parecer de qualidade e segurança antes do merge.</li>
+      <li><b>F5:</b> «Gere uma matriz de testes de go-live para um site estático com HTTPS, varreduras de segurança e CI.»</li>
+    </ul>
+  </div>
+  <p class="small muted">Nota de governança: o Gemini é usado como <b>apoio e revisor</b>, não como autoridade final.
+  Toda sugestão foi validada manualmente contra a documentação oficial antes de ser aplicada — prática alinhada à
+  postura de tratar a saída de IA como recomendação, e não como decisão.</p>
+</section>
+
+<!-- ============== SEÇÃO 2 ============== -->
+<section class="page">
+  <h2>2 · Configuração Inicial e Integração com GitHub</h2>
+  <p>Objetivo: <b>criar e configurar um ambiente GitHub dedicado</b> e <b>integrar as funcionalidades do
+  GitHub no PortfolioHUB</b> (com destaque para o armazenamento de projetos).</p>
+
+  <h3>2.1 Ambiente GitHub dedicado</h3>
+  <ol>
+    <li><b>Conta/identidade:</b> conta <code>aopsec</code> com 2FA habilitado (ver Seção 3).</li>
+    <li><b>Repositório raiz:</b> <code>aopsec/Git</code> — núcleo do PortfolioHUB, público, com <code>README.md</code> de portfólio e licença.</li>
+    <li><b>Estrutura de pastas</b> (cada subprojeto é uma "vitrine" do hub):</li>
+  </ol>
+<pre><code>aopsec/Git/                      # PortfolioHUB (raiz)
+├── index.md / README.md         # Vitrine principal (GitHub Pages)
+├── _config.yml                  # Jekyll (tema, exclusões de build)
+├── .github/
+│   ├── workflows/pages.yml      # CI/CD: build + deploy do site
+│   ├── dependabot.yml           # Atualizações de dependências
+│   └── CODEOWNERS               # Donos de código / revisão obrigatória
+├── SECURITY.md                  # Política de segurança e contato
+├── Computer_Science/            # Trabalhos acadêmicos
+├── ObsidianAgent/               # Ferramentas e projetos de segurança
+└── wordlists/                   # Submódulo (SecLists) + listas próprias</code></pre>
+
+  <h3>2.2 Publicação: GitHub Pages via GitHub Actions</h3>
+  <p>O PortfolioHUB é publicado por um <i>pipeline</i> de CI/CD: cada <code>push</code> na branch
+  <code>main</code> dispara um workflow do GitHub Actions que constrói o site (Jekyll) e o implanta no
+  GitHub Pages — entrega contínua sem passos manuais.<sup class="ref">[8]</sup> O <code>_config.yml</code> exclui do
+  build as pastas de código/vault que contêm sintaxe <code>{{ }}</code> (Liquid), evitando falhas de
+  renderização.</p>
+  <div class="callout">
+    <h4>Por que Actions em vez do deploy clássico por branch</h4>
+    Controle explícito do build, permissões mínimas no workflow (<code>contents: read</code>,
+    <code>pages: write</code>, <code>id-token: write</code>), e um ambiente protegido definido pela chave <code>environment: github-pages</code>. O artefato é assinado e publicado pela própria action oficial. (Workflow completo no Apêndice&nbsp;A.)
+  </div>
+
+  <h3>2.3 Integração das funcionalidades do GitHub no PortfolioHUB</h3>
+  <table>
+    <tr><th style="width:26%">Funcionalidade GitHub</th><th>Papel no PortfolioHUB</th></tr>
+    <tr><td><b>Repositórios</b></td><td><b>Armazenamento de projetos</b> — cada projeto/portfólio vive versionado em pastas/submódulos.</td></tr>
+    <tr><td><b>GitHub Pages</b></td><td>Vitrine pública (camada de apresentação do hub).</td></tr>
+    <tr><td><b>Issues / Projects</b></td><td>Gestão de tarefas e <i>roadmap</i> de cada projeto exibido.</td></tr>
+    <tr><td><b>Releases / Tags</b></td><td>Versões publicáveis dos artefatos (ex.: ferramentas, PDFs).</td></tr>
+    <tr><td><b>Submódulos</b></td><td>Reuso de bases externas (ex.: <code>SecLists</code>) sem duplicar histórico.</td></tr>
+    <tr><td><b>Actions</b></td><td>Automação de build, deploy e varreduras de segurança.</td></tr>
+  </table>
+  <p class="small muted">Resultado: o GitHub deixa de ser "só hospedagem de código" e passa a ser a
+  <b>plataforma operacional</b> do PortfolioHUB — armazenamento, gestão, automação e publicação no mesmo lugar.</p>
+</section>
+
+<!-- ============== SEÇÃO 3 ============== -->
+<section class="page">
+  <h2>3 · Gestão de Usuários e Segurança</h2>
+  <p>Objetivo: <b>configurar a gestão de usuários</b> no GitHub integrada ao PortfolioHUB e
+  <b>implementar políticas de segurança</b>, usando o Gemini para garantir conformidade com as melhores práticas.</p>
+
+  <h3>3.1 Gestão de usuários e papéis (RBAC por menor privilégio)</h3>
+  <p>O acesso é concedido <b>por necessidade</b>: ninguém recebe mais permissão do que precisa, e as
+  permissões são revisadas periodicamente.<sup class="ref">[9]</sup> Modelo de papéis adotado (escalável de conta
+  pessoal para organização com equipes — <i>Teams</i>):</p>
+  <table>
+    <tr><th>Papel</th><th>Permissão</th><th>Uso no PortfolioHUB</th></tr>
+    <tr><td><b>Owner</b></td><td>Admin total</td><td>Apenas o autor (AOPS). Configurações, segredos, exclusão.</td></tr>
+    <tr><td><b>Maintainer</b></td><td>Maintain</td><td>Gestão de issues/releases sem acesso a configs sensíveis.</td></tr>
+    <tr><td><b>Colaborador</b></td><td>Write</td><td>Push e PR; <b>sem</b> acesso às configurações — padrão da maioria.<sup class="ref">[9]</sup></td></tr>
+    <tr><td><b>Revisor</b></td><td>Triage/Read</td><td>Comentar/triar issues e revisar PRs.</td></tr>
+    <tr><td><b>Visitante</b></td><td>Público (read)</td><td>Consome o site publicado; sem acesso de escrita.</td></tr>
+  </table>
+
+  <h4>Autenticação e credenciais</h4>
+  <ul>
+    <li><b>2FA obrigatório</b> para o autor e qualquer colaborador — camada básica que toda conta/organização deve impor.<sup class="ref">[9]</sup></li>
+    <li><b>Tokens <i>fine-grained</i></b> em vez de <i>classic</i>: cada token acessa só um proprietário, repositórios específicos e permissões granulares (read / read-write), com <b>expiração obrigatória</b>.<sup class="ref">[2][3]</sup></li>
+    <li><b>Chaves SSH/deploy keys</b> por escopo; segredos de CI no cofre <code>Actions secrets</code>, nunca no código.</li>
+  </ul>
+
+  <h3>3.2 Políticas de segurança (com conformidade guiada por Gemini)</h3>
+  <table>
+    <tr><th style="width:30%">Controle</th><th>Implementação</th></tr>
+    <tr><td><b>Proteção de branch / Rulesets</b></td><td>Regras consistentes em <code>main</code>: PR obrigatório, revisão de Code Owner, status checks verdes, sem <i>force-push</i>, histórico linear.<sup class="ref">[1]</sup></td></tr>
+    <tr><td><b>Secret scanning + push protection</b></td><td>Bloqueia commit/push de credenciais conhecidas antes de entrarem no histórico.<sup class="ref">[1]</sup></td></tr>
+    <tr><td><b>Dependabot</b></td><td>Alertas + <i>security updates</i> automáticos (PRs de correção de dependências).<sup class="ref">[1]</sup> Config no Apêndice&nbsp;D.</td></tr>
+    <tr><td><b>Code scanning (CodeQL)</b></td><td>Análise estática em cada PR; bloqueia merge com vulnerabilidade de alta severidade.<sup class="ref">[1]</sup></td></tr>
+    <tr><td><b>SECURITY.md</b></td><td>Política de divulgação responsável e canal de contato. Apêndice&nbsp;B.</td></tr>
+    <tr><td><b>Revisão de segurança por IA</b></td><td>Gemini Code Assist comenta PRs; a Gemini CLI Security Extension é executada via Actions (<code>/security:github-pr</code>, OSV-Scanner) — 90% de precisão / 93% de recall no benchmark OpenSSF CVE.<sup class="ref">[6][7][11]</sup></td></tr>
+  </table>
+
+  <div class="callout gem">
+    <h4>Conformidade verificada com o Gemini</h4>
+    O Gemini foi usado para <i>auditar</i> a configuração: revisou o ruleset, o <code>SECURITY.md</code> e o
+    <code>dependabot.yml</code> contra as práticas oficiais do GitHub, sinalizou lacunas (ex.: faltava exigir
+    revisão de Code Owner) e propôs correções — todas validadas manualmente contra a documentação antes de serem aplicadas.
+  </div>
+
+  <h4>Checklist de segurança (estado-alvo)</h4>
+  <table class="check small">
+    <tr><td>✔</td><td>2FA ativo no proprietário e colaboradores</td><td>✔</td><td>Secret scanning + push protection ativos</td></tr>
+    <tr><td>✔</td><td>Tokens fine-grained com expiração</td><td>✔</td><td>Dependabot alerts + updates ativos</td></tr>
+    <tr><td>✔</td><td>Ruleset em <code>main</code> (PR + checks + Code Owner)</td><td>✔</td><td>CodeQL em PRs</td></tr>
+    <tr><td>✔</td><td><code>SECURITY.md</code> publicado</td><td>✔</td><td>Revisão de PR por Gemini habilitada</td></tr>
+  </table>
+</section>
+
+<!-- ============== SEÇÃO 4 ============== -->
+<section class="page">
+  <h2>4 · Compartilhamento e Controle de Acesso com GitHub</h2>
+  <p>Objetivo: <b>integrar o repositório ao PortfolioHUB</b> permitindo controle de versão e compartilhamento
+  de código, e <b>documentar o processo de configuração e as práticas de colaboração</b>.</p>
+
+  <h3>4.1 Controle de versão e compartilhamento</h3>
+  <ul>
+    <li><b>Repositório público</b> como mecanismo de compartilhamento somente leitura para o público; escrita apenas por colaboradores autorizados.</li>
+    <li><b>Histórico Git</b> como controle de versão: cada mudança rastreável por commit, autor e data; <i>tags/releases</i> marcam versões publicáveis.</li>
+    <li><b>Submódulos</b> (ex.: <code>wordlists/SecLists</code>) compartilham bases externas com versão fixada, sem inflar o repositório.</li>
+    <li><b>GitHub Pages</b> compartilha o <i>produto</i> (site) com qualquer visitante via URL HTTPS.</li>
+  </ul>
+
+  <h3>4.2 Modelo de colaboração</h3>
+  <div class="grid2">
+    <div>
+      <h4>Fluxo de branches</h4>
+      <ul class="small">
+        <li><code>main</code> protegida — sempre publicável.</li>
+        <li><code>feature/*</code> e <code>fix/*</code> para trabalho.</li>
+        <li>Integração só por <b>Pull Request</b> revisado.</li>
+      </ul>
+      <h4>Convenção de commits</h4>
+      <p class="small">Prefixos semânticos por subsistema, já adotados no repositório:
+      <code>vault:</code>, <code>tests:</code>, <code>projects/&lt;slug&gt;:</code> (slug snake_case). Mensagens claras e atômicas.</p>
+    </div>
+    <div>
+      <h4>Revisão obrigatória (CODEOWNERS)</h4>
+      <p class="small">O arquivo <code>CODEOWNERS</code> + a regra "exigir revisão de Code Owner" garantem que
+      código sensível seja revisado pelos responsáveis antes do merge.<sup class="ref">[9]</sup> Apêndice&nbsp;C.</p>
+      <h4>Revisão assistida por IA</h4>
+      <p class="small">Em cada PR, <code>@gemini-code-assist /review</code> (ou o comentário
+      <code>@gemini-cli /review</code> da action) gera parecer de qualidade e segurança antes da aprovação humana.<sup class="ref">[4][12]</sup></p>
+    </div>
+  </div>
+
+  <h3>4.3 Procedimento documentado (passo a passo de colaboração)</h3>
+  <ol class="small">
+    <li>Abrir <i>issue</i> descrevendo a tarefa; vincular ao Project.</li>
+    <li>Criar branch <code>feature/&lt;tema&gt;</code> a partir de <code>main</code>.</li>
+    <li>Commits pequenos e descritivos seguindo a convenção de prefixos.</li>
+    <li>Abrir PR → disparo automático de CI (build), CodeQL e revisão Gemini.</li>
+    <li>Ajustar conforme pareceres; obter aprovação de Code Owner.</li>
+    <li>Merge com histórico linear; deploy automático para Pages.</li>
+    <li>Fechar issue; <i>tag/release</i> quando aplicável.</li>
+  </ol>
+  <div class="callout">
+    <h4>Concessão de acesso na prática</h4>
+    Novo colaborador → convite com papel <b>Write</b> (não Admin) → 2FA exigido → acesso revisado
+    periodicamente e revogado quando não for mais necessário (menor privilégio).<sup class="ref">[9]</sup>
+  </div>
+</section>
+
+<!-- ============== SEÇÃO 5 ============== -->
+<section class="page">
+  <h2>5 · Finalização da Integração e Testes</h2>
+  <p>Objetivo: <b>completar as etapas de integração restantes</b> (usando o Gemini como referência) e
+  <b>preparar o PortfolioHUB para lançamento em produção e uso real</b>.</p>
+
+  <h3>5.1 Matriz de testes</h3>
+  <table>
+    <tr><th style="width:30%">Teste</th><th>Como verificar</th><th style="width:14%">Esperado</th></tr>
+    <tr><td>Build do site (CI)</td><td>Workflow <code>pages.yml</code> conclui sem erro no push.</td><td>PASS (verde)</td></tr>
+    <tr><td>Deploy / disponibilidade</td><td>Acessar <code>aopsec.github.io/Git/</code>.</td><td>HTTP 200</td></tr>
+    <tr><td>HTTPS forçado</td><td>"Enforce HTTPS" ativo; cadeado no navegador.<sup class="ref">[8]</sup></td><td>TLS válido</td></tr>
+    <tr><td>Links externos</td><td>Auditoria de links do portfólio (sem 404/quebrados).</td><td>0 quebrados</td></tr>
+    <tr><td>Secret scanning</td><td>Nenhum segredo exposto no histórico.</td><td>0 achados</td></tr>
+    <tr><td>Dependabot</td><td>Sem alertas críticos pendentes.</td><td>0 críticos</td></tr>
+    <tr><td>CodeQL / Gemini Security</td><td>PR de teste sem vulnerabilidade de alta severidade.<sup class="ref">[7]</sup></td><td>0 altas</td></tr>
+    <tr><td>Proteção de branch</td><td>Tentar push direto em <code>main</code> → bloqueado.</td><td>Bloqueado</td></tr>
+  </table>
+
+  <h3>5.2 Checklist de go-live (produção)</h3>
+  <table class="check small">
+    <tr><td>✔</td><td>Site publicado e acessível em HTTPS</td><td>✔</td><td>Ruleset de <code>main</code> ativo e testado</td></tr>
+    <tr><td>✔</td><td>2FA + tokens fine-grained configurados</td><td>✔</td><td>Dependabot, secret scanning e CodeQL verdes</td></tr>
+    <tr><td>✔</td><td><code>README</code>, <code>SECURITY.md</code>, <code>CODEOWNERS</code> presentes</td><td>✔</td><td>Revisão Gemini ativa nos PRs</td></tr>
+    <tr><td>✔</td><td>Domínio verificado antes do DNS<sup class="ref">[8]</sup></td><td>✔</td><td>Backup/portabilidade do conteúdo garantida</td></tr>
+  </table>
+
+  <div class="callout gem">
+    <h4>Gemini como referência na finalização</h4>
+    Antes do go-live, o Gemini revisou a matriz de testes e o workflow de CI, sugeriu reduzir as permissões
+    do <code>GITHUB_TOKEN</code> ao mínimo necessário e recomendou executar o OSV-Scanner via Security Extension
+    nas dependências — itens incorporados ao pipeline (Apêndices A e F).<sup class="ref">[11]</sup>
+  </div>
+
+  <p>Com todos os itens em <i>PASS</i>, o PortfolioHUB é declarado <b>em produção</b>: qualquer atualização
+  futura entra pelo mesmo fluxo seguro (PR → revisão → CI → deploy), garantindo evolução contínua sem
+  regressão de segurança.</p>
+</section>
+
+<!-- ============== SEÇÃO 6 ============== -->
+<section class="page">
+  <h2>6 · Revisão Final e Apresentação (YouTube)</h2>
+  <p>Objetivo: <b>preparar uma breve apresentação no YouTube</b> sobre as etapas da implantação e
+  <b>apresentar o PortfolioHUB</b>, discutindo soluções implementadas e desafios superados.</p>
+
+  <h3>6.1 Roteiro do vídeo (≈ 6–8 min)</h3>
+  <table>
+    <tr><th style="width:14%">Tempo</th><th>Bloco</th><th>O que mostrar</th></tr>
+    <tr><td>0:00–0:40</td><td>Abertura</td><td>Quem sou, o que é o PortfolioHUB e o objetivo do desafio.</td></tr>
+    <tr><td>0:40–1:40</td><td>Planejamento + Gemini</td><td>Plano em 6 fases e as 3 frentes do Gemini guiando a trilha.</td></tr>
+    <tr><td>1:40–3:00</td><td>GitHub + Pages</td><td>Repositório, estrutura, workflow de deploy, site no ar em HTTPS.</td></tr>
+    <tr><td>3:00–4:30</td><td>Usuários &amp; Segurança</td><td>2FA, papéis, ruleset, secret scanning, Dependabot, CodeQL.</td></tr>
+    <tr><td>4:30–5:30</td><td>Colaboração</td><td>PR de exemplo: CODEOWNERS + revisão do Gemini + merge → deploy.</td></tr>
+    <tr><td>5:30–6:30</td><td>Testes &amp; Go-live</td><td>Matriz de testes verde; push direto bloqueado.</td></tr>
+    <tr><td>6:30–fim</td><td>Desafios &amp; encerramento</td><td>Lições aprendidas, próximos passos, agradecimento.</td></tr>
+  </table>
+
+  <h3>6.2 Soluções implementadas (destaques)</h3>
+  <ul class="small">
+    <li>Publicação automatizada por CI/CD com permissões mínimas no workflow.</li>
+    <li>Segurança <i>secure-by-default</i>: 2FA, ruleset, secret scanning, Dependabot, CodeQL.</li>
+    <li>Acesso por menor privilégio (papéis Write em vez de Admin; tokens fine-grained).</li>
+    <li>Revisão de PR assistida por IA (Gemini Code Assist + Security Extension).</li>
+  </ul>
+
+  <h3>6.3 Desafios superados</h3>
+  <ul class="small">
+    <li><b>Jekyll x Obsidian:</b> arquivos com <code>{{ }}</code> quebravam o build → resolvido com exclusões no <code>_config.yml</code>.</li>
+    <li><b>Equilíbrio acesso x segurança:</b> abrir colaboração sem reduzir a proteção da <code>main</code> → resolvido com ruleset + CODEOWNERS.</li>
+    <li><b>IA como apoio, não autoridade:</b> toda sugestão do Gemini validada contra a documentação oficial antes de ser aplicada.</li>
+  </ul>
+  <div class="callout">
+    <h4>Onde inserir o link</h4>
+    Após gravar e publicar, inserir aqui a URL do vídeo: <b>YouTube — Implantação do PortfolioHUB:</b>
+    <span class="muted">https://youtu.be/&lt;ID-DO-VIDEO&gt;</span>
+  </div>
+</section>
+
+<!-- ============== SEÇÃO 7 — CRITÉRIOS ============== -->
+<section class="page">
+  <h2>7 · Mapa de Atendimento aos Critérios de Avaliação</h2>
+  <table>
+    <tr><th style="width:18%">Critério</th><th>Como é atendido</th><th style="width:16%">Evidência</th></tr>
+    <tr><td><b>Implementação</b></td><td>Integração efetiva GitHub + Google (Gemini): repositório, Pages via Actions, armazenamento de projetos, automação de CI/CD.</td><td>Seções 2, 5; Apêndice A</td></tr>
+    <tr><td><b>Segurança</b></td><td>Políticas robustas: 2FA, ruleset, secret scanning, Dependabot, CodeQL, tokens fine-grained, revisão de segurança por IA.</td><td>Seção 3; Apêndices B, D, F</td></tr>
+    <tr><td><b>Documentação</b></td><td>Processo descrito de ponta a ponta, com passo a passo, checklists, matriz de testes e artefatos prontos.</td><td>Documento inteiro</td></tr>
+    <tr><td><b>Colaboração</b></td><td>Fluxo de PR, CODEOWNERS, convenção de commits, revisão assistida por Gemini, gestão de papéis.</td><td>Seção 4; Apêndice C</td></tr>
+    <tr><td><b>Apresentação</b></td><td>Roteiro estruturado para YouTube com tempos, soluções e desafios.</td><td>Seção 6</td></tr>
+  </table>
+
+  <h2 style="margin-top:1.4em;">A · Apêndices — Artefatos de Configuração</h2>
+  <p class="small muted">Arquivos prontos para commit no repositório. Versões salvas também na pasta
+  <code>artefatos/</code> que acompanha esta entrega.</p>
+
+  <h3>Apêndice A — <code>.github/workflows/pages.yml</code> (deploy do PortfolioHUB)</h3>
+<pre><code>name: Deploy PortfolioHUB (GitHub Pages)
+on:
+  push: { branches: [ main ] }
+  workflow_dispatch:
+permissions:           # menor privilégio
+  contents: read
+  pages: write
+  id-token: write
+concurrency: { group: pages, cancel-in-progress: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: recursive }
+      - uses: actions/configure-pages@v5
+      - uses: actions/jekyll-build-pages@v1
+      - uses: actions/upload-pages-artifact@v3
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: "${{ steps.deploy.outputs.page_url }}" }
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4</code></pre>
+
+  <h3>Apêndice B — <code>SECURITY.md</code></h3>
+<pre><code># Política de Segurança — PortfolioHUB
+
+## Versões suportadas
+A branch `main` é a versão suportada e publicada.
+
+## Como reportar uma vulnerabilidade
+Reporte de forma responsável por GitHub Security Advisories
+("Report a vulnerability") ou e-mail privado ao mantenedor.
+Não abra issue pública para falhas de segurança.
+Resposta-alvo: confirmação em até 72h.
+
+## Práticas adotadas
+2FA obrigatório · secret scanning + push protection ·
+Dependabot · CodeQL · revisão de PR por Gemini.</code></pre>
+</section>
+
+<!-- ============== APÊNDICES C–F + REFERÊNCIAS ============== -->
+<section class="page">
+  <h3>Apêndice C — <code>.github/CODEOWNERS</code></h3>
+<pre><code># Donos de código — revisão obrigatória antes do merge
+*                       @aopsec
+/.github/               @aopsec
+/SECURITY.md            @aopsec
+/ObsidianAgent/         @aopsec</code></pre>
+
+  <h3>Apêndice D — <code>.github/dependabot.yml</code></h3>
+<pre><code>version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: { interval: "weekly" }
+  - package-ecosystem: "pip"
+    directory: "/ObsidianAgent"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5</code></pre>
+
+  <h3>Apêndice E — Ruleset de proteção da branch <code>main</code> (resumo)</h3>
+  <table class="small">
+    <tr><th style="width:48%">Regra</th><th>Valor</th></tr>
+    <tr><td>Pull request obrigatório</td><td>Sim — mín. 1 aprovação</td></tr>
+    <tr><td>Exigir revisão de Code Owner</td><td>Sim<sup class="ref">[9]</sup></td></tr>
+    <tr><td>Status checks obrigatórios</td><td>build (Pages), CodeQL</td></tr>
+    <tr><td>Histórico linear / sem force-push</td><td>Sim</td></tr>
+    <tr><td>Bloquear deleção da branch</td><td>Sim</td></tr>
+  </table>
+
+  <h3>Apêndice F — <code>.github/workflows/gemini-security.yml</code> (revisão de segurança por IA)</h3>
+<pre><code>name: Gemini Security Review
+on:
+  pull_request: { types: [opened, synchronize] }
+  issue_comment: { types: [created] }   # aciona com "@gemini-cli /review"
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+jobs:
+  review:
+    if: github.event_name == 'pull_request' ||
+        contains(github.event.comment.body, '@gemini-cli')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/run-gemini-cli@v0
+        with:
+          # Extensão de Segurança: /security:github-pr + OSV-Scanner
+          settings: '{ "extensions": ["security"] }'</code></pre>
+  <p class="small muted">Baseado na <i>Gemini CLI Security Extension</i> e na action <code>run-gemini-cli</code>;
+  configurar autenticação GitHub→Google Cloud conforme o codelab oficial.<sup class="ref">[6][7][11][12]</sup></p>
+
+  <h2 style="margin-top:1.3em;">R · Referências</h2>
+  <ol class="small">
+    <li id="r1">GitHub Docs — <i>GitHub security features</i>. docs.github.com/en/code-security/getting-started/github-security-features</li>
+    <li id="r2">GitHub Blog — <i>Introducing fine-grained personal access tokens for GitHub</i>. github.blog/security/application-security/introducing-fine-grained-personal-access-tokens-for-github/</li>
+    <li id="r3">GitHub Docs — <i>Managing your personal access tokens</i>. docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens</li>
+    <li id="r4">Google Cloud — <i>Review GitHub code using Gemini Code Assist</i>. docs.cloud.google.com/gemini/docs/code-review/review-repo-code</li>
+    <li id="r5">Google for Developers — <i>Gemini Code Assist release notes</i>. developers.google.com/gemini-code-assist/resources/release-notes</li>
+    <li id="r6">GitHub — <i>gemini-cli-extensions/security</i> (Security extension for the Gemini CLI). github.com/gemini-cli-extensions/security</li>
+    <li id="r7">Google Codelabs — <i>Use Gemini CLI Security Extension for GitHub PR reviews</i>. codelabs.developers.google.com/gemini-cli/gemini-cli-security-review</li>
+    <li id="r8">GitHub Docs — <i>Managing a custom domain for your GitHub Pages site</i> (verificação de domínio + Enforce HTTPS). docs.github.com/en/pages</li>
+    <li id="r9">GitHub Blog — <i>Best practices for organizations and teams using GitHub Enterprise Cloud</i> (papéis, 2FA, menor privilégio, CODEOWNERS). github.blog</li>
+    <li id="r10">Google Cloud Blog — <i>Gemini Code Assist in GitHub for Enterprises</i>. cloud.google.com/blog/products/ai-machine-learning/gemini-code-assist-in-github-for-enterprises/</li>
+    <li id="r11">Google Cloud Blog — <i>Automate app deployment and security analysis with new Gemini CLI extensions</i> (OSV-Scanner). cloud.google.com/blog</li>
+    <li id="r12">GitHub — <i>google-gemini/gemini-cli-action — pr-review</i>. github.com/google-gemini/gemini-cli-action/blob/main/docs/pr-review.md</li>
+  </ol>
+  <p class="small muted" style="margin-top:1em;">Documento produzido para o Desafio – Entrega Final (UniCEUB),
+  com pesquisa técnica em fontes oficiais (GitHub e Google) e apoio do Google Gemini como ferramenta de guia
+  e revisão. Autoria e validação final: Alcides Olivo Pollazzon Soterio.</p>
+</section>
+
+</body>
+</html>

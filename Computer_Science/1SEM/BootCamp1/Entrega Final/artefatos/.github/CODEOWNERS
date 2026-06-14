@@ -1,0 +1,13 @@
+# CODEOWNERS — revisão obrigatória antes do merge.
+# Combine com a regra de branch "Require review from Code Owners" em main.
+
+# Dono padrão de todo o repositório
+*                       @aopsec
+
+# Áreas sensíveis (configuração, segurança, automação)
+/.github/               @aopsec
+/SECURITY.md            @aopsec
+
+# Projetos
+/ObsidianAgent/         @aopsec
+/Computer_Science/      @aopsec
