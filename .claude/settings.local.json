@@ -112,7 +112,10 @@
       "WebFetch(domain:www.docsity.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "PowerShell(claude mcp *)",
-      "PowerShell(claude sandbox *)"
+      "PowerShell(claude sandbox *)",
+      "PowerShell(gh pr list --limit 20)",
+      "PowerShell(gh repo view --json nameWithOwner,visibility -q '.nameWithOwner + \\\\\" \\(\\\\\" + .visibility + \\\\\"\\)\\\\\"')",
+      "Bash(awk -F/ 'NF<=4')"
     ]
   },
   "enabledMcpjsonServers": [
