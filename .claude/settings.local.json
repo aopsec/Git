@@ -115,7 +115,8 @@
       "PowerShell(claude sandbox *)",
       "PowerShell(gh pr list --limit 20)",
       "PowerShell(gh repo view --json nameWithOwner,visibility -q '.nameWithOwner + \\\\\" \\(\\\\\" + .visibility + \\\\\"\\)\\\\\"')",
-      "Bash(awk -F/ 'NF<=4')"
+      "Bash(awk -F/ 'NF<=4')",
+      "WebFetch(domain:github.com)"
     ]
   },
   "enabledMcpjsonServers": [
