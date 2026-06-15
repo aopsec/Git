@@ -116,8 +116,6 @@
     <li><span class="n">3.</span> Gestão de Usuários e Segurança</li>
     <li><span class="n">4.</span> Compartilhamento e Controle de Acesso com GitHub</li>
     <li><span class="n">5.</span> Finalização da Integração e Testes</li>
-    <li><span class="n">6.</span> Revisão Final e Apresentação (roteiro YouTube)</li>
-    <li><span class="n">7.</span> Mapa de atendimento aos critérios de avaliação</li>
     <li><span class="n">A.</span> Apêndices — artefatos de configuração (arquivos prontos)</li>
     <li><span class="n">R.</span> Referências</li>
   </ol>
@@ -272,7 +270,7 @@
   <div class="callout">
     <h4>Por que Actions em vez do deploy clássico por branch</h4>
     Controle explícito do build, permissões mínimas no workflow (<code>contents: read</code>,
-    <code>pages: write</code>, <code>id-token: write</code>), e um ambiente protegido definido pela chave <code>environment: github-pages</code>. O artefato é assinado e publicado pela própria action oficial. (Workflow completo no Apêndice&nbsp;A.)
+    <code>pages: write</code>, <code>id-token: write</code>), e um ambiente protegido definido pela chave <code>environment: github-pages</code>. O artefato é assinado e publicado pela própria action oficial. (Workflow completo em <code>artefatos/.github/workflows/pages.yml</code>.)
   </div>
 
   <h3>2.3 Integração das funcionalidades do GitHub no PortfolioHUB</h3>
@@ -322,7 +320,7 @@
     <tr><td><b>Secret scanning + push protection</b></td><td>Bloqueia commit/push de credenciais conhecidas antes de entrarem no histórico.<sup class="ref">[1]</sup></td></tr>
     <tr><td><b>Dependabot</b></td><td>Alertas + <i>security updates</i> automáticos (PRs de correção de dependências).<sup class="ref">[1]</sup> Config no Apêndice&nbsp;D.</td></tr>
     <tr><td><b>Code scanning (CodeQL)</b></td><td>Análise estática em cada PR; bloqueia merge com vulnerabilidade de alta severidade.<sup class="ref">[1]</sup></td></tr>
-    <tr><td><b>SECURITY.md</b></td><td>Política de divulgação responsável e canal de contato. Apêndice&nbsp;B.</td></tr>
+    <tr><td><b>SECURITY.md</b></td><td>Política de divulgação responsável e canal de contato. Ver <code>SECURITY.md</code> em <code>artefatos/</code>.</td></tr>
     <tr><td><b>Revisão de segurança por IA</b></td><td>Gemini Code Assist comenta PRs; a Gemini CLI Security Extension é executada via Actions (<code>/security:github-pr</code>, OSV-Scanner) — 90% de precisão / 93% de recall no benchmark OpenSSF CVE.<sup class="ref">[6][7][11]</sup></td></tr>
   </table>
 
@@ -427,7 +425,7 @@
     <h4>Gemini como referência na finalização</h4>
     Antes do go-live, o Gemini revisou a matriz de testes e o workflow de CI, sugeriu reduzir as permissões
     do <code>GITHUB_TOKEN</code> ao mínimo necessário e recomendou executar o OSV-Scanner via Security Extension
-    nas dependências — itens incorporados ao pipeline (Apêndices A e F).<sup class="ref">[11]</sup>
+    nas dependências — itens incorporados ao pipeline (Apêndice F).<sup class="ref">[11]</sup>
   </div>
 
   <p>Com todos os itens em <i>PASS</i>, o PortfolioHUB é declarado <b>em produção</b>: qualquer atualização
@@ -435,104 +433,6 @@
   regressão de segurança.</p>
 </section>
 
-<!-- ============== SEÇÃO 6 ============== -->
-<section class="page">
-  <h2>6 · Revisão Final e Apresentação (YouTube)</h2>
-  <p>Objetivo: <b>preparar uma breve apresentação no YouTube</b> sobre as etapas da implantação e
-  <b>apresentar o PortfolioHUB</b>, discutindo soluções implementadas e desafios superados.</p>
-
-  <h3>6.1 Roteiro do vídeo (≈ 6–8 min)</h3>
-  <table>
-    <tr><th style="width:14%">Tempo</th><th>Bloco</th><th>O que mostrar</th></tr>
-    <tr><td>0:00–0:40</td><td>Abertura</td><td>Quem sou, o que é o PortfolioHUB e o objetivo do desafio.</td></tr>
-    <tr><td>0:40–1:40</td><td>Planejamento + Gemini</td><td>Plano em 6 fases e as 3 frentes do Gemini guiando a trilha.</td></tr>
-    <tr><td>1:40–3:00</td><td>GitHub + Pages</td><td>Repositório, estrutura, workflow de deploy, site no ar em HTTPS.</td></tr>
-    <tr><td>3:00–4:30</td><td>Usuários &amp; Segurança</td><td>2FA, papéis, ruleset, secret scanning, Dependabot, CodeQL.</td></tr>
-    <tr><td>4:30–5:30</td><td>Colaboração</td><td>PR de exemplo: CODEOWNERS + revisão do Gemini + merge → deploy.</td></tr>
-    <tr><td>5:30–6:30</td><td>Testes &amp; Go-live</td><td>Matriz de testes verde; push direto bloqueado.</td></tr>
-    <tr><td>6:30–fim</td><td>Desafios &amp; encerramento</td><td>Lições aprendidas, próximos passos, agradecimento.</td></tr>
-  </table>
-
-  <h3>6.2 Soluções implementadas (destaques)</h3>
-  <ul class="small">
-    <li>Publicação automatizada por CI/CD com permissões mínimas no workflow.</li>
-    <li>Segurança <i>secure-by-default</i>: 2FA, ruleset, secret scanning, Dependabot, CodeQL.</li>
-    <li>Acesso por menor privilégio (papéis Write em vez de Admin; tokens fine-grained).</li>
-    <li>Revisão de PR assistida por IA (Gemini Code Assist + Security Extension).</li>
-  </ul>
-
-  <h3>6.3 Desafios superados</h3>
-  <ul class="small">
-    <li><b>Jekyll x Obsidian:</b> arquivos com <code>{{ }}</code> quebravam o build → resolvido com exclusões no <code>_config.yml</code>.</li>
-    <li><b>Equilíbrio acesso x segurança:</b> abrir colaboração sem reduzir a proteção da <code>main</code> → resolvido com ruleset + CODEOWNERS.</li>
-    <li><b>IA como apoio, não autoridade:</b> toda sugestão do Gemini validada contra a documentação oficial antes de ser aplicada.</li>
-  </ul>
-  <div class="callout">
-    <h4>Onde inserir o link</h4>
-    Após gravar e publicar, inserir aqui a URL do vídeo: <b>YouTube — Implantação do PortfolioHUB:</b>
-    <span class="muted">https://youtu.be/&lt;ID-DO-VIDEO&gt;</span>
-  </div>
-</section>
-
-<!-- ============== SEÇÃO 7 — CRITÉRIOS ============== -->
-<section class="page">
-  <h2>7 · Mapa de Atendimento aos Critérios de Avaliação</h2>
-  <table>
-    <tr><th style="width:18%">Critério</th><th>Como é atendido</th><th style="width:16%">Evidência</th></tr>
-    <tr><td><b>Implementação</b></td><td>Integração efetiva GitHub + Google (Gemini): repositório, Pages via Actions, armazenamento de projetos, automação de CI/CD.</td><td>Seções 2, 5; Apêndice A</td></tr>
-    <tr><td><b>Segurança</b></td><td>Políticas robustas: 2FA, ruleset, secret scanning, Dependabot, CodeQL, tokens fine-grained, revisão de segurança por IA.</td><td>Seção 3; Apêndices B, D, F</td></tr>
-    <tr><td><b>Documentação</b></td><td>Processo descrito de ponta a ponta, com passo a passo, checklists, matriz de testes e artefatos prontos.</td><td>Documento inteiro</td></tr>
-    <tr><td><b>Colaboração</b></td><td>Fluxo de PR, CODEOWNERS, convenção de commits, revisão assistida por Gemini, gestão de papéis.</td><td>Seção 4; Apêndice C</td></tr>
-    <tr><td><b>Apresentação</b></td><td>Roteiro estruturado para YouTube com tempos, soluções e desafios.</td><td>Seção 6</td></tr>
-  </table>
-
-  <h2 style="margin-top:1.4em;">A · Apêndices — Artefatos de Configuração</h2>
-  <p class="small muted">Arquivos prontos para commit no repositório. Versões salvas também na pasta
-  <code>artefatos/</code> que acompanha esta entrega.</p>
-
-  <h3>Apêndice A — <code>.github/workflows/pages.yml</code> (deploy do PortfolioHUB)</h3>
-<pre><code>name: Deploy PortfolioHUB (GitHub Pages)
-on:
-  push: { branches: [ main ] }
-  workflow_dispatch:
-permissions:           # menor privilégio
-  contents: read
-  pages: write
-  id-token: write
-concurrency: { group: pages, cancel-in-progress: true }
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with: { submodules: recursive }
-      - uses: actions/configure-pages@v5
-      - uses: actions/jekyll-build-pages@v1
-      - uses: actions/upload-pages-artifact@v3
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: { name: github-pages, url: "${{ steps.deploy.outputs.page_url }}" }
-    steps:
-      - id: deploy
-        uses: actions/deploy-pages@v4</code></pre>
-
-  <h3>Apêndice B — <code>SECURITY.md</code></h3>
-<pre><code># Política de Segurança — PortfolioHUB
-
-## Versões suportadas
-A branch `main` é a versão suportada e publicada.
-
-## Como reportar uma vulnerabilidade
-Reporte de forma responsável por GitHub Security Advisories
-("Report a vulnerability") ou e-mail privado ao mantenedor.
-Não abra issue pública para falhas de segurança.
-Resposta-alvo: confirmação em até 72h.
-
-## Práticas adotadas
-2FA obrigatório · secret scanning + push protection ·
-Dependabot · CodeQL · revisão de PR por Gemini.</code></pre>
-</section>
 
 <!-- ============== APÊNDICES C–F + REFERÊNCIAS ============== -->
 <section class="page">
