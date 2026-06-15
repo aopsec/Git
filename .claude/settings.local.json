@@ -110,7 +110,10 @@
       "WebFetch(domain:www.youtube.com)",
       "WebFetch(domain:quizlet.com)",
       "WebFetch(domain:www.docsity.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "PowerShell(gh pr list --limit 20)",
+      "PowerShell(gh repo view --json nameWithOwner,visibility -q '.nameWithOwner + \\\\\" \\(\\\\\" + .visibility + \\\\\"\\)\\\\\"')",
+      "Bash(awk -F/ 'NF<=4')"
     ]
   },
   "sandbox": {
