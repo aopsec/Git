@@ -110,7 +110,8 @@
       "WebFetch(domain:www.youtube.com)",
       "WebFetch(domain:quizlet.com)",
       "WebFetch(domain:www.docsity.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)"
     ]
   },
   "sandbox": {
