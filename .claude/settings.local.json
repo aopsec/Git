@@ -110,7 +110,10 @@
       "WebFetch(domain:www.youtube.com)",
       "WebFetch(domain:quizlet.com)",
       "WebFetch(domain:www.docsity.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm --version)",
+      "Bash(npm ls *)",
+      "PowerShell($node = \\(Get-Command node -ErrorAction SilentlyContinue\\); if\\($node\\){node --version; npm --version}else{Write-Output \"node not found\"}; \\(Get-Command python -ErrorAction SilentlyContinue\\).Source)"
     ]
   },
   "sandbox": {
