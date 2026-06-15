@@ -116,7 +116,10 @@
       "PowerShell(gh pr list --limit 20)",
       "PowerShell(gh repo view --json nameWithOwner,visibility -q '.nameWithOwner + \\\\\" \\(\\\\\" + .visibility + \\\\\"\\)\\\\\"')",
       "Bash(awk -F/ 'NF<=4')",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(npm --version)",
+      "Bash(npm ls *)",
+      "PowerShell($node = \\(Get-Command node -ErrorAction SilentlyContinue\\); if\\($node\\){node --version; npm --version}else{Write-Output \"node not found\"}; \\(Get-Command python -ErrorAction SilentlyContinue\\).Source)"
     ]
   },
   "enabledMcpjsonServers": [
