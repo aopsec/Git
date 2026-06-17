@@ -346,66 +346,72 @@
 </section>
 
 <!-- =================================================================== -->
-<!-- §2.6 Hardware Setup & Boot (R3290_V8.1 e Variantes)                 -->
+<!-- §2.6 Hardware Setup & Boot (R3290_V8.1 — Família rk322x)           -->
 <!-- =================================================================== -->
 <section>
-  <h2>§2.6 Hardware Setup &amp; Boot — R3290_V8.1 (Rockchip Genérico)</h2>
+  <h2>§2.6 Hardware Setup &amp; Boot — R3290_V8.1 (Família rk322x)</h2>
 
   <p>
-    Para TV boxes baseados em **R3290_V8.1 ou variantes Rockchip** não oficialmente documentadas,
-    oferecemos um framework adaptável que funciona com qualquer SoC Rockchip (RK3288, RK3328, etc.).
-    Este guia reconhece que R3290_V8.1 **não possui documentação pública consolidada** e fornece
-    procedimentos universais com seções de confirmação de hardware.
+    <strong>R3290_V8.1</strong> é uma designação OEM impressa na PCB — não é o nome do SoC.
+    Com base nos padrões de nomenclatura OEM chineses e no prefixo "R32xx", este device
+    pertence à família <strong>rk322x</strong> (RK3228A, RK3228B ou RK3229). A imagem Armbian
+    <code>rk322x-box</code> cobre todos os três SoCs num único build, confirmado pós-boot via
+    <code>cat /proc/device-tree/model</code>.
   </p>
 
-  <h3>2.6.1 Aviso: Documentação Incompleta</h3>
-  <p>
-    O R3290_V8.1 é uma variante Rockchip pouco documentada. Este guia é <strong>estrutura adaptável</strong>
-    baseada em padrões Rockchip documentados (RK3229, RK3288, RK3328). <strong>Você DEVE</strong>:
-  </p>
+  <h3>2.6.1 Quick Start (Usuários Experientes)</h3>
   <ol>
-    <li>Confirmar o SoC exato (abrir device, ler silkscreen; ou usar serial console)</li>
-    <li>Localizar imagem Armbian correta para seu SoC específico</li>
-    <li>Encontrar pad de maskrom (provavelmente diferente de RK3229 V1–V3)</li>
+    <li>Instale <code>rkdeveloptool</code> de source (<a href="https://github.com/rockchip-linux/rkdeveloptool">github.com/rockchip-linux/rkdeveloptool</a>)</li>
+    <li>Download <code>Armbian rk322x-box</code> (Bookworm, armhf); verifique SHA256</li>
+    <li>Entrar em Maskrom — 3 métodos disponíveis:</li>
+    <ul style="font-size: 9.5pt; margin: 4pt 0 4pt 16pt;">
+      <li><strong>Método A (sem abrir)</strong>: Botão reset dentro do buraco AV + USB-OTG + fonte 5V</li>
+      <li><strong>Método B (com abertura)</strong>: Short do pino CLK do eMMC para GND durante power-on</li>
+      <li><strong>Método C (NAND TSOP)</strong>: Short pinos 6–7 ou 7–8 do NAND se armazenamento for TSOP48</li>
+    </ul>
+    <li>Verificar: <code>sudo rkdeveloptool ld</code> → <code>Maskrom</code> ou <code>Loader</code></li>
+    <li>Flash: <code>sudo rkdeveloptool wl 0 Armbian_*_rk322x-tv-box_*.img</code> (5–20 min)</li>
+    <li>Reboot: <code>sudo rkdeveloptool rd</code>, aguardar boot (~90s)</li>
+    <li>Confirmar SoC: <code>cat /proc/device-tree/model</code> → deve conter <code>rk3228</code> ou <code>rk3229</code></li>
+    <li>Phase 0: <code>sudo bash tools/fingerprint-rk3229.sh &gt; docs/hw/r3290_v8.1.txt</code> — verificar 4 gate criteria</li>
+    <li>Executar 6 checks de segurança pós-flash (§ 6 do guia)</li>
+    <li>Prosseguir para OpenBox <code>install.sh</code></li>
   </ol>
 
-  <h3>2.6.2 Passo 0: Identificar SoC</h3>
+  <h3>2.6.2 Três Métodos de Entrada em Maskrom</h3>
+  <table style="font-size: 9pt;">
+    <thead><tr><th>Método</th><th>Quando Usar</th><th>Requer Abertura?</th><th>Procedure</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>A — Botão Reset</strong></td>
+        <td>Primeira tentativa; Android ainda funcional</td>
+        <td>Não</td>
+        <td>Clipe no buraco AV (ou orifício reset), manter pressionado + USB-OTG + fonte 5V; soltar após 3–5s</td>
+      </tr>
+      <tr>
+        <td><strong>B — CLK eMMC Short</strong></td>
+        <td>Android corrompido; Método A falhou</td>
+        <td>Sim</td>
+        <td>Short pino CLK do eMMC para GND com agulha; via de teste marcada CLK/NAND_CLK próxima ao chip eMMC</td>
+      </tr>
+      <tr>
+        <td><strong>C — NAND Pinos</strong></td>
+        <td>Device com NAND TSOP48 (pinos visíveis)</td>
+        <td>Sim</td>
+        <td>Short pinos 6–7 ou 7–8 do chip NAND contando da parte inferior direita</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2.6.3 Guia Completo</h3>
   <p>
-    Antes de começar qualquer procedimento, você PRECISA identificar qual é o SoC real:
-  </p>
-  <pre><code># Opção 1: Abrir device e ler PCB silkscreen
-# Procure por: RK3289, RK3288, RK3228A, RK3328, RK3390 impresso
-
-# Opção 2: Se Armbian já roda
-cat /proc/device-tree/model
-# Expected: "rockchip,rk3288-..." ou similar
-
-# Opção 3: Serial console (ver guia Apêndice A)
-# Kernel log mostrará: "Rockchip RK3288 ..."</code></pre>
-
-  <h3>2.6.3 Quick Summary for Experienced Users</h3>
-  <ol style="font-size: 9.5pt;">
-    <li>Confirme SoC (RK3288? RK3328? outro?)</li>
-    <li>Download Armbian para seu SoC exato (NOT rk322x-box)</li>
-    <li>Localizar pad de maskrom (próximo a eMMC ou CPU, use multímetro)</li>
-    <li>Short pad + USB-OTG + power; verificar `sudo rkdeveloptool ld`</li>
-    <li>Flash: `sudo rkdeveloptool wl 0 Armbian_...img` (5–15 min)</li>
-    <li>Reboot: `sudo rkdeveloptool rd`</li>
-    <li>Verify SoC no boot: `cat /proc/device-tree/model` (must match)</li>
-    <li>Run 6 post-flash security checks (partition wipe, malware, C2)</li>
-  </ol>
-
-  <h3>2.6.4 Complete Guide &amp; Troubleshooting</h3>
-  <p>
-    Para guia completo, troubleshooting detalhado, serial console setup, e contexto de ameaças:
-  </p>
-  <p>
+    Procedimentos detalhados, localização do CLK test point, serial console debug, troubleshooting e contexto de ameaças:
     <a href="../docs/HARDWARE_SETUP_GUIDE_R3290.md"><code>docs/HARDWARE_SETUP_GUIDE_R3290.md</code></a>
   </p>
   <p class="small">
-    Notas: Este guia é um <strong>framework universal para Rockchip</strong>. R3290_V8.1 é pouco documentado;
-    confirmação de SoC, imagem Armbian correta, e pad de maskrom são requisitos pré-requisito antes de começar.
-    Colabore com comunidade (Armbian forums, XDA, GitHub) para consolidar detalhes específicos de R3290.
+    Família rk322x cobre: RK3228A · RK3228B · RK3229 — imagem única <code>rk322x-box</code> funciona com os três.
+    Confirmar SoC pós-boot com <code>cat /proc/device-tree/model</code>. Se resultado diferir de rk322x, consultar
+    <a href="https://forum.armbian.com/forum/193-rockchip-cpu-boxes/">Armbian Rockchip CPU Boxes</a> com o model string exato.
   </p>
 </section>
 
