@@ -1,0 +1,24 @@
+# Hardware fingerprints (per-user generated)
+docs/hw/*.txt
+
+# Build artifacts
+*.o
+*.so
+*.pyc
+__pycache__/
+.pytest_cache/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+/tmp/
+*.tmp

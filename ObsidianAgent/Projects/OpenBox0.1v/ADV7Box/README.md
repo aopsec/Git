@@ -40,6 +40,16 @@ chromium --headless=new --disable-gpu --no-pdf-header-footer \
 | Uso de Ferramentas — exemplar | §9, §11, §18 | CI syntax (75/0), VM harness, smoke 16/3/0, auditoria |
 | Estrutura do PDF — diagramas + escrita técnica | §3 (SVG + ASCII), §4, §7 | Fig. 3.1 SVG blocos + Fig. 3.2/3.3 ASCII + Fig. 4.1 fluxo |
 
+## Guia de Hardware & Boot (OpenBox v0.2.0)
+
+Para preparar o TV box RK3229 (R29_5G_LP3) — identificação de hardware, entrada em maskrom mode,
+flashing Armbian, verificação pós-flash — vide:
+
+- **`Projects/OpenBox0.1v/docs/HARDWARE_SETUP_GUIDE.md`** — guia completo com 11 seções (português)
+  - Pré-requisitos, identificação PCB, procedures detalhadas, troubleshooting
+  - Contexto de ameaças (BadBox 2.0, Vo1d)
+  - Phase 0 fingerprint + 4 gate criteria
+
 ## Fontes canônicas consultadas
 
 Todos os trechos reproduzem conteúdo versionado em:
