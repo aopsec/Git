@@ -346,6 +346,70 @@
 </section>
 
 <!-- =================================================================== -->
+<!-- §2.6 Hardware Setup & Boot (R3290_V8.1 e Variantes)                 -->
+<!-- =================================================================== -->
+<section>
+  <h2>§2.6 Hardware Setup &amp; Boot — R3290_V8.1 (Rockchip Genérico)</h2>
+
+  <p>
+    Para TV boxes baseados em **R3290_V8.1 ou variantes Rockchip** não oficialmente documentadas,
+    oferecemos um framework adaptável que funciona com qualquer SoC Rockchip (RK3288, RK3328, etc.).
+    Este guia reconhece que R3290_V8.1 **não possui documentação pública consolidada** e fornece
+    procedimentos universais com seções de confirmação de hardware.
+  </p>
+
+  <h3>2.6.1 Aviso: Documentação Incompleta</h3>
+  <p>
+    O R3290_V8.1 é uma variante Rockchip pouco documentada. Este guia é <strong>estrutura adaptável</strong>
+    baseada em padrões Rockchip documentados (RK3229, RK3288, RK3328). <strong>Você DEVE</strong>:
+  </p>
+  <ol>
+    <li>Confirmar o SoC exato (abrir device, ler silkscreen; ou usar serial console)</li>
+    <li>Localizar imagem Armbian correta para seu SoC específico</li>
+    <li>Encontrar pad de maskrom (provavelmente diferente de RK3229 V1–V3)</li>
+  </ol>
+
+  <h3>2.6.2 Passo 0: Identificar SoC</h3>
+  <p>
+    Antes de começar qualquer procedimento, você PRECISA identificar qual é o SoC real:
+  </p>
+  <pre><code># Opção 1: Abrir device e ler PCB silkscreen
+# Procure por: RK3289, RK3288, RK3228A, RK3328, RK3390 impresso
+
+# Opção 2: Se Armbian já roda
+cat /proc/device-tree/model
+# Expected: "rockchip,rk3288-..." ou similar
+
+# Opção 3: Serial console (ver guia Apêndice A)
+# Kernel log mostrará: "Rockchip RK3288 ..."</code></pre>
+
+  <h3>2.6.3 Quick Summary for Experienced Users</h3>
+  <ol style="font-size: 9.5pt;">
+    <li>Confirme SoC (RK3288? RK3328? outro?)</li>
+    <li>Download Armbian para seu SoC exato (NOT rk322x-box)</li>
+    <li>Localizar pad de maskrom (próximo a eMMC ou CPU, use multímetro)</li>
+    <li>Short pad + USB-OTG + power; verificar `sudo rkdeveloptool ld`</li>
+    <li>Flash: `sudo rkdeveloptool wl 0 Armbian_...img` (5–15 min)</li>
+    <li>Reboot: `sudo rkdeveloptool rd`</li>
+    <li>Verify SoC no boot: `cat /proc/device-tree/model` (must match)</li>
+    <li>Run 6 post-flash security checks (partition wipe, malware, C2)</li>
+  </ol>
+
+  <h3>2.6.4 Complete Guide &amp; Troubleshooting</h3>
+  <p>
+    Para guia completo, troubleshooting detalhado, serial console setup, e contexto de ameaças:
+  </p>
+  <p>
+    <a href="../docs/HARDWARE_SETUP_GUIDE_R3290.md"><code>docs/HARDWARE_SETUP_GUIDE_R3290.md</code></a>
+  </p>
+  <p class="small">
+    Notas: Este guia é um <strong>framework universal para Rockchip</strong>. R3290_V8.1 é pouco documentado;
+    confirmação de SoC, imagem Armbian correta, e pad de maskrom são requisitos pré-requisito antes de começar.
+    Colabore com comunidade (Armbian forums, XDA, GitHub) para consolidar detalhes específicos de R3290.
+  </p>
+</section>
+
+<!-- =================================================================== -->
 <!-- §3 Arquitetura de Referência                                         -->
 <!-- =================================================================== -->
 <section class="pagebreak">
