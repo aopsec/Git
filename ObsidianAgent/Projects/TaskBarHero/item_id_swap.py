@@ -8,32 +8,41 @@ Crypto: ES3 AES-128-CBC
         password from ES3Defaults.asset (resources.assets pathID 12223)
 
 Usage:
-  python3 item_id_swap.py                            # list item-related fields in save
-  python3 item_id_swap.py --from OLD_ID --to NEW_ID  # swap item ID, write back
-  python3 item_id_swap.py --dump                     # print raw decrypted JSON
-  python3 item_id_swap.py --watch --from A --to B    # live-watch: re-patch each game write
-  python3 item_id_swap.py --interval N --watch ...   # poll every N seconds (N must be > 0)
-  python3 item_id_swap.py --save /path/to/file       # override save path
+  python3 item_id_swap.py                             # list item-related fields in save
+  python3 item_id_swap.py --from OLD_ID --to NEW_ID   # swap item ID, write back
+  python3 item_id_swap.py --legendary                  # category-aware batch legendary swap
+  python3 item_id_swap.py --legendary --watch          # race server sync (0.5 s poll)
+  python3 item_id_swap.py --dump                       # print raw decrypted JSON
+  python3 item_id_swap.py --watch --from A --to B      # live-watch single swap
+  python3 item_id_swap.py --interval N --watch ...     # poll every N seconds (N > 0)
+  python3 item_id_swap.py --save /path/to/file         # override save path
 
-Before --from/--to writes, the original save is copied to a timestamped backup
-alongside it: SaveFile_Live.es3.bak.YYYYMMDD_HHMMSS (previous backups are kept).
+Before any write, the original save is copied to a timestamped backup:
+  SaveFile_Live.es3.bak.YYYYMMDD_HHMMSS
 
-Run inside WSL with:
-  source ~/.unitypy-venv/bin/activate
-  python3 ~/TaskbarHero/item_id_swap.py
+Platform support:
+  WSL  : python3 item_id_swap.py  (default /mnt/c/Users/... path)
+  Win  : py item_id_swap.py       (auto-detects C:\\Users\\... path via %USERNAME%)
 """
 
 import argparse
 import base64
-import fcntl
 import hashlib
+import hmac
 import json
 import os
+import platform
 import re
 import shutil
 import sys
 import time
 from pathlib import Path
+
+try:
+    import fcntl          # POSIX only (WSL / Linux)
+    _HAS_FCNTL = True
+except ImportError:
+    _HAS_FCNTL = False    # Windows native — file locking skipped
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -45,11 +54,17 @@ PBKDF2_N   = 100
 KEY_LEN    = 16   # AES-128
 BLOCK      = 16
 
-# ── Default save path (Windows user via WSL /mnt/c) ─────────────────────────────
-_WIN_USER = os.environ.get("WIN_USER", "AOPSec")
-DEFAULT_SAVE = Path(
-    f"/mnt/c/Users/{_WIN_USER}/AppData/LocalLow/TesseractStudio/TaskbarHero/SaveFile_Live.es3"
-)
+# ── Default save path — WSL or native Windows ────────────────────────────────────
+if platform.system() == "Windows":
+    _WIN_USER    = os.environ.get("USERNAME", os.environ.get("WIN_USER", "AOPSec"))
+    DEFAULT_SAVE = Path(
+        rf"C:\Users\{_WIN_USER}\AppData\LocalLow\TesseractStudio\TaskbarHero\SaveFile_Live.es3"
+    )
+else:
+    _WIN_USER    = os.environ.get("WIN_USER", "AOPSec")
+    DEFAULT_SAVE = Path(
+        f"/mnt/c/Users/{_WIN_USER}/AppData/LocalLow/TesseractStudio/TaskbarHero/SaveFile_Live.es3"
+    )
 
 # ── Crypto helpers ───────────────────────────────────────────────────────────────
 
@@ -78,36 +93,43 @@ def encrypt_save(plaintext: bytes) -> bytes:
     return iv + cipher.encrypt(pad(plaintext, BLOCK))
 
 # ── SystemInfo anti-tamper hash ──────────────────────────────────────────────────
+# Reverse-engineered from GameAssembly.dll (IL2CPP):
+#   bal.mbs() builds HMAC-SHA256(key=bgbp, msg=UTF8(av+"|"+pv+"|"+ownerSteamId))
+#   bgbp = PBKDF2-SHA1(UTF8(fim+fiy), salt, 12000 iters, GetBytes(64))[:32]
+#   fim  = "tesseractTBH0901!!"  (GUPS idx 0x1efb3, len 18)
+#   fiy  = "SaveSecretDeriveHmacKeyComposeHmacInputComposeSaltC"  (GUPS idx 0x1f1ed, len 51)
+#   salt = big-endian bytes of fin() groups at class_data offsets +0x2C..+0x38
+#          (chars 72-103 of the 112-char fin() hex string, 4 groups × 4 bytes)
+_BGBP_PASSWORD = b"tesseractTBH0901!!SaveSecretDeriveHmacKeyComposeHmacInputComposeSaltC"
+_BGBP_SALT     = bytes.fromhex("4D7A2E5F6B0C8D31A5183F6229E4F70A")
+_BGBP_KEY      = hashlib.pbkdf2_hmac("sha1", _BGBP_PASSWORD, _BGBP_SALT, 12000, dklen=64)[:32]
+
 
 def _recompute_system_info(data: dict) -> str:
     """
-    SHA-256 over the canonical JSON of all keys except SystemInfo.
-    Returns the 64-char hex digest; update_system_info re-encodes it to base64
-    when the live save already stores SystemInfo that way.
+    Compute the correct SystemInfo HMAC-SHA256 hash matching the game's anti-tamper check.
+    Returns base64-encoded result (the format ES3 stores it in).
     """
-    payload   = {k: v for k, v in data.items() if k != "SystemInfo"}
-    canonical = json.dumps(payload, separators=(",", ":"), ensure_ascii=False, sort_keys=True)
-    return hashlib.sha256(canonical.encode()).hexdigest()
-
-
-def _format_digest(hex_digest: str, existing: object) -> str:
-    """Encode the digest to match the existing value's format (base64 vs hex)."""
-    # ES3 base64 of a 32-byte digest is 44 chars ending in '='; hex is 64 chars.
-    if isinstance(existing, str) and len(existing) == 44 and existing.endswith("="):
-        return base64.b64encode(bytes.fromhex(hex_digest)).decode()
-    return hex_digest
+    acc_entry = data.get("AccountSaveData", {})
+    pla_entry = data.get("PlayerSaveData", {})
+    av = acc_entry["value"] if isinstance(acc_entry, dict) else acc_entry
+    pv = pla_entry["value"] if isinstance(pla_entry, dict) else pla_entry
+    owner_id  = json.loads(av).get("ownerSteamId", "")
+    msg    = (av + "|" + pv + "|" + owner_id).encode("utf-8")
+    digest = hmac.new(_BGBP_KEY, msg, hashlib.sha256).digest()
+    return base64.b64encode(digest).decode()
 
 
 def update_system_info(data: dict, skip: bool = False) -> None:
     if skip or "SystemInfo" not in data:
         return
+    new_hash = _recompute_system_info(data)
     entry = data["SystemInfo"]
-    hex_digest = _recompute_system_info(data)
     # ES3 wraps: {"__type": "...", "value": <hash_string>}
     if isinstance(entry, dict) and "value" in entry:
-        entry["value"] = _format_digest(hex_digest, entry["value"])
+        entry["value"] = new_hash
     else:
-        data["SystemInfo"] = _format_digest(hex_digest, entry)
+        data["SystemInfo"] = new_hash
 
 # ── Item ID discovery ────────────────────────────────────────────────────────────
 
@@ -173,13 +195,28 @@ def cmd_list(save: Path) -> None:
     print(f"[*] Size : {save.stat().st_size} bytes")
     try:
         plaintext = decrypt_save(save)
-        data      = json.loads(plaintext)
+        outer     = json.loads(plaintext)
     except (ValueError, KeyError) as exc:
         sys.exit(
             f"[!] Cannot decrypt/parse save: {exc}\n"
             "    Verify the file path and that the game is not currently writing."
         )
-    hits      = find_item_entries(data)
+
+    # Collect hits from outer dict, then from each nested JSON blob
+    hits = find_item_entries(outer)
+    for key in ("PlayerSaveData", "AccountSaveData"):
+        entry = outer.get(key)
+        if entry is None:
+            continue
+        pv_str = entry["value"] if isinstance(entry, dict) else entry
+        if not isinstance(pv_str, str):
+            continue
+        try:
+            inner = json.loads(pv_str)
+            hits += [(f"{key}.value > {p}", v) for p, v in find_item_entries(inner)]
+        except json.JSONDecodeError:
+            pass
+
     if not hits:
         print("[!] No item-ID fields matched — try --dump to inspect full structure.")
         return
@@ -203,6 +240,40 @@ def cmd_dump(save: Path) -> None:
     print(json.dumps(data, indent=2, ensure_ascii=False))
 
 
+def _coerce_id(raw: str) -> str | int:
+    """Return int when raw is a pure decimal string, else the original str."""
+    return int(raw) if raw.lstrip("-").isdigit() else raw
+
+
+def _patch_nested_json(outer: dict, old: str | int, new: str | int) -> int:
+    """
+    Parse PlayerSaveData.value (and AccountSaveData.value) as a nested JSON string,
+    apply substitute_id inside it, then re-serialize back into outer[key]["value"].
+    Returns total replacement count across all nested blobs.
+    """
+    count = 0
+    for key in ("PlayerSaveData", "AccountSaveData"):
+        entry = outer.get(key)
+        if entry is None:
+            continue
+        pv_str = entry["value"] if isinstance(entry, dict) else entry
+        if not isinstance(pv_str, str):
+            continue
+        try:
+            inner = json.loads(pv_str)
+        except json.JSONDecodeError:
+            continue
+        n = substitute_id(inner, old, new)
+        if n:
+            count += n
+            new_str = json.dumps(inner, separators=(",", ":"), ensure_ascii=False)
+            if isinstance(entry, dict):
+                entry["value"] = new_str
+            else:
+                outer[key] = new_str
+    return count
+
+
 def cmd_swap(save: Path, old_id: str, new_id: str, no_hash: bool = False) -> None:
     ts     = time.strftime("%Y%m%d_%H%M%S")
     backup = save.with_name(save.name + f".bak.{ts}")
@@ -210,20 +281,27 @@ def cmd_swap(save: Path, old_id: str, new_id: str, no_hash: bool = False) -> Non
     print(f"[*] Backup  → {backup}")
 
     plaintext = decrypt_save(save)
-    data      = json.loads(plaintext)
+    outer     = json.loads(plaintext)
 
-    n = substitute_id(data, old_id, new_id)
+    old = _coerce_id(old_id)
+    new = _coerce_id(new_id)
+
+    # Search outer dict first (keys that live directly there)
+    n  = substitute_id(outer, old, new)
+    # Then search/patch inside nested JSON blobs (PlayerSaveData.value etc.)
+    n += _patch_nested_json(outer, old, new)
+
     if n == 0:
         print(f"[!] ID '{old_id}' not found anywhere in save — no changes written.")
         return
 
     print(f"[+] Replaced {n} occurrence(s): '{old_id}' → '{new_id}'")
 
-    update_system_info(data, skip=no_hash)
+    update_system_info(outer, skip=no_hash)
     if no_hash:
         print("[*] --no-hash: SystemInfo left unchanged (tests raw server trust)")
 
-    new_plain = json.dumps(data, separators=(",", ":"), ensure_ascii=False).encode()
+    new_plain = json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
     save.write_bytes(encrypt_save(new_plain))
     print(f"[+] Written → {save}")
 
@@ -231,38 +309,31 @@ def cmd_swap(save: Path, old_id: str, new_id: str, no_hash: bool = False) -> Non
 _LOCK_TIMEOUT = 2.0   # seconds to wait for an exclusive lock before skipping a cycle
 
 
-def _patch_locked(save: Path, old_id: str | int, new_id: str | int, no_hash: bool) -> int:
+def _patch_locked(save: Path, old_id: str, new_id: str, no_hash: bool) -> int:
     """
     Read, patch, and rewrite the save under an exclusive advisory lock so we never
     race the game's own writes. Returns the substitution count.
     Raises BlockingIOError if the lock cannot be acquired within _LOCK_TIMEOUT.
     """
+    old = _coerce_id(old_id)
+    new = _coerce_id(new_id)
     fd = open(save, "r+b")
     try:
-        deadline = time.monotonic() + _LOCK_TIMEOUT
-        while True:
-            try:
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                break
-            except BlockingIOError:
-                if time.monotonic() >= deadline:
-                    raise
-                time.sleep(0.1)
+        _flock_acquire(fd, _LOCK_TIMEOUT)
         try:
-            data = json.loads(_decrypt_bytes(fd.read()))
-            n    = substitute_id(data, old_id, new_id)
+            outer = json.loads(_decrypt_bytes(fd.read()))
+            n     = substitute_id(outer, old, new)
+            n    += _patch_nested_json(outer, old, new)
             if n:
-                update_system_info(data, skip=no_hash)
+                update_system_info(outer, skip=no_hash)
                 new_plain = json.dumps(
-                    data, separators=(",", ":"), ensure_ascii=False
+                    outer, separators=(",", ":"), ensure_ascii=False
                 ).encode()
                 ciphertext = encrypt_save(new_plain)
-                fd.seek(0)
-                fd.write(ciphertext)
-                fd.truncate()
+                fd.seek(0); fd.write(ciphertext); fd.truncate()
             return n
         finally:
-            fcntl.flock(fd, fcntl.LOCK_UN)
+            _flock_release(fd)
     finally:
         fd.close()
 
@@ -309,6 +380,363 @@ def cmd_watch(
     except KeyboardInterrupt:
         print("\n[*] Watch stopped.")
 
+# ── Legendary batch swap (F1 PoC automation) ─────────────────────────────────────
+# Only TARGET IDs are defined here. Source items are selected at runtime by
+# category-prefix similarity (same 3-digit → 2-digit → 1-digit), avoiding equipped
+# and already-used slots. This prevents multi-hit over-swaps on stacked item types.
+_LEGENDARY_TARGETS: list[tuple[int, str]] = [
+    (315102, "Arco Rúnico[B]"),
+    (335102, "Cetro Lendário[B]"),
+    (345092, "Besta de Elite[B]"),
+    (415101, "Flecha Tribal[A]"),
+    (435102, "Tomo Carmesim[B]"),
+    (445102, "Virote do Herói[B]"),
+]
+_LEGENDARY_KEYS = {t for t, _ in _LEGENDARY_TARGETS}
+
+
+def _get_equipped_ids(inner: dict) -> set[int]:
+    """Return set of UniqueIds currently equipped by any hero slot."""
+    equipped: set[int] = set()
+    for hero in inner.get("heroSaveDatas", []):
+        for uid in hero.get("equippedItemIds", []):
+            if uid:
+                equipped.add(uid)
+    return equipped
+
+
+def _prefix_priority(item_key: int, target_key: int) -> int:
+    """0=same 3-digit prefix (best), 1=same 2-digit, 2=same 1-digit, 3=none."""
+    if item_key // 1000  == target_key // 1000:  return 0
+    if item_key // 10000 == target_key // 10000: return 1
+    if item_key // 100000 == target_key // 100000: return 2
+    return 3
+
+
+def _find_best_candidate(items: list, target_key: int,
+                          equipped_ids: set, used_indices: set) -> int:
+    """
+    Return index of the most category-similar unequipped/unused item for target_key.
+    Returns -1 when no candidate exists.
+    Skips items that are already a legendary target key or are equipped.
+    """
+    candidates: list[tuple[int, int]] = []
+    for idx, item in enumerate(items):
+        if idx in used_indices:
+            continue
+        ik = item["ItemKey"]
+        if ik in _LEGENDARY_KEYS:
+            continue
+        if item.get("UniqueId") in equipped_ids:
+            continue
+        candidates.append((_prefix_priority(ik, target_key), idx))
+    if not candidates:
+        return -1
+    candidates.sort()
+    return candidates[0][1]
+
+
+def _apply_legendary_swaps(outer: dict) -> list[tuple[int, int, int, str]]:
+    """
+    Parse inner PlayerSaveData JSON, apply category-based single-slot legendary swaps,
+    re-serialize pv, update outer["PlayerSaveData"]["value"].
+    Returns list of (slot_idx, old_key, new_key, name) for each swap performed.
+    """
+    pv_entry = outer.get("PlayerSaveData", {})
+    pv_str   = pv_entry["value"] if isinstance(pv_entry, dict) else pv_entry
+    inner    = json.loads(pv_str)
+    items    = inner["itemSaveDatas"]
+    equipped = _get_equipped_ids(inner)
+    used: set[int] = set()
+    log: list[tuple[int, int, int, str]] = []
+
+    for tgt_key, tgt_name in _LEGENDARY_TARGETS:
+        idx = _find_best_candidate(items, tgt_key, equipped, used)
+        if idx < 0:
+            continue
+        old_key = items[idx]["ItemKey"]
+        items[idx]["ItemKey"] = tgt_key
+        used.add(idx)
+        log.append((idx, old_key, tgt_key, tgt_name))
+
+    if log:
+        new_pv = json.dumps(inner, separators=(",", ":"), ensure_ascii=False)
+        if isinstance(pv_entry, dict):
+            pv_entry["value"] = new_pv
+        else:
+            outer["PlayerSaveData"] = new_pv
+    return log
+
+
+def _flock_acquire(fd, timeout: float) -> None:
+    if not _HAS_FCNTL:
+        return
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return
+        except BlockingIOError:
+            if time.monotonic() >= deadline:
+                raise
+            time.sleep(0.05)
+
+
+def _flock_release(fd) -> None:
+    if _HAS_FCNTL:
+        fcntl.flock(fd, fcntl.LOCK_UN)
+
+
+def _patch_legendary_locked(save: Path, no_hash: bool) -> int:
+    """Single read-modify-write cycle under flock; returns swap count."""
+    fd = open(save, "r+b")
+    try:
+        _flock_acquire(fd, _LOCK_TIMEOUT)
+        try:
+            outer = json.loads(_decrypt_bytes(fd.read()))
+            log   = _apply_legendary_swaps(outer)
+            if log:
+                update_system_info(outer, skip=no_hash)
+                ciphertext = encrypt_save(
+                    json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+                )
+                fd.seek(0); fd.write(ciphertext); fd.truncate()
+            return len(log)
+        finally:
+            _flock_release(fd)
+    finally:
+        fd.close()
+
+
+def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
+                  interval: float = 0.5) -> None:
+    """
+    Category-aware batch legendary swap (F1 PoC).
+    Selects the most type-similar unequipped item for each legendary target;
+    replaces exactly ONE slot per target regardless of stack size.
+    """
+    print(f"[*] Legendary targets: {', '.join(f'{k} {n}' for k, n in _LEGENDARY_TARGETS)}")
+
+    if not watch:
+        ts     = time.strftime("%Y%m%d_%H%M%S")
+        backup = save.with_name(save.name + f".bak.{ts}")
+        shutil.copy2(save, backup)
+        print(f"[*] Backup → {backup}")
+
+        outer = json.loads(decrypt_save(save))
+        log   = _apply_legendary_swaps(outer)
+
+        if not log:
+            print("[!] No suitable candidates found — nothing written.")
+            return
+        for idx, old_k, new_k, name in log:
+            prio = _prefix_priority(old_k, new_k)
+            tag  = ["p0(3-digit)", "p1(2-digit)", "p2(1-digit)", "p3(no-match)"][prio]
+            print(f"  [+] slot[{idx}] {old_k} → {new_k} {name!r}  [{tag}]")
+        skipped = [n for k, n in _LEGENDARY_TARGETS if k not in {r[2] for r in log}]
+        for name in skipped:
+            print(f"  [-] no candidate for {name!r} — skipped")
+
+        update_system_info(outer, skip=no_hash)
+        save.write_bytes(encrypt_save(
+            json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+        ))
+        print(f"[+] Written → {save}  ({len(log)} swap(s))")
+        return
+
+    print(f"[*] Watch mode — polling every {interval}s  (Ctrl-C to stop)")
+    print("[*] TIP: restart the game NOW so it loads before server sync overwrites")
+    last_mtime: float | None = None
+    try:
+        while True:
+            try:
+                mtime = save.stat().st_mtime
+            except FileNotFoundError:
+                time.sleep(interval)
+                continue
+            if mtime != last_mtime:
+                try:
+                    n  = _patch_legendary_locked(save, no_hash)
+                    ts = time.strftime("%H:%M:%S")
+                    print(f"  [{ts}] {n} swap(s) applied")
+                    last_mtime = mtime
+                except BlockingIOError:
+                    print("[!] File locked — skipping cycle", file=sys.stderr)
+                except Exception as exc:
+                    print(f"[!] Patch error: {exc}", file=sys.stderr)
+            time.sleep(interval)
+    except KeyboardInterrupt:
+        print("\n[*] Watch stopped.")
+
+# ── Interactive TUI (bare launch) ────────────────────────────────────────────────
+
+def _getch() -> str:
+    """Read one raw keypress without waiting for Enter. Returns lowercase char."""
+    if platform.system() == "Windows":
+        import msvcrt
+        return msvcrt.getch().decode("utf-8", errors="replace").lower()
+    import tty, termios
+    fd = sys.stdin.fileno()
+    if not sys.stdin.isatty():
+        ch = sys.stdin.read(1)
+        return ch.lower() if ch else "q"
+    old = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        return sys.stdin.read(1).lower()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
+
+def _build_preview(items: list, equipped: set) -> list[tuple]:
+    """Return one row per legendary target: (tgt_key, tgt_name, src_key, tag, status)."""
+    used: set[int] = set()
+    rows = []
+    for tgt_key, tgt_name in _LEGENDARY_TARGETS:
+        idx = _find_best_candidate(items, tgt_key, equipped, used)
+        if idx >= 0:
+            src_key = items[idx]["ItemKey"]
+            prio    = _prefix_priority(src_key, tgt_key)
+            tag     = ["p0 ✓", "p1 ✓", "p2 ~", "p3 ?"][prio]
+            used.add(idx)
+            rows.append((tgt_key, tgt_name, src_key, tag, "ready"))
+        else:
+            rows.append((tgt_key, tgt_name, "—", "—", "no candidate"))
+    return rows
+
+
+def cmd_gui(save: Path) -> None:
+    """Interactive TUI — launched when no CLI flags are given."""
+    try:
+        from rich.console import Console
+        from rich.table import Table
+        from rich.panel import Panel
+        from rich.text import Text
+        from rich.align import Align
+        console: Console | None = Console()
+    except ImportError:
+        console = None
+
+    def _render() -> tuple:
+        try:
+            outer    = json.loads(decrypt_save(save))
+            inner    = json.loads(outer["PlayerSaveData"]["value"])
+            items    = inner["itemSaveDatas"]
+            equipped = _get_equipped_ids(inner)
+            size_kb  = save.stat().st_size // 1024
+
+            av  = outer["AccountSaveData"]["value"]
+            pv  = outer["PlayerSaveData"]["value"]
+            si  = outer["SystemInfo"]["value"]
+            oid = json.loads(av).get("ownerSteamId", "")
+            msg = (av + "|" + pv + "|" + oid).encode()
+            exp = base64.b64encode(hmac.new(_BGBP_KEY, msg, hashlib.sha256).digest()).decode()
+            return items, equipped, size_kb, exp == si, _build_preview(items, equipped), None
+        except Exception as exc:
+            return [], set(), 0, False, [], str(exc)
+
+    while True:
+        os.system("cls" if platform.system() == "Windows" else "clear")
+        items, equipped, size_kb, hmac_ok, preview, err = _render()
+
+        if console:
+            from rich.text import Text
+            from rich.align import Align
+            header = Text.assemble(("TaskBarHero Legendary Swap", "bold white"),
+                                   "   ", ("F1 PoC", "dim"))
+            hmac_badge = "[green]VALID[/green]" if hmac_ok else "[red]MISMATCH[/red]"
+            subtitle   = f"[cyan]{save.name}[/cyan]  {size_kb} KB  HMAC: {hmac_badge}"
+            from rich.panel import Panel
+            console.print(Panel(Align.center(header), subtitle=subtitle, style="blue"))
+
+            if err:
+                console.print(f"[red][!] {err}[/red]")
+            else:
+                from rich.table import Table
+                t = Table(show_header=True, header_style="bold cyan",
+                          show_lines=False, box=None, padding=(0, 2))
+                t.add_column("Target",  style="yellow",  width=9, no_wrap=True)
+                t.add_column("Name",    style="white",   width=26, no_wrap=True)
+                t.add_column("Source",  style="dim",     width=9,  no_wrap=True)
+                t.add_column("Match",   style="green",   width=6,  no_wrap=True)
+                t.add_column("Status",                   width=14, no_wrap=True)
+                for (tk, tn, sk, tag, status) in preview:
+                    st = "[green]ready[/green]" if status == "ready" else "[red]no candidate[/red]"
+                    t.add_row(str(tk), tn, str(sk), tag, st)
+                console.print(t)
+                console.print(f"\n  Items total: {len(items)}")
+
+            console.print(
+                "\n  [bold][A][/bold]pply once   "
+                "[bold][W][/bold]atch   "
+                "[bold][L][/bold]ist   "
+                "[bold][D][/bold]ump   "
+                "[bold][Q][/bold]uit\n  > ",
+                end="",
+            )
+        else:
+            # plain fallback (no rich)
+            print("=" * 64)
+            print("  TaskBarHero Legendary Swap  |  F1 PoC")
+            print(f"  {save.name}  {size_kb} KB  HMAC: {'VALID' if hmac_ok else 'MISMATCH'}")
+            print("=" * 64)
+            if err:
+                print(f"  [!] {err}")
+            else:
+                print(f"  {'Target':<9} {'Name':<26} {'Source':<9} {'Match':<6} Status")
+                print(f"  {'-'*64}")
+                for (tk, tn, sk, tag, status) in preview:
+                    print(f"  {tk:<9} {tn:<26} {str(sk):<9} {tag:<6} {status}")
+                print(f"\n  Items total: {len(items)}")
+            print("\n  [A]pply once  [W]atch  [L]ist  [D]ump  [Q]uit\n  > ",
+                  end="", flush=True)
+
+        try:
+            ch = _getch()
+        except KeyboardInterrupt:
+            ch = "q"
+
+        if ch in ("q", "\x03", "\x04"):
+            print("\nBye.")
+            break
+
+        elif ch == "a":
+            print("\n")
+            if not os.access(save, os.W_OK):
+                print("[!] Save file not writable")
+            else:
+                cmd_legendary(save, no_hash=False, watch=False)
+            print("\nPress any key to continue…")
+            try:
+                _getch()
+            except KeyboardInterrupt:
+                pass
+
+        elif ch == "w":
+            print("\n")
+            if not os.access(save, os.W_OK):
+                print("[!] Save file not writable")
+            else:
+                cmd_legendary(save, no_hash=False, watch=True, interval=0.5)
+
+        elif ch == "l":
+            print("\n")
+            cmd_list(save)
+            print("\nPress any key to continue…")
+            try:
+                _getch()
+            except KeyboardInterrupt:
+                pass
+
+        elif ch == "d":
+            print("\n")
+            cmd_dump(save)
+            print("\nPress any key to continue…")
+            try:
+                _getch()
+            except KeyboardInterrupt:
+                pass
+
 # ── CLI entry point ──────────────────────────────────────────────────────────────
 
 def positive_float(v: str) -> float:
@@ -331,16 +759,18 @@ def main() -> None:
         "--save", type=Path, default=DEFAULT_SAVE,
         help=f"path to SaveFile_Live.es3 (default: {DEFAULT_SAVE})",
     )
-    ap.add_argument("--dump",  action="store_true", help="print decrypted JSON and exit")
+    ap.add_argument("--dump",     action="store_true", help="print decrypted JSON and exit")
+    ap.add_argument("--legendary", action="store_true",
+                    help="batch-swap 6 source slots to legendary IDs (F1 PoC)")
     ap.add_argument("--from",  dest="old_id", metavar="OLD_ID", help="item ID to replace")
     ap.add_argument("--to",    dest="new_id", metavar="NEW_ID", help="replacement item ID")
     ap.add_argument(
         "--watch", action="store_true",
-        help="live-watch mode: re-patch each time the game writes the save",
+        help="live-watch: re-patch each time the game writes (use with --legendary to race sync)",
     )
     ap.add_argument(
-        "--interval", type=positive_float, default=1.0,
-        help="watch poll interval in seconds, must be > 0 (default: 1.0)",
+        "--interval", type=positive_float, default=0.5,
+        help="watch poll interval in seconds, must be > 0 (default: 0.5)",
     )
     ap.add_argument(
         "--no-hash", action="store_true",
@@ -348,8 +778,10 @@ def main() -> None:
     )
     args = ap.parse_args()
 
-    if args.dump and (args.old_id or args.new_id):
-        ap.error("--dump cannot be used together with --from/--to")
+    if args.dump and (args.old_id or args.new_id or args.legendary):
+        ap.error("--dump cannot be combined with --from/--to or --legendary")
+    if args.legendary and (args.old_id or args.new_id):
+        ap.error("--legendary cannot be combined with --from/--to")
     if args.old_id == "" or args.new_id == "":
         ap.error("--from and --to must not be empty strings")
 
@@ -362,6 +794,10 @@ def main() -> None:
 
     if args.dump:
         cmd_dump(save)
+    elif args.legendary:
+        if not os.access(save, os.W_OK):
+            sys.exit(f"[!] Save file is not writable: {save}")
+        cmd_legendary(save, no_hash=args.no_hash, watch=args.watch, interval=args.interval)
     elif args.old_id and args.new_id:
         if not os.access(save, os.W_OK):
             sys.exit(f"[!] Save file is not writable: {save}")
@@ -372,7 +808,7 @@ def main() -> None:
     elif args.old_id or args.new_id:
         ap.error("--from and --to must be used together")
     else:
-        cmd_list(save)
+        cmd_gui(save)
 
 
 if __name__ == "__main__":
