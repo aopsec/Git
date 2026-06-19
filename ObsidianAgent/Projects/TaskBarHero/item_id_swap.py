@@ -538,8 +538,9 @@ def _find_best_candidate(items: list, target_key: int,
                           skip_keys: set | None = None) -> int:
     """
     Return index of the most category-similar unequipped/unused item for target_key.
-    Returns -1 when no candidate exists.
-    Skips items that are equipped, already used, or whose ItemKey is in skip_keys.
+    Returns -1 when no valid candidate exists.
+    Skips items that are equipped, already used, whose ItemKey is in skip_keys,
+    or whose prefix priority against target_key is p3 (no category overlap).
     `skip_keys` defaults to the global legendary target keys when None.
     """
     skip = _LEGENDARY_KEYS if skip_keys is None else skip_keys
@@ -552,7 +553,10 @@ def _find_best_candidate(items: list, target_key: int,
             continue
         if item.get("UniqueId") in equipped_ids:
             continue
-        candidates.append((_prefix_priority(ik, target_key), idx))
+        prio = _prefix_priority(ik, target_key)
+        if prio == 3:
+            continue  # Bug 3: reject wrong-category items (no 1-digit prefix match)
+        candidates.append((prio, idx))
     if not candidates:
         return -1
     candidates.sort()
@@ -568,6 +572,7 @@ def _apply_legendary_swaps(
     re-serialize pv, update outer["PlayerSaveData"]["value"].
     When `targets` is None, falls back to the global _LEGENDARY_TARGETS list.
     Returns list of (slot_idx, old_key, new_key, name) for each swap performed.
+    Targets whose ID is already present in the inventory are skipped (Bug 1+2 fix).
     """
     active_targets = _LEGENDARY_TARGETS if targets is None else targets
     skip_keys = {t for t, _ in active_targets}
@@ -576,15 +581,20 @@ def _apply_legendary_swaps(
     inner    = json.loads(pv_str)
     items    = inner["itemSaveDatas"]
     equipped = _get_equipped_ids(inner)
+    # Keys currently in inventory — skip targets already owned to avoid duplicates.
+    present_keys: set[int] = {item["ItemKey"] for item in items}
     used: set[int] = set()
     log: list[tuple[int, int, int, str]] = []
 
     for tgt_key, tgt_name in active_targets:
+        if tgt_key in present_keys:
+            continue  # Bug 1+2: already in inventory from a previous run
         idx = _find_best_candidate(items, tgt_key, equipped, used, skip_keys)
         if idx < 0:
             continue
         old_key = items[idx]["ItemKey"]
         items[idx]["ItemKey"] = tgt_key
+        present_keys.add(tgt_key)
         used.add(idx)
         log.append((idx, old_key, tgt_key, tgt_name))
 
@@ -657,18 +667,33 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
         print(f"[*] Backup → {backup}")
 
         outer = json.loads(decrypt_save(save))
-        log   = _apply_legendary_swaps(outer, targets)
 
-        if not log:
-            print("[!] No suitable candidates found — nothing written.")
-            return
+        # Snapshot present keys BEFORE the swap to classify skipped targets accurately.
+        _pv_pre = outer.get("PlayerSaveData", {})
+        _pv_pre_str = _pv_pre["value"] if isinstance(_pv_pre, dict) else _pv_pre
+        present_before: set[int] = {
+            item["ItemKey"]
+            for item in json.loads(_pv_pre_str).get("itemSaveDatas", [])
+        }
+
+        log = _apply_legendary_swaps(outer, targets)
+
+        swapped_keys = {r[2] for r in log}
         for idx, old_k, new_k, name in log:
             prio = _prefix_priority(old_k, new_k)
-            tag  = ["p0(3-digit)", "p1(2-digit)", "p2(1-digit)", "p3(no-match)"][prio]
+            tag  = ["p0(3-digit)", "p1(2-digit)", "p2(1-digit)"][prio]
             print(f"  [+] slot[{idx}] {old_k} → {new_k} {name!r}  [{tag}]")
-        skipped = [n for k, n in active_targets if k not in {r[2] for r in log}]
-        for name in skipped:
-            print(f"  [-] no candidate for {name!r} — skipped")
+        for tgt_key, tgt_name in active_targets:
+            if tgt_key in swapped_keys:
+                continue
+            if tgt_key in present_before:
+                print(f"  [=] {tgt_name!r} already in inventory — skipped")
+            else:
+                print(f"  [-] no same-category candidate for {tgt_name!r} — skipped")
+
+        if not log:
+            print("[!] Nothing to write.")
+            return
 
         update_system_info(outer, skip=no_hash)
         save.write_bytes(encrypt_save(
@@ -723,21 +748,30 @@ def _getch() -> str:
 
 def _build_preview(items: list, equipped: set,
                    targets: list[tuple[int, str]] | None = None) -> list[tuple]:
-    """Return one row per legendary target: (tgt_key, tgt_name, src_key, tag, status)."""
+    """Return one row per legendary target: (tgt_key, tgt_name, src_key, tag, status).
+    Status values: 'ready' | 'present' | 'no match'
+      present  — target ID already in inventory (previous run; will be skipped)
+      ready    — valid same-category candidate found (p0/p1/p2)
+      no match — no candidate with ≥1-digit prefix overlap (p3 or no items)
+    """
     active_targets = targets if targets is not None else _LEGENDARY_TARGETS
     skip_keys = {t for t, _ in active_targets}
+    present_keys: set[int] = {item["ItemKey"] for item in items}
     used: set[int] = set()
     rows = []
     for tgt_key, tgt_name in active_targets:
+        if tgt_key in present_keys:
+            rows.append((tgt_key, tgt_name, "—", "—", "present"))
+            continue
         idx = _find_best_candidate(items, tgt_key, equipped, used, skip_keys)
         if idx >= 0:
             src_key = items[idx]["ItemKey"]
             prio    = _prefix_priority(src_key, tgt_key)
-            tag     = ["p0 ✓", "p1 ✓", "p2 ~", "p3 ?"][prio]
+            tag     = ["p0 ✓", "p1 ✓", "p2 ~"][prio]
             used.add(idx)
             rows.append((tgt_key, tgt_name, src_key, tag, "ready"))
         else:
-            rows.append((tgt_key, tgt_name, "—", "—", "no candidate"))
+            rows.append((tgt_key, tgt_name, "—", "—", "no match"))
     return rows
 
 
