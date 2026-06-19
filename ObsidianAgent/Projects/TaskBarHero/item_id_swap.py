@@ -17,7 +17,9 @@ Usage:
   python3 item_id_swap.py --interval N --watch ...     # poll every N seconds (N > 0)
   python3 item_id_swap.py --save /path/to/file         # override save path
 
-Before any write, the original save is copied to a timestamped backup:
+All writes are atomic (temp file + os.replace) so a crash can never corrupt the save.
+Single-shot swaps back up the original before writing; watch mode takes ONE session
+backup at start (per-cycle writes don't back up individually):
   SaveFile_Live.es3.bak.YYYYMMDD_HHMMSS
 
 Platform support:
@@ -91,6 +93,23 @@ def encrypt_save(plaintext: bytes) -> bytes:
     key = _derive_key(iv)
     cipher = AES.new(key, AES.MODE_CBC, iv)
     return iv + cipher.encrypt(pad(plaintext, BLOCK))
+
+
+def _atomic_write_bytes(path: Path, data: bytes) -> None:
+    """Crash-safe write: stage to a temp file, then os.replace (atomic on POSIX+Win).
+    A partial/short write can never leave `path` in a corrupted, undecryptable state.
+    """
+    tmp = path.with_suffix(".tmp")
+    tmp.write_bytes(data)
+    os.replace(tmp, path)
+
+
+def _timestamped_backup(save: Path) -> Path:
+    """Copy `save` to save.name + '.bak.YYYYMMDD_HHMMSS' and return the backup path."""
+    ts     = time.strftime("%Y%m%d_%H%M%S")
+    backup = save.with_name(save.name + f".bak.{ts}")
+    shutil.copy2(save, backup)
+    return backup
 
 # ── SystemInfo anti-tamper hash ──────────────────────────────────────────────────
 # Reverse-engineered from GameAssembly.dll (IL2CPP):
@@ -282,7 +301,6 @@ def cmd_items(save: Path) -> None:
         console = None
 
     if console is not None:
-        from rich.table import Table
         t = Table(show_header=True, header_style="bold cyan", box=None, padding=(0, 2))
         t.add_column("Slot",       style="dim",    justify="right", no_wrap=True)
         t.add_column("ItemKey",    style="yellow", justify="right", no_wrap=True)
@@ -417,9 +435,7 @@ def cmd_swap(save: Path, old_id: str, new_id: str, no_hash: bool = False) -> Non
     print(f"[+] Replaced {n} occurrence(s): '{old_id}' → '{new_id}'")
 
     # Backup only when there are actual changes (mirrors cmd_legendary behaviour).
-    ts     = time.strftime("%Y%m%d_%H%M%S")
-    backup = save.with_name(save.name + f".bak.{ts}")
-    shutil.copy2(save, backup)
+    backup = _timestamped_backup(save)
     print(f"[*] Backup  → {backup}")
 
     update_system_info(outer, skip=no_hash)
@@ -427,10 +443,7 @@ def cmd_swap(save: Path, old_id: str, new_id: str, no_hash: bool = False) -> Non
         print("[*] --no-hash: SystemInfo left unchanged (tests raw server trust)")
 
     new_plain   = json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
-    _ciphertext = encrypt_save(new_plain)
-    _tmp = save.with_suffix(".tmp")
-    _tmp.write_bytes(_ciphertext)
-    os.replace(_tmp, save)  # atomic on POSIX and Windows
+    _atomic_write_bytes(save, encrypt_save(new_plain))
     print(f"[+] Written → {save}")
 
 
@@ -445,25 +458,25 @@ def _patch_locked(save: Path, old_id: str, new_id: str, no_hash: bool) -> int:
     """
     old = _coerce_id(old_id)
     new = _coerce_id(new_id)
-    fd = open(save, "r+b")
+    # Read under an advisory lock to serialize against another copy of this tool,
+    # then write atomically (temp + os.replace) so a crash can't corrupt the save.
+    # The lock is released before the replace: holding an open handle blocks
+    # os.replace on Windows, and the game (the real concurrent writer) does not
+    # honour flock anyway — the watch loop re-patches on the next mtime change.
+    fd = open(save, "rb")
     try:
         _flock_acquire(fd, _LOCK_TIMEOUT)
-        try:
-            outer = json.loads(_decrypt_bytes(fd.read()))
-            n     = substitute_id(outer, old, new)
-            n    += _patch_nested_json(outer, old, new)
-            if n:
-                update_system_info(outer, skip=no_hash)
-                new_plain = json.dumps(
-                    outer, separators=(",", ":"), ensure_ascii=False
-                ).encode()
-                ciphertext = encrypt_save(new_plain)
-                fd.seek(0); fd.write(ciphertext); fd.truncate()
-            return n
-        finally:
-            _flock_release(fd)
+        outer = json.loads(_decrypt_bytes(fd.read()))
     finally:
+        _flock_release(fd)
         fd.close()
+    n  = substitute_id(outer, old, new)
+    n += _patch_nested_json(outer, old, new)
+    if n:
+        update_system_info(outer, skip=no_hash)
+        new_plain = json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+        _atomic_write_bytes(save, encrypt_save(new_plain))
+    return n
 
 
 def cmd_watch(
@@ -475,6 +488,10 @@ def cmd_watch(
 ) -> None:
     """Poll the save file; re-patch each time the game overwrites it."""
     print(f"[*] Watching {save}  (poll every {interval}s) — Ctrl-C to stop")
+    # One recovery point for the whole watch session: the per-cycle writes below
+    # are atomic but never back up, so capture the pristine save before any patch.
+    _bk = _timestamped_backup(save)
+    print(f"[*] Session backup → {_bk}")
     last_mtime: float | None = None
     try:
         while True:
@@ -562,9 +579,9 @@ def _find_best_candidate(items: list, target_key: int,
     for idx, item in enumerate(items):
         if idx in used_indices:
             continue
-        ik = item["ItemKey"]
-        if ik in skip:
-            continue
+        ik = item.get("ItemKey")
+        if ik is None or ik in skip:
+            continue  # malformed item (no ItemKey) or an already-targeted key
         if item.get("UniqueId") in equipped_ids:
             continue
         prio = _prefix_priority(ik, target_key)
@@ -596,7 +613,7 @@ def _apply_legendary_swaps(
     items    = inner["itemSaveDatas"]
     equipped = _get_equipped_ids(inner)
     # Keys currently in inventory — skip targets already owned to avoid duplicates.
-    present_keys: set[int] = {item["ItemKey"] for item in items}
+    present_keys: set[int] = {item["ItemKey"] for item in items if "ItemKey" in item}
     used: set[int] = set()
     log: list[tuple[int, int, int, str]] = []
 
@@ -642,24 +659,21 @@ def _flock_release(fd) -> None:
 
 def _patch_legendary_locked(save: Path, no_hash: bool,
                             targets: list[tuple[int, str]] | None = None) -> int:
-    """Single read-modify-write cycle under flock; returns swap count."""
-    fd = open(save, "r+b")
+    """Single read-modify-write cycle: read under flock, then atomic write. Returns swap count."""
+    fd = open(save, "rb")
     try:
         _flock_acquire(fd, _LOCK_TIMEOUT)
-        try:
-            outer = json.loads(_decrypt_bytes(fd.read()))
-            log   = _apply_legendary_swaps(outer, targets)
-            if log:
-                update_system_info(outer, skip=no_hash)
-                ciphertext = encrypt_save(
-                    json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
-                )
-                fd.seek(0); fd.write(ciphertext); fd.truncate()
-            return len(log)
-        finally:
-            _flock_release(fd)
+        outer = json.loads(_decrypt_bytes(fd.read()))
     finally:
+        _flock_release(fd)
         fd.close()
+    log = _apply_legendary_swaps(outer, targets)
+    if log:
+        update_system_info(outer, skip=no_hash)
+        _atomic_write_bytes(save, encrypt_save(
+            json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+        ))
+    return len(log)
 
 
 def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
@@ -706,23 +720,21 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
             print(f"  [+] slot[{idx}] {old_k} → {new_k} {name!r}  [{tag}]")
 
         # Backup only written when there are actual changes.
-        ts     = time.strftime("%Y%m%d_%H%M%S")
-        backup = save.with_name(save.name + f".bak.{ts}")
-        shutil.copy2(save, backup)
+        backup = _timestamped_backup(save)
         print(f"[*] Backup → {backup}")
 
         update_system_info(outer, skip=no_hash)
-        _ciphertext = encrypt_save(
+        _atomic_write_bytes(save, encrypt_save(
             json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
-        )
-        _tmp = save.with_suffix(".tmp")
-        _tmp.write_bytes(_ciphertext)
-        os.replace(_tmp, save)  # atomic on POSIX and Windows
+        ))
         print(f"[+] Written → {save}  ({len(log)} swap(s))")
         return
 
     print(f"[*] Watch mode — polling every {interval}s  (Ctrl-C to stop)")
     print("[*] TIP: restart the game NOW so it loads before server sync overwrites")
+    # One recovery point for the whole watch session (per-cycle writes don't back up).
+    _bk = _timestamped_backup(save)
+    print(f"[*] Session backup → {_bk}")
     last_mtime: float | None = None
     try:
         while True:
@@ -778,7 +790,7 @@ def _build_preview(items: list, equipped: set,
     """
     active_targets = targets if targets is not None else _LEGENDARY_TARGETS
     skip_keys = {t for t, _ in active_targets}
-    present_keys: set[int] = {item["ItemKey"] for item in items}
+    present_keys: set[int] = {item["ItemKey"] for item in items if "ItemKey" in item}
     used: set[int] = set()
     rows = []
     for tgt_key, tgt_name in active_targets:
@@ -842,19 +854,15 @@ def cmd_gui(save: Path) -> None:
         items, equipped, size_kb, hmac_ok, preview, err = _render()
 
         if console:
-            from rich.text import Text
-            from rich.align import Align
             header = Text.assemble(("TaskBarHero Legendary Swap", "bold white"),
                                    "   ", ("F1 PoC", "dim"))
             hmac_badge = "[green]VALID[/green]" if hmac_ok else "[red]MISMATCH[/red]"
             subtitle   = f"[cyan]{save.name}[/cyan]  {size_kb} KB  HMAC: {hmac_badge}"
-            from rich.panel import Panel
             console.print(Panel(Align.center(header), subtitle=subtitle, style="blue"))
 
             if err:
                 console.print(f"[red][!] {err}[/red]")
             else:
-                from rich.table import Table
                 t = Table(show_header=True, header_style="bold cyan",
                           show_lines=False, box=None, padding=(0, 2))
                 t.add_column("Target",  style="yellow",  width=9, no_wrap=True)

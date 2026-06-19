@@ -447,3 +447,190 @@ def test_certified_system_info_updated(item_id, item_name, tmp_path):
         f"{item_name} ({item_id}): SystemInfo unchanged after swap (hash not updated)"
     )
 
+
+# ── Group 10: Legendary-swap core (category selection, dedup, parsers) ────────────
+#
+# Previously untested region that every audit pass touched (dedup, p3 rejection,
+# "clean after one run"). These lock in that behaviour against regression.
+
+
+def _wrap_outer(items: list[dict], heroes: list[dict] | None = None) -> dict:
+    """Build a realistic outer ES3 dict with itemSaveDatas nested in PlayerSaveData.value."""
+    inner = {"itemSaveDatas": items, "heroSaveDatas": heroes or []}
+    account = {"ownerSteamId": "76561198065188664"}
+    return {
+        "PlayerSaveData":  {"__type": "PD", "value": json.dumps(inner, separators=(",", ":"))},
+        "AccountSaveData": {"__type": "AD", "value": json.dumps(account, separators=(",", ":"))},
+        "SystemInfo":      {"__type": "SI", "value": "placeholder"},
+    }
+
+
+def _inner_items(outer: dict) -> list[dict]:
+    return json.loads(outer["PlayerSaveData"]["value"])["itemSaveDatas"]
+
+
+# ── _prefix_priority ──────────────────────────────────────────────────────────────
+
+
+@pytest.mark.parametrize(
+    "item_key, target_key, expected",
+    [
+        (315001, 315102, 0),  # same 3-digit prefix (315) → p0 (best)
+        (316001, 315102, 1),  # same 2-digit (31) only      → p1
+        (325001, 315102, 2),  # same 1-digit (3) only       → p2
+        (425001, 315102, 3),  # no overlap (4 vs 3)         → p3 (reject)
+    ],
+)
+def test_prefix_priority(item_key, target_key, expected):
+    assert item_id_swap._prefix_priority(item_key, target_key) == expected
+
+
+# ── _find_best_candidate ──────────────────────────────────────────────────────────
+
+
+def test_find_best_candidate_prefers_lowest_priority():
+    items = [{"ItemKey": 325001}, {"ItemKey": 315001}]  # p2, then p0
+    idx = item_id_swap._find_best_candidate(items, 315102, set(), set(), set())
+    assert idx == 1  # the p0 match wins
+
+
+def test_find_best_candidate_rejects_p3():
+    items = [{"ItemKey": 425001}]  # no category overlap with 315102
+    idx = item_id_swap._find_best_candidate(items, 315102, set(), set(), set())
+    assert idx == -1
+
+
+def test_find_best_candidate_skips_equipped():
+    items = [{"ItemKey": 315001, "UniqueId": 7}]
+    idx = item_id_swap._find_best_candidate(items, 315102, {7}, set(), set())
+    assert idx == -1
+
+
+def test_find_best_candidate_skips_used():
+    items = [{"ItemKey": 315001}, {"ItemKey": 315002}]
+    idx = item_id_swap._find_best_candidate(items, 315102, set(), {0}, set())
+    assert idx == 1  # index 0 already used → next match
+
+
+def test_find_best_candidate_skips_skip_keys():
+    items = [{"ItemKey": 315001}]
+    idx = item_id_swap._find_best_candidate(items, 315102, set(), set(), {315001})
+    assert idx == -1
+
+
+def test_find_best_candidate_tolerates_missing_itemkey():
+    items = [{"qty": 1}, {"ItemKey": 315001}]  # first item malformed → must not crash
+    idx = item_id_swap._find_best_candidate(items, 315102, set(), set(), set())
+    assert idx == 1
+
+
+# ── _apply_legendary_swaps ────────────────────────────────────────────────────────
+
+
+def test_apply_legendary_swaps_basic():
+    outer = _wrap_outer([{"ItemKey": 315001}])
+    log = item_id_swap._apply_legendary_swaps(outer, [(315102, "Arco")])
+    assert len(log) == 1
+    assert _inner_items(outer)[0]["ItemKey"] == 315102
+
+
+def test_apply_legendary_swaps_skips_already_present():
+    outer = _wrap_outer([{"ItemKey": 315102}, {"ItemKey": 315001}])
+    log = item_id_swap._apply_legendary_swaps(outer, [(315102, "Arco")])
+    assert log == []  # target already owned → no swap, no re-injection
+
+
+def test_apply_legendary_swaps_one_slot_per_target():
+    outer = _wrap_outer([{"ItemKey": 315001}, {"ItemKey": 315002}])
+    log = item_id_swap._apply_legendary_swaps(outer, [(315102, "Arco")])
+    keys = [it["ItemKey"] for it in _inner_items(outer)]
+    assert keys.count(315102) == 1  # exactly one slot converted
+
+
+def test_apply_legendary_swaps_rejects_wrong_category():
+    outer = _wrap_outer([{"ItemKey": 425001}])  # p3 vs 315102
+    log = item_id_swap._apply_legendary_swaps(outer, [(315102, "Arco")])
+    assert log == []
+    assert _inner_items(outer)[0]["ItemKey"] == 425001  # untouched
+
+
+# ── _parse_target_ids / _parse_targets_file ───────────────────────────────────────
+
+
+def test_parse_target_ids_valid():
+    assert item_id_swap._parse_target_ids(["315102", " 335102 ", ""]) == [
+        (315102, "315102"),
+        (335102, "335102"),
+    ]
+
+
+def test_parse_target_ids_invalid_raises():
+    with pytest.raises(ValueError):
+        item_id_swap._parse_target_ids(["notanint"])
+
+
+def test_parse_targets_file_valid(tmp_path):
+    f = tmp_path / "ids.txt"
+    f.write_text("315102\n# a comment\n335102  # inline\n\n", encoding="utf-8")
+    assert item_id_swap._parse_targets_file(f) == [
+        (315102, "315102"),
+        (335102, "335102"),
+    ]
+
+
+def test_parse_targets_file_invalid_raises(tmp_path):
+    f = tmp_path / "bad.txt"
+    f.write_text("315102\noops\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        item_id_swap._parse_targets_file(f)
+
+
+# ── _build_preview statuses ───────────────────────────────────────────────────────
+
+
+def test_build_preview_statuses():
+    items = [{"ItemKey": 335102}, {"ItemKey": 315001}]  # present target, p0 candidate
+    rows = item_id_swap._build_preview(
+        items, set(), [(335102, "Cetro"), (315102, "Arco"), (445102, "Virote")]
+    )
+    status_by_target = {r[0]: r[4] for r in rows}
+    assert status_by_target[335102] == "present"   # already owned
+    assert status_by_target[315102] == "ready"     # p0 candidate available
+    assert status_by_target[445102] == "no match"  # no category-compatible item
+
+
+# ── Group 11: Watch-path atomicity + backup helpers (regression for review fix) ───
+
+
+def test_atomic_write_bytes_no_tmp_left(tmp_path):
+    target = tmp_path / "out.bin"
+    item_id_swap._atomic_write_bytes(target, b"hello")
+    assert target.read_bytes() == b"hello"
+    assert not list(tmp_path.glob("*.tmp")), "temp staging file must be cleaned up"
+
+
+def test_timestamped_backup(tmp_path):
+    save = tmp_path / "SaveFile_Live.es3"
+    save.write_bytes(b"\x01\x02\x03")
+    backup = item_id_swap._timestamped_backup(save)
+    assert backup.exists()
+    assert backup.read_bytes() == b"\x01\x02\x03"
+    assert re.search(r"\.bak\.\d{8}_\d{6}$", backup.name)
+
+
+def test_patch_legendary_locked_atomic_and_decryptable(tmp_path):
+    """The watch-path writer must produce a valid, decryptable save and leave no .tmp."""
+    save = tmp_path / "SaveFile_Live.es3"
+    outer = _wrap_outer([{"ItemKey": 315001}])
+    save.write_bytes(item_id_swap.encrypt_save(
+        json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+    ))
+
+    n = item_id_swap._patch_legendary_locked(save, no_hash=False, targets=[(315102, "Arco")])
+
+    assert n == 1
+    result = json.loads(item_id_swap.decrypt_save(save))  # must still decrypt
+    keys = [it["ItemKey"] for it in json.loads(result["PlayerSaveData"]["value"])["itemSaveDatas"]]
+    assert 315102 in keys
+    assert not list(tmp_path.glob("*.tmp")), "atomic write must not leave a .tmp file"
+
