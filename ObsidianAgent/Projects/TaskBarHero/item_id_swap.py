@@ -514,6 +514,12 @@ _LEGENDARY_TARGETS: list[tuple[int, str]] = [
 ]
 _LEGENDARY_KEYS = {t for t, _ in _LEGENDARY_TARGETS}
 
+_STATUS_RICH = {
+    "ready":    "[green]ready[/green]",
+    "present":  "[blue]present[/blue]",
+    "no match": "[yellow]no match[/yellow]",
+}
+
 
 def _get_equipped_ids(inner: dict) -> set[int]:
     """Return set of UniqueIds currently equipped by any hero slot."""
@@ -661,11 +667,6 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
     print(f"[*] Legendary targets: {', '.join(f'{k} {n}' for k, n in active_targets)}")
 
     if not watch:
-        ts     = time.strftime("%Y%m%d_%H%M%S")
-        backup = save.with_name(save.name + f".bak.{ts}")
-        shutil.copy2(save, backup)
-        print(f"[*] Backup → {backup}")
-
         outer = json.loads(decrypt_save(save))
 
         # Snapshot present keys BEFORE the swap to classify skipped targets accurately.
@@ -679,10 +680,6 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
         log = _apply_legendary_swaps(outer, targets)
 
         swapped_keys = {r[2] for r in log}
-        for idx, old_k, new_k, name in log:
-            prio = _prefix_priority(old_k, new_k)
-            tag  = ["p0(3-digit)", "p1(2-digit)", "p2(1-digit)"][prio]
-            print(f"  [+] slot[{idx}] {old_k} → {new_k} {name!r}  [{tag}]")
         for tgt_key, tgt_name in active_targets:
             if tgt_key in swapped_keys:
                 continue
@@ -694,6 +691,17 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
         if not log:
             print("[!] Nothing to write.")
             return
+
+        for idx, old_k, new_k, name in log:
+            prio = _prefix_priority(old_k, new_k)
+            tag  = ["p0(3-digit)", "p1(2-digit)", "p2(1-digit)"][prio]
+            print(f"  [+] slot[{idx}] {old_k} → {new_k} {name!r}  [{tag}]")
+
+        # Backup only written when there are actual changes.
+        ts     = time.strftime("%Y%m%d_%H%M%S")
+        backup = save.with_name(save.name + f".bak.{ts}")
+        shutil.copy2(save, backup)
+        print(f"[*] Backup → {backup}")
 
         update_system_info(outer, skip=no_hash)
         save.write_bytes(encrypt_save(
@@ -716,7 +724,10 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
                 try:
                     n  = _patch_legendary_locked(save, no_hash, targets)
                     ts = time.strftime("%H:%M:%S")
-                    print(f"  [{ts}] {n} swap(s) applied")
+                    if n:
+                        print(f"  [{ts}] {n} swap(s) applied")
+                    else:
+                        print(f"  [{ts}] all targets present or no same-category match — idle")
                     last_mtime = mtime
                 except BlockingIOError:
                     print("[!] File locked — skipping cycle", file=sys.stderr)
@@ -841,7 +852,7 @@ def cmd_gui(save: Path) -> None:
                 t.add_column("Match",   style="green",   width=6,  no_wrap=True)
                 t.add_column("Status",                   width=14, no_wrap=True)
                 for (tk, tn, sk, tag, status) in preview:
-                    st = "[green]ready[/green]" if status == "ready" else "[red]no candidate[/red]"
+                    st = _STATUS_RICH.get(status, f"[red]{status}[/red]")
                     t.add_row(str(tk), tn, str(sk), tag, st)
                 console.print(t)
                 console.print(f"\n  Items total: {len(items)}")
