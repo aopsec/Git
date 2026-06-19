@@ -228,6 +228,78 @@ def cmd_list(save: Path) -> None:
         print(f"  {path}\n    {display}\n")
 
 
+def cmd_items(save: Path) -> None:
+    """
+    Inventory viewer: print every item in itemSaveDatas with its slot index,
+    ItemKey, 2-digit sub-category prefix, equipping hero (if any), and whether
+    the key is a known legendary target. Helps pick source/target IDs to swap.
+    """
+    try:
+        plaintext = decrypt_save(save)
+        outer     = json.loads(plaintext)
+        pv_entry  = outer.get("PlayerSaveData", {})
+        pv_str    = pv_entry["value"] if isinstance(pv_entry, dict) else pv_entry
+        inner     = json.loads(pv_str)
+        items     = inner["itemSaveDatas"]
+    except Exception as exc:
+        print(f"[!] Cannot read save: {exc}")
+        sys.exit(1)
+
+    equipped_ids = _get_equipped_ids(inner)
+    # UniqueId → heroKey for every equipped item across all hero slots.
+    hero_by_uid: dict[int, str] = {}
+    for hero in inner.get("heroSaveDatas", []):
+        hero_key = hero.get("heroKey", "?")
+        for uid in hero.get("equippedItemIds", []):
+            if uid:
+                hero_by_uid[uid] = str(hero_key)
+
+    equipped_count  = 0
+    legendary_count = 0
+    rows: list[tuple[int, int, int, str, str]] = []
+    for slot, item in enumerate(items):
+        item_key = item.get("ItemKey", 0)
+        prefix2  = item_key // 10000
+        uid      = item.get("UniqueId")
+        is_equipped = uid in equipped_ids if uid is not None else False
+        equipped_to = hero_by_uid.get(uid, "—") if is_equipped else "—"
+        if is_equipped:
+            equipped_count += 1
+        is_legendary = item_key in _LEGENDARY_KEYS
+        if is_legendary:
+            legendary_count += 1
+        rows.append((slot, item_key, prefix2, equipped_to, "✓" if is_legendary else ""))
+
+    try:
+        from rich.console import Console
+        from rich.table import Table
+        console: object | None = Console()
+    except ImportError:
+        console = None
+
+    if console is not None:
+        from rich.table import Table
+        t = Table(show_header=True, header_style="bold cyan", box=None, padding=(0, 2))
+        t.add_column("Slot",       style="dim",    justify="right", no_wrap=True)
+        t.add_column("ItemKey",    style="yellow", justify="right", no_wrap=True)
+        t.add_column("Prefix2",    style="cyan",   justify="right", no_wrap=True)
+        t.add_column("Equipped",   style="green",  no_wrap=True)
+        t.add_column("Legendary?", style="magenta", justify="center", no_wrap=True)
+        for slot, item_key, prefix2, equipped_to, legendary in rows:
+            t.add_row(str(slot), str(item_key), str(prefix2), equipped_to, legendary)
+        console.print(t)  # type: ignore[attr-defined]
+    else:
+        print(f"  {'Slot':>4}  {'ItemKey':>8}  {'Prefix2':>7}  {'Equipped':<10}  Legendary?")
+        print(f"  {'-' * 50}")
+        for slot, item_key, prefix2, equipped_to, legendary in rows:
+            print(f"  {slot:>4}  {item_key:>8}  {prefix2:>7}  {equipped_to:<10}  {legendary}")
+
+    print(
+        f"\nTotal: {len(items)} items | "
+        f"Equipped: {equipped_count} | Legendary: {legendary_count}"
+    )
+
+
 def cmd_dump(save: Path) -> None:
     try:
         plaintext = decrypt_save(save)
@@ -243,6 +315,54 @@ def cmd_dump(save: Path) -> None:
 def _coerce_id(raw: str) -> str | int:
     """Return int when raw is a pure decimal string, else the original str."""
     return int(raw) if raw.lstrip("-").isdigit() else raw
+
+
+def _parse_targets_file(path: Path) -> list[tuple[int, str]]:
+    """
+    Read target IDs from a .txt file (one ID per line). Blank lines and lines
+    whose stripped form starts with '#' are skipped; inline '# …' comments are
+    stripped. Each remaining token is parsed as int.
+    Returns [(int_id, str(int_id)), …] — ID as string, no human-readable name.
+    Raises ValueError with a clear message on the first non-integer token.
+    """
+    targets: list[tuple[int, str]] = []
+    for lineno, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        text = stripped.split("#", 1)[0].strip()
+        if not text:
+            continue
+        try:
+            int_id = int(text)
+        except ValueError as exc:
+            raise ValueError(
+                f"{path}:{lineno}: invalid target ID {text!r} (expected integer)"
+            ) from exc
+        targets.append((int_id, str(int_id)))
+    return targets
+
+
+def _parse_target_ids(raw_ids: list[str]) -> list[tuple[int, str]]:
+    """
+    Parse a list of raw ID strings (CLI --target args, TUI comma/newline split).
+    Whitespace is stripped; blank tokens are skipped; each remaining token is
+    parsed as int. Returns [(int_id, str(int_id)), …].
+    Raises ValueError with a clear message on the first non-integer token.
+    """
+    targets: list[tuple[int, str]] = []
+    for raw in raw_ids:
+        token = raw.strip()
+        if not token:
+            continue
+        try:
+            int_id = int(token)
+        except ValueError as exc:
+            raise ValueError(
+                f"invalid target ID {token!r} (expected integer)"
+            ) from exc
+        targets.append((int_id, str(int_id)))
+    return targets
 
 
 def _patch_nested_json(outer: dict, old: str | int, new: str | int) -> int:
@@ -414,18 +534,21 @@ def _prefix_priority(item_key: int, target_key: int) -> int:
 
 
 def _find_best_candidate(items: list, target_key: int,
-                          equipped_ids: set, used_indices: set) -> int:
+                          equipped_ids: set, used_indices: set,
+                          skip_keys: set | None = None) -> int:
     """
     Return index of the most category-similar unequipped/unused item for target_key.
     Returns -1 when no candidate exists.
-    Skips items that are already a legendary target key or are equipped.
+    Skips items that are equipped, already used, or whose ItemKey is in skip_keys.
+    `skip_keys` defaults to the global legendary target keys when None.
     """
+    skip = _LEGENDARY_KEYS if skip_keys is None else skip_keys
     candidates: list[tuple[int, int]] = []
     for idx, item in enumerate(items):
         if idx in used_indices:
             continue
         ik = item["ItemKey"]
-        if ik in _LEGENDARY_KEYS:
+        if ik in skip:
             continue
         if item.get("UniqueId") in equipped_ids:
             continue
@@ -436,12 +559,18 @@ def _find_best_candidate(items: list, target_key: int,
     return candidates[0][1]
 
 
-def _apply_legendary_swaps(outer: dict) -> list[tuple[int, int, int, str]]:
+def _apply_legendary_swaps(
+    outer: dict,
+    targets: list[tuple[int, str]] | None = None,
+) -> list[tuple[int, int, int, str]]:
     """
     Parse inner PlayerSaveData JSON, apply category-based single-slot legendary swaps,
     re-serialize pv, update outer["PlayerSaveData"]["value"].
+    When `targets` is None, falls back to the global _LEGENDARY_TARGETS list.
     Returns list of (slot_idx, old_key, new_key, name) for each swap performed.
     """
+    active_targets = _LEGENDARY_TARGETS if targets is None else targets
+    skip_keys = {t for t, _ in active_targets}
     pv_entry = outer.get("PlayerSaveData", {})
     pv_str   = pv_entry["value"] if isinstance(pv_entry, dict) else pv_entry
     inner    = json.loads(pv_str)
@@ -450,8 +579,8 @@ def _apply_legendary_swaps(outer: dict) -> list[tuple[int, int, int, str]]:
     used: set[int] = set()
     log: list[tuple[int, int, int, str]] = []
 
-    for tgt_key, tgt_name in _LEGENDARY_TARGETS:
-        idx = _find_best_candidate(items, tgt_key, equipped, used)
+    for tgt_key, tgt_name in active_targets:
+        idx = _find_best_candidate(items, tgt_key, equipped, used, skip_keys)
         if idx < 0:
             continue
         old_key = items[idx]["ItemKey"]
@@ -487,14 +616,15 @@ def _flock_release(fd) -> None:
         fcntl.flock(fd, fcntl.LOCK_UN)
 
 
-def _patch_legendary_locked(save: Path, no_hash: bool) -> int:
+def _patch_legendary_locked(save: Path, no_hash: bool,
+                            targets: list[tuple[int, str]] | None = None) -> int:
     """Single read-modify-write cycle under flock; returns swap count."""
     fd = open(save, "r+b")
     try:
         _flock_acquire(fd, _LOCK_TIMEOUT)
         try:
             outer = json.loads(_decrypt_bytes(fd.read()))
-            log   = _apply_legendary_swaps(outer)
+            log   = _apply_legendary_swaps(outer, targets)
             if log:
                 update_system_info(outer, skip=no_hash)
                 ciphertext = encrypt_save(
@@ -509,13 +639,16 @@ def _patch_legendary_locked(save: Path, no_hash: bool) -> int:
 
 
 def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
-                  interval: float = 0.5) -> None:
+                  interval: float = 0.5,
+                  targets: list[tuple[int, str]] | None = None) -> None:
     """
     Category-aware batch legendary swap (F1 PoC).
     Selects the most type-similar unequipped item for each legendary target;
     replaces exactly ONE slot per target regardless of stack size.
+    When `targets` is None, uses the global _LEGENDARY_TARGETS list.
     """
-    print(f"[*] Legendary targets: {', '.join(f'{k} {n}' for k, n in _LEGENDARY_TARGETS)}")
+    active_targets = _LEGENDARY_TARGETS if targets is None else targets
+    print(f"[*] Legendary targets: {', '.join(f'{k} {n}' for k, n in active_targets)}")
 
     if not watch:
         ts     = time.strftime("%Y%m%d_%H%M%S")
@@ -524,7 +657,7 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
         print(f"[*] Backup → {backup}")
 
         outer = json.loads(decrypt_save(save))
-        log   = _apply_legendary_swaps(outer)
+        log   = _apply_legendary_swaps(outer, targets)
 
         if not log:
             print("[!] No suitable candidates found — nothing written.")
@@ -533,7 +666,7 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
             prio = _prefix_priority(old_k, new_k)
             tag  = ["p0(3-digit)", "p1(2-digit)", "p2(1-digit)", "p3(no-match)"][prio]
             print(f"  [+] slot[{idx}] {old_k} → {new_k} {name!r}  [{tag}]")
-        skipped = [n for k, n in _LEGENDARY_TARGETS if k not in {r[2] for r in log}]
+        skipped = [n for k, n in active_targets if k not in {r[2] for r in log}]
         for name in skipped:
             print(f"  [-] no candidate for {name!r} — skipped")
 
@@ -556,7 +689,7 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
                 continue
             if mtime != last_mtime:
                 try:
-                    n  = _patch_legendary_locked(save, no_hash)
+                    n  = _patch_legendary_locked(save, no_hash, targets)
                     ts = time.strftime("%H:%M:%S")
                     print(f"  [{ts}] {n} swap(s) applied")
                     last_mtime = mtime
@@ -588,12 +721,15 @@ def _getch() -> str:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
-def _build_preview(items: list, equipped: set) -> list[tuple]:
+def _build_preview(items: list, equipped: set,
+                   targets: list[tuple[int, str]] | None = None) -> list[tuple]:
     """Return one row per legendary target: (tgt_key, tgt_name, src_key, tag, status)."""
+    active_targets = targets if targets is not None else _LEGENDARY_TARGETS
+    skip_keys = {t for t, _ in active_targets}
     used: set[int] = set()
     rows = []
-    for tgt_key, tgt_name in _LEGENDARY_TARGETS:
-        idx = _find_best_candidate(items, tgt_key, equipped, used)
+    for tgt_key, tgt_name in active_targets:
+        idx = _find_best_candidate(items, tgt_key, equipped, used, skip_keys)
         if idx >= 0:
             src_key = items[idx]["ItemKey"]
             prio    = _prefix_priority(src_key, tgt_key)
@@ -607,6 +743,16 @@ def _build_preview(items: list, equipped: set) -> list[tuple]:
 
 def cmd_gui(save: Path) -> None:
     """Interactive TUI — launched when no CLI flags are given."""
+    # Snapshot the terminal's original (cooked) settings so the [C]ustom handler
+    # can restore line-editing/echo before calling input(). POSIX TTY only.
+    _orig_tty_settings = None
+    if platform.system() != "Windows" and sys.stdin.isatty():
+        try:
+            import termios
+            _orig_tty_settings = termios.tcgetattr(sys.stdin.fileno())
+        except Exception:
+            _orig_tty_settings = None
+
     try:
         from rich.console import Console
         from rich.table import Table
@@ -669,6 +815,8 @@ def cmd_gui(save: Path) -> None:
             console.print(
                 "\n  [bold][A][/bold]pply once   "
                 "[bold][W][/bold]atch   "
+                "[bold][C][/bold]ustom   "
+                "[bold][I][/bold]tems   "
                 "[bold][L][/bold]ist   "
                 "[bold][D][/bold]ump   "
                 "[bold][Q][/bold]uit\n  > ",
@@ -688,7 +836,7 @@ def cmd_gui(save: Path) -> None:
                 for (tk, tn, sk, tag, status) in preview:
                     print(f"  {tk:<9} {tn:<26} {str(sk):<9} {tag:<6} {status}")
                 print(f"\n  Items total: {len(items)}")
-            print("\n  [A]pply once  [W]atch  [L]ist  [D]ump  [Q]uit\n  > ",
+            print("\n  [A]pply once  [W]atch  [C]ustom  [I]tems  [L]ist  [D]ump  [Q]uit\n  > ",
                   end="", flush=True)
 
         try:
@@ -706,6 +854,69 @@ def cmd_gui(save: Path) -> None:
                 print("[!] Save file not writable")
             else:
                 cmd_legendary(save, no_hash=False, watch=False)
+            print("\nPress any key to continue…")
+            try:
+                _getch()
+            except KeyboardInterrupt:
+                pass
+
+        elif ch == "c":
+            print("\n\n[Custom targets]")
+            # Restore the terminal to cooked mode so input() echoes and edits work.
+            if (platform.system() != "Windows" and sys.stdin.isatty()
+                    and _orig_tty_settings is not None):
+                try:
+                    import termios
+                    termios.tcsetattr(
+                        sys.stdin.fileno(), termios.TCSADRAIN, _orig_tty_settings
+                    )
+                except Exception:
+                    pass
+
+            # Abbreviated inventory to help pick target IDs (plain print, no rich).
+            try:
+                _inner = json.loads(decrypt_save(save))
+                _pv    = _inner["PlayerSaveData"]["value"]
+                _items = json.loads(_pv)["itemSaveDatas"]
+                print(f"  {'Slot':<5} {'ItemKey':<9} Prefix2")
+                for _slot, _item in enumerate(_items[:20]):
+                    _ik = _item.get("ItemKey", 0)
+                    print(f"  {_slot:<5} {_ik:<9} {_ik // 10000}")
+                if len(_items) > 20:
+                    print(f"  … {len(_items) - 20} more items")
+            except Exception as exc:
+                print(f"  [!] Could not list inventory: {exc}")
+
+            print("\nEnter IDs (comma or newline-separated) OR path to a .txt file:")
+            print("> ", end="", flush=True)
+            try:
+                raw_input_str = input()
+            except (EOFError, KeyboardInterrupt):
+                raw_input_str = ""
+
+            parsed_targets: list[tuple[int, str]] = []
+            parse_ok = True
+            stripped_input = raw_input_str.strip()
+            try:
+                if stripped_input.endswith(".txt") and Path(stripped_input).exists():
+                    parsed_targets = _parse_targets_file(Path(stripped_input))
+                else:
+                    parsed_targets = _parse_target_ids(
+                        re.split(r"[,\n]+", raw_input_str)
+                    )
+            except ValueError as exc:
+                print(f"[!] Parse error: {exc}")
+                parse_ok = False
+
+            if parse_ok and not parsed_targets:
+                print("[!] No valid IDs — skipped")
+            elif parse_ok:
+                if not os.access(save, os.W_OK):
+                    print("[!] Save file not writable")
+                else:
+                    cmd_legendary(save, targets=parsed_targets,
+                                  no_hash=False, watch=False)
+
             print("\nPress any key to continue…")
             try:
                 _getch()
@@ -737,6 +948,15 @@ def cmd_gui(save: Path) -> None:
             except KeyboardInterrupt:
                 pass
 
+        elif ch == "i":
+            print("\n")
+            cmd_items(save)
+            print("\nPress any key to continue…")
+            try:
+                _getch()
+            except KeyboardInterrupt:
+                pass
+
 # ── CLI entry point ──────────────────────────────────────────────────────────────
 
 def positive_float(v: str) -> float:
@@ -760,6 +980,8 @@ def main() -> None:
         help=f"path to SaveFile_Live.es3 (default: {DEFAULT_SAVE})",
     )
     ap.add_argument("--dump",     action="store_true", help="print decrypted JSON and exit")
+    ap.add_argument("--items",    action="store_true",
+                    help="print an inventory table of all items and exit")
     ap.add_argument("--legendary", action="store_true",
                     help="batch-swap 6 source slots to legendary IDs (F1 PoC)")
     ap.add_argument("--from",  dest="old_id", metavar="OLD_ID", help="item ID to replace")
@@ -776,14 +998,30 @@ def main() -> None:
         "--no-hash", action="store_true",
         help="skip SystemInfo hash recomputation (tests raw server trust without valid hash)",
     )
+    ap.add_argument(
+        "--target", action="append", metavar="ID", default=None,
+        help="Target item ID to swap to (repeatable); incompatible with --targets-file",
+    )
+    ap.add_argument(
+        "--targets-file", type=Path, default=None,
+        help="Path to .txt file with target IDs (one per line)",
+    )
     args = ap.parse_args()
 
+    if args.items and (args.dump or args.legendary or args.old_id or args.new_id):
+        ap.error("--items cannot be combined with --dump/--legendary or --from/--to")
     if args.dump and (args.old_id or args.new_id or args.legendary):
         ap.error("--dump cannot be combined with --from/--to or --legendary")
     if args.legendary and (args.old_id or args.new_id):
         ap.error("--legendary cannot be combined with --from/--to")
     if args.old_id == "" or args.new_id == "":
         ap.error("--from and --to must not be empty strings")
+    if args.target is not None and args.targets_file is not None:
+        ap.error("--target and --targets-file are mutually exclusive")
+    if (args.target is not None or args.targets_file is not None) and (
+        args.old_id or args.new_id
+    ):
+        ap.error("--target/--targets-file cannot be combined with --from/--to")
 
     save = args.save
     if not save.exists():
@@ -792,8 +1030,30 @@ def main() -> None:
             f"    Set --save or WIN_USER env var (current: '{_WIN_USER}')."
         )
 
-    if args.dump:
+    # Build custom targets from --target / --targets-file (mutually exclusive above).
+    custom_targets: list[tuple[int, str]] | None = None
+    if args.targets_file is not None:
+        if not args.targets_file.exists():
+            sys.exit(f"[!] File not found: {args.targets_file}")
+        try:
+            custom_targets = _parse_targets_file(args.targets_file)
+        except ValueError as exc:
+            sys.exit(f"[!] {exc}")
+    elif args.target is not None:
+        try:
+            custom_targets = _parse_target_ids(args.target)
+        except ValueError as exc:
+            sys.exit(f"[!] {exc}")
+
+    if args.items:
+        cmd_items(save)
+    elif args.dump:
         cmd_dump(save)
+    elif custom_targets is not None:
+        if not os.access(save, os.W_OK):
+            sys.exit(f"[!] Save file is not writable: {save}")
+        cmd_legendary(save, no_hash=args.no_hash, watch=args.watch,
+                      interval=args.interval, targets=custom_targets)
     elif args.legendary:
         if not os.access(save, os.W_OK):
             sys.exit(f"[!] Save file is not writable: {save}")
