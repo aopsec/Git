@@ -422,8 +422,11 @@ def cmd_swap(save: Path, old_id: str, new_id: str, no_hash: bool = False) -> Non
     if no_hash:
         print("[*] --no-hash: SystemInfo left unchanged (tests raw server trust)")
 
-    new_plain = json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
-    save.write_bytes(encrypt_save(new_plain))
+    new_plain   = json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+    _ciphertext = encrypt_save(new_plain)
+    _tmp = save.with_suffix(".tmp")
+    _tmp.write_bytes(_ciphertext)
+    os.replace(_tmp, save)  # atomic on POSIX and Windows
     print(f"[+] Written → {save}")
 
 
@@ -705,9 +708,12 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
         print(f"[*] Backup → {backup}")
 
         update_system_info(outer, skip=no_hash)
-        save.write_bytes(encrypt_save(
+        _ciphertext = encrypt_save(
             json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
-        ))
+        )
+        _tmp = save.with_suffix(".tmp")
+        _tmp.write_bytes(_ciphertext)
+        os.replace(_tmp, save)  # atomic on POSIX and Windows
         print(f"[+] Written → {save}  ({len(log)} swap(s))")
         return
 
@@ -1054,19 +1060,20 @@ def main() -> None:
     )
     args = ap.parse_args()
 
-    if args.items and (args.dump or args.legendary or args.old_id or args.new_id):
-        ap.error("--items cannot be combined with --dump/--legendary or --from/--to")
+    _has_custom = args.target is not None or args.targets_file is not None
+    if args.items and (args.dump or args.legendary or args.old_id or args.new_id or _has_custom):
+        ap.error("--items cannot be combined with --dump/--legendary, --from/--to, or --target/--targets-file")
     if args.dump and (args.old_id or args.new_id or args.legendary):
         ap.error("--dump cannot be combined with --from/--to or --legendary")
     if args.legendary and (args.old_id or args.new_id):
         ap.error("--legendary cannot be combined with --from/--to")
+    if args.legendary and _has_custom:
+        ap.error("--legendary and --target/--targets-file are mutually exclusive — use one or the other")
     if args.old_id == "" or args.new_id == "":
         ap.error("--from and --to must not be empty strings")
     if args.target is not None and args.targets_file is not None:
         ap.error("--target and --targets-file are mutually exclusive")
-    if (args.target is not None or args.targets_file is not None) and (
-        args.old_id or args.new_id
-    ):
+    if _has_custom and (args.old_id or args.new_id):
         ap.error("--target/--targets-file cannot be combined with --from/--to")
 
     save = args.save
