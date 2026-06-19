@@ -437,3 +437,4 @@ def test_certified_system_info_updated(item_id, item_name, tmp_path):
     assert after != before, (
         f"{item_name} ({item_id}): SystemInfo unchanged after swap (hash not updated)"
     )
+
