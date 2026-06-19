@@ -8,7 +8,7 @@ Crypto: ES3 AES-128-CBC
         password from ES3Defaults.asset (resources.assets pathID 12223)
 
 Usage:
-  python3 item_id_swap.py                             # list item-related fields in save
+  python3 item_id_swap.py                             # interactive TUI (bare launch)
   python3 item_id_swap.py --from OLD_ID --to NEW_ID   # swap item ID, write back
   python3 item_id_swap.py --legendary                  # category-aware batch legendary swap
   python3 item_id_swap.py --legendary --watch          # race server sync (0.5 s poll)
@@ -395,11 +395,6 @@ def _patch_nested_json(outer: dict, old: str | int, new: str | int) -> int:
 
 
 def cmd_swap(save: Path, old_id: str, new_id: str, no_hash: bool = False) -> None:
-    ts     = time.strftime("%Y%m%d_%H%M%S")
-    backup = save.with_name(save.name + f".bak.{ts}")
-    shutil.copy2(save, backup)
-    print(f"[*] Backup  → {backup}")
-
     plaintext = decrypt_save(save)
     outer     = json.loads(plaintext)
 
@@ -416,6 +411,12 @@ def cmd_swap(save: Path, old_id: str, new_id: str, no_hash: bool = False) -> Non
         return
 
     print(f"[+] Replaced {n} occurrence(s): '{old_id}' → '{new_id}'")
+
+    # Backup only when there are actual changes (mirrors cmd_legendary behaviour).
+    ts     = time.strftime("%Y%m%d_%H%M%S")
+    backup = save.with_name(save.name + f".bak.{ts}")
+    shutil.copy2(save, backup)
+    print(f"[*] Backup  → {backup}")
 
     update_system_info(outer, skip=no_hash)
     if no_hash:
@@ -561,7 +562,7 @@ def _find_best_candidate(items: list, target_key: int,
             continue
         prio = _prefix_priority(ik, target_key)
         if prio == 3:
-            continue  # Bug 3: reject wrong-category items (no 1-digit prefix match)
+            continue  # reject items with no 1-digit prefix overlap (wrong category)
         candidates.append((prio, idx))
     if not candidates:
         return -1
