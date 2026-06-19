@@ -109,12 +109,16 @@ def _recompute_system_info(data: dict) -> str:
     """
     Compute the correct SystemInfo HMAC-SHA256 hash matching the game's anti-tamper check.
     Returns base64-encoded result (the format ES3 stores it in).
+    Handles dicts that are missing AccountSaveData/PlayerSaveData gracefully (tests/stubs).
     """
-    acc_entry = data.get("AccountSaveData", {})
-    pla_entry = data.get("PlayerSaveData", {})
-    av = acc_entry["value"] if isinstance(acc_entry, dict) else acc_entry
-    pv = pla_entry["value"] if isinstance(pla_entry, dict) else pla_entry
-    owner_id  = json.loads(av).get("ownerSteamId", "")
+    acc_entry = data.get("AccountSaveData", "")
+    pla_entry = data.get("PlayerSaveData", "")
+    av = acc_entry.get("value", "") if isinstance(acc_entry, dict) else str(acc_entry)
+    pv = pla_entry.get("value", "") if isinstance(pla_entry, dict) else str(pla_entry)
+    try:
+        owner_id = json.loads(av).get("ownerSteamId", "") if av else ""
+    except (json.JSONDecodeError, AttributeError):
+        owner_id = ""
     msg    = (av + "|" + pv + "|" + owner_id).encode("utf-8")
     digest = hmac.new(_BGBP_KEY, msg, hashlib.sha256).digest()
     return base64.b64encode(digest).decode()

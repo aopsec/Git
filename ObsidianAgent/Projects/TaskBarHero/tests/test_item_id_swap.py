@@ -78,9 +78,9 @@ def test_decrypt_save_too_short(tmp_path):
 # ── Group 2: SystemInfo hash ─────────────────────────────────────────────────────
 
 
-def test_recompute_system_info_returns_hex64():
+def test_recompute_system_info_returns_base64():
     result = item_id_swap._recompute_system_info({"a": "b", "c": 1})
-    assert _HEX64.match(result)
+    assert len(result) == 44 and result.endswith("=")
 
 
 def test_recompute_system_info_excludes_system_info_key():
@@ -92,13 +92,15 @@ def test_recompute_system_info_excludes_system_info_key():
 def test_update_system_info_plain_string():
     data = {"SystemInfo": "oldhash", "x": 1}
     item_id_swap.update_system_info(data)
-    assert _HEX64.match(data["SystemInfo"])
+    new_val = data["SystemInfo"]
+    assert len(new_val) == 44 and new_val.endswith("=")
 
 
 def test_update_system_info_wrapped():
     data = {"SystemInfo": {"__type": "t", "value": "old"}, "x": 1}
     item_id_swap.update_system_info(data)
-    assert _HEX64.match(data["SystemInfo"]["value"])
+    new_val = data["SystemInfo"]["value"]
+    assert len(new_val) == 44 and new_val.endswith("=")
     assert data["SystemInfo"]["__type"] == "t"
 
 
@@ -343,11 +345,13 @@ def test_update_system_info_base64_preserved(make_es3_save):
     )
 
 
-def test_update_system_info_hex_preserved():
-    """When the live SystemInfo value is hex, the new hash must also be hex."""
-    data = {"SystemInfo": "a" * 64, "itemId": "x"}  # 64-char hex-like string
+def test_update_system_info_always_base64():
+    """update_system_info always writes base64 HMAC regardless of previous format."""
+    data = {"SystemInfo": "a" * 64, "itemId": "x"}  # 64-char old-style value
     item_id_swap.update_system_info(data)
-    assert _HEX64.match(data["SystemInfo"])
+    new_val = data["SystemInfo"]
+    assert new_val != "a" * 64  # value must change
+    assert len(new_val) == 44 and new_val.endswith("=")
 
 
 # ── Group 9: Certification — 6 specific TaskBarHero item IDs ─────────────────────
@@ -372,10 +376,14 @@ _SWAP_TARGET = "000000"
 
 
 def _make_item_save(item_id: str, tmp_path: Path) -> Path:
-    """ES3 save with a single itemSaveDatas entry for item_id."""
+    """ES3 save with a single itemSaveDatas entry for item_id.
+
+    Uses integer ItemKey matching the real TBH save schema so that
+    cmd_swap (which coerces IDs to int via _coerce_id) finds a match.
+    """
     data = {
         "SystemInfo": "placeholder",
-        "itemSaveDatas": [{"itemId": item_id, "qty": 1, "enhance": 0}],
+        "itemSaveDatas": [{"ItemKey": int(item_id), "qty": 1, "enhance": 0}],
         "inventorySaveDatas": [],
         "stashSaveDatas": [],
     }
@@ -402,11 +410,12 @@ def test_certified_roundtrip(item_id, item_name, tmp_path):
     item_id_swap.cmd_swap(save, item_id, _SWAP_TARGET)
 
     result = json.loads(item_id_swap.decrypt_save(save))
-    found = [e["itemId"] for e in result.get("itemSaveDatas", [])]
-    assert _SWAP_TARGET in found, (
+    # _make_item_save uses integer ItemKey; cmd_swap coerces IDs to int via _coerce_id
+    found = [e.get("ItemKey") for e in result.get("itemSaveDatas", [])]
+    assert int(_SWAP_TARGET) in found, (
         f"{item_name} ({item_id}): swap target not found after cmd_swap. Got: {found}"
     )
-    assert item_id not in found, (
+    assert int(item_id) not in found, (
         f"{item_name} ({item_id}): original ID still present after swap. Got: {found}"
     )
 
