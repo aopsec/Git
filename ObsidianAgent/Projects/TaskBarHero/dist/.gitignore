@@ -1,0 +1,8 @@
+# Build artifacts (do not commit the frozen exe or build envs)
+buildenv/
+runenv/
+build/
+out/
+*.exe
+*.spec
+__pycache__/

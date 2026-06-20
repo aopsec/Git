@@ -1,0 +1,5 @@
+# Runtime dependencies for item_id_swap.py (TaskBarHero ES3 save editor).
+# pycryptodome provides Crypto.Cipher.AES / Crypto.Util.Padding (ES3 AES-128-CBC).
+# rich is optional (pretty TUI tables); the script degrades to plain text without it.
+pycryptodome>=3.20
+rich>=13.0

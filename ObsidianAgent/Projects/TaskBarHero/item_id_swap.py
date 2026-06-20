@@ -1125,7 +1125,19 @@ def positive_float(v: str) -> float:
     return f
 
 
+def _force_utf8_stdio() -> None:
+    """Make Unicode output (→ — ✓ …) safe on any Windows console codepage or when
+    stdout is redirected to a pipe/file. Without this, plain prints of chars outside
+    the legacy codepage (e.g. ✓) can raise UnicodeEncodeError on a fresh Windows box."""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[union-attr]
+        except (AttributeError, ValueError):
+            pass
+
+
 def main() -> None:
+    _force_utf8_stdio()
     ap = argparse.ArgumentParser(
         description=(
             "TaskBarHero ES3 save item-ID substitution — authorized testing PoC.\n"
