@@ -806,9 +806,9 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
                     n  = _patch_legendary_locked(save, no_hash, targets)
                     ts = time.strftime("%H:%M:%S")
                     if n:
-                        print(f"  [{ts}] {n} swap(s) applied")
+                        print(f"  [{ts}] {n} change(s) applied (swap/unblock)")
                     else:
-                        print(f"  [{ts}] all targets present or no same-category match — idle")
+                        print(f"  [{ts}] all targets present & unlocked, or no match — idle")
                     last_mtime = mtime
                 except BlockingIOError:
                     print("[!] File locked — skipping cycle", file=sys.stderr)
