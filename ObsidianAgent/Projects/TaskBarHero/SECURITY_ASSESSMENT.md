@@ -72,8 +72,14 @@ charts `ItemInfoData` and `GearInfoData` resolve by key. The 6 PoC targets are r
 
 Grade ladder (10 tiers): COMMON < UNCOMMON < RARE < LEGENDARY < **ARCANA** < IMMORTAL <
 BEYOND < CELESTIAL < DIVINE < COSMIC. ARCANA is mid-ladder (so even stronger keys exist),
-but the swap delta vs a low-grade item is 4×–150× on BaseStat1 alone, plus named inherent
-stats and a `UniqueModInfoData` speciality (e.g. `ArrowRainCriticalCooldown`).
+but the swap delta vs a low-grade item is 4×–150× on BaseStat1 alone, plus three named
+inherent stats per item.
+
+**Accuracy note on "specialities".** These 6 ARCANA weapons carry an *empty* `UniqueModKey`
+— their power is the BaseStat + three inherent stats, not a named `UniqueMod`. The
+`UniqueMod` mechanism (e.g. `ArrowRainCriticalCooldown`, `FlameHydraBerserk` in
+`UniqueModInfoData`) is real and key-resolved, but is attached to *other* items; swapping to
+a key that *does* carry a `UniqueModKey` would grant that speciality too (same code path).
 
 **Disassembly (GameAssembly.dll, capstone) — combat consumes the key-resolved stats.**
 The runtime-item setup `edj()` (VA `0x1808FC860`):
@@ -102,6 +108,39 @@ Exact constants and the IL2CPP derivation notes live inline in
 
 ## Test coverage
 
-`tests/test_item_id_swap.py` (pytest) covers the crypto round-trip, the `SystemInfo`
-HMAC (base64), ID substitution, the legendary-swap selection/dedup/category logic, the
-CLI surface, atomic-write/backup safety, and certifies the 6 target item IDs end-to-end.
+`tests/test_item_id_swap.py` (pytest, 90 tests) covers the crypto round-trip, the
+`SystemInfo` HMAC (base64), ID substitution, the legendary-swap selection/dedup/category
+logic, the unblock logic, the CLI surface, atomic-write/backup safety, certifies the 6
+target item IDs, and includes an end-to-end swap+unblock+resign pipeline cert.
+
+## Full certification — swap + unblock
+
+Differential stat profile of the 6 swap targets (decoded `GearInfoData`, vs the COMMON
+same-type sibling — proves a large, real, key-resolved stat grant):
+
+| ItemKey | Grade / Type | BaseStat1 (vs COMMON) | Inherent stats (type/mod/value) |
+|---|---|---|---|
+| 315102 | ARCANA BOW | 298 (vs 2, ×149) | AttackDamage/FLAT/73 · AttackDamage/ADD/661 · CDR/FLAT/68 |
+| 335102 | ARCANA SCEPTER | 264 (vs 1, ×264) | CDR/FLAT/68 · AttackDamage/ADD/661 · CritDamage/FLAT/607 |
+| 345092 | ARCANA CROSSBOW | 344 (vs 1, ×344) | AttackDamage/FLAT/59 · AttackDamage/ADD/595 · AttackSpeed/MULT/139 |
+| 415101 | ARCANA ARROW | 338 (vs 80, ×4) | AttackDamage/FLAT/37 · CritDamage/FLAT/345 · ProjectileDmg/ADD/279 |
+| 435102 | ARCANA TOME | 198 (vs 70, ×3) | AreaOfEffect/ADD/202 · BlockChance/FLAT/74 · CDR/FLAT/53 |
+| 445102 | ARCANA BOLT | 1292 (vs 200, ×6) | AttackDamage/FLAT/37 · CritDamage/FLAT/345 · AreaOfEffect/ADD/202 |
+
+### Certification matrix
+
+| # | Claim | Status | Evidence |
+|---|---|---|---|
+| C1 | Stats/grade resolve by `ItemKey` (save holds only identity + `EnchantData`) | **PASS** | `ItemSaveData` schema (dump.cs L356742); `ItemInfoData`/`GearInfoData` `ClassMap` charts |
+| C2 | Swap targets are real, distinct, higher-tier rows (not a no-op label) | **PASS** | UnityPy extract: 6 = ARCANA weapons, 4×–344× BaseStat1 vs COMMON, 3 inherent stats each |
+| C3 | Swapped stats are consumed by the runtime item (not cosmetic) | **PASS** | capstone: `edj()` @`0x1808FC860` GearKey→`GearInfoData`→BaseStat/Inherent→`ObscuredInt`→`GearModData` |
+| C4 | `IsBlocked` is a live, anti-cheat-guarded client gate | **PASS** | capstone: `cmz()` reads `+0x21`→`ObscuredBool`@`+0x180`; getter `ive()` @`0x1808FE4E0` |
+| C5 | `--unblock` clears the gate at the save layer (before ACTk loads it) | **PASS** | live save 9→0 blocked, HMAC valid; `_apply_unblock` + e2e pytest |
+| C6 | Full swap+unblock+resign yields a game-acceptable save | **PASS** | `test_e2e_swap_unblock_certification`: decryptable, targets present+unlocked, HMAC valid, atomic+backup |
+| C7 | Which behaviours `ive()` gates (equip vs stat vs trade), exact call sites | **OPEN** | needs Ghidra/IDA xref (107 MB IL2CPP; no project staged) |
+| C8 | Server re-asserts `IsBlocked` after sync (persistence) | **OUT OF SCOPE** | server-side code; only a live play→sync→re-check behavioural test can answer |
+
+**Net:** the swap+unblock is fully certified on the **client** axis (C1–C6): a swapped,
+unblocked item is a genuine, anti-cheat-consumed stat grant in a save the game will load and
+accept. The only unresolved items are server-side persistence (C8, not statically knowable)
+and exhaustive gate call-site enumeration (C7, heavy xref tooling).

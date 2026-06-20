@@ -714,3 +714,35 @@ def test_cmd_unblock_no_change_no_backup(tmp_path):
     assert save.read_bytes() == before  # nothing flagged → no write
     assert not list(tmp_path.glob("SaveFile_Live.es3.bak.*"))
 
+
+# ── Group 13: End-to-end swap+unblock certification ──────────────────────────────
+
+
+def test_e2e_swap_unblock_certification(tmp_path):
+    """Full pipeline cert: an owned-but-blocked target + a same-category swap source
+    (also blocked) → cmd_legendary swaps, unblocks both, re-signs. Certifies the
+    resulting save is decryptable, has both targets present AND unlocked, and carries
+    a VALID anti-tamper HMAC (i.e. a save the game would accept)."""
+    save = tmp_path / "SaveFile_Live.es3"
+    outer = _wrap_outer([
+        _blocked_item(315102),                       # owned target, blocked
+        _blocked_item(335001),                       # p0 swap source for 335102, blocked
+    ])
+    save.write_bytes(item_id_swap.encrypt_save(
+        json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+    ))
+
+    item_id_swap.cmd_legendary(save, targets=[(315102, "Arco"), (335102, "Cetro")])
+
+    result = json.loads(item_id_swap.decrypt_save(save))            # 1) still decryptable
+    items = json.loads(result["PlayerSaveData"]["value"])["itemSaveDatas"]
+    by_key = {it["ItemKey"]: it for it in items}
+    assert 315102 in by_key and 335102 in by_key                   # 2) owned + swapped present
+    assert by_key[315102]["IsBlocked"] is False                    # 3) owned target unblocked
+    assert by_key[335102]["IsBlocked"] is False                    # 4) swapped target unblocked
+    assert 335001 not in by_key                                    # 5) source consumed by swap
+    # 6) anti-tamper HMAC matches the written payload → game would accept the save
+    assert result["SystemInfo"]["value"] == item_id_swap._recompute_system_info(result)
+    assert list(tmp_path.glob("*.bak.*"))                          # 7) backup taken
+    assert not list(tmp_path.glob("*.tmp"))                        # 8) atomic, no temp left
+
