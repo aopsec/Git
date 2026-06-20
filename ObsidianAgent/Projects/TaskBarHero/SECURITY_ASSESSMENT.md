@@ -25,6 +25,15 @@ HMAC, and re-encrypts. `--watch` races the server-sync overwrite window.
 **Impact.** Unauthorized inventory inflation / economy bypass, if the server trusts
 client-authored writes.
 
+**F1.a — `IsBlocked` gate is client-writable.** The per-item gate flags
+(`IsBlocked`, `IsServerPendingItem`, `IsChaotic`) live in `ItemSaveData` and are part
+of the client-authored save. The game resolves all stats/specialities by `ItemKey`, but
+a gated (`IsBlocked=true`) item is neutralized, so the speciality does not run until the
+flag is cleared. `item_id_swap.py --unblock` clears the flags and re-seals the save with
+a valid HMAC — the write-side of F1: a legitimate-looking save with `IsBlocked=false`.
+Whether the grant persists depends entirely on whether the backend re-validates on sync
+(`CheckServerPendingItemValid` / `InventoryProcessPending`) or trusts the client write.
+
 **Remediation.** Treat the client save as untrusted input: validate item grants
 server-side (provenance, drop tables, transaction ledger) rather than relying on the
 client-side `SystemInfo` HMAC, which is a tamper-evidence signal an attacker can forge.

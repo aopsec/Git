@@ -638,6 +638,51 @@ def _apply_legendary_swaps(
     return log
 
 
+# Server-authority flags that gate an item. Clearing them ("unblock") is the
+# write-side of the F1 test: does the backend accept a client-authored save that
+# flips IsBlocked → false? The game resolves all stats/specialities by ItemKey
+# (see SECURITY_ASSESSMENT.md), but a blocked item is gated, so the speciality
+# does not "run" until these flags are cleared.
+_UNBLOCK_FLAGS = ("IsBlocked", "IsServerPendingItem", "IsChaotic")
+
+
+def _apply_unblock(
+    outer: dict,
+    keys: set[int] | None = None,
+) -> list[tuple[int, int, list[str]]]:
+    """
+    Clear the server-authority gate flags (_UNBLOCK_FLAGS) on inventory items,
+    re-serialize PlayerSaveData.value.
+    keys=None  → every flagged item in the inventory.
+    keys=set   → only items whose ItemKey is in `keys`.
+    Returns list of (slot_idx, item_key, [cleared_flag, ...]) for each item changed.
+    """
+    pv_entry = outer.get("PlayerSaveData", {})
+    pv_str   = pv_entry["value"] if isinstance(pv_entry, dict) else pv_entry
+    inner    = json.loads(pv_str)
+    items    = inner.get("itemSaveDatas", [])
+    log: list[tuple[int, int, list[str]]] = []
+
+    for idx, item in enumerate(items):
+        ik = item.get("ItemKey")
+        if keys is not None and ik not in keys:
+            continue
+        cleared = [f for f in _UNBLOCK_FLAGS if item.get(f)]
+        if not cleared:
+            continue
+        for f in cleared:
+            item[f] = False
+        log.append((idx, ik, cleared))
+
+    if log:
+        new_pv = json.dumps(inner, separators=(",", ":"), ensure_ascii=False)
+        if isinstance(pv_entry, dict):
+            pv_entry["value"] = new_pv
+        else:
+            outer["PlayerSaveData"] = new_pv
+    return log
+
+
 def _flock_acquire(fd, timeout: float) -> None:
     if not _HAS_FCNTL:
         return
@@ -659,7 +704,10 @@ def _flock_release(fd) -> None:
 
 def _patch_legendary_locked(save: Path, no_hash: bool,
                             targets: list[tuple[int, str]] | None = None) -> int:
-    """Single read-modify-write cycle: read under flock, then atomic write. Returns swap count."""
+    """Single read-modify-write cycle: read under flock, swap + unblock targets,
+    then atomic write. Returns count of changed items (swaps + unblocks)."""
+    active = _LEGENDARY_TARGETS if targets is None else targets
+    target_keys = {t for t, _ in active}
     fd = open(save, "rb")
     try:
         _flock_acquire(fd, _LOCK_TIMEOUT)
@@ -667,13 +715,16 @@ def _patch_legendary_locked(save: Path, no_hash: bool,
     finally:
         _flock_release(fd)
         fd.close()
-    log = _apply_legendary_swaps(outer, targets)
-    if log:
+    swap_log = _apply_legendary_swaps(outer, targets)
+    # Make every target item usable: clear server-authority gate flags so the
+    # swapped/owned legendaries are not neutralized (the IsBlocked = unlocked fix).
+    unblock_log = _apply_unblock(outer, keys=target_keys)
+    if swap_log or unblock_log:
         update_system_info(outer, skip=no_hash)
         _atomic_write_bytes(save, encrypt_save(
             json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
         ))
-    return len(log)
+    return len(swap_log) + len(unblock_log)
 
 
 def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
@@ -706,18 +757,25 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
             if tgt_key in swapped_keys:
                 continue
             if tgt_key in present_before:
-                print(f"  [=] {tgt_name!r} already in inventory — skipped")
+                print(f"  [=] {tgt_name!r} already in inventory — will unblock if gated")
             else:
                 print(f"  [-] no same-category candidate for {tgt_name!r} — skipped")
-
-        if not log:
-            print("[!] Nothing to write.")
-            return
 
         for idx, old_k, new_k, name in log:
             prio = _prefix_priority(old_k, new_k)
             tag  = ["p0(3-digit)", "p1(2-digit)", "p2(1-digit)"][prio]
             print(f"  [+] slot[{idx}] {old_k} → {new_k} {name!r}  [{tag}]")
+
+        # Clear server-authority gate flags on every target key (swapped + owned)
+        # so the legendary specialities actually run (IsBlocked = unlocked).
+        target_keys = {t for t, _ in active_targets}
+        unblock_log = _apply_unblock(outer, keys=target_keys)
+        for idx, ik, cleared in unblock_log:
+            print(f"  [U] slot[{idx}] ItemKey={ik} unblocked ({', '.join(cleared)})")
+
+        if not log and not unblock_log:
+            print("[!] Nothing to write — targets absent or already unlocked.")
+            return
 
         # Backup only written when there are actual changes.
         backup = _timestamped_backup(save)
@@ -727,7 +785,7 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
         _atomic_write_bytes(save, encrypt_save(
             json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
         ))
-        print(f"[+] Written → {save}  ({len(log)} swap(s))")
+        print(f"[+] Written → {save}  ({len(log)} swap(s), {len(unblock_log)} unblock(s))")
         return
 
     print(f"[*] Watch mode — polling every {interval}s  (Ctrl-C to stop)")
@@ -759,6 +817,30 @@ def cmd_legendary(save: Path, no_hash: bool = False, watch: bool = False,
             time.sleep(interval)
     except KeyboardInterrupt:
         print("\n[*] Watch stopped.")
+
+
+def cmd_unblock(save: Path, keys: set[int] | None = None, no_hash: bool = False) -> None:
+    """
+    Clear the server-authority gate flags (IsBlocked/IsServerPendingItem/IsChaotic)
+    so gated items become usable (IsBlocked = unlocked). keys=None clears every
+    flagged item; a key set scopes the change to those ItemKeys.
+    """
+    scope = "all flagged items" if keys is None else f"{len(keys)} target key(s)"
+    print(f"[*] Unblock scope: {scope}")
+    outer = json.loads(decrypt_save(save))
+    log = _apply_unblock(outer, keys)
+    if not log:
+        print("[=] No blocked/pending/chaotic items to clear — nothing to write.")
+        return
+    for idx, ik, cleared in log:
+        print(f"  [U] slot[{idx}] ItemKey={ik} unblocked ({', '.join(cleared)})")
+    backup = _timestamped_backup(save)
+    print(f"[*] Backup → {backup}")
+    update_system_info(outer, skip=no_hash)
+    _atomic_write_bytes(save, encrypt_save(
+        json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+    ))
+    print(f"[+] Written → {save}  ({len(log)} item(s) unblocked)")
 
 # ── Interactive TUI (bare launch) ────────────────────────────────────────────────
 
@@ -880,6 +962,7 @@ def cmd_gui(save: Path) -> None:
                 "\n  [bold][A][/bold]pply once   "
                 "[bold][W][/bold]atch   "
                 "[bold][C][/bold]ustom   "
+                "[bold][U][/bold]nblock   "
                 "[bold][I][/bold]tems   "
                 "[bold][L][/bold]ist   "
                 "[bold][D][/bold]ump   "
@@ -900,7 +983,7 @@ def cmd_gui(save: Path) -> None:
                 for (tk, tn, sk, tag, status) in preview:
                     print(f"  {tk:<9} {tn:<26} {str(sk):<9} {tag:<6} {status}")
                 print(f"\n  Items total: {len(items)}")
-            print("\n  [A]pply once  [W]atch  [C]ustom  [I]tems  [L]ist  [D]ump  [Q]uit\n  > ",
+            print("\n  [A]pply once  [W]atch  [C]ustom  [U]nblock  [I]tems  [L]ist  [D]ump  [Q]uit\n  > ",
                   end="", flush=True)
 
         try:
@@ -918,6 +1001,18 @@ def cmd_gui(save: Path) -> None:
                 print("[!] Save file not writable")
             else:
                 cmd_legendary(save, no_hash=False, watch=False)
+            print("\nPress any key to continue…")
+            try:
+                _getch()
+            except KeyboardInterrupt:
+                pass
+
+        elif ch == "u":
+            print("\n")
+            if not os.access(save, os.W_OK):
+                print("[!] Save file not writable")
+            else:
+                cmd_unblock(save, keys=None, no_hash=False)  # unblock ALL flagged items
             print("\nPress any key to continue…")
             try:
                 _getch()
@@ -1070,9 +1165,18 @@ def main() -> None:
         "--targets-file", type=Path, default=None,
         help="Path to .txt file with target IDs (one per line)",
     )
+    ap.add_argument(
+        "--unblock", action="store_true",
+        help="clear IsBlocked/IsServerPendingItem/IsChaotic so items are usable "
+             "(scope: --target/--targets-file keys, else --legendary keys, else ALL items)",
+    )
     args = ap.parse_args()
 
     _has_custom = args.target is not None or args.targets_file is not None
+    if args.unblock and (args.dump or args.items or args.old_id or args.new_id):
+        ap.error("--unblock cannot be combined with --dump/--items or --from/--to")
+    if args.unblock and args.watch:
+        ap.error("--unblock is one-shot; use --legendary/--target with --watch to unblock continuously")
     if args.items and (args.dump or args.legendary or args.old_id or args.new_id or _has_custom):
         ap.error("--items cannot be combined with --dump/--legendary, --from/--to, or --target/--targets-file")
     if args.dump and (args.old_id or args.new_id or args.legendary):
@@ -1110,7 +1214,17 @@ def main() -> None:
         except ValueError as exc:
             sys.exit(f"[!] {exc}")
 
-    if args.items:
+    if args.unblock:
+        if not os.access(save, os.W_OK):
+            sys.exit(f"[!] Save file is not writable: {save}")
+        if custom_targets is not None:
+            unblock_keys: set[int] | None = {k for k, _ in custom_targets}
+        elif args.legendary:
+            unblock_keys = set(_LEGENDARY_KEYS)
+        else:
+            unblock_keys = None  # all flagged items
+        cmd_unblock(save, keys=unblock_keys, no_hash=args.no_hash)
+    elif args.items:
         cmd_items(save)
     elif args.dump:
         cmd_dump(save)

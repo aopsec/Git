@@ -634,3 +634,83 @@ def test_patch_legendary_locked_atomic_and_decryptable(tmp_path):
     assert 315102 in keys
     assert not list(tmp_path.glob("*.tmp")), "atomic write must not leave a .tmp file"
 
+
+# ── Group 12: Unblock (IsBlocked = unlocked) ─────────────────────────────────────
+
+
+def _blocked_item(item_key: int, **flags) -> dict:
+    base = {"ItemKey": item_key, "UniqueId": item_key * 10,
+            "IsBlocked": True, "IsServerPendingItem": False, "IsChaotic": False}
+    base.update(flags)
+    return base
+
+
+def test_apply_unblock_all_clears_every_flag():
+    outer = _wrap_outer([
+        _blocked_item(315102, IsBlocked=True, IsServerPendingItem=True, IsChaotic=True),
+        _blocked_item(999999, IsBlocked=False),  # not flagged → untouched
+    ])
+    log = item_id_swap._apply_unblock(outer, keys=None)
+    items = _inner_items(outer)
+    assert items[0]["IsBlocked"] is False
+    assert items[0]["IsServerPendingItem"] is False
+    assert items[0]["IsChaotic"] is False
+    assert len(log) == 1 and log[0][1] == 315102
+    assert set(log[0][2]) == {"IsBlocked", "IsServerPendingItem", "IsChaotic"}
+
+
+def test_apply_unblock_scoped_to_keys():
+    outer = _wrap_outer([_blocked_item(315102), _blocked_item(445102)])
+    log = item_id_swap._apply_unblock(outer, keys={315102})
+    items = {it["ItemKey"]: it for it in _inner_items(outer)}
+    assert items[315102]["IsBlocked"] is False  # in scope → cleared
+    assert items[445102]["IsBlocked"] is True   # out of scope → untouched
+    assert [r[1] for r in log] == [315102]
+
+
+def test_apply_unblock_noop_when_nothing_flagged():
+    outer = _wrap_outer([{"ItemKey": 315102, "IsBlocked": False}])
+    assert item_id_swap._apply_unblock(outer, keys=None) == []
+
+
+def test_patch_legendary_locked_unblocks_present_target(tmp_path):
+    """A blocked legendary already in inventory must be unblocked (no swap needed)."""
+    save = tmp_path / "SaveFile_Live.es3"
+    outer = _wrap_outer([_blocked_item(315102)])  # target already present, blocked
+    save.write_bytes(item_id_swap.encrypt_save(
+        json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+    ))
+
+    n = item_id_swap._patch_legendary_locked(save, no_hash=False, targets=[(315102, "Arco")])
+
+    assert n == 1  # one unblock, zero swaps
+    items = json.loads(json.loads(item_id_swap.decrypt_save(save))["PlayerSaveData"]["value"])["itemSaveDatas"]
+    assert items[0]["IsBlocked"] is False
+
+
+def test_cmd_unblock_roundtrip_and_backup(tmp_path):
+    save = tmp_path / "SaveFile_Live.es3"
+    outer = _wrap_outer([_blocked_item(315102), _blocked_item(445102)])
+    outer["SystemInfo"] = {"__type": "SI", "value": "x" * 44}
+    save.write_bytes(item_id_swap.encrypt_save(
+        json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+    ))
+
+    item_id_swap.cmd_unblock(save, keys=None)
+
+    items = json.loads(json.loads(item_id_swap.decrypt_save(save))["PlayerSaveData"]["value"])["itemSaveDatas"]
+    assert all(it["IsBlocked"] is False for it in items)
+    assert list(tmp_path.glob("SaveFile_Live.es3.bak.*")), "unblock must back up before writing"
+
+
+def test_cmd_unblock_no_change_no_backup(tmp_path):
+    save = tmp_path / "SaveFile_Live.es3"
+    outer = _wrap_outer([{"ItemKey": 315102, "IsBlocked": False}])
+    save.write_bytes(item_id_swap.encrypt_save(
+        json.dumps(outer, separators=(",", ":"), ensure_ascii=False).encode()
+    ))
+    before = save.read_bytes()
+    item_id_swap.cmd_unblock(save, keys=None)
+    assert save.read_bytes() == before  # nothing flagged → no write
+    assert not list(tmp_path.glob("SaveFile_Live.es3.bak.*"))
+
