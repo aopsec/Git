@@ -137,10 +137,37 @@ same-type sibling — proves a large, real, key-resolved stat grant):
 | C4 | `IsBlocked` is a live, anti-cheat-guarded client gate | **PASS** | capstone: `cmz()` reads `+0x21`→`ObscuredBool`@`+0x180`; getter `ive()` @`0x1808FE4E0` |
 | C5 | `--unblock` clears the gate at the save layer (before ACTk loads it) | **PASS** | live save 9→0 blocked, HMAC valid; `_apply_unblock` + e2e pytest |
 | C6 | Full swap+unblock+resign yields a game-acceptable save | **PASS** | `test_e2e_swap_unblock_certification`: decryptable, targets present+unlocked, HMAC valid, atomic+backup |
-| C7 | Which behaviours `ive()` gates (equip vs stat vs trade), exact call sites | **OPEN** | needs Ghidra/IDA xref (107 MB IL2CPP; no project staged) |
+| C7 | Which behaviours `ive()` (IsBlocked) gates | **RESOLVED** | direct-call xref + gate-branch disasm (below) |
 | C8 | Server re-asserts `IsBlocked` after sync (persistence) | **OUT OF SCOPE** | server-side code; only a live play→sync→re-check behavioural test can answer |
 
-**Net:** the swap+unblock is fully certified on the **client** axis (C1–C6): a swapped,
+**Net:** the swap+unblock is fully certified on the **client** axis (C1–C7): a swapped,
 unblocked item is a genuine, anti-cheat-consumed stat grant in a save the game will load and
-accept. The only unresolved items are server-side persistence (C8, not statically knowable)
-and exhaustive gate call-site enumeration (C7, heavy xref tooling).
+accept, and `IsBlocked` gates exactly the item-manipulation surfaces. The only unresolved
+item is server-side persistence (C8), which is not statically knowable.
+
+### C7 — what `IsBlocked` gates (call-site xref)
+
+Direct (`E8 rel32`) call-site scan of `GameAssembly.dll` for the `ive()` getter
+(VA `0x1808FE4E0`), each site mapped to its containing method via `dump.cs`:
+**18 call sites** across these domains —
+
+| Caller (class :: method) | Surface gated |
+|---|---|
+| `GearSlot :: lcw(uc)`, `lcz(vd) → bool` | **equip slot** (usability/interactable) |
+| `rj :: {mwz,nze}→SlotActionResult`, `{fro,gks,hzf,hzr,igk,lof}→string` | **slot actions** (equip/unequip/use) |
+| `re :: hxj(MoveRequest) → ValidationResult` | **move/transfer validation** |
+| `vb.Cube :: ina(uc,bool) → EAddCubeResult` | **cube / synthesis** (craft/dismantle) |
+| `vb.Stash :: jhf/jhc`, `vb.StashCache :: jik()` | **stash / storage** |
+| `vb.ue.uc.ub :: MoveNext()`, `vg :: joz()` | item iterators / predicates |
+
+**Gate-branch proof** — `GearSlot.lcz` (`0x180A07850`):
+```asm
+0x180A078C3: call 0x1808FE4E0   ; ive()  = IsBlocked
+0x180A078C8: xor  al, 1         ; al = !IsBlocked
+0x180A078CD: movzx edx, al
+0x180A078D3: call 0x1808FC170   ; set slot usable/interactable = !IsBlocked
+```
+i.e. a blocked item makes its gear slot **not usable**. **Crucially, the stat builder
+`edj()` does NOT call `ive()`** (0 xrefs) — so `IsBlocked` is an *eligibility / manipulation*
+gate (equip, slot-action, move, cube, stash), **not** a raw-stat suppressor. Clearing it
+(`--unblock`) restores full item usability, which is what the `IsBlocked = unlocked` fix does.
