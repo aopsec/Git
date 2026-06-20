@@ -54,6 +54,41 @@ backend re-asserts `IsBlocked` after sync. Enumerating every `ive()` call site
 server-side (provenance, drop tables, transaction ledger) rather than relying on the
 client-side `SystemInfo` HMAC, which is a tamper-evidence signal an attacker can forge.
 
+### F1.b — Swaps are NOT placebo (the stat effect is real), certified
+
+A swapped `ItemKey` changes the *actual* combat stats, not just the displayed name/icon —
+the display, grade, base/inherent stats, and unique-mod speciality all key off the same
+`ItemKey`, so there is no separate "real stat" source the swap could miss.
+
+**Empirical (master charts extracted from `resources.assets` via UnityPy).** The CsvHelper
+charts `ItemInfoData` and `GearInfoData` resolve by key. The 6 PoC targets are real
+`ARCANA`-grade `GEAR` weapons with concrete stat rows, e.g.:
+
+| ItemKey | Type / Grade | BaseStat1 | vs COMMON sibling | Inherent stats |
+|---|---|---|---|---|
+| 315102 | BOW / ARCANA | 298 | 2 (×149) | AttackDamage, AttackDamage, CooldownReduction |
+| 345092 | CROSSBOW / ARCANA | 344 | 1 | AttackDamage, AttackDamage, AttackSpeed |
+| 445102 | BOLT / ARCANA | 1292 | 200 (×6) | AttackDamage, CriticalDamage, AreaOfEffect |
+
+Grade ladder (10 tiers): COMMON < UNCOMMON < RARE < LEGENDARY < **ARCANA** < IMMORTAL <
+BEYOND < CELESTIAL < DIVINE < COSMIC. ARCANA is mid-ladder (so even stronger keys exist),
+but the swap delta vs a low-grade item is 4×–150× on BaseStat1 alone, plus named inherent
+stats and a `UniqueModInfoData` speciality (e.g. `ArrowRainCriticalCooldown`).
+
+**Disassembly (GameAssembly.dll, capstone) — combat consumes the key-resolved stats.**
+The runtime-item setup `edj()` (VA `0x1808FC860`):
+- reads `ItemInfoData.GearKey` (`this.beni+0x60`) and resolves `GearInfoData` via the
+  `Dictionary<int, GearInfoData>` lookup (`lzd`/`heo(int)`),
+- reads `GearInfoData.BaseStat1_Value` (`+0x34`), `BaseStat2_Value` (`+0x38`), and the
+  inherent-stat values, wraps each in CodeStage ACTk `ObscuredInt` (`0x1806eb9b0`),
+- stores them into the live item's `GearModData` stat fields (`[this+0x58/0x68/0x78]`).
+
+Chain: `ItemKey → ItemInfoData → GearKey → GearInfoData → BaseStat/InherentStat →
+ObscuredInt → live item GearModData → hero stat sum`. Every link is driven by the key, and
+the stat values are anti-tamper-guarded (`ObscuredInt`), which is only done for values the
+game's combat math actually uses. **Conclusion: the swap is a genuine stat grant, not a
+cosmetic relabel.**
+
 ## Crypto provenance (locally reverse-engineered)
 
 | Layer | Derivation | Source artifact |
