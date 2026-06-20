@@ -34,6 +34,22 @@ a valid HMAC — the write-side of F1: a legitimate-looking save with `IsBlocked
 Whether the grant persists depends entirely on whether the backend re-validates on sync
 (`CheckServerPendingItemValid` / `InventoryProcessPending`) or trusts the client write.
 
+**Certified by disassembly (GameAssembly.dll, capstone).** `IsBlocked` is a *live,
+anti-cheat-protected* client gate — not cosmetic and not dead:
+- The runtime-item field-copier `cmz(ItemSaveData)` (VA `0x1808FBC10`) reads
+  `ItemSaveData+0x21` (IsBlocked) with `movzx edx, byte [rbx+0x21]`, passes it to the
+  CodeStage ACTk `ObscuredBool` constructor (`0x1806df940`), and stores the obscured
+  value into the live item at `this+0x180` (sibling to IsChaotic@`+0x168` from `+0x20`).
+- A dedicated getter `ive()` (VA `0x1808FE4E0`) loads `this+0x180`/`+0x188` and calls the
+  ACTk decode (`0x1806df9c0`) to return the bool — i.e. game code queries "is blocked?".
+- Wrapping the flag in `ObscuredBool` means the in-memory value is anti-tamper-guarded,
+  which is only done for values the client actually checks. The on-disk JSON save is
+  edited *before* ACTk loads it, so `--unblock` is effective at load time.
+
+What disassembly cannot answer (server-side, not in the client binary): whether the
+backend re-asserts `IsBlocked` after sync. Enumerating every `ive()` call site
+(equip vs stat-contribution vs trade) needs xref tooling (Ghidra/IDA).
+
 **Remediation.** Treat the client save as untrusted input: validate item grants
 server-side (provenance, drop tables, transaction ledger) rather than relying on the
 client-side `SystemInfo` HMAC, which is a tamper-evidence signal an attacker can forge.
