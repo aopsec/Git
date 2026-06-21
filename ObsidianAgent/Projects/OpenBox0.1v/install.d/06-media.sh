@@ -7,6 +7,9 @@ shopt -s inherit_errexit
 
 OPENBOX_ROOT="${OPENBOX_ROOT:-$(pwd)}"
 DRY_RUN="${DRY_RUN:-0}"
+# IPTV (Jellyfin Live TV via iptv-org) — opt-in. LAN-expor Jellyfin sem Caddy — opt-in.
+OPENBOX_ENABLE_IPTV="${OPENBOX_ENABLE_IPTV:-0}"
+OPENBOX_JELLYFIN_LAN="${OPENBOX_JELLYFIN_LAN:-0}"
 
 # shellcheck source=install.d/_lib.sh
 . "$(dirname "${BASH_SOURCE[0]}")/_lib.sh"
@@ -28,6 +31,10 @@ EOF
 }
 
 start_jellyfin_container() {
+  # Padrao: loopback (atras do Caddy /jellyfin/). Com OPENBOX_JELLYFIN_LAN=1 publica
+  # na LAN (sem Caddy) para acesso direto a Live TV de TVs/celulares.
+  local port_bind="127.0.0.1:8096:8096"
+  [[ "${OPENBOX_JELLYFIN_LAN}" -eq 1 ]] && port_bind="8096:8096"
   if ! docker ps -a --format '{{.Names}}' | grep -q '^jellyfin$'; then
     run mkdir -p /var/lib/jellyfin/config /var/lib/jellyfin/cache
     run docker run -d \
@@ -36,7 +43,7 @@ start_jellyfin_container() {
       --user 1000:1000 \
       -v /var/lib/jellyfin/config:/config \
       -v /var/lib/jellyfin/cache:/cache \
-      -p 127.0.0.1:8096:8096 \
+      -p "${port_bind}" \
       jellyfin/jellyfin:latest
   fi
 }
@@ -61,4 +68,14 @@ else
   exit 1
 fi
 
-echo "[06-media] OK — Jellyfin em http://127.0.0.1:8096 (acesso via Caddy em https://openbox.lan/jellyfin/)"
+# ===== IPTV (Jellyfin Live TV via iptv-org — canais publicos legais/open-source) =====
+run install -d -m 0755 /etc/openbox
+run install -m 0644 "${OPENBOX_ROOT}/etc/openbox/iptv.conf" /etc/openbox/iptv.conf
+run install -m 0755 "${OPENBOX_ROOT}/usr/local/sbin/openbox-iptv-setup.sh" /usr/local/sbin/openbox-iptv-setup.sh
+if [[ "${OPENBOX_ENABLE_IPTV}" -eq 1 ]]; then
+  run /usr/local/sbin/openbox-iptv-setup.sh
+else
+  echo "[06-media] IPTV pronto: rode 'sudo openbox-iptv-setup.sh' (ou reinstale com OPENBOX_ENABLE_IPTV=1) para configurar Live TV (iptv-org)."
+fi
+
+echo "[06-media] OK — Jellyfin em http://127.0.0.1:8096 (Caddy: https://openbox.lan/jellyfin/; LAN direto via OPENBOX_JELLYFIN_LAN=1 -> http://<box>:8096)"

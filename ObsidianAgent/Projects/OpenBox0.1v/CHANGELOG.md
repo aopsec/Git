@@ -1,5 +1,15 @@
 # Changelog — OpenBox
 
+## Unreleased
+
+### Added
+- **IPTV via Jellyfin Live TV** — `etc/openbox/iptv.conf` (fonte **iptv-org**, canais publicos legais/open-source), `usr/local/sbin/openbox-iptv-setup.sh` (registra tuner M3U + EPG XMLTV opcional via API do Jellyfin, idempotente; sem API key imprime os passos da UI), e hooks em `install.d/06-media.sh`: `OPENBOX_ENABLE_IPTV=1` configura o Live TV; `OPENBOX_JELLYFIN_LAN=1` publica o Jellyfin na LAN (`:8096`) sem Caddy.
+- `etc/nftables/openbox-base.nft`: regra LAN opcional (comentada) para `tcp dport 8096`.
+
+### Notes
+- **Stremio continua indisponivel em ARMv7** (sem build) — IPTV usa Jellyfin, mantendo a decisao do retarget v0.2.0. Em 1GB sem HW transcode: apenas direct-play; usar subconjunto leve da iptv-org.
+- `docs/RUNBOOK.md`: secao "Stremio container crash" substituida por "Jellyfin / IPTV Live TV".
+
 ## 0.2.0 — 2026-04-25 — RK3229 retarget
 
 ### Changed (hardware target)

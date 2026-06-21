@@ -34,6 +34,10 @@ table inet openbox {
     # Servicos locais expostos via Caddy (LAN apenas)
     ip saddr $LAN_NET tcp dport { 80, 443, 9090 } accept
 
+    # Jellyfin Live TV (IPTV) direto na LAN — APENAS se OPENBOX_JELLYFIN_LAN=1 em 06-media.
+    # Normal: Jellyfin fica em loopback atras do Caddy (:443). Descomente p/ expor :8096:
+    # ip saddr $LAN_NET tcp dport 8096 accept
+
     # Pi-hole DNS apenas da LAN
     ip saddr $LAN_NET udp dport $PIHOLE_PT accept
     ip saddr $LAN_NET tcp dport $PIHOLE_PT accept
