@@ -55,12 +55,27 @@ sudo journalctl -u caddy -n 50
 
 Se o upstream não existir, mova o admin web do Pi-hole para `127.0.0.1:8081` e recarregue o Caddy.
 
-### Stremio container crash
+### Jellyfin / IPTV Live TV (substituiu Stremio — sem build ARMv7)
 
 ```bash
-docker logs stremio --tail 100
-docker restart stremio
+# Saude do Jellyfin (container)
+docker logs jellyfin --tail 100
+docker restart jellyfin
+curl -fsS http://127.0.0.1:8096/health           # -> Healthy
+
+# (Re)configurar fonte IPTV iptv-org no Live TV (idempotente)
+sudo openbox-iptv-setup.sh                        # usa /etc/openbox/iptv.conf
+#   sem API key -> imprime passos da UI (Dashboard -> Live TV -> M3U Tuner)
+#   com API key -> registra tuner M3U (+ EPG) automaticamente:
+#     echo '<API_KEY>' | sudo tee /etc/openbox/jellyfin-api.key && sudo chmod 600 /etc/openbox/jellyfin-api.key
 ```
+
+Notas IPTV (RK3229 / 1GB):
+- Fonte = **apenas iptv-org** (open-source, canais publicos legais). URLs em `/etc/openbox/iptv.conf`.
+- **Sem HW transcode**: so canais *direct-play* fluem bem; use subconjunto leve por pais/categoria
+  (a lista completa ~10k canais trava o Jellyfin). Sem canais? confira a URL M3U e `docker logs jellyfin`.
+- Acesso: `https://openbox.lan/jellyfin/` (Caddy) ou `http://<box>:8096` (se `OPENBOX_JELLYFIN_LAN=1`).
+- Trafego Live TV e **outbound**: com o kill switch (`02-nftables`/WireGuard) ativo, roteia pelo tunel.
 
 ### Tor circuit unhealthy
 

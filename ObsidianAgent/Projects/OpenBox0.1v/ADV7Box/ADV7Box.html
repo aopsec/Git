@@ -274,6 +274,148 @@
 </section>
 
 <!-- =================================================================== -->
+<!-- §2.5 Hardware Setup & Boot (RK3229)                                 -->
+<!-- =================================================================== -->
+<section>
+  <h2>§2.5 Hardware Setup &amp; Boot — RK3229 (R29_5G_LP3)</h2>
+
+  <p>
+    Antes de instalar o OpenBox v0.2.0, o TV box RK3229 precisa ser formatado e fazer boot em Armbian.
+    Este procedimento é crítico: a caixa saiu de fábrica rodando Android proprietary potencialmente comprometido
+    (BadBox 2.0, Vo1d). O wipe via maskrom mode (recuperação de hardware) remove completamente qualquer software
+    pré-infectado, substituindo-o com Armbian auditável.
+  </p>
+
+  <h3>2.5.1 Quick Start (Usuários Experientes)</h3>
+  <ol>
+    <li>Instale <code>rkdeveloptool</code> + <code>libusb-1.0-0-dev</code> na máquina dev</li>
+    <li>Download Armbian rk322x-box (oficial, com checksum verificado)</li>
+    <li>Localize pad de maskrom do seu PCB (tabela em <a href="../docs/HARDWARE_SETUP_GUIDE.md">docs/HARDWARE_SETUP_GUIDE.md § 2</a>)</li>
+    <li>Short o pad + conecte USB-OTG enquanto lança <code>sudo rkdeveloptool ld</code>; verifique "Maskrom" device</li>
+    <li>Flash: <code>sudo rkdeveloptool wl 0 Armbian_...img</code> (5–15 min)</li>
+    <li>Reboot: <code>sudo rkdeveloptool rd</code>, aguarde Armbian boot (~60s)</li>
+    <li>Executar <code>sudo bash tools/fingerprint-rk3229.sh</code> e verificar 4 gate criteria (§ 6 do guia)</li>
+    <li>Executar verificação de segurança pós-flash (§ 7 do guia: 6 commands)</li>
+    <li>Prosseguir para OpenBox <code>install.sh</code></li>
+  </ol>
+
+  <h3>2.5.2 Guia Completo &amp; Procedimentos Detalhados</h3>
+  <p>
+    Para novos usuários, identificação de hardware, troubleshooting e contexto de ameaças de supply-chain,
+    vide: <a href="../docs/HARDWARE_SETUP_GUIDE.md"><code>docs/HARDWARE_SETUP_GUIDE.md</code></a>
+  </p>
+  <p>
+    Seções do guia:
+  </p>
+  <ol style="font-size: 9.5pt;">
+    <li><strong>Introdução</strong> — pré-requisitos, glossário, ameaças (BadBox 2.0, Vo1d)</li>
+    <li><strong>Identificação de Hardware</strong> — reconhecer revisão PCB (V1.1, V1.2, V2.3, V3.0); localizar maskrom pad</li>
+    <li><strong>Checklist Pré-Flashing</strong> — instalar rkdeveloptool, download imagem Armbian, verificação de integridade</li>
+    <li><strong>Entrar em Maskrom Mode</strong> — sequência de timing, troubleshooting</li>
+    <li><strong>Flashing Armbian</strong> — procedimento rkdeveloptool, possíveis erros, recovery</li>
+    <li><strong>Primeiro Boot &amp; Verificação de Hardware</strong> — Phase 0 fingerprint (4 gate criteria obrigatórios)</li>
+    <li><strong>Verificação de Segurança Pós-Flash</strong> — 6 comandos críticos (confir wipe de Android, sem malware)</li>
+    <li><strong>Próximos Passos</strong> — referência a install.sh, CASE_STUDY.md, RUNBOOK.md</li>
+    <li><strong>Troubleshooting</strong> — USB não encontrado, maskrom entry fails, flash timeout, boot fails, network issues</li>
+    <li><strong>Apêndices</strong> — specs RK3229, partition layout Rockchip, GPIO pinout, community resources, supply-chain context</li>
+  </ol>
+
+  <h3>2.5.3 Contexto de Ameaças</h3>
+  <table style="font-size: 9pt;">
+    <thead><tr><th>Malware</th><th>Escala</th><th>Vetores</th><th>Mitigação via OpenBox</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>BadBox 2.0</strong></td>
+        <td>10M+ devices</td>
+        <td>Pre-flash factory; first-boot OTA; sideload</td>
+        <td><strong>Wipe antes de qualquer tráfego</strong>; flash via maskrom antes de SO proprietary rodar</td>
+      </tr>
+      <tr>
+        <td><strong>Vo1d</strong></td>
+        <td>1.3M boxes (Brasil #1)</td>
+        <td>Pre-flash factory; Android /system partition</td>
+        <td>Wipe + Armbian flash remove completamente; Vo1d não infecta BootROM</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="small">
+    Documentação completa de threat model: <a href="./THREAT_MODEL.md">docs/THREAT_MODEL.md</a> (ADV7Box) e
+    <a href="../docs/security/RK3229_THREAT_RESEARCH.md">docs/security/RK3229_THREAT_RESEARCH.md</a> (análise pré-wipe, partition layout, post-flash verification).
+  </p>
+</section>
+
+<!-- =================================================================== -->
+<!-- §2.6 Hardware Setup & Boot (R3290_V8.1 — Família rk322x)           -->
+<!-- =================================================================== -->
+<section>
+  <h2>§2.6 Hardware Setup &amp; Boot — R3290_V8.1 (Família rk322x)</h2>
+
+  <p>
+    <strong>R3290_V8.1</strong> é uma designação OEM impressa na PCB — não é o nome do SoC.
+    Com base nos padrões de nomenclatura OEM chineses e no prefixo "R32xx", este device
+    pertence à família <strong>rk322x</strong> (RK3228A, RK3228B ou RK3229). A imagem Armbian
+    <code>rk322x-box</code> cobre todos os três SoCs num único build, confirmado pós-boot via
+    <code>cat /proc/device-tree/model</code>.
+  </p>
+
+  <h3>2.6.1 Quick Start (Usuários Experientes)</h3>
+  <ol>
+    <li>Instale <code>rkdeveloptool</code> de source (<a href="https://github.com/rockchip-linux/rkdeveloptool">github.com/rockchip-linux/rkdeveloptool</a>)</li>
+    <li>Download <code>Armbian rk322x-box</code> (Bookworm, armhf); verifique SHA256</li>
+    <li>Entrar em Maskrom — 3 métodos disponíveis:</li>
+    <ul style="font-size: 9.5pt; margin: 4pt 0 4pt 16pt;">
+      <li><strong>Método A (sem abrir)</strong>: Botão reset dentro do buraco AV + USB-OTG + fonte 5V</li>
+      <li><strong>Método B (com abertura)</strong>: Short do pino CLK do eMMC para GND durante power-on</li>
+      <li><strong>Método C (NAND TSOP)</strong>: Short pinos 6–7 ou 7–8 do NAND se armazenamento for TSOP48</li>
+    </ul>
+    <li>Verificar: <code>sudo rkdeveloptool ld</code> → <code>Maskrom</code> ou <code>Loader</code></li>
+    <li>Flash: <code>sudo rkdeveloptool wl 0 Armbian_*_rk322x-tv-box_*.img</code> (5–20 min)</li>
+    <li>Reboot: <code>sudo rkdeveloptool rd</code>, aguardar boot (~90s)</li>
+    <li>Confirmar SoC: <code>cat /proc/device-tree/model</code> → deve conter <code>rk3228</code> ou <code>rk3229</code></li>
+    <li>Phase 0: <code>sudo bash tools/fingerprint-rk3229.sh &gt; docs/hw/r3290_v8.1.txt</code> — verificar 4 gate criteria</li>
+    <li>Executar 6 checks de segurança pós-flash (§ 6 do guia)</li>
+    <li>Prosseguir para OpenBox <code>install.sh</code></li>
+  </ol>
+
+  <h3>2.6.2 Três Métodos de Entrada em Maskrom</h3>
+  <table style="font-size: 9pt;">
+    <thead><tr><th>Método</th><th>Quando Usar</th><th>Requer Abertura?</th><th>Procedure</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>A — Botão Reset</strong></td>
+        <td>Primeira tentativa; Android ainda funcional</td>
+        <td>Não</td>
+        <td>Clipe no buraco AV (ou orifício reset), manter pressionado + USB-OTG + fonte 5V; soltar após 3–5s</td>
+      </tr>
+      <tr>
+        <td><strong>B — CLK eMMC Short</strong></td>
+        <td>Android corrompido; Método A falhou</td>
+        <td>Sim</td>
+        <td>Short pino CLK do eMMC para GND com agulha; via de teste marcada CLK/NAND_CLK próxima ao chip eMMC</td>
+      </tr>
+      <tr>
+        <td><strong>C — NAND Pinos</strong></td>
+        <td>Device com NAND TSOP48 (pinos visíveis)</td>
+        <td>Sim</td>
+        <td>Short pinos 6–7 ou 7–8 do chip NAND contando da parte inferior direita</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2.6.3 Guia Completo</h3>
+  <p>
+    Procedimentos detalhados, localização do CLK test point, serial console debug, troubleshooting e contexto de ameaças:
+    <a href="../docs/HARDWARE_SETUP_GUIDE_R3290.md"><code>docs/HARDWARE_SETUP_GUIDE_R3290.md</code></a>
+  </p>
+  <p class="small">
+    Família rk322x cobre: RK3228A · RK3228B · RK3229 — imagem única <code>rk322x-box</code> funciona com os três.
+    Confirmar SoC pós-boot com <code>cat /proc/device-tree/model</code>. Se resultado diferir de rk322x, consultar
+    <a href="https://forum.armbian.com/forum/193-rockchip-cpu-boxes/">Armbian Rockchip CPU Boxes</a> com o model string exato.
+  </p>
+</section>
+
+<!-- =================================================================== -->
 <!-- §3 Arquitetura de Referência                                         -->
 <!-- =================================================================== -->
 <section class="pagebreak">
