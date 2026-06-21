@@ -6,6 +6,9 @@
 - **IPTV via Jellyfin Live TV** — `etc/openbox/iptv.conf` (fonte **iptv-org**, canais publicos legais/open-source), `usr/local/sbin/openbox-iptv-setup.sh` (registra tuner M3U + EPG XMLTV opcional via API do Jellyfin, idempotente; sem API key imprime os passos da UI), e hooks em `install.d/06-media.sh`: `OPENBOX_ENABLE_IPTV=1` configura o Live TV; `OPENBOX_JELLYFIN_LAN=1` publica o Jellyfin na LAN (`:8096`) sem Caddy.
 - `etc/nftables/openbox-base.nft`: regra LAN opcional (comentada) para `tcp dport 8096`.
 
+### Fixed
+- `install.d/06-media.sh` (necessario para deploy real no RK3229 / Armbian base Ubuntu): Docker via **`docker.io`** (pacote da distro) em vez de docker-ce (o repo nao tem o codename `resolute`); imagem Jellyfin fixada em tag com **arm/v7** via `OPENBOX_JELLYFIN_IMAGE` (default `jellyfin/jellyfin:10.10.7` — `:latest` dropou 32-bit ARM); **`chown 1000:1000`** em `/var/lib/jellyfin/{config,cache}` (o container roda como uid 1000 e sem isso o Jellyfin falha com `UnauthorizedAccessException` em `/config/log`).
+
 ### Notes
 - **Stremio continua indisponivel em ARMv7** (sem build) — IPTV usa Jellyfin, mantendo a decisao do retarget v0.2.0. Em 1GB sem HW transcode: apenas direct-play; usar subconjunto leve da iptv-org.
 - `docs/RUNBOOK.md`: secao "Stremio container crash" substituida por "Jellyfin / IPTV Live TV".

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # install.d/06-media.sh — Jellyfin media server via Docker (armhf nativo)
-# RK3229 retarget v0.2.0: substituiu Stremio. Jellyfin publica linux/arm/v7,
-# Stremio nao. Bound a 127.0.0.1:8096 e fronted por Caddy (mesmo padrao anterior).
+# RK3229 retarget v0.2.0: substituiu Stremio (sem build ARM). NOTA: jellyfin:latest
+# dropou 32-bit ARM — usamos um tag fixo com arm/v7 (OPENBOX_JELLYFIN_IMAGE). Docker via
+# docker.io (distro), pois o repo docker-ce nao cobre o codename do Armbian base Ubuntu.
 set -euo pipefail
 shopt -s inherit_errexit
 
@@ -10,25 +11,12 @@ DRY_RUN="${DRY_RUN:-0}"
 # IPTV (Jellyfin Live TV via iptv-org) — opt-in. LAN-expor Jellyfin sem Caddy — opt-in.
 OPENBOX_ENABLE_IPTV="${OPENBOX_ENABLE_IPTV:-0}"
 OPENBOX_JELLYFIN_LAN="${OPENBOX_JELLYFIN_LAN:-0}"
+# jellyfin/jellyfin:latest dropou linux/arm/v7; 10.10.7 e o tag mais novo que ainda
+# publica arm/v7 (necessario no RK3229/Cortex-A7/armhf). Em arm64 pode usar :latest.
+OPENBOX_JELLYFIN_IMAGE="${OPENBOX_JELLYFIN_IMAGE:-jellyfin/jellyfin:10.10.7}"
 
 # shellcheck source=install.d/_lib.sh
 . "$(dirname "${BASH_SOURCE[0]}")/_lib.sh"
-
-write_docker_repo_file() {
-  local target="/etc/apt/sources.list.d/docker.list"
-  local arch
-  local codename
-  arch="$(dpkg --print-architecture)"
-  codename="$(. /etc/os-release && printf '%s' "${VERSION_CODENAME}")"
-  if [[ "${DRY_RUN}" -eq 1 ]]; then
-    printf 'DRY: write %s\n' "${target}"
-    return 0
-  fi
-  cat > "${target}" <<EOF
-deb [arch=${arch} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian ${codename} stable
-EOF
-  chmod 0644 "${target}"
-}
 
 start_jellyfin_container() {
   # Padrao: loopback (atras do Caddy /jellyfin/). Com OPENBOX_JELLYFIN_LAN=1 publica
@@ -37,6 +25,9 @@ start_jellyfin_container() {
   [[ "${OPENBOX_JELLYFIN_LAN}" -eq 1 ]] && port_bind="8096:8096"
   if ! docker ps -a --format '{{.Names}}' | grep -q '^jellyfin$'; then
     run mkdir -p /var/lib/jellyfin/config /var/lib/jellyfin/cache
+    # Container roda como uid:gid 1000:1000 — os volumes precisam pertencer a esse uid,
+    # senao o Jellyfin nao cria /config/log e sai (UnauthorizedAccessException).
+    run chown -R 1000:1000 /var/lib/jellyfin/config /var/lib/jellyfin/cache
     run docker run -d \
       --name=jellyfin \
       --restart=unless-stopped \
@@ -44,18 +35,15 @@ start_jellyfin_container() {
       -v /var/lib/jellyfin/config:/config \
       -v /var/lib/jellyfin/cache:/cache \
       -p "${port_bind}" \
-      jellyfin/jellyfin:latest
+      "${OPENBOX_JELLYFIN_IMAGE}"
   fi
 }
 
-# Docker engine
+# Docker engine — docker.io (pacote da distro). Robusto em Debian E em Armbian de base
+# Ubuntu: o repo docker-ce nao cobre todos os codenames (ex.: base 'resolute' nao existe
+# em download.docker.com), enquanto docker.io vem dos repos do proprio SO.
 if ! command -v docker >/dev/null; then
-  run install -m 0755 -d /etc/apt/keyrings
-  run_sh "curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg"
-  run chmod a+r /etc/apt/keyrings/docker.gpg
-  write_docker_repo_file
-  run apt update
-  run env DEBIAN_FRONTEND=noninteractive apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  run env DEBIAN_FRONTEND=noninteractive apt install -y docker.io
   run systemctl enable --now docker
 fi
 
