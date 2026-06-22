@@ -6,13 +6,13 @@ Plataforma de borda Open Source com camadas honestas de privacidade, monitoramen
 
 ## Hardware fingerprint
 
-Antes de instalar, capture o fingerprint da placa fisica:
+Antes de instalar, capture o fingerprint da placa física:
 
 ```bash
 sudo bash tools/fingerprint-rk3229.sh > docs/hw/r29_5g_lp3.txt 2>&1
 ```
 
-Verifique manualmente as 4 portas do gate Phase 0 (SoC = rockchip,rk3229; arch = armhf; modulo wireguard presente; /dev/watchdog* existe). Sem isso, NAO prossiga.
+Verifique manualmente as 4 portas do gate Phase 0 (SoC = rockchip,rk3229; arch = armhf; módulo wireguard presente; /dev/watchdog* existe). Sem isso, NÃO prossiga.
 
 ---
 
@@ -27,11 +27,11 @@ Verifique manualmente as 4 portas do gate Phase 0 (SoC = rockchip,rk3229; arch =
 | DSCP marking | `ip mangle` (sintaxe iptables) | nftables `ip qos` chain |
 | IRQ affinity | `cut -f1 -d:` frágil + `/etc/rc.local` | systemd unit + `awk` robusto |
 | Stream via Tor | "sem impacto na experiência" (falso) | **Tor apenas metadados/DNS**, stream sob VPN |
-| Servidor de midia | Stremio (sem armhf) | **Jellyfin** (`jellyfin/jellyfin:latest` publica `linux/arm/v7`) |
+| Servidor de mídia | Stremio (sem armhf) | **Jellyfin** (`jellyfin/jellyfin:latest` publica `linux/arm/v7`) |
 | Install | `curl \| sudo bash` | download + sha256 verify + inspect + arch guard armhf |
 | Auto-avaliação 5/5/5 | presente no entregue | removida |
 | CAKE flow isolation | `diffserv4` only | `diffserv4` + `flows` (compat WireGuard) |
-| Backdoor de cadeia | nao discutido | **wipe + flash Armbian + verificacao Vo1d** documentados |
+| Backdoor de cadeia | não discutido | **wipe + flash Armbian + verificação Vo1d** documentados |
 
 ---
 
@@ -55,7 +55,7 @@ Verifique manualmente as 4 portas do gate Phase 0 (SoC = rockchip,rk3229; arch =
 +------------------------------------------------------------+
 ```
 
-**Egress real:** RK3229 → wg0 → ISP (toda midia). Tor é túnel auxiliar para resolução/lookup de catalogos quando o addon suportar SOCKS5.
+**Egress real:** RK3229 → wg0 → ISP (toda mídia). Tor é túnel auxiliar para resolução/lookup de catálogos quando o addon suportar SOCKS5.
 
 ---
 
@@ -85,10 +85,10 @@ sudo ./install.sh --phase wireguard  # fase isolada
 
 ## Documentos
 
-| Doc | Descricao |
+| Doc | Descrição |
 |---|---|
 | `docs/CASE_STUDY.md` | Estudo de caso completo (substitui o PDF original) |
-| `docs/THREAT_MODEL.md` | Modelo de ameaça explicito + escopo |
+| `docs/THREAT_MODEL.md` | Modelo de ameaça explícito + escopo |
 | `docs/HARDENING_PLAN_v2.md` | Plano de implementação atualizado |
 | `docs/RUNBOOK.md` | Procedimentos operacionais e troubleshooting |
 | `docs/TOR_STREAMING_CAVEAT.md` | Por que stream via Tor não funciona |
@@ -130,7 +130,7 @@ sudo ./tests/validate-stack.sh
 
 ## Status
 
-**v0.2.0** — retargeted para RK3229 (R29_5G_LP3). Codigo + configs alinhados ao novo alvo; lint 74/0. Pendente: validacao em placa fisica (Phase 0 fingerprint + Phase 1 boot baseline + smoke iperf3 sobre WireGuard). Use por sua conta e risco. Ver `docs/security/RK3229_THREAT_RESEARCH.md` antes de conectar a placa de fabrica a qualquer rede sem wipe.
+**v0.2.0** — retargeted para RK3229 (R29_5G_LP3). Código + configs alinhados ao novo alvo; lint 74/0. Pendente: validação em placa física (Phase 0 fingerprint + Phase 1 boot baseline + smoke iperf3 sobre WireGuard). Use por sua conta e risco. Ver `docs/security/RK3229_THREAT_RESEARCH.md` antes de conectar a placa de fábrica a qualquer rede sem wipe.
 
 ## Licença
 
