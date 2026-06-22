@@ -35,7 +35,7 @@ Depois disso:
 3. Edite notas manuais em `vault/`.
 4. Não edite notas geradas em `vault/Generated/` manualmente; regenere.
 
-## Validacao
+## Validação
 
 ```bash
 bash tests/validate-obsidian-vault.sh

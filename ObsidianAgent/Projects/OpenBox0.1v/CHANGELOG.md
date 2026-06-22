@@ -13,7 +13,7 @@
 ## 0.2.0 — 2026-04-25 — RK3229 retarget
 
 ### Changed (hardware target)
-- Plataforma de referencia: **Raspberry Pi 4 (4GB / aarch64) → Rockchip RK3229 (R29_5G_LP3 board, armhf, 1GB LPDDR3)**.
+- Plataforma de referência: **Raspberry Pi 4 (4GB / aarch64) → Rockchip RK3229 (R29_5G_LP3 board, armhf, 1GB LPDDR3)**.
 - Distro alvo: **Raspberry Pi OS Lite → Armbian community `rk322x-box`** (Debian Bookworm armhf, kernel >= 6.x com WireGuard in-tree).
 - Stack drop: **Raspbian apt origin removida** de `install.d/00-base.sh` (Armbian publica sob `origin=Debian`).
 - Arch guard adicionado em `install.sh`: install aborta se `dpkg --print-architecture != armhf`.
@@ -21,7 +21,7 @@
 ### Added
 - `tools/fingerprint-rk3229.sh` — runner Phase 0 que captura 12 facts de hardware (SoC, kernel, RAM, eMMC, NIC, WireGuard, cpufreq, thermal, watchdog, Wi-Fi, crypto baseline) em `docs/hw/r29_5g_lp3.txt`.
 - Helpers de runtime em `install.d/_lib.sh`: `detect_eth_iface`, `ram_kb`, `has_cpufreq`, `arch_is_armhf` (substituem hardcodes `eth0` / 4GB / aarch64).
-- `docs/security/RK3229_THREAT_RESEARCH.md` — analise de ameacas pre-existentes (BadBox 2.0 / Vo1d / Triada / maskrom) e plano de mitigacao defensiva no fluxo flash-Armbian.
+- `docs/security/RK3229_THREAT_RESEARCH.md` — análise de ameaças pré-existentes (BadBox 2.0 / Vo1d / Triada / maskrom) e plano de mitigação defensiva no fluxo flash-Armbian.
 
 ### Replaced
 - **`install.d/06-stremio.sh` → `install.d/06-media.sh`** com Jellyfin (`jellyfin/jellyfin:latest` publica `linux/arm/v7`; Stremio nao). Porta 8080 -> 8096. Caddy front em `/jellyfin/*`. nftables DSCP rule ajustada.
