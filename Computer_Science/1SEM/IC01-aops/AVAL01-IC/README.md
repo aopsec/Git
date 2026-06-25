@@ -30,8 +30,12 @@ cd /home/aops/ObsidianAgent/Projects/IC01-aops/AVAL01-IC
 bash build.sh
 ```
 
-Dependências: `chromium` (obrigatório), `pandoc` (opcional para DOCX —
+Dependências: `chromium` ou `msedge`/`msedge.exe` (obrigatório), `pandoc` (opcional para DOCX —
 `sudo pacman -S pandoc-cli`).
+
+No Windows + WSL, o script também tenta localizar `msedge.exe` em:
+- `/mnt/c/Program Files (x86)/Microsoft/Edge/Application`
+- `/mnt/c/Program Files/Microsoft/Edge/Application`
 
 ## Mapa rubrica AV01 → seção do documento
 

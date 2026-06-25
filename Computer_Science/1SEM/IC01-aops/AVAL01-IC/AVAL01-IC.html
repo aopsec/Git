@@ -264,6 +264,52 @@
     <span class="label">Por que isso importa</span>
     O aluno termina o semestre não apenas conhecendo definições — ele saberá, na prática, por que um TV box barato pode dispensar PMIC, por que o "5G" no nome é uma mentira de marketing, e por que abrir mão de R$ 800 para "economizar" no streaming pode custar muito caro em privacidade e segurança.
   </aside>
+
+  <h3>2.4 Recapitulação do projeto ADV7Box e checklist de requisitos</h3>
+  <p>
+    Esta entrega AVFinal retoma e estende o projeto ADV7Box já consolidado em AV01-A.
+    O documento irmão combina OpenBox (caixa de borda com WireGuard, DNS cifrado,
+    Pi-hole e kill switch em nftables) com ADV7Sec (IPS/IDS host-side para workstation).
+    Aqui, a narrativa foi adaptada especificamente para a rubrica de Introdução à
+    Computação, reforçando infraestrutura, arquitetura, matriz de risco e evidências.
+  </p>
+  <table>
+    <thead>
+      <tr><th>Requisito esperado</th><th>Seção</th><th>Como atende</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Diagnóstico de cenário real</td>
+        <td>§2 e §4</td>
+        <td>Contexto do consumidor BR e estudo de caso do MXQ Pro 4k com fontes governamentais.</td>
+      </tr>
+      <tr>
+        <td>Demanda de hardware/software/rede</td>
+        <td>§6</td>
+        <td>Tabela de hardware, listas de software, e topologia de rede detalhada.</td>
+      </tr>
+      <tr>
+        <td>Arquitetura justificada</td>
+        <td>§7</td>
+        <td>Diagrama de blocos, fluxo de dados e telemetria ADV7Sec.</td>
+      </tr>
+      <tr>
+        <td>Matriz de risco e mitigação</td>
+        <td>§6.4</td>
+        <td>Registro de três falhas principais e ações correspondentes de mitigação e validação.</td>
+      </tr>
+      <tr>
+        <td>Direcionamento de carreira</td>
+        <td>§8</td>
+        <td>Parágrafo dedicado ao perfil Blue Team e continuidade para ADV7ia.</td>
+      </tr>
+      <tr>
+        <td>Evidências de desenvolvimento</td>
+        <td>§10</td>
+        <td>Apêndice com estrutura de repositórios, comandos de reprodução e snapshots embutidos.</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <!-- =================================================================== -->
@@ -976,6 +1022,37 @@ alert tls $HOME_NET any -&gt; any 443 ( \
     de listas pequenas) — explicitamente <strong>não usado para streaming</strong> de
     HD/4K, conforme documento de caveat (<code>TOR_STREAMING_CAVEAT.md</code>).</li>
   </ul>
+
+  <h3>6.4 Matriz de risco e mitigação</h3>
+  <p>
+    A tabela abaixo sintetiza as três falhas centrais previstas pela arquitetura
+    e as ações de mitigação para cada domínio: hardware, software e rede.
+  </p>
+  <table>
+    <thead>
+      <tr><th>Risco</th><th>Impacto</th><th>Mitigação</th><th>Como validar</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Hardware — edge router RK3229 / eletiva física</td>
+        <td>Perda de isolamento de tráfego e falha do kill switch</td>
+        <td>Uso de switch/VLAN ou cabo USB-Ethernet alternativo; monitoramento Netdata; configuração versionada</td>
+        <td>Teste de failover físico e validação do circuito VPN em modo redundante</td>
+      </tr>
+      <tr>
+        <td>Software — instalação/configuração quebrada</td>
+        <td>OpenBox ou ADV7Sec não opera; logs não são gerados; falso senso de segurança</td>
+        <td>Instalador faseado idempotente; validações de pré-instalação; testes de smoke e regressão</td>
+        <td>Execução de <code>bash tests/ci-syntax-check.sh</code> e <code>bash tests/validate-stack.sh</code></td>
+      </tr>
+      <tr>
+        <td>Rede — vazamento VPN/DNS</td>
+        <td>Tráfego crítica sai sem proteção; metadados expostos</td>
+        <td>Kill switch nftables + DNS forçado para Unbound + DNS cifrado + Pi-hole</td>
+        <td>Teste de vazamento DNS + handshake WireGuard + auditoria de rotas</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <!-- =================================================================== -->
@@ -1345,7 +1422,17 @@ alert tls $HOME_NET any -&gt; any 443 ( \
 <section class="pagebreak">
   <h2>§10 Apêndice — Evidências de Desenvolvimento</h2>
 
-  <h3>10.1 Estrutura de diretórios</h3>
+  <h3>10.1 Snapshots de evidência</h3>
+  <div class="figwrap">
+    <img src="assets/snapshot-01.svg" alt="Snapshot profissional do projeto ADV7Box — arquitetura integrada OpenBox + ADV7Sec" />
+    <div class="caption">Figura 10.0 — Snapshot profissional do projeto ADV7Box: arquitetura integrada de borda e host.</div>
+  </div>
+  <div class="figwrap">
+    <img src="assets/snapshot-02.svg" alt="Snapshot de validação de stack e processo de entrega" />
+    <div class="caption">Figura 10.1 — Snapshot de validação de stack e processo de entrega, estilo moderno e humanizado.</div>
+  </div>
+
+  <h3>10.2 Estrutura de diretórios</h3>
   <pre>~/ObsidianAgent/Projects/IC01-aops/
 ├── OpenBox0.1v/                  # Pilar A — código do edge router (versionado)
 │   ├── install.sh                # Orquestrador faseado
