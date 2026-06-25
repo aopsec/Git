@@ -58,12 +58,12 @@ BLOCK      = 16
 
 # ── Default save path — WSL or native Windows ────────────────────────────────────
 if platform.system() == "Windows":
-    _WIN_USER    = os.environ.get("USERNAME", os.environ.get("WIN_USER", "ofcal"))
+    _WIN_USER    = os.environ.get("USERNAME", os.environ.get("WIN_USER", "AOPSec"))
     DEFAULT_SAVE = Path(
         rf"C:\Users\{_WIN_USER}\AppData\LocalLow\TesseractStudio\TaskbarHero\SaveFile_Live.es3"
     )
 else:
-    _WIN_USER    = os.environ.get("WIN_USER", "ofcal")
+    _WIN_USER    = os.environ.get("WIN_USER", "AOPSec")
     DEFAULT_SAVE = Path(
         f"/mnt/c/Users/{_WIN_USER}/AppData/LocalLow/TesseractStudio/TaskbarHero/SaveFile_Live.es3"
     )
