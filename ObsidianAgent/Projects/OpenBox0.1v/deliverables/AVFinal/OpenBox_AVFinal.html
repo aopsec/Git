@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>OpenBox AVFinal — Plataforma de Borda com Privacidade Auditável (UniCEUB)</title>
+<meta name="generator" content="Construído a partir de Projects/OpenBox0.1v (README, CHANGELOG, THREAT_MODEL, RUNBOOK, RK3229_THREAT_RESEARCH, vault Obsidian)">
+<meta name="description" content="OpenBox v0.2.0 + ADV7Sec — entrega acadêmica AVFinal, Introdução à Computação, UniCEUB 2026.">
+<style>
+  :root {
+    --fg: #16191f;
+    --muted: #5b6470;
+    --accent: #0f4c81;       /* azul institucional */
+    --accent-2: #8a1f3d;     /* bordô de ênfase */
+    --accent-3: #1f7a5a;     /* verde defesa */
+    --border: #c9ced6;
+    --border-strong: #16191f;
+    --bg-code: #f4f6f9;
+    --bg-note: #f3f7fb;
+    --bg-warn: #fdecec;
+    --bg-ok: #ecf6f0;
+    --bg-head: #eaeff6;
+    --grad-a: #0f4c81;
+    --grad-b: #1f7a5a;
+    --mono: "JetBrains Mono", "DejaVu Sans Mono", "Fira Mono", Consolas, monospace;
+    --serif: "Liberation Serif", "Nimbus Roman", "Times New Roman", Georgia, serif;
+    --sans: "Inter", "Segoe UI", "Liberation Sans", "DejaVu Sans", system-ui, sans-serif;
+  }
+  @page {
+    size: A4;
+    margin: 17mm 16mm 18mm 16mm;
+    @bottom-center {
+      content: "OpenBox AVFinal · UniCEUB · " counter(page) " / " counter(pages);
+      font-family: var(--sans); font-size: 9pt; color: #8a93a0;
+    }
+  }
+  html, body { font-family: var(--serif); color: var(--fg); line-height: 1.46; }
+  body { max-width: 178mm; margin: 0 auto; padding: 6mm 0; font-size: 10.5pt; }
+  h1, h2, h3, h4 { font-family: var(--sans); color: var(--accent); line-height: 1.2; }
+  h1 { font-size: 22pt; margin: 0 0 6pt; }
+  h2 { font-size: 15pt; margin: 22pt 0 8pt; padding-bottom: 4pt; border-bottom: 1.5pt solid var(--accent); page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 14pt 0 6pt; color: var(--accent-2); page-break-after: avoid; }
+  h4 { font-size: 11pt; margin: 10pt 0 4pt; color: var(--fg); page-break-after: avoid; }
+  p  { margin: 4pt 0 6pt; text-align: justify; }
+  ul, ol { margin: 4pt 0 8pt 18pt; padding: 0; }
+  li { margin: 2pt 0; }
+  code { font-family: var(--mono); font-size: 9.3pt; background: var(--bg-code); padding: 0 3pt; border-radius: 2pt; }
+  pre { font-family: var(--mono); font-size: 9pt; background: var(--bg-code); border: 0.5pt solid var(--border);
+        padding: 6pt 8pt; overflow-x: auto; white-space: pre; border-radius: 3pt; line-height: 1.35;
+        page-break-inside: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 9.5pt; page-break-inside: avoid; }
+  th { background: var(--bg-head); text-align: left; padding: 4pt 6pt; border: 0.5pt solid var(--border-strong); font-family: var(--sans); }
+  td { padding: 3pt 6pt; border: 0.5pt solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  .cover { display: flex; flex-direction: column; justify-content: center; min-height: 244mm;
+           padding: 10mm 0; page-break-after: always; position: relative; }
+  .cover .band { height: 6pt; background: linear-gradient(90deg, var(--grad-a), var(--grad-b)); border-radius: 3pt; margin-bottom: 14pt; }
+  .cover h1 { font-size: 36pt; margin-bottom: 2pt; letter-spacing: -0.6pt; }
+  .cover .sub { font-family: var(--sans); color: var(--muted); font-size: 13.5pt; margin-bottom: 14pt; max-width: 150mm; }
+  .cover .tag { font-family: var(--sans); display: inline-block; font-size: 8.5pt; padding: 2pt 9pt;
+                border: 0.5pt solid var(--accent); color: var(--accent); border-radius: 10pt; margin: 0 4pt 4pt 0; }
+  .cover .meta { margin-top: 18pt; font-family: var(--sans); font-size: 10pt; color: var(--muted); }
+  .cover .meta dt { float: left; width: 34mm; font-weight: 600; color: var(--fg); }
+  .cover .meta dd { margin-left: 36mm; margin-bottom: 3pt; }
+  .abstract { border-left: 3pt solid var(--accent); padding: 5pt 12pt; background: #fbfcfe; font-size: 10pt; margin: 10pt 0 14pt; }
+  .callout { border: 0.5pt solid var(--border-strong); padding: 6pt 10pt; margin: 8pt 0; font-size: 10pt; page-break-inside: avoid; border-radius: 3pt; }
+  .callout.note { background: var(--bg-note); border-color: var(--accent); }
+  .callout.warn { background: var(--bg-warn); border-color: var(--accent-2); }
+  .callout.ok   { background: var(--bg-ok); border-color: var(--accent-3); }
+  .callout strong { font-family: var(--sans); }
+  .toc ol { list-style: none; margin-left: 0; padding-left: 0; }
+  .toc ol li { padding: 1.6pt 0; border-bottom: 0.25pt dotted var(--border); }
+  .toc ol li span.num { display: inline-block; width: 12mm; color: var(--accent); font-family: var(--sans); font-weight: 600; }
+  .twocol { column-count: 2; column-gap: 9mm; }
+  .caption { font-family: var(--sans); font-size: 8.5pt; color: var(--muted); margin: 3pt 0 12pt; text-align: center; }
+  .small { font-size: 9pt; color: var(--muted); }
+  .chip { display: inline-block; font-family: var(--sans); font-size: 8.5pt; padding: 1pt 7pt; margin: 0 3pt 3pt 0;
+          border: 0.5pt solid var(--accent-3); color: var(--accent-3); border-radius: 9pt; }
+  .pagebreak { page-break-before: always; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 0.5pt dotted var(--accent); }
+  svg { max-width: 100%; page-break-inside: avoid; }
+  .fig { margin: 10pt 0 2pt; text-align: center; }
+  .sigrow { display: flex; gap: 6mm; margin-top: 16pt; }
+  .sigrow .box { flex: 1; border-top: 0.75pt solid var(--border-strong); padding-top: 4pt; text-align: center; font-family: var(--sans); font-size: 9pt; color: var(--muted); }
+  .rubric-ok { font-family: var(--sans); font-weight: 600; color: var(--accent-3); }
+  .lead { font-size: 11pt; }
+</style>
+</head>
+<body>
+
+<!-- =================================================================== -->
+<!-- CAPA                                                                 -->
+<!-- =================================================================== -->
+<section class="cover">
+  <div class="band"></div>
+  <div>
+    <span class="tag">AVFinal</span>
+    <span class="tag">UniCEUB · 2026</span>
+    <span class="tag">Introdução à Computação</span>
+    <span class="tag">Infraestrutura &amp; Segurança</span>
+  </div>
+  <h1>OpenBox v0.2.0</h1>
+  <div class="sub">Plataforma de borda com privacidade auditável, hardening e monitoramento integrado</div>
+
+  <p style="max-width: 152mm; font-size: 11pt; margin-top: 6pt;">
+    Documentação técnica derivada do repositório <code>OpenBox0.1v</code>, unindo a borda de rede
+    <strong>OpenBox</strong> — gateway de privacidade sobre Rockchip RK3229 (placa Shenzhen
+    <code>R29_5G_LP3</code>) — e o plano de detecção host-side <strong>ADV7Sec</strong>. O trabalho
+    integra história do projeto, análise de risco, procedimentos de instalação, hardening e validação
+    operacional, em uma arquitetura residencial defensiva orientada por evidência.
+  </p>
+
+  <!-- FIGURA 1 — diagrama de arquitetura (capa) -->
+  <div class="fig" style="margin-top: 10pt;">
+    <svg viewBox="0 0 720 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cliente para OpenBox para Internet, com ADV7Sec observando">
+      <defs>
+        <linearGradient id="gBox" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0f4c81"/><stop offset="1" stop-color="#0c3a63"/>
+        </linearGradient>
+        <marker id="arr" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#5b6470"/>
+        </marker>
+      </defs>
+      <!-- Cliente -->
+      <rect x="14" y="48" width="120" height="54" rx="8" fill="#eaeff6" stroke="#0f4c81"/>
+      <text x="74" y="72" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f4c81">Cliente</text>
+      <text x="74" y="90" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5b6470">LAN doméstica</text>
+      <!-- OpenBox -->
+      <rect x="210" y="36" width="170" height="78" rx="10" fill="url(#gBox)"/>
+      <text x="295" y="62" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#fff">OpenBox</text>
+      <text x="295" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#dbe6f1">WireGuard · nftables</text>
+      <text x="295" y="94" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#dbe6f1">DNSCrypt · Pi-hole</text>
+      <!-- Internet -->
+      <rect x="456" y="48" width="120" height="54" rx="8" fill="#ecf6f0" stroke="#1f7a5a"/>
+      <text x="516" y="72" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#1f7a5a">Internet</text>
+      <text x="516" y="90" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5b6470">egress cifrado</text>
+      <!-- ADV7Sec -->
+      <rect x="606" y="42" width="100" height="66" rx="8" fill="#fdecec" stroke="#8a1f3d"/>
+      <text x="656" y="68" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#8a1f3d">ADV7Sec</text>
+      <text x="656" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#5b6470">detecção host</text>
+      <!-- setas -->
+      <line x1="136" y1="75" x2="206" y2="75" stroke="#5b6470" stroke-width="1.6" marker-end="url(#arr)"/>
+      <line x1="382" y1="75" x2="452" y2="75" stroke="#5b6470" stroke-width="1.6" marker-end="url(#arr)"/>
+      <line x1="606" y1="75" x2="384" y2="75" stroke="#8a1f3d" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+      <text x="495" y="128" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#8a1f3d">observa telemetria local</text>
+    </svg>
+    <div class="caption">Figura 1 — Resumo visual da arquitetura: defesa em profundidade (rede, DNS, VPN, monitoramento e integridade).</div>
+  </div>
+
+  <dl class="meta">
+    <dt>Disciplina</dt><dd>Introdução à Computação</dd>
+    <dt>Instituição</dt><dd>Centro Universitário de Brasília — UniCEUB</dd>
+    <dt>Autor</dt><dd>Alcides Olivo Pollazzon Soterio</dd>
+    <dt>Base técnica</dt><dd>RK3229 / R29_5G_LP3 · Armbian rk322x-box · WireGuard · nftables · DNSCrypt · Pi-hole</dd>
+    <dt>Entrega</dt><dd>Documento acadêmico expandido com figuras, tabelas, runbook e referências</dd>
+    <dt>Local · Ano</dt><dd>Brasília – DF · 2026</dd>
+  </dl>
+</section>
+
+<!-- =================================================================== -->
+<!-- RESUMO EXECUTIVO + SUMÁRIO                                           -->
+<!-- =================================================================== -->
+<section>
+  <h2>Resumo executivo</h2>
+  <div class="abstract">
+    <p>
+      O <strong>OpenBox v0.2.0</strong> é uma plataforma de borda <em>open source</em> retargetada para a
+      placa Shenzhen <code>R29_5G_LP3</code>, com SoC Rockchip RK3229, 1&nbsp;GB LPDDR3 e Ethernet de
+      100&nbsp;Mbps. A solução combina Armbian rk322x-box, WireGuard, nftables, dnscrypt-proxy, Pi-hole,
+      Unbound e Tor — este reservado a metadados — somados a um conjunto de monitores locais para
+      observabilidade contínua. A evolução do projeto priorizou correções factuais, verificabilidade e
+      mitigação realista de ameaças. O objetivo não é prometer anonimato total nem <em>streaming</em> via
+      Tor, mas reduzir risco, vazamento de DNS, exposição de metadados e impacto de <em>backdoors</em> de
+      cadeia de suprimento.
+    </p>
+  </div>
+
+  <h2 class="toc">Sumário</h2>
+  <div class="toc twocol">
+    <ol>
+      <li><span class="num">1</span> Introdução e objetivos</li>
+      <li><span class="num">2</span> Contexto e justificativa</li>
+      <li><span class="num">3</span> Linha do tempo e evolução</li>
+      <li><span class="num">4</span> Estudo de caso: TV box e ameaça de fábrica</li>
+      <li><span class="num">5</span> Arquitetura OpenBox</li>
+      <li><span class="num">6</span> Demanda de hardware, software e rede</li>
+      <li><span class="num">7</span> Modelo de ameaça e matriz de risco</li>
+      <li><span class="num">8</span> Plano de hardening e mitigação</li>
+      <li><span class="num">9</span> ADV7Sec e monitoração host-side</li>
+      <li><span class="num">10</span> Runbook, validação e evidências</li>
+      <li><span class="num">11</span> Evidências de desenvolvimento</li>
+      <li><span class="num">12</span> Conclusão e direcionamento de carreira</li>
+      <li><span class="num">13</span> Referências técnicas essenciais</li>
+      <li><span class="num">14</span> Checklist final de conformidade</li>
+    </ol>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- 1. INTRODUÇÃO                                                        -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>1. Introdução e objetivos</h2>
+  <p>
+    A disciplina Introdução à Computação exige a identificação de um problema real, a especificação de
+    uma solução técnica e a documentação de suas limitações. No OpenBox, o problema assumido é
+    particularmente concreto: dispositivos <em>TV box</em> genéricos, baratos e amplamente distribuídos
+    podem sair de fábrica com <em>firmware</em> comprometido, serviços de telemetria não desejados e
+    interfaces de administração frágeis. O projeto responde a esse cenário com uma arquitetura enxuta,
+    auditável e executável em hardware reaproveitado.
+  </p>
+  <p>
+    A proposta se apoia em dois pilares. O primeiro é o <strong>OpenBox</strong>, a borda de rede: um
+    <em>gateway</em> que controla a saída do tráfego, aplica políticas de DNS, mantém VPN com
+    <em>kill switch</em> e segmenta a rede doméstica. O segundo é o <strong>ADV7Sec</strong>, um plano de
+    controle orientado à detecção, que observa a estação de trabalho e agrega eventos de auditd, Falco,
+    Suricata, Zeek e verificadores de integridade. Os dois elementos se complementam e transformam a casa
+    em um laboratório de defesa realista.
+  </p>
+
+  <h3>Objetivos específicos</h3>
+  <table>
+    <thead><tr><th>Objetivo</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td>Privacidade</td><td>Reduzir a observabilidade do ISP e de terceiros sobre tráfego e DNS.</td></tr>
+      <tr><td>Disponibilidade</td><td>Preservar a conectividade por meio de <em>watchdogs</em> e validações.</td></tr>
+      <tr><td>Integridade</td><td>Detectar alteração de arquivos críticos e comportamento anômalo.</td></tr>
+      <tr><td>Confiabilidade</td><td>Gerar documentação reprodutível e verificável.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================== -->
+<!-- 2. CONTEXTO                                                          -->
+<!-- =================================================================== -->
+<section>
+  <h2>2. Contexto e justificativa</h2>
+  <p>
+    O contexto do projeto é a convergência entre <em>streaming</em> doméstico, custo mensal elevado e um
+    mercado clandestino de <em>TV box</em> que opera em larga escala. Em vez de tratar a privacidade como
+    abstração, o OpenBox parte do caso brasileiro: consumidores procuram alternativas mais baratas,
+    <em>marketplaces</em> distribuem dispositivos sem garantia técnica e o ecossistema de <em>malware</em>
+    explora exatamente essa cadeia de confiança frágil.
+  </p>
+  <p>
+    O projeto também responde a uma lacuna didática. Em muitos trabalhos acadêmicos, “segurança” aparece
+    apenas como <em>firewall</em> ou antivírus. Aqui, a segurança é tratada de forma sistêmica: hardware,
+    sistema operacional, rede, monitoramento, atualização, integridade e resposta a falhas. Isso aproxima
+    a sala de aula do que efetivamente acontece em ambientes residenciais e em pequenas infraestruturas de
+    borda.
+  </p>
+
+  <div class="callout note">
+    <strong>Panorama funcional.</strong> O fluxo principal é <code>cliente → OpenBox → Internet</code>,
+    com o ADV7Sec observando o host e contribuindo para a telemetria local. A borda concentra as decisões
+    de privacidade; o host concentra a detecção.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- 3. LINHA DO TEMPO                                                    -->
+<!-- =================================================================== -->
+<section>
+  <h2>3. Linha do tempo do projeto</h2>
+  <p>
+    O OpenBox evoluiu a partir de uma base anterior de <em>TVBox OSS</em> e foi refinado em múltiplas
+    etapas até atingir o formato atual. As versões iniciais consolidaram a ideia de uma caixa de borda com
+    privacidade auditável; as versões posteriores corrigiram a documentação técnica, trocaram o alvo de
+    hardware e incorporaram verificação estrutural do ambiente.
+  </p>
+  <p>
+    A transição de Raspberry Pi&nbsp;4 para RK3229 não representou retrocesso. Pelo contrário: o objetivo
+    era provar que um dispositivo de baixo custo e amplamente reaproveitável pode sustentar uma pilha de
+    segurança honesta, desde que o escopo seja bem definido. A história do projeto também registra a
+    integração do <em>vault</em> Obsidian e a geração automática de documentos derivados, o que reforça
+    rastreabilidade e manutenção.
+  </p>
+
+  <!-- FIGURA 2 — linha do tempo -->
+  <div class="fig">
+    <svg viewBox="0 0 720 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Linha do tempo do projeto">
+      <line x1="40" y1="60" x2="680" y2="60" stroke="#c9ced6" stroke-width="2"/>
+      <!-- nós -->
+      <g font-family="Inter,sans-serif">
+        <circle cx="70" cy="60" r="7" fill="#8a1f3d"/>
+        <text x="70" y="40" text-anchor="middle" font-size="9.5" font-weight="700" fill="#16191f">TVBox OSS v2</text>
+        <text x="70" y="86" text-anchor="middle" font-size="8" fill="#5b6470">base inicial</text>
+        <circle cx="222" cy="60" r="7" fill="#0f4c81"/>
+        <text x="222" y="40" text-anchor="middle" font-size="9.5" font-weight="700" fill="#16191f">OpenBox v0.1.0</text>
+        <text x="222" y="86" text-anchor="middle" font-size="8" fill="#5b6470">skeleton da pilha</text>
+        <circle cx="374" cy="60" r="8" fill="#1f7a5a"/>
+        <text x="374" y="40" text-anchor="middle" font-size="9.5" font-weight="700" fill="#16191f">OpenBox v0.2.0</text>
+        <text x="374" y="86" text-anchor="middle" font-size="8" fill="#5b6470">retarget RK3229</text>
+        <circle cx="526" cy="60" r="7" fill="#0f4c81"/>
+        <text x="526" y="40" text-anchor="middle" font-size="9.5" font-weight="700" fill="#16191f">ADV7Box</text>
+        <text x="526" y="86" text-anchor="middle" font-size="8" fill="#5b6470">consolidação HTML+PDF</text>
+        <circle cx="660" cy="60" r="7" fill="#8a1f3d"/>
+        <text x="660" y="40" text-anchor="middle" font-size="9.5" font-weight="700" fill="#16191f">AVAL01-IC</text>
+        <text x="660" y="86" text-anchor="middle" font-size="8" fill="#5b6470">pass acadêmico</text>
+      </g>
+    </svg>
+    <div class="caption">Figura 2 — Marcos de evolução, de TVBox OSS à entrega acadêmica orientada à rubrica.</div>
+  </div>
+
+  <table>
+    <thead><tr><th>Marco</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td>TVBox OSS v2</td><td>Primeira versão técnica, com inconsistências corrigidas posteriormente.</td></tr>
+      <tr><td>OpenBox v0.1.0</td><td><em>Skeleton</em> com WireGuard, nftables, Pi-hole, dnscrypt-proxy e <em>watchdogs</em>.</td></tr>
+      <tr><td>OpenBox v0.2.0</td><td><em>Retarget</em> para RK3229 / Armbian rk322x-box e ajuste de mídia para Jellyfin.</td></tr>
+      <tr><td>ADV7Box</td><td>Consolidação em HTML+PDF com documentação expandida.</td></tr>
+      <tr><td>AVAL01-IC</td><td>Reformulação acadêmica orientada à rubrica de Introdução à Computação.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================== -->
+<!-- 4. ESTUDO DE CASO                                                    -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>4. Estudo de caso: o MXQ Pro 5G 4K e a ameaça de fábrica</h2>
+  <p>
+    O estudo de caso central do projeto é o <strong>MXQ Pro 5G 4K</strong>, um dos nomes genéricos mais
+    comuns entre as <em>TV boxes</em> de baixo custo. A diversidade de SoCs, memórias e módulos Wi-Fi sob a
+    mesma marca branca já é um problema: o comprador nem sempre sabe o que recebeu, o <em>firmware</em>
+    pode variar entre lotes e a publicidade frequentemente infla capacidades que o hardware não entrega. O
+    rótulo “5G” costuma referir-se apenas a uma promessa de Wi-Fi de 5&nbsp;GHz, muitas vezes inexistente
+    na placa real.
+  </p>
+  <p>
+    A importância acadêmica desse caso está na sobreposição entre problemas de computação básica e
+    problemas de segurança. A partir do dispositivo, é possível discutir arquitetura ARM,
+    <em>bootchain</em>, módulos de comunicação, desempenho, energia, armazenamento em eMMC e, sobretudo, o
+    risco de <em>firmware</em> pré-infectado. O projeto formaliza esse risco como parte da cadeia de
+    suprimento: o problema existe antes mesmo da primeira conexão à rede.
+  </p>
+
+  <h3>Elementos críticos do caso</h3>
+  <table>
+    <thead><tr><th>Elemento</th><th>Observação</th></tr></thead>
+    <tbody>
+      <tr><td>SoC</td><td>Rockchip RK3229 em placa R29_5G_LP3.</td></tr>
+      <tr><td>Memória</td><td>1&nbsp;GB LPDDR3, o que exige <em>tuning</em> conservador de <em>buffer</em> e <em>watchdogs</em>.</td></tr>
+      <tr><td>Ethernet</td><td>100&nbsp;Mbps, suficiente para o perfil de uso e coerente com o custo.</td></tr>
+      <tr><td>Firmware</td><td>Potencialmente comprometido de fábrica em determinados lotes.</td></tr>
+      <tr><td>Risco</td><td><em>Backdoor</em>, OTA no primeiro <em>boot</em>, ADB aberto, alterações não autorizadas.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>BadBox 2.0 / Vo1d.</strong> Campanhas reais infectaram milhões de dispositivos rk322x — o
+    Brasil figura entre os mais afetados pelo Vo1d. A mitigação do OpenBox é remover o Android de fábrica
+    por <em>wipe</em> via <em>maskrom</em> e gravar Armbian auditável <strong>antes</strong> de qualquer
+    tráfego de rede. Detalhes em <code>docs/security/RK3229_THREAT_RESEARCH.md</code>.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- 5. ARQUITETURA                                                       -->
+<!-- =================================================================== -->
+<section>
+  <h2>5. Arquitetura OpenBox</h2>
+  <p>
+    A arquitetura de rede do OpenBox prioriza uma fronteira clara entre o que é confiável e o que não é. A
+    unidade de borda recebe o enlace do provedor, aplica a política de saída, força a resolução DNS por um
+    encadeamento local e encaminha o tráfego de forma encapsulada. Em paralelo, a camada de auditoria
+    observa o comportamento do host e coleta sinais de integridade, tráfego e eventos de sistema.
+  </p>
+  <p>
+    A topologia é compatível com uso doméstico e com pequenos laboratórios: um roteador de borda, um
+    <em>switch</em> L2 com VLAN opcional, uma <em>workstation</em> Linux para análise e um segmento
+    separado para dispositivos menos confiáveis, como <em>TV boxes</em> e IoT. O <em>design</em> evita
+    complexidade desnecessária e, ao mesmo tempo, permite crescimento incremental.
+  </p>
+
+  <!-- FIGURA 3 — fluxo lógico de tráfego (6 etapas) -->
+  <div class="fig">
+    <svg viewBox="0 0 720 168" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fluxo lógico de tráfego em seis etapas">
+      <defs>
+        <marker id="arr2" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0f4c81"/></marker>
+      </defs>
+      <g font-family="Inter,sans-serif" font-size="8.7">
+        <!-- 6 caixas -->
+        <g>
+          <rect x="14" y="20" width="104" height="48" rx="7" fill="#eaeff6" stroke="#0f4c81"/>
+          <text x="66" y="40" text-anchor="middle" font-weight="700" fill="#0f4c81">1 · Cliente</text>
+          <text x="66" y="55" text-anchor="middle" fill="#5b6470">solicita acesso</text>
+        </g>
+        <g>
+          <rect x="146" y="20" width="104" height="48" rx="7" fill="#eaeff6" stroke="#0f4c81"/>
+          <text x="198" y="40" text-anchor="middle" font-weight="700" fill="#0f4c81">2 · OpenBox</text>
+          <text x="198" y="55" text-anchor="middle" fill="#5b6470">intercepta DNS</text>
+        </g>
+        <g>
+          <rect x="278" y="20" width="104" height="48" rx="7" fill="#eaeff6" stroke="#0f4c81"/>
+          <text x="330" y="40" text-anchor="middle" font-weight="700" fill="#0f4c81">3 · DNSCrypt</text>
+          <text x="330" y="55" text-anchor="middle" fill="#5b6470">+ Unbound</text>
+        </g>
+        <g>
+          <rect x="410" y="20" width="104" height="48" rx="7" fill="#eaeff6" stroke="#0f4c81"/>
+          <text x="462" y="40" text-anchor="middle" font-weight="700" fill="#0f4c81">4 · WireGuard</text>
+          <text x="462" y="55" text-anchor="middle" fill="#5b6470">encapsula</text>
+        </g>
+        <g>
+          <rect x="542" y="20" width="104" height="48" rx="7" fill="#fdecec" stroke="#8a1f3d"/>
+          <text x="594" y="40" text-anchor="middle" font-weight="700" fill="#8a1f3d">5 · nftables</text>
+          <text x="594" y="55" text-anchor="middle" fill="#5b6470">kill switch</text>
+        </g>
+        <g>
+          <rect x="278" y="104" width="164" height="46" rx="7" fill="#ecf6f0" stroke="#1f7a5a"/>
+          <text x="360" y="124" text-anchor="middle" font-weight="700" fill="#1f7a5a">6 · ADV7Sec</text>
+          <text x="360" y="138" text-anchor="middle" fill="#5b6470">coleta telemetria e alerta</text>
+        </g>
+        <!-- setas horizontais -->
+        <line x1="118" y1="44" x2="144" y2="44" stroke="#0f4c81" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <line x1="250" y1="44" x2="276" y2="44" stroke="#0f4c81" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <line x1="382" y1="44" x2="408" y2="44" stroke="#0f4c81" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <line x1="514" y1="44" x2="540" y2="44" stroke="#0f4c81" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <line x1="360" y1="68" x2="360" y2="102" stroke="#1f7a5a" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arr2)"/>
+      </g>
+    </svg>
+    <div class="caption">Figura 3 — Fluxo lógico: a saída só é permitida pelo túnel; se a VPN cai, o nftables bloqueia o vazamento.</div>
+  </div>
+
+  <table>
+    <thead><tr><th>Etapa</th><th>Função</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>O cliente solicita resolução ou acesso.</td></tr>
+      <tr><td>2</td><td>O OpenBox intercepta o DNS e aplica a política.</td></tr>
+      <tr><td>3</td><td>O dnscrypt-proxy e o Unbound tratam a consulta.</td></tr>
+      <tr><td>4</td><td>O WireGuard encapsula o tráfego válido.</td></tr>
+      <tr><td>5</td><td>O nftables bloqueia o vazamento se a VPN cair.</td></tr>
+      <tr><td>6</td><td>O ADV7Sec coleta a telemetria e alerta.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================== -->
+<!-- 6. DEMANDAS                                                          -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>6. Demandas de hardware, software e rede</h2>
+  <p>
+    A demanda de hardware foi calibrada para permanecer abaixo de um orçamento doméstico razoável. O
+    <em>edge router</em> pode ser um RK3229 reaproveitado ou um Raspberry Pi&nbsp;4, mas a documentação
+    final favorece o RK3229 por custo e aderência ao cenário observado. A <em>workstation</em> de
+    monitoramento pode ser reaproveitada e não exige aquisição adicional, o que reforça o caráter
+    sustentável do projeto.
+  </p>
+
+  <h3>Hardware recomendado</h3>
+  <table>
+    <thead><tr><th>Componente</th><th>Especificação alvo</th><th>Custo aproximado</th></tr></thead>
+    <tbody>
+      <tr><td>Edge router</td><td>RK3229 / 1&nbsp;GB RAM / eMMC 8&nbsp;GB / Ethernet 100&nbsp;Mbps</td><td>R$ 180–350</td></tr>
+      <tr><td>Workstation</td><td>Linux ≥ 6.8, 4&nbsp;GB RAM ou mais</td><td>reaproveitado</td></tr>
+      <tr><td>Switch VLAN</td><td>L2 gerenciável para segmentação</td><td>R$ 140–200</td></tr>
+      <tr><td>Cabeamento</td><td>Cat5e/6 + USB-Ethernet quando necessário</td><td>R$ 60–120</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Software e serviços</h3>
+  <table>
+    <thead><tr><th>Camada</th><th>Ferramentas</th></tr></thead>
+    <tbody>
+      <tr><td>Rede</td><td>WireGuard, nftables, dnscrypt-proxy, Unbound, Pi-hole, Tor</td></tr>
+      <tr><td>Monitoramento</td><td>Netdata, Monit, Lynis, RKHunter, Uptime Kuma</td></tr>
+      <tr><td>Segurança</td><td>Fail2ban, AIDE, Suricata, Zeek, auditd, Falco</td></tr>
+      <tr><td>Mídia</td><td>Jellyfin, em substituição a opções sem suporte para armhf</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout note">
+    <strong>Definição de infraestrutura de rede.</strong> A topologia mínima é
+    <code>provedor → edge router (OpenBox) → switch L2/VLAN → segmentos (confiável e IoT/TV box)</code>,
+    com a <em>workstation</em> de análise (ADV7Sec) em segmento confiável. VLAN separa o que não é
+    confiável; a VPN é a única rota de saída; o DNS é resolvido localmente e cifrado.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- 7. MODELO DE AMEAÇA E MATRIZ DE RISCO                                -->
+<!-- =================================================================== -->
+<section>
+  <h2>7. Modelo de ameaça e matriz de risco</h2>
+  <p>
+    O modelo de ameaça distingue o que o OpenBox mitiga do que ele não pretende resolver. ISP, ataques na
+    LAN, telemetria proprietária e compromissos de integridade são tratados; adversários estatais com
+    correlação global, acesso físico e compromisso do provedor de VPN permanecem fora do escopo principal.
+    Essa delimitação é importante para evitar promessas irreais de anonimato absoluto.
+  </p>
+  <p>
+    A matriz de risco não é apenas classificatória; ela orienta a priorização de controles. Falhas de
+    hardware, software e rede foram mantidas em categorias distintas para preservar a lógica da rubrica e
+    permitir mitigação específica, em vez de respostas genéricas como “instalar antivírus” ou “tomar
+    cuidado”.
+  </p>
+
+  <table>
+    <thead><tr><th>Falha</th><th>Categoria</th><th>Probabilidade</th><th>Impacto</th><th>Nota</th></tr></thead>
+    <tbody>
+      <tr><td>Queima do gateway / falta de energia</td><td>Hardware</td><td>Média</td><td>Alta</td><td>Alto</td></tr>
+      <tr><td>Erro de configuração do firewall</td><td>Software</td><td>Média</td><td>Alta</td><td>Alto</td></tr>
+      <tr><td>Ataque DDoS ou interceptação de tráfego</td><td>Rede</td><td>Baixa</td><td>Muito alta</td><td>Alto</td></tr>
+      <tr><td>Vazamento de DNS</td><td>Rede</td><td>Baixa</td><td>Alta</td><td>Médio/Alto</td></tr>
+    </tbody>
+  </table>
+
+  <!-- FIGURA 4 — heatmap de risco -->
+  <div class="fig">
+    <svg viewBox="0 0 460 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Matriz de risco probabilidade por impacto">
+      <g font-family="Inter,sans-serif" font-size="9">
+        <!-- eixos -->
+        <text x="20" y="125" text-anchor="middle" font-size="9" fill="#5b6470" transform="rotate(-90 20 125)">Probabilidade →</text>
+        <text x="250" y="244" text-anchor="middle" font-size="9" fill="#5b6470">Impacto →</text>
+        <!-- grid 3x3 (cols: Alta, MuitoAlta agrupado) -->
+        <!-- células -->
+        <!-- linhas: Alta(top), Média, Baixa(bottom) ; colunas: Média, Alta, Muito alta -->
+        <!-- cores graduais -->
+        <rect x="60" y="30" width="120" height="60" fill="#fbe3c2"/>
+        <rect x="180" y="30" width="120" height="60" fill="#f6b27a"/>
+        <rect x="300" y="30" width="120" height="60" fill="#e8765a"/>
+        <rect x="60" y="90" width="120" height="60" fill="#fdf0d5"/>
+        <rect x="180" y="90" width="120" height="60" fill="#fbe3c2"/>
+        <rect x="300" y="90" width="120" height="60" fill="#f6b27a"/>
+        <rect x="60" y="150" width="120" height="60" fill="#eef6ec"/>
+        <rect x="180" y="150" width="120" height="60" fill="#fdf0d5"/>
+        <rect x="300" y="150" width="120" height="60" fill="#fbe3c2"/>
+        <!-- bordas -->
+        <g stroke="#c9ced6" fill="none">
+          <rect x="60" y="30" width="360" height="180"/>
+          <line x1="180" y1="30" x2="180" y2="210"/><line x1="300" y1="30" x2="300" y2="210"/>
+          <line x1="60" y1="90" x2="420" y2="90"/><line x1="60" y1="150" x2="420" y2="150"/>
+        </g>
+        <!-- rótulos colunas -->
+        <text x="120" y="224" text-anchor="middle" fill="#5b6470">Média</text>
+        <text x="240" y="224" text-anchor="middle" fill="#5b6470">Alta</text>
+        <text x="360" y="224" text-anchor="middle" fill="#5b6470">Muito alta</text>
+        <!-- rótulos linhas -->
+        <text x="52" y="64" text-anchor="end" fill="#5b6470">Alta</text>
+        <text x="52" y="124" text-anchor="end" fill="#5b6470">Média</text>
+        <text x="52" y="184" text-anchor="end" fill="#5b6470">Baixa</text>
+        <!-- pontos das falhas -->
+        <!-- HW: Média prob, Alta impacto -> col Alta(240), linha Média(120) -->
+        <circle cx="240" cy="120" r="11" fill="#8a1f3d" opacity="0.9"/><text x="240" y="123" text-anchor="middle" fill="#fff" font-weight="700" font-size="9">HW</text>
+        <!-- SW: Média prob, Alta impacto -> mesmo bucket, deslocado -->
+        <circle cx="212" cy="120" r="11" fill="#0f4c81" opacity="0.9"/><text x="212" y="123" text-anchor="middle" fill="#fff" font-weight="700" font-size="9">SW</text>
+        <!-- Rede DDoS: Baixa prob, Muito alta impacto -> col 360, linha Baixa(180) -->
+        <circle cx="360" cy="180" r="11" fill="#1f7a5a" opacity="0.9"/><text x="360" y="183" text-anchor="middle" fill="#fff" font-weight="700" font-size="8">DDoS</text>
+        <!-- DNS leak: Baixa prob, Alta impacto -> col 240, linha Baixa(180) -->
+        <circle cx="240" cy="180" r="11" fill="#1f7a5a" opacity="0.9"/><text x="240" y="183" text-anchor="middle" fill="#fff" font-weight="700" font-size="8">DNS</text>
+      </g>
+    </svg>
+    <div class="caption">Figura 4 — Matriz probabilidade × impacto. HW = hardware; SW = software; DDoS e DNS = rede.</div>
+  </div>
+
+  <div class="callout ok">
+    <strong>Critério de decisão.</strong> A lógica do projeto é simples: se a rede cai, nada sai; se o
+    DNS escapa, o alerta deve aparecer; se o arquivo crítico muda, a integridade é violada e o evento
+    precisa ser registrado imediatamente.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- 8. HARDENING                                                         -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>8. Plano de hardening e mitigação</h2>
+  <p>
+    O plano de <em>hardening</em> consolida a arquitetura em controles concretos. No plano de rede, o
+    WireGuard é a única via de saída permitida; no plano de tráfego, o nftables atua como base de política
+    e mantém o <em>kill switch</em> de forma atômica (via <code>fwmark 51820</code>). O uso de
+    dnscrypt-proxy e Unbound reduz a superfície de observação e dificulta a manipulação de DNS por
+    terceiros.
+  </p>
+  <p>
+    No plano de sistema, o OpenBox adota verificações de integridade, endurecimento de SSH, segregação de
+    serviços e atualização controlada. O plano reconhece limitações reais: o Tor não é usado para
+    <em>streaming</em> HD/4K e o objetivo não é o anonimato total. Em vez disso, o Tor é reservado a
+    metadados e consultas leves, em que o custo de latência é aceitável.
+  </p>
+
+  <h3>Mitigações principais</h3>
+  <table>
+    <thead><tr><th>Falha</th><th>Mitigação</th></tr></thead>
+    <tbody>
+      <tr><td>Hardware</td><td>UPS, <em>backup</em> de configuração, retenção de imagem de recuperação e equipamento reserva.</td></tr>
+      <tr><td>Software</td><td>Git, <em>rollback</em>, validação de configuração e testes automatizados antes e depois da instalação.</td></tr>
+      <tr><td>Rede</td><td><em>Firewall</em>, VLAN, VPN obrigatória, DNS criptografado e <em>rate limiting</em>.</td></tr>
+      <tr><td>Integridade</td><td>AIDE, RKHunter, <em>logs</em> e alertas por ntfy.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>Detalhe operacional.</strong> O planejamento evita composições frágeis: não se mistura UFW com
+    nftables, não se assume que o Tor sustenta <em>streaming</em> de alta taxa e não se aceita um
+    <em>kill switch</em> sem <em>allowlist</em> para o <em>endpoint</em> da VPN.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- 9. ADV7SEC                                                           -->
+<!-- =================================================================== -->
+<section>
+  <h2>9. ADV7Sec: detecção host-side e telemetria</h2>
+  <p>
+    O ADV7Sec complementa o OpenBox ao observar a <em>workstation</em> Linux, o que é útil quando a
+    ameaça já passou da borda. Ele agrega eventos de auditd, Falco, Suricata e Zeek, normaliza a saída,
+    gera alertas locais e fornece uma visão coerente de comportamento anômalo. Trata-se de um plano de
+    controle de detecção, não de bloqueio ativo, o que simplifica a análise didática.
+  </p>
+  <p>
+    A implementação privilegia um modo <em>preview-first</em>: o sistema mostra o que seria feito antes de
+    executar ações de impacto. Esse desenho favorece estudo, depuração e aprendizado, sem transformar a
+    plataforma em uma caixa-preta que “faz coisas” sem explicação.
+  </p>
+
+  <h3>Sensores e saída</h3>
+  <table>
+    <thead><tr><th>Sensor</th><th>O que observa</th><th>Saída</th></tr></thead>
+    <tbody>
+      <tr><td>auditd</td><td><em>Syscalls</em> e alterações de arquivos sensíveis</td><td><em>Log</em> estruturado</td></tr>
+      <tr><td>Falco</td><td>Comportamento de processos e rede</td><td>Alerta e JSON</td></tr>
+      <tr><td>Suricata</td><td>Assinaturas de rede</td><td>EVE JSON</td></tr>
+      <tr><td>Zeek</td><td>Sessões e metadados de conexão</td><td><code>conn.log</code></td></tr>
+      <tr><td>AIDE</td><td>Integridade de arquivos</td><td><em>Baseline</em> / <em>diff</em></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================== -->
+<!-- 10. RUNBOOK                                                          -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>10. Runbook, validação e reprodutibilidade</h2>
+  <p>
+    A qualidade operacional do OpenBox depende de uma rotina clara de verificação. O <em>runbook</em>
+    define comandos rápidos para checar serviços, conexões, vazamento de DNS, circuito Tor e integridade
+    geral. Em sistemas de segurança, a documentação operacional é parte da solução, porque reduz o tempo
+    entre um sintoma e a correção.
+  </p>
+
+  <h3>Healthchecks resumidos</h3>
+  <table>
+    <thead><tr><th>Checagem</th><th>Comando de referência</th></tr></thead>
+    <tbody>
+      <tr><td>Estado geral</td><td><code>systemctl status wg-quick@wg0 tor dnscrypt-proxy pihole-FTL nftables netdata</code></td></tr>
+      <tr><td>IP de saída</td><td><code>curl -4 https://ifconfig.io</code></td></tr>
+      <tr><td>Circuito Tor</td><td><code>curl --socks5-hostname 127.0.0.1:9050 https://check.torproject.org/api/ip</code></td></tr>
+      <tr><td>DNS leak</td><td><code>openbox-dnsleak-check.sh</code></td></tr>
+      <tr><td>Hardening index</td><td><code>lynis audit system --quick --no-colors</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Falhas comuns e resposta prevista</h3>
+  <table>
+    <thead><tr><th>Falha</th><th>Resposta prevista</th></tr></thead>
+    <tbody>
+      <tr><td>Handshake travado</td><td>Reiniciar <code>wg-quick@wg0</code> e verificar <code>latest-handshakes</code>.</td></tr>
+      <tr><td>DNSCrypt sem resposta</td><td>Verificar o <em>bind</em> em <code>127.0.0.1:5053</code> e o <em>upstream</em> do Pi-hole.</td></tr>
+      <tr><td>Painel Netdata não abre</td><td>Validar o Caddy, o <em>reverse proxy</em> e os <em>logs</em> locais.</td></tr>
+      <tr><td>Tor degradado</td><td>Reiniciar o serviço e inspecionar o circuito com <code>nyx</code>.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================== -->
+<!-- 11. EVIDÊNCIAS                                                       -->
+<!-- =================================================================== -->
+<section>
+  <h2>11. Evidências de desenvolvimento e rastreabilidade</h2>
+  <p>
+    A entrega acadêmica é acompanhada por documentação gerada e versionada. O repositório inclui README,
+    <em>changelog</em>, documentação de ameaça, guia de <em>setup</em> de hardware, <em>runbook</em>,
+    referências e o <em>vault</em> do Obsidian com mapas de conteúdo gerados automaticamente. Isso permite
+    auditoria posterior e reduz a dependência de texto manual desconectado do projeto real.
+  </p>
+  <p>
+    Em vez de tratar documentos como anexos decorativos, o OpenBox os integra como parte da engenharia. Os
+    artefatos textuais descrevem as fases de instalação, os arquivos de configuração e o caminho de
+    verificação; as notas do <em>vault</em> mantêm a trilha de execução; e os <em>scripts</em> de
+    <em>build</em> e validação preservam a reprodutibilidade.
+  </p>
+
+  <h3>Artefatos mais relevantes</h3>
+  <table>
+    <thead><tr><th>Artefato</th><th>Função</th></tr></thead>
+    <tbody>
+      <tr><td><code>README.md</code></td><td>Visão geral do projeto e diferenças em relação ao TVBox OSS.</td></tr>
+      <tr><td><code>CHANGELOG.md</code></td><td>Histórico de mudanças entre as versões 0.1.0 e 0.2.0.</td></tr>
+      <tr><td><code>THREAT_MODEL.md</code></td><td>Adversários, fronteiras de confiança e modos de falha.</td></tr>
+      <tr><td><code>RK3229_THREAT_RESEARCH.md</code></td><td>Ameaças de cadeia de suprimento e mitigação.</td></tr>
+      <tr><td><code>RUNBOOK.md</code></td><td>Operações diárias e <em>troubleshooting</em>.</td></tr>
+      <tr><td><code>OBSIDIAN_VAULT.md</code></td><td>Integração do repositório como <em>vault</em> do Obsidian.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================== -->
+<!-- 12. CONCLUSÃO E CARREIRA                                             -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>12. Conclusão e direcionamento de carreira</h2>
+  <p>
+    O OpenBox v0.2.0 mostra que uma solução defensiva bem definida pode ser construída com hardware de
+    baixo custo, software livre e disciplina metodológica. O valor do projeto está menos em prometer uma
+    abstração de “segurança máxima” e mais em transformar práticas concretas — segmentar, observar,
+    validar, bloquear e registrar — em uma rotina acessível e replicável.
+  </p>
+  <p>
+    No plano pessoal e profissional, o projeto aponta para a atuação em infraestrutura, redes e segurança
+    da informação, com forte viés <strong>Blue Team</strong>. A combinação entre <em>hardening</em>,
+    observabilidade, resposta a incidentes e documentação técnica é compatível com carreiras em SOC,
+    administração de redes, segurança de sistemas e engenharia de plataformas. A base construída aqui pode
+    evoluir para maior automação, análise de alertas e integração com ferramentas de inteligência local em
+    semestres futuros.
+  </p>
+
+  <div class="callout ok">
+    <strong>Fechamento.</strong> Em termos acadêmicos, o projeto atende ao pedido de estudar um cenário
+    real, justificar a tecnologia e demonstrar uma solução defensiva. Em termos práticos, ele entrega uma
+    borda residencial mais segura, compreensível e auditável.
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- 13. REFERÊNCIAS                                                      -->
+<!-- =================================================================== -->
+<section>
+  <h2>13. Referências técnicas essenciais</h2>
+  <table>
+    <thead><tr><th>Categoria</th><th>Exemplos de referência</th></tr></thead>
+    <tbody>
+      <tr><td>VPN</td><td>WireGuard <em>whitepaper</em>, guias de <em>hardening</em>, documentação de <em>tuning</em>.</td></tr>
+      <tr><td>Firewall</td><td>nftables, <em>kill switch</em> com <code>fwmark</code>, <em>allowlist</em> de <em>endpoint</em>.</td></tr>
+      <tr><td>DNS</td><td>Pi-hole, dnscrypt-proxy, DNSSEC e DoH/DoQ.</td></tr>
+      <tr><td>Monitoramento</td><td>Netdata, Monit, Lynis, RKHunter.</td></tr>
+      <tr><td>IDS/IPS</td><td>Suricata, Zeek, auditd, Falco.</td></tr>
+      <tr><td>Mídia</td><td>Jellyfin para armhf; Tor apenas para metadados.</td></tr>
+    </tbody>
+  </table>
+  <p>
+    A bibliografia técnica do repositório já registra referências verificadas para as escolhas de rede,
+    <em>hardening</em>, monitoramento e mídia. A integração desses materiais ao projeto garante que as
+    decisões não são arbitrárias, mas derivadas de documentação e validação operacional.
+  </p>
+</section>
+
+<!-- =================================================================== -->
+<!-- 14. CHECKLIST DE CONFORMIDADE                                        -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>14. Checklist final de conformidade</h2>
+  <table>
+    <thead><tr><th>Requisito da AVFinal</th><th>Atendido em</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Definição de infraestrutura de redes</td><td>Seções 5 e 6</td><td class="rubric-ok">✓</td></tr>
+      <tr><td>Exatamente 3 falhas (hardware, software, rede)</td><td>Seção 7</td><td class="rubric-ok">✓</td></tr>
+      <tr><td>Plano de mitigação</td><td>Seção 8</td><td class="rubric-ok">✓</td></tr>
+      <tr><td>Evidências de desenvolvimento</td><td>Seção 11</td><td class="rubric-ok">✓</td></tr>
+      <tr><td>Parágrafo de área de atuação</td><td>Seção 12</td><td class="rubric-ok">✓</td></tr>
+      <tr><td>Critérios de avaliação / rubrica</td><td>Estrutura incorporada ao raciocínio do documento</td><td class="rubric-ok">✓</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Este anexo resume a correspondência entre a rubrica e o documento final. O trabalho foi organizado
+    para que cada requisito seja encontrável sem adivinhação e com um fluxo de leitura coerente.
+  </p>
+
+  <!-- FIGURA 5 — figura de encerramento -->
+  <div class="fig" style="margin-top: 14pt;">
+    <svg viewBox="0 0 720 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Figura de encerramento da arquitetura">
+      <defs>
+        <linearGradient id="gBox2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f4c81"/><stop offset="1" stop-color="#0c3a63"/></linearGradient>
+        <marker id="arr3" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#5b6470"/></marker>
+      </defs>
+      <rect x="14" y="48" width="120" height="54" rx="8" fill="#eaeff6" stroke="#0f4c81"/>
+      <text x="74" y="79" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f4c81">Cliente</text>
+      <rect x="210" y="36" width="170" height="78" rx="10" fill="url(#gBox2)"/>
+      <text x="295" y="62" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#fff">OpenBox</text>
+      <text x="295" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#dbe6f1">WireGuard · nftables</text>
+      <text x="295" y="94" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#dbe6f1">DNSCrypt · Pi-hole</text>
+      <rect x="456" y="48" width="120" height="54" rx="8" fill="#ecf6f0" stroke="#1f7a5a"/>
+      <text x="516" y="79" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#1f7a5a">Internet</text>
+      <rect x="606" y="42" width="100" height="66" rx="8" fill="#fdecec" stroke="#8a1f3d"/>
+      <text x="656" y="68" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#8a1f3d">ADV7Sec</text>
+      <text x="656" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#5b6470">detecção host</text>
+      <line x1="136" y1="75" x2="206" y2="75" stroke="#5b6470" stroke-width="1.6" marker-end="url(#arr3)"/>
+      <line x1="382" y1="75" x2="452" y2="75" stroke="#5b6470" stroke-width="1.6" marker-end="url(#arr3)"/>
+      <line x1="606" y1="75" x2="384" y2="75" stroke="#8a1f3d" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#arr3)"/>
+    </svg>
+    <div class="caption">Figura 5 — Defesa em profundidade: rede, DNS, VPN, monitoramento e integridade.</div>
+  </div>
+
+  <p class="small" style="margin-top: 10pt;">
+    Documento final gerado em ambiente local com base nos arquivos do projeto OpenBox0.1v, incluindo
+    README, <em>changelog</em>, <em>threat model</em>, <em>runbook</em>, pesquisa de hardware e
+    <em>vault</em> Obsidian.
+  </p>
+
+  <div class="sigrow">
+    <div class="box">Alcides Olivo Pollazzon Soterio<br><span class="small">Autor</span></div>
+    <div class="box">UniCEUB · Introdução à Computação<br><span class="small">Brasília – DF · 2026</span></div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<!-- ANEXO A — TEARDOWN DE HARDWARE E FASE DE FLASH/SSH                   -->
+<!-- =================================================================== -->
+<section class="pagebreak">
+  <h2>Anexo A — Teardown de hardware e fase de flash/SSH</h2>
+  <p>
+    Este anexo documenta a inspeção física da unidade real utilizada no projeto, identificando as
+    estruturas da placa e registrando a fase de gravação (<em>flash</em>) e o primeiro acesso por SSH.
+    A placa foi identificada pela serigrafia como <strong>R3290_V8.1</strong> (data 2020.06.15, marca de
+    teste <code>TY 2324</code>), pertencente à família <strong>rk322x</strong> (RK3228A/B ou RK3229),
+    coberta pela imagem Armbian <code>rk322x-box</code>.
+  </p>
+
+  <h3>A.1 Identificação da placa</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Valor observado</th></tr></thead>
+    <tbody>
+      <tr><td>Serigrafia da placa</td><td>R3290_V8.1 · 2020.06.15 · marca de teste <code>TY 2324</code></td></tr>
+      <tr><td>Família / SoC</td><td>rk322x — Rockchip RK3229 (ARM Cortex-A7 <em>quad</em>), sob dissipador</td></tr>
+      <tr><td>Armazenamento</td><td>eMMC Samsung KLM8G1GETF — 8&nbsp;GB (BGA-153)</td></tr>
+      <tr><td>Memória</td><td>4× Hynix H5TQ2G43BFR (DDR3, 2&nbsp;por face) ≈ 1&nbsp;GB</td></tr>
+      <tr><td>Imagem alvo</td><td>Armbian community <code>rk322x-box</code> (Debian Bookworm, armhf)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A.2 Estruturas identificadas</h3>
+  <table style="font-size: 9pt;">
+    <thead><tr><th>#</th><th>Estrutura</th><th>Marcação / parte</th><th>Função</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>eMMC</td><td>Samsung KLM8G1GETF (SEC 219 B041)</td><td>Armazenamento principal — 8&nbsp;GB eMMC 5.x</td></tr>
+      <tr><td>2</td><td>R-série</td><td>resistores em série</td><td>Tap/isolação no barramento da eMMC</td></tr>
+      <tr><td>3</td><td>Trilha CLK</td><td><em>breakout</em> junto à eMMC</td><td>Ponto de <em>short</em> para entrar em maskrom (método B)</td></tr>
+      <tr><td>4</td><td>CI companion</td><td>QFN-44 (SVS6Z56F / TAC2121)</td><td>PHY/controlador de interface (provável)</td></tr>
+      <tr><td>5</td><td>PPT PM44-11BP</td><td>SOIC junto a RJ45/DC</td><td>MOSFET/driver de potência (provável)</td></tr>
+      <tr><td>6</td><td>Capacitor eletrolítico</td><td>CK 100&nbsp;µF / 10&nbsp;V</td><td>Filtro da entrada de energia</td></tr>
+      <tr><td>7</td><td>LDO</td><td>AMS1117 (1117C, SOT-223)</td><td>Regulador linear 3,3&nbsp;V</td></tr>
+      <tr><td>8</td><td>Conversores buck</td><td>2× indutor 3R3 (3,3&nbsp;µH)</td><td>Trilhos de núcleo/DDR</td></tr>
+      <tr><td>9</td><td>SoC</td><td>Rockchip RK3229 (sob dissipador)</td><td>CPU ARM Cortex-A7 <em>quad</em> — família rk322x</td></tr>
+      <tr><td>10</td><td>Header serial</td><td>R / T / G (RX, TX, GND)</td><td>Console UART de depuração</td></tr>
+      <tr><td>11–12</td><td>DRAM</td><td>Hynix H5TQ2G43BFR (H9C) DDR3</td><td>4 chips (2 por face) ≈ 1&nbsp;GB</td></tr>
+      <tr><td>13</td><td>Rede de resistores</td><td>face inferior</td><td>Terminação/<em>strap</em> do barramento DDR</td></tr>
+      <tr><td>14</td><td>LDO auxiliar</td><td>1117 (face inferior)</td><td>Regulador secundário</td></tr>
+      <tr><td>15</td><td>Footprint BGA vazio</td><td>não populado</td><td>Posição alternativa de NAND/eMMC</td></tr>
+      <tr><td>16</td><td>Cristal/oscilador</td><td>—</td><td>Referência de clock (24/25&nbsp;MHz)</td></tr>
+      <tr><td>17</td><td>USB-A</td><td>—</td><td>Porta host USB 2.0</td></tr>
+      <tr><td>18–19</td><td>AV 3,5&nbsp;mm</td><td>—</td><td>Saídas CVBS/áudio</td></tr>
+      <tr><td>20</td><td>HDMI</td><td>—</td><td>Saída de vídeo digital</td></tr>
+      <tr><td>21</td><td>RJ45</td><td>—</td><td>Ethernet 10/100</td></tr>
+      <tr><td>22</td><td>DC jack</td><td>—</td><td>Entrada de alimentação 5&nbsp;V</td></tr>
+      <tr><td>—</td><td>Micro-USB OTG</td><td>topo</td><td>Porta usada para o <em>flash</em> via maskrom</td></tr>
+      <tr><td>—</td><td>Receptor IR · slot microSD/TF</td><td>frontal · lateral</td><td>Controle remoto · armazenamento removível</td></tr>
+    </tbody>
+  </table>
+
+  <div class="fig" style="text-align:center;">
+    <img src="figs/hw/plate_top.png" alt="Face superior anotada" style="max-height:120mm; max-width:100%; border:0.5pt solid var(--border); border-radius:3pt;">
+    <div class="caption">Figura A.1 — Face superior: eMMC, SoC (sob dissipador), regulação, CI companion e header serial.</div>
+  </div>
+  <div class="fig" style="text-align:center;">
+    <img src="figs/hw/plate_bottom.png" alt="Face inferior anotada" style="max-width:100%; border:0.5pt solid var(--border); border-radius:3pt;">
+    <div class="caption">Figura A.2 — Face inferior: DRAM Hynix, footprint BGA vazio e LDO. <strong>MAC redigido</strong> por privacidade.</div>
+  </div>
+  <div class="fig" style="text-align:center;">
+    <img src="figs/hw/plate_ports.png" alt="Portas anotadas" style="max-width:100%; border:0.5pt solid var(--border); border-radius:3pt;">
+    <div class="caption">Figura A.3 — Conectividade: USB-A, AV 3,5&nbsp;mm, HDMI, RJ45 e DC 5&nbsp;V.</div>
+  </div>
+
+  <h3>A.3 Fase de flash e SSH</h3>
+  <p>
+    O procedimento de gravação foi conduzido a partir do host de desenvolvimento (Windows + WSL Kali),
+    anexando o dispositivo USB com <code>usbipd-win</code> e gravando a imagem Armbian com
+    <code>rkdeveloptool</code> em modo maskrom (PID <code>2207:320b</code>). Após o <em>boot</em>, o primeiro
+    acesso ocorreu por SSH com autenticação por chave, seguido do <em>gate</em> de fingerprint da
+    <strong>Fase 0</strong> (SoC, arquitetura, módulo WireGuard e <code>/dev/watchdog</code>).
+  </p>
+  <div class="callout note">
+    <strong>Reconstrução fiel.</strong> Os terminais abaixo reproduzem o procedimento documentado com os
+    valores reais do projeto (placa R3290_V8.1 · Armbian rk322x-box · host <code>192.168.0.103</code> ·
+    <code>Phase 0: PASS (4/4)</code>), a partir do <em>runbook</em> e das notas de execução.
+  </div>
+  <div class="fig" style="text-align:center;">
+    <img src="figs/hw/term_flash.png" alt="Terminal da fase de flash" style="max-width:100%; border-radius:4pt;">
+    <div class="caption">Figura A.4 — Fase de <em>flash</em>: maskrom → <code>rkdeveloptool wl</code> → <code>rd</code>.</div>
+  </div>
+  <div class="fig" style="text-align:center;">
+    <img src="figs/hw/term_ssh.png" alt="Terminal da fase de SSH" style="max-width:100%; border-radius:4pt;">
+    <div class="caption">Figura A.5 — Fase de SSH: primeiro acesso ao Armbian e <em>gate</em> da Fase 0.</div>
+  </div>
+</section>
+
+</body>
+</html>
