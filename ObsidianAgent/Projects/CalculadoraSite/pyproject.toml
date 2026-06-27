@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "calculadora-site"
+version = "0.1.0"
+description = "Calculadora de precificacao de sites (mercado BR 2026) — TUI/CLI com orcamento ADVAN7Tech"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.8,<3.0",
+  "PyYAML>=6.0",
+  "rich>=13",
+  "textual>=0.79",
+  "typer>=0.12",
+  "reportlab>=4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy>=1.11",
+  "pytest>=8.3",
+  "ruff>=0.6",
+  "types-PyYAML>=6.0",
+]
+
+[project.scripts]
+calculadora-site = "calculadora_site.cli:main"
+
+[tool.setuptools]
+packages = [
+  "calculadora_site",
+  "calculadora_site.core",
+  "calculadora_site.ui",
+  "calculadora_site.reports",
+]
+
+[tool.setuptools.package-data]
+calculadora_site = ["config/*.yaml"]
+
+[tool.ruff]
+line-length = 120  # convencao repo-wide (raiz CLAUDE.md)
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "PL"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PLR2004"]  # numeros "magicos" sao esperados em asserts de teste
+# Typer exige call em default (B008) e comandos tem muitos parametros (PLR0913);
+# o import da TUI e adiado de proposito (PLC0415) para nao carregar Textual no modo CLI.
+"calculadora_site/cli.py" = ["B008", "PLR0913", "PLC0415"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["reportlab.*", "questionary.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+branch = true
+source = ["calculadora_site"]
+
+[tool.coverage.report]
+fail_under = 90
+exclude_lines = [
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+]
