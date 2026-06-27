@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ObsidianAgent/CLAUDE.md",
+                "file": "Computer_Science/HTB/Cyber_Jr/Structure_InfoSec.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CLAUDE"
+              "title": "Structure_InfoSec"
             }
           }
         ]
@@ -185,10 +185,10 @@
   },
   "active": "05d297e1248e9839",
   "lastOpenFiles": [
+    "ObsidianAgent/CLAUDE.md",
     "ObsidianAgent/AGENTS.md",
     "ObsidianAgent/Sumary.base",
     "ObsidianAgent/README.md",
-    "ObsidianAgent/CLAUDE.md",
     "README.md",
     "ObsidianAgent/Vault/References/CyberPDFs/Sources/hacking-apis-early-access-691dcdd7.md",
     "ObsidianAgent/Vault/References/CyberPDFs/Sources/black-hat-go-21619c7f.md",
