@@ -1,0 +1,17 @@
+[Unit]
+Description=Waydroid Session — WslDroid
+Documentation=https://docs.waydro.id/
+After=waydroid-container.service
+Requires=waydroid-container.service
+
+[Service]
+Type=simple
+Environment=XDG_RUNTIME_DIR=/run/user/%U
+ExecStartPre=/bin/sleep 2
+ExecStart=/usr/bin/waydroid session start
+ExecStop=/usr/bin/waydroid session stop
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
