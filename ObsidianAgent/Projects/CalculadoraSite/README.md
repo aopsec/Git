@@ -90,6 +90,13 @@ manutenção) ficam **fora** do preço do projeto, listados à parte.
 
 Detalhe completo no docstring de [`core/pricing.py`](calculadora_site/core/pricing.py).
 
+### Competitividade e atratividade
+
+O preço default fica competitivo/alinhado ao mercado; para deixar a oferta
+atrativa há `--desconto` (âncora "de/por" + economia), `--arredondar`
+(número limpo, nunca aumenta) e a classificação de competitividade exibida no
+orçamento. Atestação e evidência completas em [CERTIFICACAO.md](CERTIFICACAO.md).
+
 ## Editar preços
 
 Toda tabela (tipos de site, horas-base, valores/hora, add-ons, multiplicadores,
