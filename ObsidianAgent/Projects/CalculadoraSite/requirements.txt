@@ -1,0 +1,8 @@
+# Dependencias de runtime da CalculadoraSite (Python 3.11+).
+# Versoes/extras de dev (ruff, mypy, pytest) ficam em pyproject.toml [dev].
+pydantic>=2.8,<3.0
+PyYAML>=6.0
+rich>=13
+textual>=0.79
+typer>=0.12
+reportlab>=4.0
