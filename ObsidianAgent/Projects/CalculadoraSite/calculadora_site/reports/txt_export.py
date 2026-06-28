@@ -25,6 +25,27 @@ def _linha_valor(rotulo: str, valor: str, recuo: int = 2) -> str:
     return esq + " " * espaco + valor
 
 
+def _bloco_preco_final(orcamento: Orcamento) -> list[str]:
+    """Bloco de fechamento: ancora de desconto, preco final, economia, competitividade."""
+    brl = theme.formatar_brl
+    linhas = ["  " + "-" * (LARGURA - 2)]
+    if orcamento.economia > 0:
+        linhas.append(_linha_valor("Preco cheio (de)", brl(orcamento.preco_cheio)))
+        if orcamento.desconto_pct:
+            linhas.append(
+                _linha_valor("Desconto comercial", f"-{theme.formatar_pct(orcamento.desconto_pct)}")
+            )
+    rotulo = "PRECO FINAL (por)" if orcamento.economia > 0 else "PRECO FINAL"
+    linhas.append(_linha_valor(rotulo, brl(orcamento.preco_final)))
+    if orcamento.economia > 0:
+        linhas.append(_linha_valor("Economia do cliente", brl(orcamento.economia)))
+    if orcamento.piso_acionado:
+        linhas.append(_linha_valor("(piso do projeto aplicado)", brl(orcamento.piso_aplicado)))
+    linhas.append(_linha_valor("Competitividade", orcamento.competitividade_label))
+    linhas.append("")
+    return linhas
+
+
 def _bloco_recorrentes(orcamento: Orcamento) -> list[str]:
     """Secao de custos recorrentes (vazia se nao houver)."""
     if not orcamento.recorrentes:
@@ -103,11 +124,7 @@ def orcamento_para_txt(orcamento: Orcamento) -> str:
     linhas.append(
         _linha_valor("Carga tributaria", theme.formatar_pct(orcamento.carga_tributaria_pct))
     )
-    linhas.append("  " + "-" * (LARGURA - 2))
-    linhas.append(_linha_valor("PRECO FINAL", brl(orcamento.preco_final)))
-    if orcamento.piso_acionado:
-        linhas.append(_linha_valor("(piso do projeto aplicado)", brl(orcamento.piso_aplicado)))
-    linhas.append("")
+    linhas.extend(_bloco_preco_final(orcamento))
 
     # --- sanity-check ---
     marcador = {"ok": "[OK]", "acima_faixa": "[i]", "abaixo_faixa": "[!]", "abaixo_piso": "[!!]"}

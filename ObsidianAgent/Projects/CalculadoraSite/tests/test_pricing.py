@@ -181,6 +181,65 @@ def test_status_abaixo_faixa(catalogo_fake: Catalogo) -> None:
     assert orc.sanity.dentro_da_faixa is False
 
 
+def test_desconto_gera_ancora_e_economia(catalogo_fake: Catalogo) -> None:
+    """Desconto comercial: preco_cheio vira ancora, preco_final = cheio*(1-desc)."""
+    base = calcular(
+        ProjetoInput(tipo="basico", paginas=2, nivel_design="flat", senioridade="cem"), catalogo_fake
+    )
+    com = calcular(
+        ProjetoInput(
+            tipo="basico", paginas=2, nivel_design="flat", senioridade="cem", desconto_pct=0.20
+        ),
+        catalogo_fake,
+    )
+    assert com.preco_cheio == pytest.approx(base.preco_final, abs=CENT)
+    assert com.preco_final == pytest.approx(base.preco_final * 0.80, abs=CENT)
+    assert com.economia == pytest.approx(base.preco_final * 0.20, abs=CENT)
+    assert com.desconto_pct == 0.20
+
+
+def test_desconto_nunca_rebaixa_o_piso(catalogo_fake: Catalogo) -> None:
+    """Mesmo com desconto agressivo, o preco final respeita o piso do projeto."""
+    orc = calcular(
+        ProjetoInput(
+            tipo="basico", paginas=2, nivel_design="flat", senioridade="cem", desconto_pct=0.95
+        ),
+        catalogo_fake,
+    )
+    assert orc.preco_final == pytest.approx(1000.0, abs=CENT)  # piso do tipo basico
+    assert orc.economia >= 0
+
+
+def test_arredondamento_atrativo_nunca_aumenta(catalogo_fake: Catalogo) -> None:
+    """Arredondamento e sempre 'para baixo' (favoravel ao cliente) e gera numero limpo."""
+    base = calcular(
+        ProjetoInput(tipo="basico", paginas=2, nivel_design="flat", senioridade="cem"), catalogo_fake
+    )
+    arr = calcular(
+        ProjetoInput(
+            tipo="basico", paginas=2, nivel_design="flat", senioridade="cem", arredondar=True
+        ),
+        catalogo_fake,
+    )
+    assert arr.preco_final <= base.preco_final
+    assert arr.arredondado is True
+    # base.preco_final = 2343.75 -> passo 50 -> 2300
+    assert arr.preco_final == pytest.approx(2300.0, abs=CENT)
+
+
+def test_competitividade_classifica_posicao(catalogo_fake: Catalogo) -> None:
+    # basico/flat/cem = 2343.75, faixa [1000,5000], mediana 3000 -> competitivo
+    comp = calcular(
+        ProjetoInput(tipo="basico", paginas=2, nivel_design="flat", senioridade="cem"), catalogo_fake
+    )
+    assert comp.competitividade == "competitivo"
+    # dobro = 9000+ -> acima de 5000 -> premium
+    prem = calcular(
+        ProjetoInput(tipo="basico", paginas=4, nivel_design="dobro", senioridade="cem"), catalogo_fake
+    )
+    assert prem.competitividade == "premium"
+
+
 def test_determinismo(catalogo_fake: Catalogo) -> None:
     """Mesma entrada => saida identica (exceto a data, que e 'hoje')."""
     entrada = ProjetoInput(

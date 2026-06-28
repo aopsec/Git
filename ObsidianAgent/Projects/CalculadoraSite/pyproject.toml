@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "calculadora-site"
-version = "0.1.0"
+version = "0.2.0"
 description = "Calculadora de precificacao de sites (mercado BR 2026) — TUI/CLI com orcamento ADVAN7Tech"
 requires-python = ">=3.11"
 dependencies = [

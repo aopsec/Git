@@ -198,6 +198,36 @@ def _nota_sanity(orcamento: Orcamento, estilos: dict[str, ParagraphStyle]) -> Ta
     return tabela
 
 
+def _bloco_fechamento(orcamento: Orcamento, est: dict[str, ParagraphStyle]) -> list[Flowable]:
+    """Ajustes + ancora de desconto + caixa de preco + competitividade + sanity."""
+    brl = theme.formatar_brl
+    ajustes = []
+    if orcamento.urgencia_pct:
+        ajustes.append(("Urgencia", f"+{theme.formatar_pct(orcamento.urgencia_pct)}"))
+    if orcamento.localizacao_pct:
+        ajustes.append(("Localizacao capital", f"+{theme.formatar_pct(orcamento.localizacao_pct)}"))
+    ajustes.append(("Margem de lucro", f"+{theme.formatar_pct(orcamento.margem_lucro_pct)}"))
+    ajustes.append(("Carga tributaria (gross-up)", theme.formatar_pct(orcamento.carga_tributaria_pct)))
+
+    flow: list[Flowable] = [
+        Paragraph("Ajustes aplicados", est["secao"]),
+        _tabela_kv(ajustes),
+        Spacer(1, 6),
+    ]
+    if orcamento.economia > 0:
+        anc = f"De <strike>{brl(orcamento.preco_cheio)}</strike>"
+        if orcamento.desconto_pct:
+            anc += f" com desconto de {theme.formatar_pct(orcamento.desconto_pct)}"
+        anc += f" - economia de {brl(orcamento.economia)} para o cliente"
+        flow.append(Paragraph(anc, est["aviso"]))
+    flow.append(_caixa_preco_final(orcamento))
+    flow.append(Spacer(1, 4))
+    flow.append(Paragraph(f"Posicao de mercado: {orcamento.competitividade_label}.", est["normal"]))
+    flow.append(Spacer(1, 6))
+    flow.append(_nota_sanity(orcamento, est))
+    return flow
+
+
 def _construir_corpo(orcamento: Orcamento) -> list[Flowable]:
     est = _estilos()
     brl = theme.formatar_brl
@@ -247,20 +277,8 @@ def _construir_corpo(orcamento: Orcamento) -> list[Flowable]:
     comp.append(("Subtotal", brl(orcamento.subtotal)))
     flow.append(_tabela_kv(comp, total_idx=len(comp) - 1))
 
-    # ajustes
-    flow.append(Paragraph("Ajustes aplicados", est["secao"]))
-    ajustes = []
-    if orcamento.urgencia_pct:
-        ajustes.append(("Urgencia", f"+{theme.formatar_pct(orcamento.urgencia_pct)}"))
-    if orcamento.localizacao_pct:
-        ajustes.append(("Localizacao capital", f"+{theme.formatar_pct(orcamento.localizacao_pct)}"))
-    ajustes.append(("Margem de lucro", f"+{theme.formatar_pct(orcamento.margem_lucro_pct)}"))
-    ajustes.append(("Carga tributaria (gross-up)", theme.formatar_pct(orcamento.carga_tributaria_pct)))
-    flow.append(_tabela_kv(ajustes))
-    flow.append(Spacer(1, 6))
-    flow.append(_caixa_preco_final(orcamento))
-    flow.append(Spacer(1, 6))
-    flow.append(_nota_sanity(orcamento, est))
+    # ajustes + fechamento (preco/competitividade/sanity)
+    flow.extend(_bloco_fechamento(orcamento, est))
 
     # recorrentes
     if orcamento.recorrentes:

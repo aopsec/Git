@@ -111,6 +111,9 @@ class CalculadoraApp(App[None]):
 
             yield Checkbox("Projeto urgente (+urgencia)", id="urgencia")
             yield Checkbox("Cliente em capital / grande centro", id="capital")
+            yield Label("Desconto ao cliente (%, opcional)", classes="rotulo")
+            yield Input(placeholder="ex.: 15", type="number", id="desconto")
+            yield Checkbox("Arredondar preco final (atrativo)", id="arredondar")
 
             yield Label("Hospedagem (recorrente)", classes="rotulo")
             yield Select(
@@ -153,6 +156,10 @@ class CalculadoraApp(App[None]):
         paginas_txt = self._input("paginas")
         funcs = list(self.query_one("#funcionalidades", SelectionList).selected)
 
+        # desconto e digitado em % (ex.: 15) -> fracao (0.15); vazio -> None
+        desc_pct = self._num_opcional("desconto")
+        desconto = desc_pct / 100 if desc_pct is not None else None
+
         return ProjetoInput(
             tipo=str(tipo),
             paginas=int(paginas_txt) if paginas_txt else 1,
@@ -163,6 +170,8 @@ class CalculadoraApp(App[None]):
             meta_mensal=self._num_opcional("meta_mensal"),
             urgencia=self.query_one("#urgencia", Checkbox).value,
             localizacao_capital=self.query_one("#capital", Checkbox).value,
+            desconto_pct=desconto,
+            arredondar=self.query_one("#arredondar", Checkbox).value,
             hospedagem=str(hosp),
             incluir_dominio=self.query_one("#dominio", Checkbox).value,
             manutencao_mensal=self._num_opcional("manutencao") or 0.0,

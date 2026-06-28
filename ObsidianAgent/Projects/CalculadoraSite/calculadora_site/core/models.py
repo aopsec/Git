@@ -141,6 +141,12 @@ class ProjetoInput(_Strict):
     margem_lucro_pct: float | None = Field(default=None, ge=0)
     carga_tributaria_pct: float | None = Field(default=None, ge=0, lt=1)
 
+    # --- competitividade / atratividade ---
+    # Desconto comercial aplicado ao preco cheio (ancora). Nunca rebaixa o piso.
+    desconto_pct: float | None = Field(default=None, ge=0, lt=1)
+    # Arredonda o preco final "para baixo" a um numero atrativo (ex.: R$ 7.900).
+    arredondar: bool = False
+
     # --- recorrentes ---
     hospedagem: str = "nenhuma"
     incluir_dominio: bool = False
@@ -211,9 +217,17 @@ class Orcamento(_Strict):
     carga_tributaria_pct: float
     preco_apos_ajustes: float
     preco_apos_margem: float
-    preco_final: float
     piso_aplicado: float
     piso_acionado: bool
+
+    # competitividade / atratividade
+    preco_cheio: float       # ancora (antes de desconto/arredondamento)
+    desconto_pct: float      # desconto comercial aplicado
+    economia: float          # preco_cheio - preco_final
+    arredondado: bool        # houve arredondamento atrativo?
+    preco_final: float       # o que o cliente paga
+    competitividade: str     # "abaixo_mercado"|"competitivo"|"alinhado"|"premium"|"piso"
+    competitividade_label: str
 
     # detalhamento para relatorio
     itens_escopo: list[LinhaItem]

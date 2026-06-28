@@ -22,6 +22,8 @@ def orcamento(catalogo_real: Catalogo):
         senioridade="pleno",
         funcionalidades=["blog_cms", "seo_avancado", "chat_whatsapp"],
         urgencia=True,
+        desconto_pct=0.12,
+        arredondar=True,
         hospedagem="vps",
         incluir_dominio=True,
         manutencao_mensal=300,
@@ -80,6 +82,24 @@ def test_exportar_txt_grava_arquivo(orcamento, tmp_path: Path) -> None:
     destino = txt_export.exportar_txt(orcamento, tmp_path / "orc.txt")
     assert destino.exists()
     assert "ADVAN7Tech" in destino.read_text(encoding="utf-8")
+
+
+def test_txt_mostra_desconto_e_competitividade(catalogo_real: Catalogo) -> None:
+    entrada = ProjetoInput(
+        tipo="institucional_completo",
+        paginas=10,
+        nivel_design="semi_custom",
+        senioridade="pleno",
+        desconto_pct=0.15,
+        arredondar=True,
+        cliente="Cliente X",
+    )
+    orc = calcular(entrada, catalogo_real)
+    texto = txt_export.orcamento_para_txt(orc)
+    assert "Preco cheio (de)" in texto
+    assert "Desconto comercial" in texto
+    assert "Economia do cliente" in texto
+    assert "Competitividade" in texto
 
 
 # --- PDF --------------------------------------------------------------------

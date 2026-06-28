@@ -2,6 +2,27 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
+## [0.2.0] - 2026-06-27
+
+### Adicionado (competitividade / atratividade ao cliente)
+
+- **Desconto comercial** (`desconto_pct`): gera ancora "de/por" — `preco_cheio`
+  (cheio) vs `preco_final` (com desconto) + `economia` do cliente. Nunca rebaixa o piso.
+- **Arredondamento atrativo** (`arredondar`): arredonda o preco final "para baixo"
+  a um numero comercial limpo (ex.: R$ 23.400) — nunca aumenta o preco nem fura o piso.
+- **Classificacao de competitividade** (`competitividade`): posiciona o preco final
+  ante a faixa de mercado (abaixo_mercado / competitivo / alinhado / premium / piso),
+  exibida em PDF, TXT e na tabela do terminal.
+- CLI: flags `--desconto` e `--arredondar/--sem-arredondar`. TUI: campo de desconto
+  (%) e checkbox de arredondamento.
+
+### Notas de auditoria
+
+- Configuracoes-base (template, sem extras) ficam na metade inferior das faixas de
+  mercado (competitivas). Multiplicadores opcionais (design/urgencia/capital) compoem
+  e podem ultrapassar a faixa — o orcamento agora sinaliza isso como "premium" e
+  oferece desconto/arredondamento para reposicionar de forma atrativa.
+
 ## [0.1.0] - 2026-06-27
 
 ### Adicionado

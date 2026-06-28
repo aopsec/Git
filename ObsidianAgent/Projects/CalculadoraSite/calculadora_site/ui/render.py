@@ -66,10 +66,30 @@ def painel_orcamento(orc: Orcamento) -> RenderableType:
     tc.add_row("Carga tributaria", theme.formatar_pct(orc.carga_tributaria_pct))
     blocos.append(tc)
 
-    # --- preco final ---
-    rotulo = "PRECO FINAL" + (" (piso do projeto)" if orc.piso_acionado else "")
-    preco = Text(f"{rotulo}: {brl(orc.preco_final)}", style=f"bold {theme.ACENTO}")
+    # --- preco final (com ancora de desconto, se houver) ---
+    preco = Text()
+    if orc.economia > 0:
+        rotulo_de = f"De {brl(orc.preco_cheio)}"
+        if orc.desconto_pct:
+            rotulo_de += f"  (-{theme.formatar_pct(orc.desconto_pct)})"
+        preco.append(rotulo_de + "\n", style=f"strike {theme.TEXTO_SUAVE}")
+    rotulo = "PRECO FINAL" + (" (piso)" if orc.piso_acionado else "")
+    preco.append(f"{rotulo}: {brl(orc.preco_final)}", style=f"bold {theme.ACENTO}")
+    if orc.economia > 0:
+        preco.append(f"   economia {brl(orc.economia)}", style=theme.VERDE_OK)
     blocos.append(Panel(preco, border_style=theme.ACENTO_CLARO))
+
+    # --- competitividade (posicao vs mercado) ---
+    cor_comp = {
+        "abaixo_mercado": theme.VERDE_OK,
+        "competitivo": theme.VERDE_OK,
+        "alinhado": theme.ACENTO,
+        "premium": theme.AMBAR_ALERTA,
+        "piso": theme.AMBAR_ALERTA,
+    }.get(orc.competitividade, theme.ACENTO)
+    blocos.append(
+        Panel(Text(orc.competitividade_label, style=cor_comp), title="Competitividade", border_style=cor_comp)
+    )
 
     # --- sanity ---
     cor = theme.COR_STATUS.get(orc.sanity.status, theme.ACENTO)

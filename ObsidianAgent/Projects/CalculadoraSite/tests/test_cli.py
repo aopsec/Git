@@ -66,6 +66,22 @@ def test_paginas_zero_rejeitado() -> None:
     assert resultado.exit_code != 0
 
 
+def test_calcular_com_desconto_e_arredondamento() -> None:
+    resultado = runner.invoke(
+        app,
+        ["calcular", "-t", "institucional_simples", "-p", "5", "--desconto", "0.15", "--arredondar"],
+    )
+    assert resultado.exit_code == 0
+    assert "PRECO FINAL" in resultado.output
+    assert "Competitividade" in resultado.output
+
+
+def test_desconto_invalido_sai_com_erro() -> None:
+    # desconto >= 1 viola o schema (lt=1)
+    resultado = runner.invoke(app, ["calcular", "-t", "landing_simples", "--desconto", "1.5"])
+    assert resultado.exit_code == 2
+
+
 def test_precos_inexistente_sai_com_erro(tmp_path: Path) -> None:
     resultado = runner.invoke(
         app, ["calcular", "-t", "landing_simples", "--precos", str(tmp_path / "x.yaml")]

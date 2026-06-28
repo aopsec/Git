@@ -73,6 +73,12 @@ def calcular(
     capital: bool = typer.Option(False, "--capital/--sem-capital"),
     margem: float | None = typer.Option(None, "--margem", help="Fracao, ex.: 0.3 = 30%."),
     tributo: float | None = typer.Option(None, "--tributo", help="Fracao < 1, ex.: 0.06."),
+    desconto: float | None = typer.Option(
+        None, "--desconto", help="Desconto comercial ao cliente, fracao < 1 (ex.: 0.15)."
+    ),
+    arredondar: bool = typer.Option(
+        False, "--arredondar/--sem-arredondar", help="Arredonda o preco final a um numero atrativo."
+    ),
     hospedagem: str = typer.Option("nenhuma", "--hospedagem"),
     dominio: bool = typer.Option(False, "--dominio/--sem-dominio"),
     manutencao: float = typer.Option(0.0, "--manutencao", min=0.0),
@@ -99,6 +105,8 @@ def calcular(
             localizacao_capital=capital,
             margem_lucro_pct=margem,
             carga_tributaria_pct=tributo,
+            desconto_pct=desconto,
+            arredondar=arredondar,
             hospedagem=hospedagem,
             incluir_dominio=dominio,
             manutencao_mensal=manutencao,

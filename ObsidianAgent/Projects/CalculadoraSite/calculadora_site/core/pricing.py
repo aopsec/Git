@@ -54,6 +54,58 @@ def _horas(valor: float) -> float:
     return round(valor, 2)
 
 
+# Passo de arredondamento atrativo por faixa de valor (R$): (limite_superior, passo).
+_PASSOS_ARREDONDAMENTO = ((1000.0, 10.0), (5000.0, 50.0), (50000.0, 100.0))
+_PASSO_ARREDONDAMENTO_TOPO = 500.0
+
+
+def _arredondar_atrativo(valor: float) -> float:
+    """Arredonda 'para baixo' a um numero comercialmente atrativo (ex.: 7932 -> 7900).
+
+    Sempre <= valor original (favoravel ao cliente). O passo cresce com a ordem
+    de grandeza para manter o numero limpo.
+    """
+    passo = _PASSO_ARREDONDAMENTO_TOPO
+    for limite, candidato in _PASSOS_ARREDONDAMENTO:
+        if valor < limite:
+            passo = candidato
+            break
+    return float(int(valor / passo) * passo)
+
+
+def _aplicar_competitividade(
+    entrada: ProjetoInput, preco_cheio: float, piso: float
+) -> tuple[float, bool, float]:
+    """Desconto comercial + arredondamento atrativo. Nem o desconto nem o
+    arredondamento rebaixam o piso. Retorna (preco_final, arredondado, economia)."""
+    desconto_pct = entrada.desconto_pct or 0.0
+    preco_final = max(preco_cheio * (1 - desconto_pct), piso)
+    arredondado = False
+    if entrada.arredondar:
+        candidato = _arredondar_atrativo(preco_final)
+        if candidato >= piso:
+            arredondado = _dinheiro(candidato) != _dinheiro(preco_final)
+            preco_final = candidato
+    return preco_final, arredondado, preco_cheio - preco_final
+
+
+def _classificar_competitividade(
+    preco_final: float, faixa: tuple[float, float], piso_acionado: bool
+) -> tuple[str, str]:
+    """Posiciona o preco final ante a faixa de mercado (foco no que o cliente paga)."""
+    faixa_min, faixa_max = faixa
+    mediana = (faixa_min + faixa_max) / 2
+    if piso_acionado:
+        return "piso", "No piso minimo viavel do projeto"
+    if preco_final < faixa_min:
+        return "abaixo_mercado", "Abaixo do mercado - muito competitivo"
+    if preco_final <= mediana:
+        return "competitivo", "Competitivo - abaixo da mediana de mercado"
+    if preco_final <= faixa_max:
+        return "alinhado", "Alinhado a faixa de mercado"
+    return "premium", "Premium - acima da faixa de mercado"
+
+
 def _resolver_valor_hora(entrada: ProjetoInput, valor_hora_senioridade: float) -> float:
     """Prioridade: override direto > meta mensal / horas faturaveis > senioridade."""
     if entrada.valor_hora is not None:
@@ -210,24 +262,32 @@ def calcular(entrada: ProjetoInput, catalogo: Catalogo) -> Orcamento:
 
     preco_apos_ajustes = subtotal * (1 + urgencia_pct) * (1 + localizacao_pct)
     preco_apos_margem = preco_apos_ajustes * (1 + margem_pct)
-    preco_final = preco_apos_margem / (1 - tributo_pct)
+    preco_cheio = preco_apos_margem / (1 - tributo_pct)
 
     piso = max(tipo.piso, params.piso_minimo)
-    piso_acionado = preco_final < piso
+    # O piso (custo minimo viavel) aplica-se ao preco cheio, antes do desconto.
+    piso_acionado = preco_cheio < piso
     if piso_acionado:
-        preco_final = piso
+        preco_cheio = piso
 
-    # --- 5. sanity check contra a faixa de mercado ----------------------------
+    # --- 5. competitividade: desconto comercial + arredondamento atrativo ------
+    desconto_pct = entrada.desconto_pct or 0.0
+    preco_final, arredondado, economia = _aplicar_competitividade(entrada, preco_cheio, piso)
+
+    # --- 6. sanity + competitividade (sobre o preco que o cliente paga) --------
     sanity = _avaliar_faixa(preco_final, tipo.faixa_mercado, piso_acionado)
+    competitividade, competitividade_label = _classificar_competitividade(
+        preco_final, tipo.faixa_mercado, piso_acionado
+    )
 
-    # --- 6. itens de escopo (detalhamento de horas para o relatorio) ----------
+    # --- 7. itens de escopo (detalhamento de horas para o relatorio) ----------
     itens_escopo = _montar_itens_escopo(tipo, paginas_extra, horas_paginas, funcionalidades)
 
-    # --- 7. custos recorrentes ------------------------------------------------
+    # --- 8. custos recorrentes ------------------------------------------------
     recorrentes = _montar_recorrentes(entrada, hospedagem, params.dominio_anual)
     total_recorrente_mensal = sum(r.valor_mensal for r in recorrentes)
 
-    # --- 8. montar o orcamento ------------------------------------------------
+    # --- 9. montar o orcamento ------------------------------------------------
     return Orcamento(
         cliente=entrada.cliente,
         projeto=entrada.projeto,
@@ -254,9 +314,15 @@ def calcular(entrada: ProjetoInput, catalogo: Catalogo) -> Orcamento:
         carga_tributaria_pct=tributo_pct,
         preco_apos_ajustes=_dinheiro(preco_apos_ajustes),
         preco_apos_margem=_dinheiro(preco_apos_margem),
-        preco_final=_dinheiro(preco_final),
         piso_aplicado=_dinheiro(piso),
         piso_acionado=piso_acionado,
+        preco_cheio=_dinheiro(preco_cheio),
+        desconto_pct=desconto_pct,
+        economia=_dinheiro(economia),
+        arredondado=arredondado,
+        preco_final=_dinheiro(preco_final),
+        competitividade=competitividade,
+        competitividade_label=competitividade_label,
         itens_escopo=itens_escopo,
         recorrentes=recorrentes,
         total_recorrente_mensal=_dinheiro(total_recorrente_mensal),
